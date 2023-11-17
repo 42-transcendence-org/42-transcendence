@@ -58,7 +58,70 @@ let background = new GameObject('../assets/bg.png');
 let leftPlayer = new GameObject('../assets/paddle.png');
 let rightPlayer = new GameObject('../assets/paddle.png');
 
+function resetBall(direction) {
+	ball.x = (canvas.width - ball.width) / 2;
+	ball.y = (canvas.height - ball.height) / 2;
+	ball.dx = -250 * direction;
+	ball.dy = -250;
+}
+
+function AABB(paddle, ball) {
+	return (
+		ball.x < paddle.x + paddle.width &&
+		ball.x + ball.width > paddle.x &&
+		ball.y < paddle.y + paddle.height &&
+		ball.y + ball.height > paddle.y
+	);
+}
+
+function enhancedCollisionDetection(ball, paddle) {
+	if (AABB(ball, paddle)) {
+		// Determine the side of the collision
+		const topCollision = ball.y + ball.height > paddle.y && ball.y < paddle.y;
+		const bottomCollision = ball.y < paddle.y + paddle.height && ball.y + ball.height > paddle.y + paddle.height;
+		const leftCollision = ball.x + ball.width > paddle.x && ball.x < paddle.x;
+		const rightCollision = ball.x < paddle.x + paddle.width && ball.x + ball.width > paddle.x + paddle.width;
+
+		// Adjust ball's position to avoid getting stuck
+		if (topCollision) ball.y = paddle.y - ball.height;
+		if (bottomCollision) ball.y = paddle.y + paddle.height;
+		if (leftCollision) ball.x = paddle.x - ball.width;
+		if (rightCollision) ball.x = paddle.x + paddle.width;
+
+		// Adjust ball's velocity based on collision type
+		if (topCollision || bottomCollision) {
+			ball.dy *= -1;
+			ball.dx = adjustBallHorizontalDirection(ball.x, paddle.x, paddle.width, topCollision, bottomCollision);
+		} else {
+			ball.dx *= -1;
+			ball.dy = adjustBallVerticalDirection(ball.y, paddle.y, paddle.height);
+		}
+	}
+}
+
+function adjustBallHorizontalDirection(ballX, paddleX, paddleWidth, topCollision, bottomCollision) {
+	let relativeIntersectX = (topCollision || bottomCollision) ? (paddleX + (paddleWidth / 2)) - ballX : 0;
+	let normalizedRelativeIntersectionX = (relativeIntersectX / (paddleWidth / 2));
+	let maxBounceAngle = 75; // Maximum bounce angle in degrees
+	let bounceAngle = normalizedRelativeIntersectionX * maxBounceAngle;
+	return Math.sign(ball.dx) * Math.cos(bounceAngle * Math.PI / 180) * Math.abs(ball.dx);
+}
+
+function adjustBallVerticalDirection(ballY, paddleY, paddleHeight) {
+	var relativeIntersectY = (paddleY + (paddleHeight / 2)) - ballY;
+	var normalizedRelativeIntersectionY = (relativeIntersectY / (paddleHeight / 2));
+	var maxBounceAngle = 75; // Maximum bounce angle in degrees
+	var bounceAngle = normalizedRelativeIntersectionY * maxBounceAngle;
+	return -Math.sign(ball.dy) * Math.cos(bounceAngle * Math.PI / 180) * Math.abs(ball.dy);
+}
+
+let lastFrameTime = performance.now();
 function update() {
+	/* Update dt */
+	let now = performance.now();
+	dt = (now - lastFrameTime) / 1000;
+	lastFrameTime = now;
+
 	/* Left player */
 	if (keys['q']) {
 		/* UP */
@@ -71,14 +134,39 @@ function update() {
 	}
 
 	/* Right player */
-	if (keys['ArrowUp']) {
+	if (keys['p']) {
 		/* UP */
 		if (rightPlayer.dy > 0) rightPlayer.dy *= -1;
 		if (rightPlayer.y - rightPlayer.dy * dt >= border) rightPlayer.move();
-	} else if (keys['ArrowDown']) {
+	} else if (keys['l']) {
 		/* DOWN */
 		if (rightPlayer.dy < 0) rightPlayer.dy *= -1;
 		if (rightPlayer.y + rightPlayer.height + rightPlayer.dy * dt <= canvas.height - border) rightPlayer.move();
+	}
+
+	/* Ball */
+	ball.move();
+	/* Check collisions with walls */
+	if (ball.y <= border) {
+		/* TOP */
+		ball.y = border;
+		ball.dy *= -1;
+	} else if (ball.y + ball.height >= canvas.height - border) {
+		/* BOTTOM */
+		ball.y = canvas.height - ball.height - border;
+		ball.dy *= -1;
+	} else if (ball.x <= 0) {
+		/* LEFT */
+		rightScore++;
+		resetBall(-1);
+	} else if (ball.x + ball.width >= canvas.width) {
+		/* RIGHT */
+		leftScore++;
+		resetBall(1);
+	} else if (enhancedCollisionDetection(ball, leftPlayer)) {
+		/* Collision with Left Paddle */
+	} else if (enhancedCollisionDetection(ball, rightPlayer)) {
+		/* Collision with Right Paddle */
 	}
 }
 
@@ -102,10 +190,9 @@ Promise.all([background.loaded, ball.loaded, leftPlayer.loaded, rightPlayer.load
 	leftPlayer.x = leftPlayer.width;
 	rightPlayer.x = canvas.width - (rightPlayer.width * 2);
 	rightPlayer.y = leftPlayer.y = (canvas.height - rightPlayer.height) / 2;
-	rightPlayer.dy = leftPlayer.dy = 5.0;
+	rightPlayer.dy = leftPlayer.dy = canvas.height * 0.90;
 	/* Ball coordinates */
-	ball.x = (canvas.width - ball.width) / 2;
-	ball.y = (canvas.height - ball.height) / 2;
+	resetBall(1);
 
 	/* Start the game loop */
 	main();
