@@ -1,0 +1,14 @@
+# Blacklist everything
+*
+# Whitelist all directories
+!*/
+# Whitelist the file you're interested in.
+!*.html
+!*.css
+!*.js
+!*.png
+!*.ttf
+!*.txt
+!*.pdf
+!*.md
+!.gitignore
