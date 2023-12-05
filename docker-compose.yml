@@ -1,7 +1,40 @@
 version: '3'
 
 services:
-  game_service:
-    build: ./Game
+  frontend:
+    build:
+      context: ./PONG/frontend
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    depends_on:
+      - frontend_db
+
+  nginx:
+    build:
+      context: ./PONG/nginx
+      dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8001:8000"
+    depends_on:
+      - frontend
+    networks:
+      - backend
+
+  frontend_db:
+    image: postgres:latest
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: frontend_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+    networks:
+      - backend
+
+volumes:
+  postgres_db:
+
+networks:
+  backend:
+    driver: bridge
