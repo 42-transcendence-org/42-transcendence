@@ -6,7 +6,7 @@
 
 # Game
 ![Start menu](img/startmenu.png)
-![Board](img/gameboard.png)
+![Board](img/board.png)
 ## Description
 ### Graphics
 + Retro-style, bi-color, uses the same colors as the rest of the website.
