@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import welcome
+from .settings import STATIC_URL
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', welcome, name='welcome'),
     path('admin/', admin.site.urls),
-]
+] + static(STATIC_URL)

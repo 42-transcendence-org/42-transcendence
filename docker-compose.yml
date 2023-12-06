@@ -3,38 +3,63 @@ version: '3'
 services:
   frontend:
     build:
-      context: ./PONG/frontend
+      context: ./PONG/frontend/src
       dockerfile: Dockerfile
     networks:
-      - backend
+      - front
     depends_on:
       - frontend_db
 
   nginx:
     build:
-      context: ./PONG/nginx
+      context: ./PONG/frontend/nginx
       dockerfile: Dockerfile
     ports:
       - "8001:8000"
     depends_on:
       - frontend
     networks:
-      - backend
+      - front
 
   frontend_db:
     image: postgres:latest
     volumes:
-      - postgres_db:/var/lib/postgresql/data
+      - front_postgres_db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: frontend_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: yourpassword
     networks:
-      - backend
+      - front
+
+  authentification:
+    build:
+      context: ./PONG/authentification/src
+      dockerfile: Dockerfile
+    networks:
+      - auth
+    depends_on:
+      - authentification_db
+
+
+  authentification_db:
+    image: postgres:latest
+    volumes:
+      - auth_postgres_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: authentification_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+    networks:
+      - auth
 
 volumes:
-  postgres_db:
+  front_postgres_db:
+  auth_postgres_db:
+
 
 networks:
-  backend:
+  front:
+    driver: bridge
+  auth:
     driver: bridge
