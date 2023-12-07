@@ -1,36 +1,24 @@
 # auth_app/views.py
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from django.contrib.auth.models import User  # or your custom user model
 from django.shortcuts import render
+from django.http import JsonResponse
+from django.contrib.auth.models import User
 import logging
 
 logger = logging.getLogger(__name__)
 
-@api_view(['POST'])
 def register(request):
+    logger.info("register view is called")
     if request.method == 'POST':
-        try:
-            data = json.loads(requestbody)
-            username = data['username']
-            password = data['password']
+        # Extract user data from request
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        # Add validation as needed
 
-            if not username or not password:
-                return JsonResponse({'error': 'Username and oassword are required.'}, status=400)
-            if User.objects.filter(username=username).exists():
-                return JsonResponse({'error': 'Username already taken.'}, status=400)
-            
-            user = User.objects.create(username=username, password=make_password(password))
-            return JsonResponse({'success': 'User created successfully.'}, status=201)
-            
-        except KeyError as e:
-            return JsonResponse({'error': f'Missing field: {str(e)}'}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    
-    else:
-        return JsonResponse({'error': 'Invalid request method.'}, status=405)
+        # Create user
+        user = User.objects.create_user(username=username, password=password)
+        return JsonResponse({'status': 'success', 'username': user.username})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
 
