@@ -8,7 +8,6 @@ WORKDIR /app
 COPY . /app/
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
-RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 

@@ -36,6 +36,8 @@ services:
     build:
       context: ./PONG/authentification/src
       dockerfile: Dockerfile
+    ports:
+      - "8002:8000"
     networks:
       - auth
     depends_on:

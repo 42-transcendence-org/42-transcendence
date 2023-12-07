@@ -1,11 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const showAuthFormButton = document.getElementById('showAuthFormButton');
-    const authContentDiv = document.getElementById('authContent');
+    const loadAuthFormButton = document.getElementById('loadAuthFormButton');
 
-    if (showAuthFormButton && authContentDiv) {
-        showAuthFormButton.addEventListener('click', function() {
-            // Toggle the display property between 'none' and 'block'
-            authContentDiv.style.display = authContentDiv.style.display === 'none' ? 'block' : 'none';
-        });
-    }
+    loadAuthFormButton.addEventListener('click', function() {
+        fetch('http://localhost:8002/auth_form/')  // Update this URL to your actual authentication service URL
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('authFormContainer').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error fetching auth form:', error);
+            });
+    });
 });

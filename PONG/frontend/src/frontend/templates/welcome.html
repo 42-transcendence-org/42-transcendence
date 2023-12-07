@@ -15,19 +15,14 @@
         <div class="welcome-container">
             <h1>Welcome to Our Pong Game!</h1>
             <p>This is a custom welcome page for our Pong game project.</p>
-            <button id="showAuthFormButton">Log In / Register</button>
+            <button id="loadAuthFormButton">Log In / Register</button>
         </div>
     </header>
     <main>
-        <div id="authContent" style="display:none;">
-            <form id="authForm">
-                <input type="text" id="name" name="name" placeholder="Name">
-                <input type="text" id="nickname" name="nickname" placeholder="Nickname">
-                <button type="submit">Submit</button>
-            </form>
-        </div>
+        <div id="authFormContainer"></div>
     </main>
 
+    <script src="{% static 'js/authScript.js' %}"></script>
     <script src="{% static 'js/diplayAuth.js' %}"></script>
 </body>
 </html>
