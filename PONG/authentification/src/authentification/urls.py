@@ -19,6 +19,7 @@ from django.urls import include, path
 from auth_app.views import register
 
 urlpatterns = [
-    path('', include('auth_app.urls')),
+    path('auth_form/', include('auth_app.urls')),
+    path('register/', include('auth_app.urls')),
     path('admin/', admin.site.urls),
 ]

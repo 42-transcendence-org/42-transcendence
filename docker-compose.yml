@@ -5,6 +5,8 @@ services:
     build:
       context: ./PONG/frontend/src
       dockerfile: Dockerfile
+    volumes:
+      - ./PONG/frontend/src:/app
     networks:
       - front
     depends_on:
@@ -22,9 +24,9 @@ services:
       - front
 
   frontend_db:
-    image: postgres:latest
+    image: postgres:16-bookworm
     volumes:
-      - front_postgres_db:/var/lib/postgresql/data
+      - front_db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: frontend_db
       POSTGRES_USER: postgres
@@ -36,6 +38,8 @@ services:
     build:
       context: ./PONG/authentification/src
       dockerfile: Dockerfile
+    volumes:
+      - ./PONG/authentification/src:/app
     ports:
       - "8002:8000"
     networks:
@@ -45,19 +49,31 @@ services:
 
 
   authentification_db:
-    image: postgres:latest
+    image: postgres:16-bookworm
     volumes:
-      - auth_postgres_db:/var/lib/postgresql/data
+      - auth_db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: authentification_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: yourpassword
+    ports:
+      - "5432:5432"
     networks:
       - auth
 
 volumes:
-  front_postgres_db:
-  auth_postgres_db:
+  front_db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/vburton/data/transcendence_data/front_db'
+  auth_db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/vburton/data/transcendence_data/auth_db'
 
 
 networks:

@@ -6,19 +6,25 @@ document.addEventListener('DOMContentLoaded', function() {
         authForm.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            var username = document.getElementById('username').value;
-            var password = document.getElementById('password').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-            fetch('http://localhost:8002/api/auth/register', {  // Update URL based on your setup
+            // const formData = new FormData(authForm);
+            // const username = formData.get('username');
+            // const password = formData.get('password');
+            console.log(username)
+            console.log(password)
+
+            fetch('http://localhost:8002/register/', {  // Update URL based on your setup
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username: username, password: password })
+                body: JSON({ username, password })
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                document.getElementById('responseMessage').innerText = data.message;
             })
             .catch(error => {
                 console.error('Error:', error);
