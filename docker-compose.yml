@@ -56,10 +56,58 @@ services:
       POSTGRES_DB: authentification_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: yourpassword
-    ports:
-      - "5432:5432"
     networks:
       - auth
+
+  game:
+    build:
+      context: ./PONG/game
+      dockerfile: Dockerfile
+    volumes:
+      - ./PONG/game:/app
+    ports:
+      - "8003:8000"
+    networks:
+      - game
+    depends_on:
+      - game_db
+
+
+  game_db:
+    image: postgres:16-bookworm
+    volumes:
+      - game_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: game_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+    networks:
+      - game
+
+  bot:
+    build:
+      context: ./PONG/bot
+      dockerfile: Dockerfile
+    volumes:
+      - ./PONG/bot:/app
+    ports:
+      - "8004:8000"
+    networks:
+      - bot
+    depends_on:
+      - bot_db
+
+
+  bot_db:
+    image: postgres:16-bookworm
+    volumes:
+      - bot_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: bot_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+    networks:
+      - bot
 
 volumes:
   front_db:
@@ -68,16 +116,35 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '/home/vburton/data/transcendence_data/front_db'
+  
   auth_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: '/home/vburton/data/transcendence_data/auth_db'
+  
+  game_db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/vburton/data/transcendence_data/game_db'
+    
+  bot_db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/vburton/data/transcendence_data/bot_db'
 
 
 networks:
   front:
     driver: bridge
   auth:
+    driver: bridge
+  game:
+    driver: bridge
+  bot:
     driver: bridge
