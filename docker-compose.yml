@@ -122,21 +122,21 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/home/vburton/data/transcendence_data/auth_db'
+      device: $AUTH_DB_VOL
   
   game_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/home/vburton/data/transcendence_data/game_db'
+      device: $GAME_DB_VOL
     
   bot_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/home/vburton/data/transcendence_data/bot_db'
+      device: $BOT_DB_VOL
 
 
 networks:
