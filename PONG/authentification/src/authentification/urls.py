@@ -17,9 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from auth_app.views import register
+from auth_app import views
+from .settings import STATIC_URL
+from django.conf.urls.static import static
+
 
 urlpatterns = [
-    path('auth_form/', include('auth_app.urls')),
-    path('register/', include('auth_app.urls')),
+    path('', include('auth_app.urls')),
+    path('', include('auth_app.urls')),
+    path('', views.index),
     path('admin/', admin.site.urls),
-]
+] + static(STATIC_URL)

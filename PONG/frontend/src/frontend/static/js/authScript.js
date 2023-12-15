@@ -1,26 +1,25 @@
-// Example: script.js
 document.addEventListener('DOMContentLoaded', function() {
-    const authForm = document.getElementById('authForm');
+    const authFormContainer = document.getElementById('authFormContainer');
 
-    if (authForm) {
-        authForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+    authFormContainer.addEventListener('submit', function(event) {
+        if (event.target.id === 'authForm') {
+            event.preventDefault(); // Prevent the default form submission
 
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const formData = new FormData(event.target); // Use the event target which is the form
+            const username = formData.get('username');
+            const email = formData.get('email');
+            const password = formData.get('password');
 
-            // const formData = new FormData(authForm);
-            // const username = formData.get('username');
-            // const password = formData.get('password');
-            console.log(username)
-            console.log(password)
+            console.log("Username:", username, "Email:", email, "Password:", password);
 
-            fetch('http://localhost:8002/register/', {  // Update URL based on your setup
+
+            fetch('http://localhost:8002/register/', {  // Update this URL to your Django backend endpoint
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    // Add CSRF token header if needed
                 },
-                body: JSON({ username, password })
+                body: JSON.stringify({ username, email, password })
             })
             .then(response => response.json())
             .then(data => {
@@ -29,6 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error:', error);
             });
-        });
-    };
+        }
+    });
 });

@@ -58,6 +58,9 @@ services:
       POSTGRES_PASSWORD: yourpassword
     networks:
       - auth
+    ports:
+      - 5432
+
 
   game:
     build:

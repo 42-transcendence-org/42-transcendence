@@ -9,14 +9,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+@csrf_exempt
 def register(request):
     logger.info("register view is called")
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            user = User.objects.create_user(username=data['username'], password=data['password'])
+            user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
             print("User created:", user.username)
-            return JsonResponse({"status": "success", "username": user.username})
+            # return JsonResponse({"status": "success", "username": user.username})
+            return JsonResponse({'message': 'User created successfully'})
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)})
     else:
@@ -31,3 +33,7 @@ def auth_form(request):
     except Exception as e:
         logger.error(f"Error in auth_form view: {e}")
         raise
+
+
+def index(request):
+    return render(request, 'test.html') 
