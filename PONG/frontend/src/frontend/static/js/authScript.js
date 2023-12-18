@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     const authFormContainer = document.getElementById('authFormContainer');
-
+    
     authFormContainer.addEventListener('submit', function(event) {
-        if (event.target.id === 'authForm') {
+        event.preventDefault(); // Prevent the default form submission
+        if (event.target.id === 'registerForm') {
+            console.log("coucou");
             event.preventDefault(); // Prevent the default form submission
 
             const formData = new FormData(event.target); // Use the event target which is the form
@@ -13,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("Username:", username, "Email:", email, "Password:", password);
 
 
-            fetch('http://localhost:8002/register/', {  // Update this URL to your Django backend endpoint
+            fetch('http://localhost:8002/register/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -24,6 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 document.getElementById('responseMessage').innerText = data.message;
+                if (data.message == 'User created successfully')
+                    authFormContainer.innerHTML = '';
             })
             .catch(error => {
                 console.error('Error:', error);

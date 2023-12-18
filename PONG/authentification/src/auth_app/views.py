@@ -26,12 +26,20 @@ def register(request):
 
 
 
-def auth_form(request):
-    logger.info("auth_form view is called")
+def register_form(request):
+    logger.info("register_form view is called")
     try:
-        return render(request, 'auth_form.html')
+        return render(request, 'register_form.html')
     except Exception as e:
-        logger.error(f"Error in auth_form view: {e}")
+        logger.error(f"Error in register_form view: {e}")
+        raise
+
+def login_form(request):
+    logger.info("login_form view is called")
+    try:
+        return render(request, 'login_form.html')
+    except Exception as e:
+        logger.error(f"Error in login_form view: {e}")
         raise
 
 

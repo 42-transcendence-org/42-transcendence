@@ -1,6 +1,13 @@
 /* frontend/static/css/style.css */
 
-.welcome-container {
+.main {
     text-align: center;
     margin-top: 50px;
+}
+
+.log * {
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 15px; 
 }
