@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
 import json
 import logging
 
@@ -42,6 +44,9 @@ def login_form(request):
         logger.error(f"Error in login_form view: {e}")
         raise
 
+class MyLoginView(LoginView):
+    template_name = 'login_form.html'
 
-def index(request):
-    return render(request, 'test.html') 
+@login_required
+def home(request):
+    return render(request, 'home.html', {'user': request.user}) 

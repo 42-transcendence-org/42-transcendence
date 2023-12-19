@@ -58,6 +58,8 @@ CORS_ORIGIN_WHITELIST = [
      'http://localhost:8001',  # URL of your SPA
 ]
 
+LOGIN_REDIRECT_URL = 'home'
+
 
 ROOT_URLCONF = 'authentification.urls'
 
