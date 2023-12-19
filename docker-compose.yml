@@ -27,6 +27,8 @@ services:
     image: postgres:16-bookworm
     volumes:
       - front_db:/var/lib/postgresql/data
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: frontend_db
       POSTGRES_USER: postgres
@@ -47,11 +49,12 @@ services:
     depends_on:
       - authentification_db
 
-
   authentification_db:
     image: postgres:16-bookworm
     volumes:
       - auth_db:/var/lib/postgresql/data
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: authentification_db
       POSTGRES_USER: postgres
@@ -60,7 +63,6 @@ services:
       - auth
     ports:
       - 5432
-
 
   game:
     build:
@@ -75,11 +77,12 @@ services:
     depends_on:
       - game_db
 
-
   game_db:
     image: postgres:16-bookworm
     volumes:
       - game_db:/var/lib/postgresql/data
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: game_db
       POSTGRES_USER: postgres
@@ -100,11 +103,12 @@ services:
     depends_on:
       - bot_db
 
-
   bot_db:
     image: postgres:16-bookworm
     volumes:
       - bot_db:/var/lib/postgresql/data
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: bot_db
       POSTGRES_USER: postgres
@@ -118,29 +122,28 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '/home/vburton/data/transcendence_data/front_db'
-  
+      device: $FRNT_DB_VOL
+
   auth_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: $AUTH_DB_VOL
-  
+
   game_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: $GAME_DB_VOL
-    
+
   bot_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: $BOT_DB_VOL
-
 
 networks:
   front:

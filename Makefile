@@ -1,37 +1,74 @@
-ENV_FILE        := .env
-DOCKER_FILE     := ./docker-compose.yml
+# -f = specify the location of the compose file
+DOCKER_COMPOSE	:= docker-compose -f ./docker-compose.yml --env-file ./.env
+VOLUMES_DIR		:= front_db auth_db game_db bot_db
+VOLUMES_PATH	:= $(HOME)/data/transcendence_data
+VOLUMES			:= $(addprefix $(VOLUMES_PATH)/, $(VOLUMES_DIR))
 
-VOLUMES_DIR        := front_db auth_db game_db bot_db
-VOLUMES_PATH       := $(HOME)/data/transcendence_data
-VOLUMES         := $(addprefix $(VOLUMES_PATH)/, $(VOLUMES_DIR))
+# define standard colors
+_END			:=	\033[0m
+_GREEN			:=	\033[32m
 
 all: up
 
-# The | character specifies order-only prerequisites, which must be built
-# before this target but do not trigger a rebuild if they change.
+# -d = run the containers in the background (terminal is still usable while running)
+# --build = force to rebuild the images of the services
 up: | $(VOLUMES)
-		docker-compose -f $(DOCKER_FILE) --env-file $(ENV_FILE) up -d --build
+	@echo "$(_GREEN) Rebuild and start all the containers in detached mode$(_END)"
+	${DOCKER_COMPOSE} up -d --build
 
-# Removing the -d flag allows us to see the output of the containers.
 debug: | $(VOLUMES)
-		docker-compose -f $(DOCKER_FILE) --env-file $(ENV_FILE) up --build
+	@echo "$(_GREEN) Rebuild and start all the containers in attached mode$(_END)"
+	${DOCKER_COMPOSE} up --build
 
-# Create the directories if they do not exist.
+build:
+	@echo "$(_GREEN)Build images$(_END)"
+	$(DOCKER_COMPOSE) build
+
 $(VOLUMES):
-		mkdir -p $(VOLUMES)
+	mkdir -p $(VOLUMES)
+
+start:
+	@echo "$(_GREEN)Start containers$(_END)"
+	$(DOCKER_COMPOSE) start
+
+restart:
+	@echo "$(_GREEN)Restart containers$(_END)"
+	$(DOCKER_COMPOSE) restart
 
 stop:
-		docker-compose -f $(DOCKER_FILE) --env-file $(ENV_FILE) down
+	@echo "$(_GREEN)Stop containers$(_END)"
+	$(DOCKER_COMPOSE) stop
 
-# Remove the Docker volumes prefixed with 'srcs_', located at /var/lib/docker/volumes/.
-# Remove all unused Docker volumes.
-# Remove the directories on the host system where the volume data is stored.
-clean:    stop
-		docker volume rm $(addprefix srcs_, $(VOLUMES_DIR)) -f
-		rm -rf $(VOLUMES_PATH)/*
-		docker-compose -f srcs/docker-compose.yml down --volumes --rmi all
+ls:
+	@echo "$(_GREEN)------------------------List running containers-------------------------$(_END)"
+	$(DOCKER_COMPOSE) ps
+	@echo "$(_GREEN)------------------------------List images-------------------------------$(_END)"
+	docker images
+	@echo "$(_GREEN)------------------------------List volumes------------------------------$(_END)"
+	docker volume ls
 
+# --rmi all = remove all images associated with the services
+# --volumes = remove any volume
+# --remove-orphans = remove any container unused by docker-compose file
+clean:
+	@echo "$(_GREEN)Stop and remove containers, volumes and networks$(_END)"
+	$(DOCKER_COMPOSE) down --rmi all --volumes --remove-orphans
 
-re: stop debug
+clean_volumes:
+	@echo "$(_GREEN)Stop and remove volumes$(_END)"
+	$(DOCKER_COMPOSE) down --volumes
+	sudo rm -rf $(VOLUMES)
 
-.PHONY: all load debug stop clean re
+fclean: clean
+	@echo "$(_GREEN)Removes images, containers and volumes$(_END)"
+	sudo rm -rf $(VOLUMES)
+
+# -a = remove all objects including unused
+# -f = force the removal without confirmation
+prune: fclean
+	@echo "$(_GREEN)Removes all unused images, containers, networks and volumes$(_END)"
+	docker system prune -af
+
+re: prune all
+
+.PHONY: all build up start restart stop ls clean fclean prune re debug
