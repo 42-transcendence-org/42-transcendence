@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     RegisterForm.addEventListener('click', function() {
         if (!isRegisterForm){
-            fetch('http://localhost:8002/register_form/')  // Update this URL to your actual authentication service URL
+            fetch('http://localhost:8002/register/')  // Update this URL to your actual authentication service URL
             .then(response => response.text())
             .then(html => {
                 authFormContainer.innerHTML = html;
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     LoginForm.addEventListener('click', function() {
         if (!isLoginForm){
-            fetch('http://localhost:8002/login_form/')  // Update this URL to your actual authentication service URL
+            fetch('http://localhost:8002/login/')  // Update this URL to your actual authentication service URL
             .then(response => response.text())
             .then(html => {
                 authFormContainer.innerHTML = html;

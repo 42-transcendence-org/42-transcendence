@@ -2,7 +2,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const authFormContainer = document.getElementById('authFormContainer');
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     
+    
     authFormContainer.addEventListener('submit', function(event) {
+        console.log("toto")
         event.preventDefault(); // Prevent the default form submission
         if (event.target.id === 'registerForm') {
             console.log("coucou");
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Add CSRF token header if needed
+                    'X-CSRFToken': csrftoken,
                 },
                 body: JSON.stringify({ username, email, password })
             })

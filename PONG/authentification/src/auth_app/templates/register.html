@@ -1,0 +1,9 @@
+<h1> Creer un compte</h1>
+
+<div class="register-form">
+    <form id="registerForm" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Je m'inscris !">
+    </form>
+</div>
