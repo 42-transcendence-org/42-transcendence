@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     const authFormContainer = document.getElementById('authFormContainer');
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    
-    
+
+
     authFormContainer.addEventListener('submit', function(event) {
         console.log("toto")
-        event.preventDefault(); // Prevent the default form submission
         if (event.target.id === 'registerForm') {
             console.log("coucou");
             event.preventDefault(); // Prevent the default form submission
@@ -56,11 +55,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({ username, password })
             })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('responseMessage').innerText = data.message;
-                if (data.message == 'User created successfully')
-                    authFormContainer.innerHTML = '';
+            .then(response => response.text())
+            .then(html => {
+                authFormContainer.innerHTML = html;
+                document.getElementById('authFormContainer').innerHTML = html;
+                isFormVisible = true;
             })
             .catch(error => {
                 console.error('Error:', error);

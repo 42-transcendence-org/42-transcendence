@@ -12,6 +12,7 @@ from django.contrib import messages
 import json
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 @csrf_exempt
@@ -53,27 +54,40 @@ class MyLoginView(LoginView):
 
 # @login_required
 def home(request):
-    return render(request, 'home.html', {'user': request.user}) 
+    return render(request, 'home.html', {'user': request.user})
 
 def login_user(request):
+    print(request.body)
     if request.method == 'POST':
-        username = request.POST["username"]
-        password = request.POST["password"]
+        if not request.body:
+            return JsonResponse({'error': 'Empty request body'}, status=400)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        username = data.get('username')
+        password = data.get('password')
+
+        if not username or not password:
+            return JsonResponse({'error': 'Veuillez remplir tous les champs'}, status=400)
 
         user = authenticate(request, username = username, password = password)
 
         if user is not None:
             login(request, user)
-            return redirect("home")
+            print('coucou1')
+            return render(request, 'home.html')
         else:
+            print('coucou2')
             messages.info(request, "Indentifiant ou mot de passe incorrect.")
 
     form = AuthenticationForm()
+    print('coucou3')
     return render(request, "login.html", {"form": form})
 
 def logout_user(request):
     logout(request)
-    return redirect("auth_app:home")
+    return redirect("home")
 
 def register_user(request):
     if request.method == 'POST':

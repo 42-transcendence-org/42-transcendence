@@ -8,7 +8,7 @@ class user(models.Model):
 
     def __str__(self):
         return self.username
-    
+
     class Meta:
         verbose_name = "Utilisateur"
         verbose_name_plural = "Utilisateurs"

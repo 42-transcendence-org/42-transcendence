@@ -11,6 +11,7 @@ urlpatterns = [
     # path('login/', MyLoginView.as_view(), name='login'),
     path('login/', views.login_user, name='login'),
     # path('logout/', LogoutView.as_view(), name='logout'),
-    path('login/', views.logout_user, name='logout'),
+    path('logout/', views.logout_user, name='logout'),
     path('home/', views.home, name='home'),
+
 ]

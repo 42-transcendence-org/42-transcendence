@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const LoginForm = document.getElementById('LoginForm');
     const authFormContainer = document.getElementById('authFormContainer');
     let isRegisterForm = false;
-    let isLoginForm = false; 
+    let isLoginForm = false;
 
     RegisterForm.addEventListener('click', function() {
         if (!isRegisterForm){

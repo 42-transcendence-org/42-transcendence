@@ -21,6 +21,8 @@ from auth_app import views
 from .settings import STATIC_URL
 from django.conf.urls.static import static
 
+app_name = 'auth_app'
+
 urlpatterns = [
     path('', include('auth_app.urls')),
     path('admin/', admin.site.urls),
