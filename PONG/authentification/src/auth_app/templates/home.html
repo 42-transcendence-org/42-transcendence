@@ -1,6 +1,6 @@
 {% if user.is_authenticated %}
-    <p>Welcome, {{ user.username }}! | <a href="{% url 'logout' %}">Déconnexion</a></p>
+    <p>Welcome, {{ user.username }}!</p>
 {% else %}
-    <p>You are not logged in.</p>
+    <p>Your account has been succesfully created. You can now login.</p>
 
 {% endif %}

@@ -49,6 +49,14 @@ def login_form(request):
         logger.error(f"Error in login_form view: {e}")
         raise
 
+def login_buttons(request):
+    logger.info("login_form view is called")
+    try:
+        return render(request, 'loginButtons.html')
+    except Exception as e:
+        logger.error(f"Error in login_buttons view: {e}")
+        raise
+
 class MyLoginView(LoginView):
     template_name = 'login_form.html'
 
