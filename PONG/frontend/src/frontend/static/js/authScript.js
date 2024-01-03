@@ -11,10 +11,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const formData = new FormData(event.target); // Use the event target which is the form
             const username = formData.get('username');
-            const email = formData.get('email');
-            const password = formData.get('password');
+            const password1 = formData.get('password1');
+            const password2 = formData.get('password2');
 
-            console.log("Username:", username, "Email:", email, "Password:", password);
+
+            console.log("Username:", username, "Password:", password1);
 
 
             fetch('http://localhost:8002/register/', {
@@ -23,13 +24,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrftoken,
                 },
-                body: JSON.stringify({ username, email, password })
+                body: JSON.stringify({ username, password1, password2 })
             })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('responseMessage').innerText = data.message;
-                if (data.message == 'User created successfully')
-                    authFormContainer.innerHTML = '';
+            .then(response => response.text())
+            .then(html => {
+                authFormContainer.innerHTML = html;
+                document.getElementById('authFormContainer').innerHTML = html;
+                // if (data.message == 'User created successfully')
+                //     authFormContainer.innerHTML = '';
             })
             .catch(error => {
                 console.error('Error:', error);

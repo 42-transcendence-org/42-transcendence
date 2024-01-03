@@ -75,14 +75,11 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
-            print('coucou1')
             return render(request, 'home.html')
         else:
-            print('coucou2')
             messages.info(request, "Indentifiant ou mot de passe incorrect.")
 
     form = AuthenticationForm()
-    print('coucou3')
     return render(request, "login.html", {"form": form})
 
 def logout_user(request):
@@ -90,13 +87,25 @@ def logout_user(request):
     return redirect("home")
 
 def register_user(request):
+    print(request.body)
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-
+        if not request.body:
+            return JsonResponse({'error': 'Empty request body'}, status=400)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        form = UserCreationForm(data)
+        print('coucou1')
         if form.is_valid():
+            print('coucou3')
             form.save()
-            return redirect("home")
+            return render(request, 'home.html')
+        else:
+            print(form.errors)
+
     else:
+        print('coucou2')
         form = UserCreationForm()
 
     return render(request, "register.html", {"form": form})
