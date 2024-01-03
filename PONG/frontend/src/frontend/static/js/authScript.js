@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const authFormContainer = document.getElementById('authFormContainer');
     const statusUser = document.getElementById('statusUser');
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    // const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const csrftoken = getCookie('csrftoken');
 
 
     authFormContainer.addEventListener('submit', function(event) {
@@ -44,7 +45,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrftoken,
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ username, password }),
+                credentials: 'include'
             })
             .then(response => response.text())
             .then(html => {
@@ -60,3 +62,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 });
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

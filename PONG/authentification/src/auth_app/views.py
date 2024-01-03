@@ -15,24 +15,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-@csrf_exempt
-def register(request):
-    pass
-    # logger.info("register view is called")
-    # if request.method == 'POST':
-    #     try:
-    #         data = json.loads(request.body)
-    #         user = User.objects.create_user(password=data['username'], email=data['email'], password=data['password'])
-    #         print("User created:", user.username)
-    #         # return JsonResponse({"status": "success", "username": user.username})
-    #         return JsonResponse({'message': 'User created successfully'})
-    #     except Exception as e:
-    #         return JsonResponse({"status": "error", "message": str(e)})
-    # else:
-    #     return JsonResponse({"status": "error", "message": "Only POST requests are allowed"})
-
-
-
 def register_form(request):
     logger.info("register_form view is called")
     try:
@@ -60,7 +42,6 @@ def login_buttons(request):
 class MyLoginView(LoginView):
     template_name = 'login_form.html'
 
-# @login_required
 def home(request):
     return render(request, 'home.html', {'user': request.user})
 
@@ -94,7 +75,7 @@ def logout_user(request):
     logout(request)
     return redirect("home")
 
-def register_user(request):
+def register(request):
     print(request.body)
     if request.method == 'POST':
         if not request.body:
@@ -117,3 +98,9 @@ def register_user(request):
         form = UserCreationForm()
 
     return render(request, "register.html", {"form": form})
+
+def check_authentication(request):
+    if request.user.is_authenticated:
+        return JsonResponse({'isAuthenticated': True})
+    else:
+        return JsonResponse({'isAuthenticated': False})

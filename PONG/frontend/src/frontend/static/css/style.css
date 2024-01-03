@@ -29,6 +29,9 @@ button {
 
 .auth-buttons {
     display: flex;
+    align-items: center;
+    text-align: center;
+    flex-direction: line;
 }
 
 .log * {
