@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     const authFormContainer = document.getElementById('authFormContainer');
     const statusUser = document.getElementById('statusUser');
-    // const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     const csrftoken = getCookie('csrftoken');
+	console.log(csrftoken);
+
 
 
     authFormContainer.addEventListener('submit', function(event) {
@@ -50,12 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.text())
             .then(html => {
+				localStorage.setItem('csrftoken', csrftoken);
                 statusUser.innerHTML = html;
                 document.getElementById('statusUser').innerHTML = html;
                 authFormContainer.innerHTML = ''
-                console.error('Error:', error);
             })
             .catch(error => {
+				console.error('Error:', error);
             });
         }
 

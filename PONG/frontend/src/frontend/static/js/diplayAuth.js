@@ -3,27 +3,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const LoginForm = document.getElementById('LoginForm');
     const authFormContainer = document.getElementById('authFormContainer');
     const statusUser = document.getElementById('statusUser');
-    
+	const csrftoken = localStorage.getItem('csrftoken');
+	console.log(csrftoken);
+
     let isRegisterForm = false;
     let isLoginForm = false;
 
-    if (isLoggedIn()){
-        displayLoggedInUser();
-    } else {
-        fetch('http://localhost:8002/buttons/')  // Update this URL to your actual authentication service URL
-        .then(response => response.text())
-        .then(html => {
-            statusUser.innerHTML = html;
-            document.getElementById('statusUser').innerHTML = html;
-            isFormVisible = false;
-        })
-        .catch(error => {
-            console.error('Error fetching auth form:', error);
-        });
+	// let check = isLoggedIn();
+	// console.log('check = ', check);
+
+    isLoggedIn().then(isAuthenticated => {
+		if (isAuthenticated) {
+			console.log('User is logged in');
+			displayLoggedInUser();
+		} else {
+			console.log('User is not logged in');
+			updateUIForLoggedOutUser();
+		}
+	});
+
+		console.log('hello');
         statusUser.addEventListener('click', function() {
             const targetId = event.target.id;
-    
-    
+
+
             if (targetId == 'RegisterForm' && !isRegisterForm){
                 fetch('http://localhost:8002/register/')  // Update this URL to your actual authentication service URL
                 .then(response => response.text())
@@ -51,11 +54,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 isLoginForm = true;
                 isRegisterForm = false;
             } else if (targetId == 'logout'){
-                isLoggedIn()
-                .then(isAuthenticated => {
-                })
+				fetch('http://localhost:8002/logout/', {
+					method: 'POST',
+					credentials: 'include',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRFToken': csrftoken,
+					}
+				})
+				.then(response => {
+					if (response.ok) {
+						localStorage.removeItem('authToken')
+						deleteCookie('sessionid');
+						updateUIForLoggedOutUser(csrftoken);
+					}
+					console.log(response.ok)
+				})
                 .catch(error => {
-                    console.error('Error fetching auth form:', error);
+                    console.error('Logout failed:', error);
                 });
                 isLoginForm = true;
                 isRegisterForm = false;
@@ -65,24 +81,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-    }
-
-
 });
 
 function isLoggedIn() {
-    fetch('http://localhost:8002/check-authentication/', {
+    return fetch('http://localhost:8002/check-authentication/', {
         credentials: 'include'
     })
         .then(response => response.json())
         .then(data => {
-            if (data.isAuthenticated) {
-                console.log('User is logged in');
-            } else {
-                console.log('User is not logged in')
-            }
-            return data.isAuthenticated;  // Assuming the API returns a JSON object with an isAuthenticated boolean
-        });
+                console.log('Authentication check', data.isAuthenticated);
+				return data.isAuthenticated;
+		})
+		.catch(error => {
+			console.error('Error checking authentication:', error);
+			return false;
+		});
 }
 
 
@@ -90,4 +103,35 @@ function displayLoggedInUser(){
     fetch('http://localhost:8002/home/', {
         credentials: 'include'
     })
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		return response.text();
+	})
+    .then(html => {
+        console.log('HTML response:', html);
+		statusUser.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error fetchin /hone:', error);
+		return false;
+    });
+}
+
+function updateUIForLoggedOutUser() {
+	return fetch('http://localhost:8002/buttons/')  // Update this URL to your actual authentication service URL
+        .then(response => response.text())
+        .then(html => {
+            statusUser.innerHTML = html;
+            document.getElementById('statusUser').innerHTML = html;
+            isFormVisible = false;
+        })
+        .catch(error => {
+            console.error('Error fetching auth form:', error);
+        });
+}
+
+function deleteCookie(name) {
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }

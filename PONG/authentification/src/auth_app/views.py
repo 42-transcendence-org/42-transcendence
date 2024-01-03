@@ -73,7 +73,7 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return redirect("home")
+    return JsonResponse({'status': 'logged out'})
 
 def register(request):
     print(request.body)
