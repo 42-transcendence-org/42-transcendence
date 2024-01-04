@@ -14,6 +14,8 @@ import logging
 
 
 logger = logging.getLogger(__name__)
+# class MyLoginView(LoginView):
+#     template_name = 'login_form.html'
 
 def register_form(request):
     logger.info("register_form view is called")
@@ -39,8 +41,6 @@ def login_buttons(request):
         logger.error(f"Error in login_buttons view: {e}")
         raise
 
-class MyLoginView(LoginView):
-    template_name = 'login_form.html'
 
 def home(request):
     return render(request, 'home.html', {'user': request.user})

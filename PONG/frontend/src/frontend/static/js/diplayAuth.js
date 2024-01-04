@@ -1,15 +1,13 @@
+let isRegisterForm = false;
+let isLoginForm = false;
 document.addEventListener('DOMContentLoaded', function() {
-    const authFormContainer = document.getElementById('authFormContainer');
-    const statusUser = document.getElementById('statusUser');
 	const csrftoken = localStorage.getItem('csrftoken');
 
-    let isRegisterForm = false;
-    let isLoginForm = false;
-
     firstView();
-
-	viewToDisplay(csrftoken);
-
+	statusUser.addEventListener('click', function() {
+		const targetId = event.target.id;
+		viewToDisplay(csrftoken, targetId);
+	});
 });
 
 function firstView(){
@@ -24,9 +22,7 @@ function firstView(){
 	});
 }
 
-function viewToDisplay(csrftoken){
-	statusUser.addEventListener('click', function() {
-        const targetId = event.target.id;
+function viewToDisplay(csrftoken, targetId){
 
 
         if (targetId == 'RegisterForm' && !isRegisterForm){
@@ -42,11 +38,12 @@ function viewToDisplay(csrftoken){
             isLoginForm = false;
             isRegisterForm = false;
         } else {
+			console.log('I pass here')
             authFormContainer.innerHTML = '';
             isLoginForm = false;
 			isRegisterForm = false;
         }
-    });
+		console.log('lets go');
 }
 
 function displayLogout(csrftoken){
