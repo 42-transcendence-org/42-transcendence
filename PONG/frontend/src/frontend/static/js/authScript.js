@@ -51,10 +51,15 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.text())
             .then(html => {
-				localStorage.setItem('csrftoken', csrftoken);
-                statusUser.innerHTML = html;
-                document.getElementById('statusUser').innerHTML = html;
-                authFormContainer.innerHTML = ''
+				if (html.includes('Indentifiant ou mot de passe incorrect.')){
+					authFormContainer.innerHTML = html;
+				}
+				else {
+					localStorage.setItem('csrftoken', csrftoken);
+                	statusUser.innerHTML = html;
+                	document.getElementById('statusUser').innerHTML = html;
+                	authFormContainer.innerHTML = ''
+				}
             })
             .catch(error => {
 				console.error('Error:', error);

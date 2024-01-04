@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetch('http://localhost:8002/login/')  // Update this URL to your actual authentication service URL
                 .then(response => response.text())
                 .then(html => {
-                    authFormContainer.innerHTML = html;
+					authFormContainer.innerHTML = html;
                     document.getElementById('authFormContainer').innerHTML = html;
                     isFormVisible = true;
                 })
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     console.error('Logout failed:', error);
                 });
-                isLoginForm = true;
+                isLoginForm = false;
                 isRegisterForm = false;
             } else {
                 authFormContainer.innerHTML = '';
