@@ -4,3 +4,9 @@
     margin: 0 auto;
     margin-bottom: 15px; /* Space between inputs */
 }
+
+.tooltip-icon {
+	text-decoration: none;
+	color: #000;
+	cursor: help;
+}

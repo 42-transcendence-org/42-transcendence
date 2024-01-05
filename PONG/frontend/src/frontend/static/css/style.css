@@ -35,8 +35,34 @@ button {
 }
 
 .log * {
-    text-align: center;
-    display: block;
+    text-align: left;
+    /* display: block; */
+	flex-direction: center;
     margin: 0 auto;
-    margin-bottom: 15px; 
+    margin-bottom: 15px;
+}
+
+.tooltip-icon {
+    text-decoration: none;
+    cursor: help;
+    margin-left: 5px;
+}
+
+.tooltip-icon[data-tooltip]:hover:after {
+    content: attr(data-tooltip);
+    position: absolute;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.field-errors .error {
+    color: red;
+    font-size: 0.8em;
 }

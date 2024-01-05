@@ -9,13 +9,22 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .forms import CustomUserCreationForm
 import json
 import logging
 
 
 logger = logging.getLogger(__name__)
-# class MyLoginView(LoginView):
-#     template_name = 'login_form.html'
+
+# def register(request):
+#     print('coucou42')
+#     if request.method == 'POST':
+#         form = CustomUserCreationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#     else:
+#         form = CustomUserCreationForm()
+#     return render(request, 'register.html', {'form': form})
 
 def register_form(request):
     logger.info("register_form view is called")
@@ -85,18 +94,14 @@ def register(request):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
         form = UserCreationForm(data)
-        print('coucou1')
         if form.is_valid():
-            print('coucou3')
             form.save()
             return render(request, 'home.html')
         else:
             print(form.errors)
 
     else:
-        print('coucou2')
         form = UserCreationForm()
-
     return render(request, "register.html", {"form": form})
 
 def check_authentication(request):

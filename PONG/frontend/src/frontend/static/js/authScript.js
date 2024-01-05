@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+	const csrftoken = getCookie('csrftoken');
     const authFormContainer = document.getElementById('authFormContainer');
     const statusUser = document.getElementById('statusUser');
-    const csrftoken = getCookie('csrftoken');
 	console.log(csrftoken);
 
 
@@ -55,6 +55,7 @@ function sendLoginForm(csrftoken){
 function sendRegisterForm(csrftoken){
 	const formData = new FormData(event.target); // Use the event target which is the form
 	const username = formData.get('username');
+	// const email = formData.get('email');
 	const password1 = formData.get('password1');
 	const password2 = formData.get('password2');
 
@@ -64,7 +65,8 @@ function sendRegisterForm(csrftoken){
 			'Content-Type': 'application/json',
 			'X-CSRFToken': csrftoken,
 		},
-		body: JSON.stringify({ username, password1, password2 })
+		body: JSON.stringify({ username, password1, password2 }),
+		credentials: 'include'
 	})
 	.then(response => response.text())
 	.then(html => {
