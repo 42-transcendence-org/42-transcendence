@@ -112,6 +112,28 @@ services:
     networks:
       - bot
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    ports:
+     - "9090:9090"
+    networks:
+    - front
+    - auth
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=yourpassword
+    ports:
+      - "3000:3000"
+    networks:
+    - front
+    - auth
+
 volumes:
   front_db:
     driver: local
@@ -119,27 +141,31 @@ volumes:
       type: 'none'
       o: 'bind'
       device: $FRNT_DB_VOL
-  
+
   auth_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: $AUTH_DB_VOL
-  
+
   game_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: $GAME_DB_VOL
-    
+
   bot_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: $BOT_DB_VOL
+
+  grafana-storage:
+
+  prometheus-storage:
 
 
 networks:

@@ -26,4 +26,5 @@ app_name = 'auth_app'
 urlpatterns = [
     path('', include('auth_app.urls')),
     path('admin/', admin.site.urls),
+	path('metrics', lambda request: HttpResponse(django_prometheus_exports.export_to_django_view(), content_type='text/plain')),
 ] + static(STATIC_URL)

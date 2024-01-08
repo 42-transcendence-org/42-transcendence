@@ -23,4 +23,5 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', welcome, name='welcome'),
     path('admin/', admin.site.urls),
+	path('metrics', lambda request: HttpResponse(django_prometheus_exports.export_to_django_view(), content_type='text/plain')),
 ] + static(STATIC_URL)
