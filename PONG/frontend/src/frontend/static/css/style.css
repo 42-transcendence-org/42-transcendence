@@ -1,68 +1,80 @@
-/* frontend/static/css/style.css */
+/* FONTS */
 
-/* frontend/static/css/style.css */
-
-body, html {
-    height: 100%;
-    margin: 0;
+@font-face {
+	font-family: 'CP437';
+	src: url('../assets/cp437.ttf') format('truetype');
 }
 
+/* HEADER / FOOTER */
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
+	text-align: center;
+	border-bottom: 2px solid rgb(0, 0, 0);
 }
 
-.main {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+/* Footer styles */
+footer {
+	text-align: center;
+	border-top: 2px solid rgb(0, 0, 0);
 }
 
-button {
-    margin-left: 10px;
+nav ul {
+	/* Center the menu */
+	display: inline-block;
 }
 
-.auth-buttons {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    flex-direction: line;
+nav ul li {
+	/* Display links side by side */
+	display: inline;
+	/* Spacing between links */
+	margin: 0 10px;
 }
 
-.log * {
-    text-align: left;
-    /* display: block; */
-	flex-direction: center;
-    margin: 0 auto;
-    margin-bottom: 15px;
+nav img {
+	/* Removes default inline spacing */
+	display: inline-block;
+	/* Ensures background is transparent */
+	background: transparent;
+	/* Removes any border */
+	border: none;
 }
 
-.tooltip-icon {
-    text-decoration: none;
-    cursor: help;
-    margin-left: 5px;
+/* LISTS */
+ul {
+	list-style-type: square;
 }
 
-.tooltip-icon[data-tooltip]:hover:after {
-    content: attr(data-tooltip);
-    position: absolute;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    z-index: 1000;
+/* BODY */
+body {
+	font-family: 'CP437', serif;
+	font-size: 16px;
+	color: #ffffff;
+	background-color: #000000;
+	margin: 8ch auto;
+	max-width: 80ch;
+	padding: 0 10px;
+	text-align: left;
+	line-height: 1.4;
+	word-spacing: 0.16em;
+	font-kerning: normal;
+	text-rendering: optimizeLegibility;
 }
 
-.field-errors .error {
-    color: red;
-    font-size: 0.8em;
+p {
+	margin-bottom: 2em;
+}
+
+/* HEADINGS */
+
+h1 {
+	font-size: 64px;
+	text-align: center;
+	line-height: 1.8;
+}
+
+h2 {
+	line-height: 1.6;
+}
+
+h3 {
+	line-height: 1.4;
 }

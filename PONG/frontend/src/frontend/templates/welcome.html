@@ -5,25 +5,34 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome Page</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <header>
-        <div class=".auth-buttons" id="statusUser"></div>
-    </header>
-    <main>
-        <div class="main">
-            <h1>Welcome to Our Pong Game!</h1>
-            <p>This is a custom welcome page for our Pong game project.</p>
-        </div>
-        <div class= "log" id="authFormContainer"></div>
-    </main>
 
-    <script src="{% static 'js/authScript.js' %}"></script>
-    <script src="{% static 'js/diplayAuth.js' %}"></script>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pong</title>
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+	<header>
+		<div class=".auth-buttons" id="statusUser"></div>
+		<h1>PONG</h1>
+		<nav>
+			<ul>
+				<li><a href="/index.html">Play</a></li>
+				<li><a href="/articles.html">Login / Signup</a></li>
+			</ul>
+		</nav>
+	</header>
+	<main>
+		<div class="main">
+			<p>This is the main section.</p>
+		</div>
+		<div class="log" id="authFormContainer"></div>
+	</main>
+
+	<script src="{% static 'js/authScript.js' %}"></script>
+	<script src="{% static 'js/diplayAuth.js' %}"></script>
 </body>
+
 </html>
