@@ -11,6 +11,7 @@ services:
       - front
     depends_on:
       - frontend_db
+    restart: on-failure
 
   nginx:
     build:
@@ -22,6 +23,7 @@ services:
       - frontend
     networks:
       - front
+    restart: on-failure
 
   frontend_db:
     image: postgres:16-bookworm
@@ -33,6 +35,7 @@ services:
       POSTGRES_PASSWORD: yourpassword
     networks:
       - front
+    restart: on-failure
 
   authentification:
     build:
@@ -46,6 +49,7 @@ services:
       - auth
     depends_on:
       - authentification_db
+    restart: on-failure
 
 
   authentification_db:
@@ -60,6 +64,7 @@ services:
       - auth
     ports:
       - 5432
+    restart: on-failure
 
 
   game:
@@ -74,6 +79,7 @@ services:
       - game
     depends_on:
       - game_db
+    restart: on-failure
 
 
   game_db:
@@ -86,6 +92,7 @@ services:
       POSTGRES_PASSWORD: yourpassword
     networks:
       - game
+    restart: on-failure
 
   bot:
     build:
@@ -99,6 +106,7 @@ services:
       - bot
     depends_on:
       - bot_db
+    restart: on-failure
 
 
   bot_db:
@@ -111,6 +119,7 @@ services:
       POSTGRES_PASSWORD: yourpassword
     networks:
       - bot
+    restart: on-failure
 
   prometheus:
     image: prom/prometheus
@@ -121,6 +130,7 @@ services:
     networks:
     - front
     - auth
+    restart: on-failure
 
   grafana:
     image: grafana/grafana
@@ -133,6 +143,7 @@ services:
     networks:
     - front
     - auth
+    restart: on-failure
 
 volumes:
   front_db:
