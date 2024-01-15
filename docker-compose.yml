@@ -13,6 +13,18 @@ services:
       - frontend_db
     restart: on-failure
 
+  frontend_new:
+    build:
+      context: ./PONG/frontend_new/src
+      dockerfile: Dockerfile
+    volumes:
+      - ./PONG/frontend_new/src:/usr/share/nginx/html
+    networks:
+      - front
+    ports:
+      - "8050:80"
+    restart: on-failure
+
   nginx:
     build:
       context: ./PONG/frontend/nginx

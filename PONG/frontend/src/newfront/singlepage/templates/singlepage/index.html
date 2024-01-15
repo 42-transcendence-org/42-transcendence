@@ -1,0 +1,38 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <title>Single Page</title>
+        <script>
+            function showSection(section) {
+                fetch(`/sections/${section}`)
+                    .then(response => response.text())
+                    .then(text => {
+                        console.log(text);
+                        document.querySelector('#content').innerHTML = text;
+                });
+            };
+
+            document.addEventListener("DOMContentLoaded", function() {
+                document.querySelectorAll('button').forEach(button => {
+                    button.onclick = function() {
+                        console.log("button pressed");
+                        showSection(this.dataset.section)
+                    }
+                })
+            });
+
+        </script>
+    </head>
+
+    <body>
+        <h1>Hello</h1>
+        <button data-section="1">Section 1</button>
+        <button data-section="2">Section 2</button>
+        <button data-section="3">Section 3</button>
+
+        <div id='content' class='content'></div>
+        <div id='content1' class='content'>1</div>
+        <div id='content2' class='content'>2</div>
+        <div id='content3' class='content'>3</div>
+    </body>
+</html>

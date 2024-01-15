@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 #         form = CustomUserCreationForm()
 #     return render(request, 'register.html', {'form': form})
 
+
 def register_form(request):
     logger.info("register_form view is called")
     try:
@@ -34,6 +35,7 @@ def register_form(request):
         logger.error(f"Error in register_form view: {e}")
         raise
 
+
 def login_form(request):
     logger.info("login_form view is called")
     try:
@@ -41,6 +43,7 @@ def login_form(request):
     except Exception as e:
         logger.error(f"Error in login_form view: {e}")
         raise
+
 
 def login_buttons(request):
     logger.info("login_form view is called")
@@ -53,6 +56,7 @@ def login_buttons(request):
 
 def home(request):
     return render(request, 'home.html', {'user': request.user})
+
 
 def login_user(request):
     print(request.body)
@@ -80,9 +84,11 @@ def login_user(request):
     form = AuthenticationForm()
     return render(request, "login.html", {"form": form})
 
+
 def logout_user(request):
     logout(request)
     return JsonResponse({'status': 'logged out'})
+
 
 def register(request):
     print(request.body)
@@ -104,8 +110,13 @@ def register(request):
         form = UserCreationForm()
     return render(request, "register.html", {"form": form})
 
+
 def check_authentication(request):
     if request.user.is_authenticated:
         return JsonResponse({'isAuthenticated': True})
     else:
         return JsonResponse({'isAuthenticated': False})
+
+
+def check_test(request):
+    return JsonResponse({'name': 'tralala', 'youhou': 'heya'})

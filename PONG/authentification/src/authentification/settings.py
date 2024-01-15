@@ -56,15 +56,16 @@ MIDDLEWARE = [
 	'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-	'http://localhost:8001',
-    'http://localhost:8002'
+CORS_ALLOWED_ORIGINS = ['http://localhost:8001',
+    'http://localhost:8002',
+    'http://localhost:8050',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = [
      'http://localhost:8001',  # URL of your SPA
+    'http://localhost:8050',
 ]
 
 CSRF_COOKIE_DOMAIN = '.localhost::8001'
