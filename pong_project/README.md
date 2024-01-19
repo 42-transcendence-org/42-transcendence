@@ -1,0 +1,4 @@
+- TODO Define all models (GameResult, TournamentResult)
+- Create views for /games/ endpoints using DRF
+- Add authentication system
+- 

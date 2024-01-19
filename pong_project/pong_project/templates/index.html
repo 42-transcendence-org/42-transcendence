@@ -1,0 +1,58 @@
+{% load static %}
+{% csrf_token %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pong</title>
+	<style>
+		@font-face {
+			font-family: 'Code Page 437';
+			src: url('{% static "assets/code-page-437.ttf" %}') format('truetype');
+		}
+
+		body {
+			font-family: 'Code Page 437', Arial, sans-serif;
+			font-size: 64px;
+			margin: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: #ffffff;
+			background-color: #000000;
+		}
+
+		main {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		#pongCanvas {
+			display: none;
+			border: 1px solid #fff;
+		}
+
+		button {
+			margin: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<main>
+		<div id="buttonsContainer">
+			<button id="buttonHumanLocal">Human vs Human (Local)</button>
+			<button id="buttonHumanRemote">Human vs Human (Remote)</button>
+			<button id="buttonHumanComputer">Human vs Computer</button>
+			<button id="buttonTournament">Tournament</button>
+		</div>
+		<canvas id="pongCanvas" width="600" height="800"></canvas>
+		<script src="{% static 'js/buttons.js' %}"></script>
+	</main>
+</body>
+
+</html>
