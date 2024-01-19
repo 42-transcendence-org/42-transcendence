@@ -1,4 +1,5 @@
 - TODO Define all models (GameResult, TournamentResult)
-- Create views for /games/ endpoints using DRF
-- Add authentication system
-- 
+- TODO Find a way to end the GamaManager thread gracefully when stopping the server
+- TODO Create views for /games/ endpoints using DRF
+- TODO Add authentication system
+-
