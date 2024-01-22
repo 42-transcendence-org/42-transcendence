@@ -44,11 +44,11 @@ class originalDiv extends HTMLElement {
         })
         .then(response => response.json())
         .then(data => {
-            //if (data.isAuthenticated) {
-            if (true) {
+            if (false) {
                 this.shadowRoot.innerHTML = `<home-page pseudo=${data.pseudo}></home-page>`;
             } else {
                 this.shadowRoot.innerHTML = '<authentication-page></authentication-page>';
+                console.log("authentication-page loaded");
                 this.shadowRoot.querySelector('authentication-page').addEventListener('authenticated', () => {
                     this.shadowRoot.innerHTML = `<home-page></home-page>`;
                 });
@@ -107,7 +107,6 @@ class authenticationPage extends HTMLElement {
                 <p id="notification"></p>\
             </ul>\
         </div>';
-
     }
 
     connectedCallback() {
@@ -142,8 +141,8 @@ class authenticationPage extends HTMLElement {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data.isAuthenticated);
-                    if (data.isAuthenticated) {
-                    //if (true) {
+                    //if (data.isAuthenticated) {
+                    if (true) {
                         this.dispatchEvent(new CustomEvent('authenticated'));
                         console.log("here");
                     }
