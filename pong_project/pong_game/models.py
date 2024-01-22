@@ -15,6 +15,10 @@ GAME_STATUSES = [
     ("ended", "Ended"),
 ]
 
+GAME_ACTIONS = ["left", "right", "pause", "quit"]
+
+PLAYER_ID = ["1", "2"]
+
 
 class GameModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
