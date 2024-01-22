@@ -1,11 +1,18 @@
+import uuid
+
+from django.db.models import Q
+from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import status
-from django.shortcuts import render
 
-from .serializers import UserRegistrationSerializer, UserLoginSerializer
+from . import serializers
+from .game import PongGame
+from .apps import game_manager as gm
+from .models import GameModel
 
 
 def index(request):
@@ -14,7 +21,7 @@ def index(request):
 
 @api_view(["POST"])
 def userRegistration(request):
-    serializer = UserRegistrationSerializer(data=request.data)
+    serializer = serializers.UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         User.objects.create_user(**serializer.validated_data)
         return Response(
@@ -26,7 +33,7 @@ def userRegistration(request):
 
 @api_view(["POST"])
 def userLogin(request):
-    serializer = UserLoginSerializer(data=request.data)
+    serializer = serializers.UserLoginSerializer(data=request.data)
     if serializer.is_valid():
         user = authenticate(**serializer.validated_data)
         if user:
@@ -40,7 +47,47 @@ def userLogin(request):
 
 @api_view(["POST"])
 def createGame(request):
-    pass
+    user = request.user
+    serializer = serializers.GameCreationSerializer(data=request.data)
+    # Check if the user is authenticated
+    if not user.is_authenticated:
+        return Response(
+            {"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED
+        )
+    # Check if data is valid
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # Check for existing active game sessions for this user
+    active_games = GameModel.objects.filter(
+        (Q(player1=user) | Q(player2=user)),
+        status__in=["waiting", "active", "paused"],
+    )
+    if active_games.exists():
+        return Response(
+            {"error": "User already has an active game session"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Check if we have games waiting for a player
+    waiting_game = GameModel.objects.filter(
+        type="remote", player2__isnull=True, status="waiting"
+    ).first()
+
+    if waiting_game:
+        # Join the waiting game
+        waiting_game.player2 = user
+        waiting_game.status = "active"  # Update status as the game is now active
+        waiting_game.save()
+        game_id = waiting_game.id
+        # Update or retrieve the game instance in GameManager as needed
+        # gm.update_game(game_id, ...) or gm.get_game(game_id)
+    else:
+        # Create a new game session
+        game_id = uuid.uuid4()
+        gm.add_game(game_id, PongGame("local"))
+        GameModel.objects.create(id=game_id, player1=user)
+
+    return Response({"game_id": game_id}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["PUT"])
@@ -51,27 +98,3 @@ def updateGameState(request):
 @api_view(["GET"])
 def getGameState(request):
     pass
-
-
-# def create_game(request):
-#     if request.method == "POST":
-#         try:
-#             data = json.loads(request.body)
-#             game_type = data.get("gameType")
-
-#             if game_type not in [g[0] for g in GameSession.GAME_TYPES]:
-#                 print(game_type)
-#                 return HttpResponseBadRequest("Invalid game type")
-
-#             # Create a new game session with the specified type
-#             game_session = GameSession.objects.create(
-#                 game_type=game_type, game_status="active"
-#             )
-#             return JsonResponse(
-#                 {"message": "Game created", "game_id": str(game_session.game_id)}
-#             )
-
-#         except json.JSONDecodeError:
-#             return HttpResponseBadRequest("Invalid JSON")
-
-#     return HttpResponseBadRequest("Invalid request method")

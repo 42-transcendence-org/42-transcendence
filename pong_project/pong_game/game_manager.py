@@ -1,10 +1,15 @@
 import time
 import threading
-from typing import Dict
+
 from uuid import UUID
+from typing import Dict
+
 from .game import PongGame
 
+game_manager = None
 
+
+# TODO Implement a mechanism to restore game sessions from the database i.e take all game with status 'active'
 class GameManager:
     def __init__(self):
         self.game_sessions: Dict[UUID, PongGame] = {}

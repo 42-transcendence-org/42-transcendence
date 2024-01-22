@@ -9,6 +9,7 @@ BALL_HEIGHT = 16
 ENDED = "ended"
 ACTIVE = "active"
 PAUSED = "paused"
+WAITING = "waiting"
 
 
 class Action:
@@ -58,8 +59,9 @@ class Ball:
 # TODO Add a way to restore the game state from the database if needed.
 # Player 1 is at the bottom of the screen, Player 2 is at the top
 class PongGame:
-    def __init__(self):
-        self.game_status = ACTIVE
+    def __init__(self, game_type):
+        self.game_type = type
+        self.game_status = WAITING
         self.ball = Ball()
         self.player1 = Paddle()
         self.player2 = Paddle()

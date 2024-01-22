@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import GameSession
+
+from .models import GAME_TYPES
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -15,21 +16,11 @@ class UserLoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
 
-class GameSessionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GameSession
-        fields = [
-            "game_id",
-            "game_type",
-            "game_status",
-            "player1",
-            "player2",
-            "start_time",
-            "last_updated",
-            "player1_score",
-            "player2_score",
-            "player1_x",
-            "player2_x",
-            "ball_x",
-            "ball_y",
-        ]
+class GameCreationSerializer(serializers.Serializer):
+    type = serializers.ChoiceField(choices=GAME_TYPES)
+
+    def validate_type(self, value):
+        # Check if the provided type is in the list of allowed types
+        if value not in dict(GAME_TYPES).keys():
+            raise serializers.ValidationError("Invalid game type.")
+        return value
