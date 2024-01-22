@@ -1,38 +1,3 @@
-class mon_button extends HTMLElement {
-    constructor() {
-        super();
-        var shadow = this.attachShadow({ mode: "open" });
-    }
-
-    connectedCallback() {
-        const button = document.createElement('button');
-        button.textContent = "Text de mon button";
-        this.shadowRoot.appendChild(button);
-    }
-
-    disconnectedCallback() {
-    }
-}
-
-customElements.define('my-button', mon_button);
-
-class mon_footer extends HTMLElement {
-    constructor() {
-        super();
-        var shadow = this.attachShadow({ mode: "open" });
-    }
-
-    connectedCallback() {
-        const span = document.createElement('my-button');
-        this.shadowRoot.appendChild(span);
-    }
-
-    disconnectedCallback() {
-    }
-}
-
-customElements.define('mon-elem', mon_footer);
-
 class connectionPage extends HTMLElement {
     constructor() {
         super();
@@ -71,18 +36,165 @@ class originalDiv extends HTMLElement {
     connectedCallback() {
         const csrftoken = getCookie('csrftoken');
         console.log(csrftoken);
-        fetch('http://localhost:8002/check-test/', {
+        fetch('http://localhost:8002/check-authentication/', {
             headers: {
                 'X-CSRFToken': csrftoken,
             },
-                credentials: 'include'
+            credentials: 'include'
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data.name);
-            this.innerText = data.name;
+            //if (data.isAuthenticated) {
+            if (true) {
+                this.shadowRoot.innerHTML = `<home-page pseudo=${data.pseudo}></home-page>`;
+            } else {
+                this.shadowRoot.innerHTML = '<authentication-page></authentication-page>';
+                this.shadowRoot.querySelector('authentication-page').addEventListener('authenticated', () => {
+                    this.shadowRoot.innerHTML = `<home-page></home-page>`;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('An error occured:', error);
         });
     }
 }
 
 customElements.define('original-div', originalDiv);
+
+class csrfToken extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+    }
+
+    connectedCallback() {
+        fetch('http://localhost:8002//', {
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        });
+    }
+}
+
+class authenticationPage extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+    }
+
+    getHtml() {
+        return '<div>\
+            <ul>\
+                <li>\
+        	        <label for="name">Pseudo\t:    </label>\
+        	        <input type="text" id="username" name="username" />\
+        	    </li>\
+        	    <li>\
+        	        <label for="mail">Password\t:</label>\
+        	        <input type="email" id="password" name="password" />\
+        	    <li>\
+        	        <label for="msg">Message&nbsp;:</label>\
+        	        <textarea id="msg" name="user_message"></textarea>\
+                </li>\
+        	    </li>\
+                <li>\
+                    <div class="button" id=\'button_login\'>\
+                        <button>Envoyer le message</button>\
+                    </div>\
+                </li>\
+                <p id="notification"></p>\
+            </ul>\
+        </div>';
+
+    }
+
+    connectedCallback() {
+        this.shadowRoot.innerHTML = this.getHtml();
+        this.shadowRoot.querySelector('#button_login').addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            const username = this.shadowRoot.querySelector('#username').value;
+            const password = this.shadowRoot.querySelector('#password').value;
+
+            if (username == "" || password == "") {
+                console.log("No default values");
+                return ;
+            }
+
+            const data = {
+                username: username,
+                password: password
+            };
+            console.log(data);
+
+            try {
+                const csrftoken = getCookie('csrftoken');
+                const response = await fetch('http://localhost:8002/login/', {
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.isAuthenticated);
+                    if (data.isAuthenticated) {
+                    //if (true) {
+                        this.dispatchEvent(new CustomEvent('authenticated'));
+                        console.log("here");
+                    }
+                    else
+                        this.shadowRoot.querySelector("#notification").innerHTML = "can't connect cause of " + data.reason;
+                    return ;
+                });
+            } catch (error) {
+                console.log('Error :', error);
+            }
+        });
+
+    }
+}
+
+customElements.define('authentication-page', authenticationPage);
+
+class homePage extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+    }
+
+    launchGame() {
+        console.log("this");
+        this.querySelector("#home-page-main").innerHTML = '<p>yes<p>';
+    }
+
+    connectedCallback() {
+        this.shadowRoot.innerHTML = this.getHtml();
+
+        this.shadowRoot.querySelector("#Classique").addEventListener('click', this.launchGame);
+    }
+
+    getHtml() {
+        return `\
+        <header>\
+            <nav>\
+                <ul>\
+                    <p>Hello, ${this.pseudo}</p>\
+                    <p id="Classique">Classique</p>\
+                    <p id="Tournoi>Tournoi</p>\
+                    <p id="Stats>Stats</p>\
+                    <p id="Logout>Se déconnecter</p>\
+                </ul>\
+            </nav>\
+        </header>\
+        <main id="home-page-main">\
+            <game></game>\
+        </main>`;
+    }
+}
+
+customElements.define('home-page', homePage);
