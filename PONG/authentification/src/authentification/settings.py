@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
 	'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -52,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 	'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
@@ -64,7 +64,7 @@ CORS_ALLOWED_ORIGINS = ['http://localhost:8001',
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = [
-     'http://localhost:8001',  # URL of your SPA
+    'http://localhost:8001',  # URL of your SPA
     'http://localhost:8050',
 ]
 

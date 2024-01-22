@@ -20,6 +20,6 @@ urlpatterns = [
     path('check-authentication/',
          views.check_authentication,
          name='check_authentication'),
-    path('check-test/', views.check_test, name='check_test'),
+    # path('csrf-token/', views.csrf_token, name='csrf_token'),
 
 ]

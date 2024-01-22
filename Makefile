@@ -23,6 +23,8 @@ $(VOLUMES):
 stop:
 		docker compose -f $(DOCKER_FILE) --env-file $(ENV_FILE) down
 
+down:
+		docker compose -f $(DOCKER_FILE) --env-file $(ENV_FILE) down
 # Remove the Docker volumes prefixed with 'srcs_', located at /var/lib/docker/volumes/.
 # Remove all unused Docker volumes.
 # Remove the directories on the host system where the volume data is stored.

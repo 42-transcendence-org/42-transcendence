@@ -57,9 +57,15 @@ def login_buttons(request):
 def home(request):
     return render(request, 'home.html', {'user': request.user})
 
+# @ensure_csrf_coie
+# def csrf_token(request):
+    # return HttpResponse("CSRF Token generated")
+
 
 def login_user(request):
     print(request.body)
+    return JsonResponse(json.loads(request.body))
+    return JsonResponse(request.body)
     if request.method == 'POST':
         if not request.body:
             return JsonResponse({'error': 'Empty request body'}, status=400)
