@@ -2,7 +2,7 @@ import uuid
 
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
 from rest_framework import status
@@ -44,6 +44,21 @@ def userLogin(request):
             {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def userLogout(request):
+    logout(request)
+    return Response({"message": "Successfully logged out"})
+
+
+@api_view(["GET"])
+def userIsAuthenticated(request):
+    user = request.user
+    if user.is_authenticated:
+        return Response({"isAuthenticated": True}, status=status.HTTP_200_OK)
+    else:
+        return Response({"isAuthenticated": False}, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])

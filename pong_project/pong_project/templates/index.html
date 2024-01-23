@@ -31,9 +31,19 @@
 			align-items: center;
 		}
 
-		#pongCanvas {
+		#game-canvas {
+			width: 600;
+			height: 800;
 			display: none;
 			border: 1px solid #fff;
+		}
+
+		#auth-form-div {
+			display: none;
+		}
+
+		#game-launch-buttons {
+			display: none;
 		}
 
 		button {
@@ -44,14 +54,157 @@
 
 <body>
 	<main>
-		<div id="buttonsContainer">
-			<button id="buttonHumanLocal">Human vs Human (Local)</button>
-			<button id="buttonHumanRemote">Human vs Human (Remote)</button>
-			<button id="buttonHumanComputer">Human vs Computer</button>
-			<button id="buttonTournament">Tournament</button>
+		<div id="auth-form-div">
+			<input type="text" id="username" placeholder="Username">
+			<input type="password" id="password" placeholder="Password">
+			<button id="login-btn">Login</button>
+			<button id="register-btn">Register</button>
 		</div>
-		<canvas id="pongCanvas" width="600" height="800"></canvas>
-		<script src="{% static 'js/buttons.js' %}"></script>
+
+		<div id="game-launch-buttons">
+			<button id="start-local-game">Play Local Game</button>
+			<button id="start-remote-game">Play Remote Game</button>
+			<button id="start-ai-game">Play Against AI</button>
+		</div>
+		<canvas id="game-canvas"></canvas>
+		<script>
+			let currentGame = null;
+
+			function getCookie(name) {
+				let cookieValue = null;
+				if (document.cookie && document.cookie !== '') {
+					const cookies = document.cookie.split(';');
+					for (let i = 0; i < cookies.length; i++) {
+						const cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+				return cookieValue;
+			}
+
+			function checkAuthenticationStatus() {
+				fetch('http://localhost:8000/api/auth/check/', {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						// Include credentials to ensure cookies are sent with the request
+						'credentials': 'include'
+					}
+				})
+					.then(response => response.json())
+					.then(data => {
+						if (data.isAuthenticated) {
+							// Hide login/register div and show game launch buttons
+							document.getElementById('auth-form-div').style.display = 'none';
+							document.getElementById('game-launch-buttons').style.display = 'block';
+						} else {
+							// Show login/register div
+							document.getElementById('auth-form-div').style.display = 'block';
+						}
+					})
+					.catch(error => console.error('Error:', error));
+			}
+
+			function authRequest(url) {
+				const username = document.getElementById('username').value;
+				const password = document.getElementById('password').value;
+
+				fetch(url, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						// Add CSRF token header if needed
+					},
+					credentials: 'include',
+					body: JSON.stringify({ username, password })
+				})
+					.then(response => response.json())
+					.then(data => {
+						if (data.message === "Login successful" || data.message === "Registration successful") {
+							// Handle successful authentication
+							console.log("Success:", data);
+							checkAuthenticationStatus()
+						} else {
+							// Handle errors
+							console.error("Error:", data);
+						}
+					})
+					.catch(error => console.error('Error:', error));
+			}
+
+			function createGame(gameType, csrfToken) {
+				fetch('http://localhost:8000/api/games/', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRFToken': csrfToken,
+					},
+					body: JSON.stringify({ type: gameType }),
+				})
+					.then(response => response.json())
+					.then(data => {
+						if (data.id) {
+							currentGame = data;
+							// Hide game launch buttons and show canvas
+							document.getElementById('game-launch-buttons').style.display = 'none';
+							document.getElementById('game-canvas').style.display = 'block';
+							// Start the game loop
+							startGameLoop();
+						} else {
+							console.error('Game creation failed');
+						}
+					})
+					.catch(error => console.error('Error:', error));
+			}
+
+			function startGameLoop() {
+				// Implement your game loop here
+				// This loop will send user actions to the server and update the game state
+				// For example, it could use requestAnimationFrame for smooth animations
+				function gameLoop() {
+					// Handle user input
+
+					// Update game state based on server response
+
+					// Render game state on canvas
+
+					requestAnimationFrame(gameLoop);
+				}
+
+				requestAnimationFrame(gameLoop);
+			}
+
+			document.addEventListener('keydown', (event) => {
+				const keyName = event.key;
+				// Send user action to server
+				sendUserAction(keyName);
+			});
+
+			function sendUserAction(action) {
+				// Use fetch to send user action to the server
+				// Handle the server response to update the game state
+			}
+
+			document.addEventListener('DOMContentLoaded', function () {
+				const csrfToken = getCookie('csrftoken');
+
+				document.getElementById('login-btn').addEventListener('click', function () {
+					authRequest('http://localhost:8000/api/auth/login/');
+				});
+
+				document.getElementById('register-btn').addEventListener('click', function () {
+					authRequest('http://localhost:8000/api/auth/register/');
+				});
+				document.getElementById('start-local-game').addEventListener('click', () => createGame('local', csrfToken));
+				document.getElementById('start-remote-game').addEventListener('click', () => createGame('remote', csrfToken));
+				document.getElementById('start-ai-game').addEventListener('click', () => createGame('ai', csrfToken));
+				checkAuthenticationStatus()
+			});
+
+		</script>
 	</main>
 </body>
 

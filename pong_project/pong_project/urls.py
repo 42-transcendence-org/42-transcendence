@@ -21,8 +21,10 @@ from pong_game import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("admin/", admin.site.urls),
-    path("api/register/", views.userRegistration, name="userRegistration"),
-    path("api/login/", views.userLogin, name="userLogin"),
+    path("api/auth/register/", views.userRegistration, name="userRegistration"),
+    path("api/auth/login/", views.userLogin, name="userLogin"),
+    path("api/auth/logout/", views.userLogout, name="userLogout"),
+    path("api/auth/check/", views.userIsAuthenticated, name="userIsAuthenticated"),
     path("api/games/", views.createGame, name="createGame"),
     path("api/games/<uuid:gameId>/", views.game_state, name="game_state"),
 ]
