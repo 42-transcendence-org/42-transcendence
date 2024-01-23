@@ -24,6 +24,5 @@ urlpatterns = [
     path("api/register/", views.userRegistration, name="userRegistration"),
     path("api/login/", views.userLogin, name="userLogin"),
     path("api/games/", views.createGame, name="createGame"),
-    path("api/games/<uuid:game_id>/", views.updateGameState, name="updateGameState"),
-    path("api/games/<uuid:game_id>/", views.getGameState, name="getGameState"),
+    path("api/games/<uuid:gameId>/", views.game_state, name="game_state"),
 ]

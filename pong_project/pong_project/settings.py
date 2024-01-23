@@ -122,3 +122,12 @@ STATICFILES_DIRS = [BASE_DIR / "pong_project/static"]
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": [
+        "pong_game.throttles.BurstRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "burst": "60/second",
+    },
+}

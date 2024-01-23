@@ -8,12 +8,13 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 
 from . import serializers
 from .game import PongGame
-from .apps import game_manager as gm
 from .models import GameModel
+from .apps import game_manager as gm
+from .throttles import BurstRateThrottle
 
 
 def index(request):
@@ -93,7 +94,8 @@ def createGame(request):
 
 
 @api_view(["PUT"])
-@permission_classes([IsAuthenticated])  # Require user to be authenticated
+@permission_classes([IsAuthenticated])
+@throttle_classes([BurstRateThrottle])
 def updateGameState(request, gameId):
     user = request.user
     game = get_object_or_404(GameModel, id=gameId)
@@ -105,21 +107,37 @@ def updateGameState(request, gameId):
         )
 
     # Retrieve action from request data
+    player_id = request.data.get("id")
     action = request.data.get("action")
 
-    # Process the action (this depends on your game logic)
-    # For example, handle 'left', 'right', 'pause', 'quit' actions
-    # Update the game state accordingly
+    test = gm.get_game(gameId)
+    test.add_action(player_id, action)
 
     # After updating the game state, serialize and return the updated game state
     updated_game_serializer = serializers.GameModelSerializer(game)
     return Response(updated_game_serializer.data, status=status.HTTP_200_OK)
 
 
-# Add the path to your urls.py
-# path('games/<uuid:gameId>/', views.updateGameState, name='update-game-state')
-
-
 @api_view(["GET"])
-def getGameState(request):
-    pass
+@permission_classes([IsAuthenticated])
+@throttle_classes([BurstRateThrottle])
+def getGameState(request, gameId):
+    user = request.user
+    game = get_object_or_404(GameModel, id=gameId)
+
+    # Check if the user is part of the game
+    if game.player1 != user and game.player2 != user:
+        return Response(
+            {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
+        )
+    game_serializer = serializers.GameModelSerializer(game)
+    return Response(game_serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET", "PUT"])
+@permission_classes([IsAuthenticated])
+def game_state(request, gameId):
+    if request.method == "GET":
+        return getGameState(request._request, gameId)
+    elif request.method == "PUT":
+        return updateGameState(request._request, gameId)
