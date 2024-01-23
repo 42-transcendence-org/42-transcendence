@@ -9,13 +9,19 @@ from .game import PongGame
 game_manager = None
 
 
-# TODO Implement a mechanism to restore game sessions from the database i.e take all game with status 'active'
 class GameManager:
     def __init__(self):
         self.game_sessions: Dict[UUID, PongGame] = {}
         self.running = True
         self.update_thread = threading.Thread(target=self.update_games)
         self.update_thread.start()
+
+    def load_active_games(self):
+        from .models import GameModel
+
+        active_games = GameModel.objects.filter(status="active")
+        for game in active_games:
+            self.game_sessions[game.id] = PongGame(game.type)
 
     def update_games(self):
         update_interval = 1.0 / 60  # Desired update rate (e.g., 60 times per second)

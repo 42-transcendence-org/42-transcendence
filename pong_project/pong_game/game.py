@@ -90,7 +90,7 @@ class PongGame:
 
     def update(self, dt):
         while self.actions:
-            action = self.popleft()
+            action = self.actions.popleft()
             if action.player == 1:
                 self.player1.move(action.action, dt)
             else:

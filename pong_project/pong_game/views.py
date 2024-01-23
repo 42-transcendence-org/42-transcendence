@@ -110,6 +110,7 @@ def updateGameState(request, gameId):
     player_id = request.data.get("id")
     action = request.data.get("action")
 
+    # TODO Add safety checks for None
     test = gm.get_game(gameId)
     test.add_action(player_id, action)
 

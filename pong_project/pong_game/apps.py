@@ -18,3 +18,4 @@ class PongGameConfig(AppConfig):
         global game_manager  # This line tells Python to use the global variable declared in game_manager.py
         if game_manager == None:
             game_manager = GameManager()
+        game_manager.load_active_games()
