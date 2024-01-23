@@ -32,14 +32,12 @@
 		}
 
 		#game-canvas {
-			width: 600;
-			height: 800;
 			display: none;
 			border: 1px solid #fff;
 		}
 
 		#auth-form-div {
-			display: none;
+			display: block;
 		}
 
 		#game-launch-buttons {
@@ -66,9 +64,14 @@
 			<button id="start-remote-game">Play Remote Game</button>
 			<button id="start-ai-game">Play Against AI</button>
 		</div>
-		<canvas id="game-canvas"></canvas>
+		<canvas id="game-canvas" width="600" height="800"></canvas>
 		<script>
 			let currentGame = null;
+			let paddleWidth = 64;
+			let paddleHeight = 16;
+			let ballSide = 16;
+			let boardWidth = 600;
+			let boardHeight = 800;
 
 			function getCookie(name) {
 				let cookieValue = null;
@@ -135,6 +138,53 @@
 					.catch(error => console.error('Error:', error));
 			}
 
+			let canvas = document.getElementById("game-canvas");
+			let ctx = canvas.getContext("2d");
+
+			function drawGame(gameData) {
+				// Clear the canvas
+				ctx.fillStyle = "black";
+				ctx.fillRect(0, 0, boardWidth, boardHeight);
+
+				// Draw player paddles
+				ctx.fillStyle = "white";
+				ctx.fillRect(gameData.player1.x, gameData.player1.y, paddleWidth, paddleHeight);
+				ctx.fillRect(gameData.player2.x, gameData.player2.y, paddleWidth, paddleHeight);
+
+				// Draw the ball
+				ctx.fillRect(gameData.ball.x, gameData.ball.y, ballSide, ballSide);
+
+				// Draw scores (optional)
+				ctx.font = "30px Code Page 437";
+				ctx.fillText(gameData.player1_score, 20, 50);
+				ctx.fillText(gameData.player2_score, 20, boardHeight - 30);
+			}
+
+			function startGameLoop(gameId) {
+				const fetchInterval = 1000 / 30; // Polling every ~33.33 milliseconds
+				let gameData = null;
+
+				function fetchGameState() {
+					fetch(`http://localhost:8000/api/games/${gameId}`)
+						.then(response => response.json())
+						.then(data => {
+							gameData = data; // Store the latest game state
+						})
+						.catch(error => console.error('Error:', error));
+				}
+
+				function gameLoop() {
+					if (gameData) {
+						drawGame(gameData);
+					}
+
+					requestAnimationFrame(gameLoop);
+				}
+
+				setInterval(fetchGameState, fetchInterval);
+				requestAnimationFrame(gameLoop);
+			}
+
 			function createGame(gameType, csrfToken) {
 				fetch('http://localhost:8000/api/games/', {
 					method: 'POST',
@@ -153,29 +203,12 @@
 							document.getElementById('game-launch-buttons').style.display = 'none';
 							document.getElementById('game-canvas').style.display = 'block';
 							// Start the game loop
-							startGameLoop();
+							startGameLoop(data.id);
 						} else {
 							console.error('Game creation failed');
 						}
 					})
 					.catch(error => console.error('Error:', error));
-			}
-
-			function startGameLoop() {
-				// Implement your game loop here
-				// This loop will send user actions to the server and update the game state
-				// For example, it could use requestAnimationFrame for smooth animations
-				function gameLoop() {
-					// Handle user input
-
-					// Update game state based on server response
-
-					// Render game state on canvas
-
-					requestAnimationFrame(gameLoop);
-				}
-
-				requestAnimationFrame(gameLoop);
 			}
 
 			document.addEventListener('keydown', (event) => {

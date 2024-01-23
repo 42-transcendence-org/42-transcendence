@@ -39,7 +39,7 @@ class GameManager:
             self.game_sessions[game.id] = PongGame(game.type)
 
     def update_games(self):
-        update_interval = 1.0 / 60  # Desired update rate (e.g., 60 times per second)
+        update_interval = 1.0 / 30
         while self.running:
             start_time = time.time()
 

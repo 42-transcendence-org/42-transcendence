@@ -45,8 +45,8 @@ class Ball:
         self.dy = 0
 
     def move(self, dt):
-        self.x += self.dx * dt
-        self.y += self.dy * dt
+        self.x += self.dx  # * dt
+        self.y += self.dy  # * dt
 
         if self.x <= 0:
             self.x = 0
@@ -81,9 +81,9 @@ class PongGame:
         # TODO Make ball.dx a random number to change the angle
         self.ball.dx = 0
         if who_scored == 1:
-            self.ball.dy = 1
+            self.ball.dy = 10
         else:
-            self.ball.dy = -1
+            self.ball.dy = -10
 
     def add_action(self, player, action):
         self.actions.append(Action(player, action))
