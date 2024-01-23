@@ -1,1 +1,1 @@
-- TODO Create views for /games/ endpoints using DRF
+- TODO Setup auth UI in the frontend

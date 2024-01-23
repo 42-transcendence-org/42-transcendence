@@ -16,14 +16,14 @@ function getCookie(name) {
 document.addEventListener('DOMContentLoaded', function () {
 	const csrfToken = getCookie('csrftoken');
 
-	function createGame(type) {
+	function createGame(gameType) {
 		fetch('http://localhost:8000/api/games/', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'X-CSRFToken': csrfToken,
 			},
-			body: JSON.stringify({ gameType: type }),
+			body: JSON.stringify({ type: gameType }),
 		})
 			.then(response => response.json())
 			.then(data => console.log(data))

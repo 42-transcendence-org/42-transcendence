@@ -49,6 +49,7 @@ def userLogin(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def createGame(request):
+    print(request.data)
     user = request.user
     game_manager = GameManager.get_instance()
     serializer = serializers.GameCreationSerializer(data=request.data)
