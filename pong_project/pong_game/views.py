@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view, permission_classes, throttle_cla
 from . import serializers
 from .game import PongGame
 from .models import GameModel
-from .apps import game_manager as gm
+from .game_manager import GameManager
 from .throttles import BurstRateThrottle
 
 
@@ -50,6 +50,7 @@ def userLogin(request):
 @permission_classes([IsAuthenticated])
 def createGame(request):
     user = request.user
+    game_manager = GameManager.get_instance()
     serializer = serializers.GameCreationSerializer(data=request.data)
 
     # Check if data is valid
@@ -83,7 +84,7 @@ def createGame(request):
         game_status = "active"
         if game_type == "remote":
             game_status = "waiting"
-        gm.add_game(game_id, PongGame(game_type))
+        game_manager.add_game(game_id, PongGame(game_type))
         GameModel.objects.create(
             id=game_id, type=game_type, status=game_status, player1=user
         )
@@ -98,10 +99,11 @@ def createGame(request):
 @throttle_classes([BurstRateThrottle])
 def updateGameState(request, gameId):
     user = request.user
-    game = get_object_or_404(GameModel, id=gameId)
+    game_db = get_object_or_404(GameModel, id=gameId)
+    game_manager = GameManager.get_instance()
 
     # Check if the user is part of the game
-    if game.player1 != user and game.player2 != user:
+    if game_db.player1 != user and game_db.player2 != user:
         return Response(
             {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
         )
@@ -110,12 +112,16 @@ def updateGameState(request, gameId):
     player_id = request.data.get("id")
     action = request.data.get("action")
 
-    # TODO Add safety checks for None
-    test = gm.get_game(gameId)
-    test.add_action(player_id, action)
+    game_instance = game_manager.get_game(gameId)
+    if game_instance is not None:
+        game_instance.add_action(player_id, action)
+    else:
+        return Response(
+            {"error": "No game with this id"}, status=status.HTTP_404_NOT_FOUND
+        )
 
     # After updating the game state, serialize and return the updated game state
-    updated_game_serializer = serializers.GameModelSerializer(game)
+    updated_game_serializer = serializers.GameModelSerializer(game_db)
     return Response(updated_game_serializer.data, status=status.HTTP_200_OK)
 
 

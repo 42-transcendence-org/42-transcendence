@@ -6,15 +6,30 @@ from typing import Dict
 
 from .game import PongGame
 
-game_manager = None
-
 
 class GameManager:
+    _instance = None
+
     def __init__(self):
-        self.game_sessions: Dict[UUID, PongGame] = {}
-        self.running = True
-        self.update_thread = threading.Thread(target=self.update_games)
-        self.update_thread.start()
+        if GameManager._instance is not None:
+            raise Exception("This class is a singleton!")
+        else:
+            GameManager._instance = self
+            self.running = True
+            self.game_sessions: Dict[UUID, PongGame] = {}
+            self.load_active_games()
+            self.update_thread = threading.Thread(target=self.update_games)
+            self.update_thread.start()
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = GameManager()
+        return cls._instance
+
+    @classmethod
+    def instance_exists(cls):
+        return cls._instance is not None
 
     def load_active_games(self):
         from .models import GameModel
@@ -28,7 +43,7 @@ class GameManager:
         while self.running:
             start_time = time.time()
 
-            for _, game in self.game_sessions.items():
+            for id, game in self.game_sessions.items():
                 if game.game_type == "ai":
                     self.handle_ai_move(game)
                 dt = time.time() - start_time  # Time elapsed since start of the loop

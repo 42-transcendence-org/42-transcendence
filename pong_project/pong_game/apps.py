@@ -1,11 +1,14 @@
 import sys
 import signal
 from django.apps import AppConfig
-from .game_manager import GameManager, game_manager
+
+from .game_manager import GameManager
 
 
 def graceful_shutdown(signal, frame):
-    game_manager.stop()
+    if GameManager.instance_exists():
+        game_manager = GameManager.get_instance()
+        game_manager.stop()
     sys.exit(0)
 
 
@@ -14,8 +17,5 @@ class PongGameConfig(AppConfig):
     name = "pong_game"
 
     def ready(self):
+        GameManager.get_instance()
         signal.signal(signal.SIGINT, graceful_shutdown)
-        global game_manager  # This line tells Python to use the global variable declared in game_manager.py
-        if game_manager == None:
-            game_manager = GameManager()
-        game_manager.load_active_games()
