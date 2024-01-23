@@ -71,3 +71,24 @@ class GameModelSerializer(serializers.ModelSerializer):
             "ball_x",
             "ball_y",
         ]
+
+
+class PaddleSerializer(serializers.Serializer):
+    x = serializers.IntegerField()
+    y = serializers.IntegerField()
+
+
+class BallSerializer(serializers.Serializer):
+    x = serializers.IntegerField()
+    y = serializers.IntegerField()
+    dx = serializers.IntegerField()
+    dy = serializers.IntegerField()
+
+
+class PongGameSerializer(serializers.Serializer):
+    game_status = serializers.CharField()
+    ball = BallSerializer()
+    player1 = PaddleSerializer()
+    player2 = PaddleSerializer()
+    player1_score = serializers.IntegerField()
+    player2_score = serializers.IntegerField()

@@ -47,6 +47,7 @@ def userLogin(request):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def userLogout(request):
     logout(request)
     return Response({"message": "Successfully logged out"})
@@ -64,7 +65,6 @@ def userIsAuthenticated(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def createGame(request):
-    print(request.data)
     user = request.user
     game_manager = GameManager.get_instance()
     serializer = serializers.GameCreationSerializer(data=request.data)
@@ -135,25 +135,25 @@ def updateGameState(request, gameId):
         return Response(
             {"error": "No game with this id"}, status=status.HTTP_404_NOT_FOUND
         )
-
-    # After updating the game state, serialize and return the updated game state
-    updated_game_serializer = serializers.GameModelSerializer(game_db)
-    return Response(updated_game_serializer.data, status=status.HTTP_200_OK)
+    return Response(
+        {"message": "Action processed successfully"}, status=status.HTTP_200_OK
+    )
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
 def getGameState(request, gameId):
     user = request.user
     game = get_object_or_404(GameModel, id=gameId)
+    game_manager = GameManager.get_instance()
 
-    # Check if the user is part of the game
     if game.player1 != user and game.player2 != user:
         return Response(
             {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
         )
-    game_serializer = serializers.GameModelSerializer(game)
+    game_instance = game_manager.get_game(gameId)
+    game_serializer = serializers.PongGameSerializer(game_instance)
     return Response(game_serializer.data, status=status.HTTP_200_OK)
 
 
