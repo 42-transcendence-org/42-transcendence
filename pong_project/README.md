@@ -1,1 +1,2 @@
 - TODO Setup auth UI in the frontend
+- Implement game graphics and input handling
