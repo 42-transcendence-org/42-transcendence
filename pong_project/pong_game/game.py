@@ -45,8 +45,8 @@ class Ball:
         self.dy = 0
 
     def move(self, dt):
-        self.x += self.dx  # * dt
-        self.y += self.dy  # * dt
+        self.x += self.dx * dt
+        self.y += self.dy * dt
 
         if self.x <= 0:
             self.x = 0
@@ -56,12 +56,11 @@ class Ball:
             self.dx *= -1
 
 
-# TODO Add a way to restore the game state from the database if needed.
 # Player 1 is at the bottom of the screen, Player 2 is at the top
-class PongGame:
-    def __init__(self, game_type):
-        self.game_type = type
-        self.game_status = WAITING
+class Game:
+    def __init__(self, game_type, game_status):
+        self.type = game_type
+        self.status = game_status
         self.ball = Ball()
         self.player1 = Paddle()
         self.player2 = Paddle()

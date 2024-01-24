@@ -67,11 +67,6 @@
 		<canvas id="game-canvas" width="600" height="800"></canvas>
 		<script>
 			let currentGame = null;
-			let paddleWidth = 64;
-			let paddleHeight = 16;
-			let ballSide = 16;
-			let boardWidth = 600;
-			let boardHeight = 800;
 
 			function getCookie(name) {
 				let cookieValue = null;
@@ -138,6 +133,11 @@
 					.catch(error => console.error('Error:', error));
 			}
 
+			let ballSide = 16;
+			let boardWidth = 600;
+			let boardHeight = 800;
+			let paddleWidth = 64;
+			let paddleHeight = 16;
 			let canvas = document.getElementById("game-canvas");
 			let ctx = canvas.getContext("2d");
 
@@ -177,10 +177,8 @@
 					if (gameData) {
 						drawGame(gameData);
 					}
-
 					requestAnimationFrame(gameLoop);
 				}
-
 				setInterval(fetchGameState, fetchInterval);
 				requestAnimationFrame(gameLoop);
 			}

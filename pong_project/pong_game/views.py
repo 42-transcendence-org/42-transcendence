@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 
 from . import serializers
-from .game import PongGame
+from .game import Game
 from .models import GameModel
 from .game_manager import GameManager
 from .throttles import BurstRateThrottle
@@ -65,17 +65,15 @@ def userIsAuthenticated(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def createGame(request):
-    user = request.user
-    game_manager = GameManager.get_instance()
-    serializer = serializers.GameCreationSerializer(data=request.data)
-
-    # Check if data is valid
+    serializer = serializers.CreateGameSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    user = request.user
+
     # Check for an active game session for this user
     active_games = GameModel.objects.filter(
-        (Q(player1=user) | Q(player2=user)),
+        (Q(player1_user=user) | Q(player2_user=user)),
         status__in=["waiting", "active", "paused"],
     )
     if active_games.exists():
@@ -84,49 +82,47 @@ def createGame(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Check if we have game sessions waiting for a second player
+    # Check if we have a game session waiting for a second player
     waiting_game = GameModel.objects.filter(
-        type="remote", player2__isnull=True, status="waiting"
+        type="remote", player2_user__isnull=True, status="waiting"
     ).first()
+    game_type = serializer.validated_data.get("type")
 
     if waiting_game:
-        waiting_game.player2 = user
-        waiting_game.status = "active"
-        waiting_game.save()
         game_id = waiting_game.id
+        waiting_game.player2_user = user
+        waiting_game.save()
     else:
-        game_id = uuid.uuid4()
-        game_type = serializer.validated_data["type"]
-        game_status = "active"
-        if game_type == "remote":
-            game_status = "waiting"
-        game_manager.add_game(game_id, PongGame(game_type))
-        GameModel.objects.create(
-            id=game_id, type=game_type, status=game_status, player1=user
+        new_game = GameModel.objects.create(
+            type=game_type, status="waiting", player1_user=user
         )
-
-    game_instance = GameModel.objects.get(id=game_id)
-    game_serializer = serializers.GameModelSerializer(game_instance)
-    return Response(game_serializer.data, status=status.HTTP_201_CREATED)
+        game_id = new_game.id
+    if waiting_game or game_type == "local" or game_type == "ai":
+        game_manager = GameManager.get_instance()
+        game_manager.add_game(game_id)
+    return Response({"id": game_id}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
 def updateGameState(request, gameId):
+    serializer = serializers.CreateGameSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     user = request.user
-    game_db = get_object_or_404(GameModel, id=gameId)
     game_manager = GameManager.get_instance()
+    game_db = get_object_or_404(GameModel, id=gameId)
 
     # Check if the user is part of the game
-    if game_db.player1 != user and game_db.player2 != user:
+    if game_db.player1_user != user and game_db.player2_user != user:
         return Response(
             {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
         )
 
-    # Retrieve action from request data
-    player_id = request.data.get("id")
-    action = request.data.get("action")
+    action = serializer.validated_data.get("action")
+    player_id = serializer.validated_data.get("id")
 
     game_instance = game_manager.get_game(gameId)
     if game_instance is not None:
@@ -141,19 +137,19 @@ def updateGameState(request, gameId):
 
 
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
 def getGameState(request, gameId):
     user = request.user
     game = get_object_or_404(GameModel, id=gameId)
-    game_manager = GameManager.get_instance()
 
-    if game.player1 != user and game.player2 != user:
+    if game.player1_user != user and game.player2_user != user:
         return Response(
             {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
         )
+    game_manager = GameManager.get_instance()
     game_instance = game_manager.get_game(gameId)
-    game_serializer = serializers.PongGameSerializer(game_instance)
+    game_serializer = serializers.GameSerializer(game_instance)
     return Response(game_serializer.data, status=status.HTTP_200_OK)
 
 

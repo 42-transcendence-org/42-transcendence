@@ -22,15 +22,14 @@ PLAYER_ID = ["1", "2"]
 
 class GameModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    type = models.CharField(max_length=10, choices=GAME_TYPES)
-    status = models.CharField(max_length=8, choices=GAME_STATUSES, default="waiting")
+    type = models.CharField(max_length=32, choices=GAME_TYPES)
     time_started = models.DateTimeField(auto_now_add=True)
     time_ended = models.DateTimeField(null=True, blank=True)
     last_updated = models.DateTimeField(auto_now=True)
-    player1 = models.ForeignKey(
+    player1_user = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="game_as_player1"
     )
-    player2 = models.ForeignKey(
+    player2_user = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="game_as_player2"
     )
     player1_score = models.IntegerField(default=0)
