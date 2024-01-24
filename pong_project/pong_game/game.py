@@ -1,26 +1,18 @@
 from collections import deque
 
-BOARD_WIDTH = 600
-BOARD_HEIGHT = 800
-PADDLE_WIDTH = 64
-PADDLE_HEIGHT = 16
-PADDLE_DX = 10
-BALL_WIDTH = 16
-BALL_HEIGHT = 16
-ENDED = "ended"
-ACTIVE = "active"
-PAUSED = "paused"
-WAITING = "waiting"
+from . import constants as const
 
 
 class Action:
-    def __init__(self, player, action):
+    def __init__(self, player: str, action: str):
         self.player = player
         self.action = action
 
 
 class Paddle:
-    def __init__(self, x=0, y=0, w=PADDLE_WIDTH, h=PADDLE_HEIGHT, dx=PADDLE_DX):
+    def __init__(
+        self, x=0, y=0, w=const.PADDLE_WIDTH, h=const.PADDLE_HEIGHT, dx=const.PADDLE_DX
+    ):
         self.x = x
         self.y = y
         self.w = w
@@ -32,12 +24,12 @@ class Paddle:
             if self.x - self.dx * dt > 16:
                 self.x -= self.dx * dt
         if direction == "right":
-            if self.x + self.w + self.dx * dt < BOARD_WIDTH - 16:
+            if self.x + self.w + self.dx * dt < const.BOARD_WIDTH - 16:
                 self.x += self.dx * dt
 
 
 class Ball:
-    def __init__(self, x=0, y=0, w=BALL_WIDTH, h=BALL_HEIGHT, dx=0, dy=0):
+    def __init__(self, x=0, y=0, w=const.BALL_WIDTH, h=const.BALL_HEIGHT, dx=0, dy=0):
         self.x = x
         self.y = y
         self.w = w
@@ -52,8 +44,8 @@ class Ball:
         if self.x <= 0:
             self.x = 0
             self.dx *= -1
-        elif self.x + self.w >= BOARD_WIDTH:
-            self.x = BOARD_WIDTH - self.w
+        elif self.x + self.w >= const.BOARD_WIDTH:
+            self.x = const.BOARD_WIDTH - self.w
             self.dx *= -1
 
 
@@ -72,12 +64,12 @@ class Game:
 
     def initialize_game(self, who_scored):
         self.actions.clear()
-        self.player1.x = (BOARD_WIDTH - self.player1.w) / 2
-        self.player1.y = BOARD_HEIGHT - (self.player1.h + 16)
-        self.player2.x = (BOARD_WIDTH - self.player2.w) / 2
+        self.player1.x = (const.BOARD_WIDTH - self.player1.w) / 2
+        self.player1.y = const.BOARD_HEIGHT - (self.player1.h + 16)
+        self.player2.x = (const.BOARD_WIDTH - self.player2.w) / 2
         self.player2.y = 16
-        self.ball.x = (BOARD_WIDTH - self.ball.w) / 2
-        self.ball.y = (BOARD_HEIGHT - self.ball.h) / 2
+        self.ball.x = (const.BOARD_WIDTH - self.ball.w) / 2
+        self.ball.y = (const.BOARD_HEIGHT - self.ball.h) / 2
         # TODO Make ball.dx a random number to change the angle
         self.ball.dx = 0
         if who_scored == 1:
@@ -119,10 +111,10 @@ class Game:
         if self.ball.y <= 0:
             self.player1_score += 1
             who_scored = 1
-        elif self.ball.y + self.ball.h >= BOARD_HEIGHT:
+        elif self.ball.y + self.ball.h >= const.BOARD_HEIGHT:
             self.player2_score += 1
             who_scored = 2
         if self.player1_score == 10 or self.player2_score == 10:
-            self.game_status = ENDED
+            self.game_status = const.ENDED
         else:
             self.initialize_game(who_scored)

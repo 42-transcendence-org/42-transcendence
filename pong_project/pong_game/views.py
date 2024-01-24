@@ -22,7 +22,7 @@ def index(request):
 
 
 @api_view(["POST"])
-def userRegistration(request):
+def user_registration(request):
     serializer = serializers.UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         User.objects.create_user(**serializer.validated_data)
@@ -33,7 +33,7 @@ def userRegistration(request):
 
 
 @api_view(["POST"])
-def userLogin(request):
+def user_login(request):
     serializer = serializers.UserLoginSerializer(data=request.data)
     if serializer.is_valid():
         user = authenticate(**serializer.validated_data)
@@ -48,13 +48,13 @@ def userLogin(request):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def userLogout(request):
+def user_logout(request):
     logout(request)
     return Response({"message": "Successfully logged out"})
 
 
 @api_view(["GET"])
-def userIsAuthenticated(request):
+def user_is_authenticated(request):
     user = request.user
     if user.is_authenticated:
         return Response({"isAuthenticated": True}, status=status.HTTP_200_OK)
@@ -64,7 +64,7 @@ def userIsAuthenticated(request):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def createGame(request):
+def create_game(request):
     serializer = serializers.CreateGameSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -106,7 +106,7 @@ def createGame(request):
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
-def updateGameState(request, gameId):
+def update_game_state(request, gameId):
     serializer = serializers.CreateGameSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -139,7 +139,7 @@ def updateGameState(request, gameId):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
-def getGameState(request, gameId):
+def get_game_state(request, gameId):
     user = request.user
     game = get_object_or_404(GameModel, id=gameId)
 
@@ -155,8 +155,8 @@ def getGameState(request, gameId):
 
 @api_view(["GET", "PUT"])
 @permission_classes([IsAuthenticated])
-def game_state(request, gameId):
+def state_handler(request, gameId):
     if request.method == "GET":
-        return getGameState(request._request, gameId)
+        return get_game_state(request._request, gameId)
     elif request.method == "PUT":
-        return updateGameState(request._request, gameId)
+        return update_game_state(request._request, gameId)

@@ -1,33 +1,9 @@
 import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
 
-from .game import (
-    BOARD_WIDTH,
-    BOARD_HEIGHT,
-    PADDLE_WIDTH,
-    PADDLE_HEIGHT,
-    PADDLE_DX,
-    BALL_WIDTH,
-    BALL_HEIGHT,
-)
-
-GAME_TYPES = [
-    ("local", "Local"),
-    ("remote", "Remote"),
-    ("ai", "AI"),
-]
-
-GAME_STATUSES = [
-    ("waiting", "Waiting for player..."),
-    ("active", "Active"),
-    ("paused", "Paused"),
-    ("ended", "Ended"),
-]
-
-GAME_ACTIONS = ["left", "right", "pause", "quit"]
-
-PLAYER_ID = ["1", "2"]
+from . import constants as const
 
 
 class GameModel(models.Model):
@@ -45,24 +21,25 @@ class GameModel(models.Model):
         null=True,
         related_name="game_sessions_as_player2",
     )
+
     # State
-    type = models.CharField(max_length=32, choices=GAME_TYPES)
-    status = models.CharField(max_length=32, choices=GAME_STATUSES)
-    player1_score = models.IntegerField(default=0)
-    player2_score = models.IntegerField(default=0)
-    player1_x = models.IntegerField(default=0)
-    player1_y = models.IntegerField(default=0)
-    player1_w = models.IntegerField(default=PADDLE_WIDTH)
-    player1_h = models.IntegerField(default=PADDLE_HEIGHT)
-    player1_dx = models.IntegerField(default=PADDLE_DX)
-    player2_x = models.IntegerField(default=0)
-    player2_y = models.IntegerField(default=0)
-    player2_w = models.IntegerField(default=PADDLE_WIDTH)
-    player2_h = models.IntegerField(default=PADDLE_HEIGHT)
-    player2_dx = models.IntegerField(default=PADDLE_DX)
-    ball_x = models.IntegerField(default=0)
-    ball_y = models.IntegerField(default=0)
-    ball_w = models.IntegerField(default=BALL_WIDTH)
-    ball_h = models.IntegerField(default=BALL_HEIGHT)
-    ball_dx = models.IntegerField(default=0)
-    ball_dy = models.IntegerField(default=0)
+    type = models.CharField(max_length=32, choices=const.GAME_TYPES)
+    status = models.CharField(max_length=32, choices=const.GAME_STATUSES)
+    player1_score = models.IntegerField()
+    player2_score = models.IntegerField()
+    player1_x = models.IntegerField()
+    player1_y = models.IntegerField()
+    player1_w = models.IntegerField()
+    player1_h = models.IntegerField()
+    player1_dx = models.IntegerField()
+    player2_x = models.IntegerField()
+    player2_y = models.IntegerField()
+    player2_w = models.IntegerField()
+    player2_h = models.IntegerField()
+    player2_dx = models.IntegerField()
+    ball_x = models.IntegerField()
+    ball_y = models.IntegerField()
+    ball_w = models.IntegerField()
+    ball_h = models.IntegerField()
+    ball_dx = models.IntegerField()
+    ball_dy = models.IntegerField()

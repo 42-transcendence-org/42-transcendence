@@ -1,8 +1,8 @@
 from rest_framework import serializers
+
 from django.contrib.auth.models import User
 
-from .models import GAME_TYPES, GAME_ACTIONS, PLAYER_ID
-from .game import Game, Paddle, Ball
+from . import constants as const
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -18,25 +18,25 @@ class UserLoginSerializer(serializers.Serializer):
 
 
 class CreateGameSerializer(serializers.Serializer):
-    type = serializers.ChoiceField(choices=GAME_TYPES)
+    type = serializers.ChoiceField(choices=const.GAME_TYPES)
 
     def validate_type(self, value):
-        if value not in dict(GAME_TYPES).keys():
+        if value not in dict(const.GAME_TYPES).keys():
             raise serializers.ValidationError("Invalid game type.")
         return value
 
 
 class UpdateGameStateSerializer(serializers.Serializer):
-    id = serializers.ChoiceField(choices=PLAYER_ID)
-    action = serializers.ChoiceField(choices=GAME_ACTIONS)
+    id = serializers.ChoiceField(choices=const.PLAYER_ID)
+    action = serializers.ChoiceField(choices=const.GAME_ACTIONS)
 
     def validate_id(self, value):
-        if value not in PLAYER_ID:
+        if value not in const.PLAYER_ID:
             raise serializers.ValidationError("Invalid player ID.")
         return value
 
     def validate_action(self, value):
-        if value not in GAME_ACTIONS:
+        if value not in const.GAME_ACTIONS:
             raise serializers.ValidationError("Invalid action.")
         return value
 

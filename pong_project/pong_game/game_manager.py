@@ -6,7 +6,6 @@ from typing import Dict
 
 from .game import Game
 from .models import GameModel
-from .serializers import GameSerializer
 
 
 def save_game_state(uuid: UUID, game: Game) -> None:
@@ -154,24 +153,7 @@ class GameManager:
             self.add_game(game.id)
 
     def add_game(self, game_id):
-        model = GameModel.objects.get(id=game_id)
-        game = Game(model.type, model.status)
-        game_serializer = GameSerializer(
-            model,
-            data={
-                "type": game.type,
-                "status": game.status,
-                "player1_score": game.player1_score,
-                "player2_score": game.player2_score,
-                "player1_x": game.player1.x,
-                "player2_x": game.player2.x,
-                "ball_x": game.ball.x,
-                "ball_y": game.ball.y,
-            },
-        )
-        if game_serializer.is_valid():
-            game_serializer.save()
-            self.game_sessions[game_id] = game
+        pass
 
     def get_game(self, game_id):
         return self.game_sessions.get(game_id)

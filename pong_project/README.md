@@ -6,3 +6,6 @@
 Add a way to save all game states to the db when server quits
 
 
+CamelCase for classes
+snake_case for variables and functions
+ALL_CAPS for constants
