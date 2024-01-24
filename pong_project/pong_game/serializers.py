@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
-from .models import GAME_TYPES, GAME_ACTIONS, PLAYER_ID, GameModel
-from .game import Game
+from .models import GAME_TYPES, GAME_ACTIONS, PLAYER_ID
+from .game import Game, Paddle, Ball
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -41,63 +41,63 @@ class UpdateGameStateSerializer(serializers.Serializer):
         return value
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["username"]
+def game_to_dict(game):
+    return {
+        "type": game.type,
+        "status": game.status,
+        "player1_score": game.player1_score,
+        "player2_score": game.player2_score,
+        "player1": {
+            "x": game.player1.x,
+            "y": game.player1.y,
+            "w": game.player1.w,
+            "h": game.player1.h,
+            "dx": game.player1.dx,
+        },
+        "player2": {
+            "x": game.player2.x,
+            "y": game.player2.y,
+            "w": game.player2.w,
+            "h": game.player2.h,
+            "dx": game.player2.dx,
+        },
+        "ball": {
+            "x": game.ball.x,
+            "y": game.ball.y,
+            "w": game.ball.w,
+            "h": game.ball.h,
+            "dx": game.ball.dx,
+            "dy": game.ball.dy,
+        },
+    }
 
 
-class BallSerializer(serializers.Serializer):
-    x = serializers.IntegerField()
-    y = serializers.IntegerField()
-
-
-class PaddleSerializer(serializers.Serializer):
-    x = serializers.IntegerField()
-    y = serializers.IntegerField()  # TODO Could be removed
-
-
-class GameSerializer(serializers.Serializer):
-    id = serializers.UUIDField()
-    type = serializers.CharField(max_length=32)
-    status = serializers.CharField(max_length=32)
-    ball = BallSerializer()
-    player1 = PaddleSerializer()
-    player2 = PaddleSerializer()
-    player1_user = UserSerializer(read_only=True)
-    player2_user = UserSerializer(read_only=True)
-    player1_score = serializers.IntegerField()
-    player2_score = serializers.IntegerField()
-    player1_x = serializers.IntegerField()
-    player2_x = serializers.IntegerField()
-    ball_x = serializers.IntegerField()
-    ball_y = serializers.IntegerField()
-
-    def create(self, validated_data):
-        game = Game(
-            game_type=validated_data.get("type"),
-            game_status=validated_data.get("status"),
-        )
-        game.player1_score = validated_data.get("player1_score")
-        game.player2_score = validated_data.get("player2_score")
-        game.player1.x = validated_data.get("player1_x")
-        game.player2.x = validated_data.get("player2_x")
-        game.ball.x = validated_data.get("ball_x")
-        game.ball.y = validated_data.get("ball_y")
-        return game
-
-    def update(self, instance, validated_data):
-        # Update Game instance with validated data
-        instance.type = validated_data.get("type", instance.type)
-        instance.status = validated_data.get("status", instance.status)
-        instance.player1_score = validated_data.get(
-            "player1_score", instance.player1_score
-        )
-        instance.player2_score = validated_data.get(
-            "player2_score", instance.player2_score
-        )
-        instance.player1.x = validated_data.get("player1_x", instance.player1.x)
-        instance.player2.x = validated_data.get("player2_x", instance.player2.x)
-        instance.ball.x = validated_data.get("ball_x", instance.ball.x)
-        instance.ball.y = validated_data.get("ball_y", instance.ball.y)
-        return instance
+# {
+# "status": string
+# "player1_name": string
+# "player2_name": string
+# "player1_score": int
+# "player2_score": int
+# "player1_x": int
+# "player2_x": int
+# "ball_x": int
+# "ball_y": int
+# }
+def gameStateReponse(game, session):
+    return {
+        "status": game.status,
+        "player1_score": game.player1_score,
+        "player2_score": game.player2_score,
+        "player1": {
+            "x": game.player1.x,
+            "name": session.player1.username,
+        },
+        "player2": {
+            "x": game.player2.x,
+            "name": session.player2.username,
+        },
+        "ball": {
+            "x": game.ball.x,
+            "y": game.ball.y,
+        },
+    }

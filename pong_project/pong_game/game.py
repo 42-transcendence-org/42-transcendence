@@ -4,6 +4,7 @@ BOARD_WIDTH = 600
 BOARD_HEIGHT = 800
 PADDLE_WIDTH = 64
 PADDLE_HEIGHT = 16
+PADDLE_DX = 10
 BALL_WIDTH = 16
 BALL_HEIGHT = 16
 ENDED = "ended"
@@ -19,12 +20,12 @@ class Action:
 
 
 class Paddle:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.w = PADDLE_WIDTH
-        self.h = PADDLE_HEIGHT
-        self.dx = 10
+    def __init__(self, x=0, y=0, w=PADDLE_WIDTH, h=PADDLE_HEIGHT, dx=PADDLE_DX):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.dx = dx
 
     def move(self, direction, dt):
         if direction == "left":
@@ -36,13 +37,13 @@ class Paddle:
 
 
 class Ball:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.w = BALL_WIDTH
-        self.h = BALL_HEIGHT
-        self.dx = 0
-        self.dy = 0
+    def __init__(self, x=0, y=0, w=BALL_WIDTH, h=BALL_HEIGHT, dx=0, dy=0):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.dx = dx
+        self.dy = dy
 
     def move(self, dt):
         self.x += self.dx * dt
@@ -58,7 +59,7 @@ class Ball:
 
 # Player 1 is at the bottom of the screen, Player 2 is at the top
 class Game:
-    def __init__(self, game_type, game_status):
+    def __init__(self, game_type="local", game_status="waiting"):
         self.type = game_type
         self.status = game_status
         self.ball = Ball()

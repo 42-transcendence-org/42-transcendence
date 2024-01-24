@@ -4,30 +4,40 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pong_game', '0001_initial'),
+        ("pong_game", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='gamemodel',
-            old_name='player1',
-            new_name='player1_user',
+            model_name="GameModel",
+            old_name="player1",
+            new_name="player1",
         ),
         migrations.RenameField(
-            model_name='gamemodel',
-            old_name='player2',
-            new_name='player2_user',
+            model_name="GameModel",
+            old_name="player2",
+            new_name="player2",
         ),
         migrations.AlterField(
-            model_name='gamemodel',
-            name='status',
-            field=models.CharField(choices=[('waiting', 'Waiting for player...'), ('active', 'Active'), ('paused', 'Paused'), ('ended', 'Ended')], max_length=32),
+            model_name="GameModel",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("waiting", "Waiting for player..."),
+                    ("active", "Active"),
+                    ("paused", "Paused"),
+                    ("ended", "Ended"),
+                ],
+                max_length=32,
+            ),
         ),
         migrations.AlterField(
-            model_name='gamemodel',
-            name='type',
-            field=models.CharField(choices=[('local', 'Local'), ('remote', 'Remote'), ('ai', 'AI')], max_length=32),
+            model_name="GameModel",
+            name="type",
+            field=models.CharField(
+                choices=[("local", "Local"), ("remote", "Remote"), ("ai", "AI")],
+                max_length=32,
+            ),
         ),
     ]

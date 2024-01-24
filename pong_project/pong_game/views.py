@@ -73,7 +73,7 @@ def createGame(request):
 
     # Check for an active game session for this user
     active_games = GameModel.objects.filter(
-        (Q(player1_user=user) | Q(player2_user=user)),
+        (Q(player1=user) | Q(player2=user)),
         status__in=["waiting", "active", "paused"],
     )
     if active_games.exists():
@@ -84,17 +84,17 @@ def createGame(request):
 
     # Check if we have a game session waiting for a second player
     waiting_game = GameModel.objects.filter(
-        type="remote", player2_user__isnull=True, status="waiting"
+        type="remote", player2__isnull=True, status="waiting"
     ).first()
     game_type = serializer.validated_data.get("type")
 
     if waiting_game:
         game_id = waiting_game.id
-        waiting_game.player2_user = user
+        waiting_game.player2 = user
         waiting_game.save()
     else:
         new_game = GameModel.objects.create(
-            type=game_type, status="waiting", player1_user=user
+            type=game_type, status="waiting", player1=user
         )
         game_id = new_game.id
     if waiting_game or game_type == "local" or game_type == "ai":
@@ -116,7 +116,7 @@ def updateGameState(request, gameId):
     game_db = get_object_or_404(GameModel, id=gameId)
 
     # Check if the user is part of the game
-    if game_db.player1_user != user and game_db.player2_user != user:
+    if game_db.player1 != user and game_db.player2 != user:
         return Response(
             {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
         )
@@ -143,7 +143,7 @@ def getGameState(request, gameId):
     user = request.user
     game = get_object_or_404(GameModel, id=gameId)
 
-    if game.player1_user != user and game.player2_user != user:
+    if game.player1 != user and game.player2 != user:
         return Response(
             {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
         )
