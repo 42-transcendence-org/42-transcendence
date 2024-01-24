@@ -8,6 +8,22 @@ from .game import Game
 from .models import GameModel
 
 
+def game_to_dict(game: Game) -> dict:
+    """
+    Create a dict containing the values needed by the client to update the
+    game's graphics from a Game instance.
+    """
+    return {
+        "status": game.status,
+        "player1_score": game.player1_score,
+        "player2_score": game.player2_score,
+        "player1_x": game.player1.x,
+        "player2_x": game.player2.x,
+        "ball_x": game.ball.x,
+        "ball_y": game.ball.y,
+    }
+
+
 def save_game_state(uuid: UUID, game: Game) -> None:
     """
     Saves the current state of a Game instance into the database.
