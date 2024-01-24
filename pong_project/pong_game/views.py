@@ -12,9 +12,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 
 from . import serializers
-from .game import Game
 from .models import GameModel
-from .game_manager import GameManager
+from .game_manager import GameManager, game_to_dict
 from .throttles import BurstRateThrottle
 
 
@@ -149,9 +148,9 @@ def game_state_get(request: Request, game_id: UUID) -> Response:
             {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
         )
     game_manager = GameManager.get_instance()
-    game_instance = game_manager.get_game(game_id)
-    game_serializer = serializers.GameSerializer(game_instance)
-    return Response(game_serializer.data, status=status.HTTP_200_OK)
+    return Response(
+        game_to_dict(game_manager.get_game(game_id)), status=status.HTTP_200_OK
+    )
 
 
 @api_view(["GET", "PUT"])

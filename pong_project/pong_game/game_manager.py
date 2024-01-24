@@ -43,7 +43,7 @@ def save_game_state(uuid: UUID, game: Game) -> None:
     TypeError: If 'game' is not an instance of Game.
     """
 
-    game_model = GameModel.objects.get_or_create(id=uuid)
+    game_model, _ = GameModel.objects.get_or_create(id=uuid)
 
     game_model.type = game.type
     game_model.status = game.status
@@ -149,7 +149,7 @@ class GameManager:
             start_time = time.time()
 
             for id, game in self.game_sessions.items():
-                if game.game_type == "ai":
+                if game.type == "ai":
                     self.handle_ai_move(game)
                 dt = time.time() - start_time  # Time elapsed since start of the loop
                 game.update(dt)
@@ -169,13 +169,15 @@ class GameManager:
             self.add_game(game.id)
 
     def add_game(self, game_id):
-        pass
+        game_model = GameModel.objects.get(id=game_id)
+        self.game_sessions[game_id] = Game(game_model.type, game_model.status)
+        save_game_state(game_id, self.game_sessions[game_id])
 
     def get_game(self, game_id):
         return self.game_sessions.get(game_id)
 
     def delete_game(self, game_id):
-        # TODO Add save state, then delete
+        save_game_state(game_id, self.game_sessions[game_id])
         self.game_sessions.pop(game_id, None)
 
     def handle_ai_move(self, game):

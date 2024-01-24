@@ -27,7 +27,7 @@ urlpatterns = [
     path("api/auth/check/", views.user_is_authenticated, name="user_is_authenticated"),
     path("api/games/", views.game_create, name="game_create"),
     path(
-        "api/games/<uuid:gameId>/",
+        "api/games/<uuid:game_id>/",
         views.game_state_dispatcher,
         name="game_state_dispatcher",
     ),
