@@ -25,6 +25,10 @@ urlpatterns = [
     path("api/auth/login/", views.user_login, name="user_login"),
     path("api/auth/logout/", views.user_logout, name="user_logout"),
     path("api/auth/check/", views.user_is_authenticated, name="user_is_authenticated"),
-    path("api/games/", views.create_game, name="create_game"),
-    path("api/games/<uuid:gameId>/", views.state_handler, name="state_handler"),
+    path("api/games/", views.game_create, name="game_create"),
+    path(
+        "api/games/<uuid:gameId>/",
+        views.game_state_dispatcher,
+        name="game_state_dispatcher",
+    ),
 ]
