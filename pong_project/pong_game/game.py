@@ -29,7 +29,7 @@ class Paddle:
 
 
 class Ball:
-    def __init__(self, x=0, y=0, w=const.BALL_WIDTH, h=const.BALL_HEIGHT, dx=0, dy=0):
+    def __init__(self, x=0, y=0, w=const.BALL_WIDTH, h=const.BALL_HEIGHT, dx=1, dy=1):
         self.x = x
         self.y = y
         self.w = w
@@ -38,15 +38,17 @@ class Ball:
         self.dy = dy
 
     def move(self, dt):
-        self.x += self.dx * dt
-        self.y += self.dy * dt
+        print("before: dt, x, y", dt, self.x, self.y)
+        self.x += self.dx  # * dt
+        self.y += self.dy  # * dt
+        print("after: dt, x, y", dt, self.x, self.y)
 
-        if self.x <= 0:
-            self.x = 0
-            self.dx *= -1
-        elif self.x + self.w >= const.BOARD_WIDTH:
-            self.x = const.BOARD_WIDTH - self.w
-            self.dx *= -1
+        # if self.x <= 0:
+        #     self.x = 0
+        #     self.dx *= -1
+        # elif self.x + self.w >= const.BOARD_WIDTH:
+        #     self.x = const.BOARD_WIDTH - self.w
+        #     self.dx *= -1
 
 
 # Player 1 is at the bottom of the screen, Player 2 is at the top
@@ -73,9 +75,9 @@ class Game:
         # TODO Make ball.dx a random number to change the angle
         self.ball.dx = 0
         if who_scored == 1:
-            self.ball.dy = 10
+            self.ball.dy = 1
         else:
-            self.ball.dy = -10
+            self.ball.dy = -1
 
     def add_action(self, player, action):
         self.actions.append(Action(player, action))

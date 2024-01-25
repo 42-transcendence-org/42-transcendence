@@ -144,19 +144,26 @@ class GameManager:
         return cls._instance is not None
 
     def update_games(self):
-        update_interval = 1.0 / 30
+        update_interval = 1.0 / 30  # 30 updates per second
+        last_update_time = time.time()
+
         while self.running:
-            start_time = time.time()
+            current_time = time.time()
+            dt = current_time - last_update_time  # Time elapsed since last update
 
-            for id, game in self.game_sessions.items():
-                if game.type == "ai":
-                    self.handle_ai_move(game)
-                dt = time.time() - start_time  # Time elapsed since start of the loop
-                game.update(dt)
+            if dt >= update_interval:
+                # Update game state
+                for id, game in self.game_sessions.items():
+                    if game.type == "ai":
+                        self.handle_ai_move(game)
+                    game.update(dt)
 
-            time_taken = time.time() - start_time
-            sleep_time = max(0, update_interval - time_taken)
-            time.sleep(sleep_time)
+                last_update_time = current_time
+
+            # Calculate time to sleep to maintain the update rate
+            time_to_sleep = update_interval - (time.time() - current_time)
+            if time_to_sleep > 0:
+                time.sleep(time_to_sleep)
 
     def stop(self):
         # TODO Save all games to DB
