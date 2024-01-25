@@ -17,15 +17,13 @@ BALL_DY = 1
 MARGIN = 16
 
 keep_updating = True
-active_games = Dict[UUID, dict] = {}
+active_games: Dict[UUID, dict] = {}
 
 
-def game_create(id: UUID, type: str, status: str, name1: str, name2: str) -> dict:
+def game_create(type: str, status: str, name1: str, name2: str) -> dict:
     return {
-        "id": id,
         "type": type,
         "status": status,
-        "dt": 0,
         "ball": {
             "x": (BOARD_WIDTH - BALL_SIDE) / 2,
             "y": (BOARD_HEIGHT - BALL_SIDE) / 2,
@@ -123,10 +121,12 @@ def game_ai_move(game_state: dict):
     pass
 
 
+# TODO Handle locking
+# TODO Double check the logic
 # TODO Save the game state to the database if someone scored
 def game_update_all():
     accumulator = 0.0
-    update_interval = 1.0 / 60  # 60 updates per second
+    update_interval = 1.0 / 60
     last_update_time = time.time()
 
     while keep_updating:
@@ -148,7 +148,7 @@ def game_update_all():
             time.sleep(time_to_sleep)
 
 
-game_update_all_thread = threading.Thread(target=game_update_all())
+game_update_all_thread = threading.Thread(target=game_update_all)
 games_update_all_lock = threading.Lock()
 
 
@@ -157,3 +157,19 @@ def game_update_all_shutdown(signal, frame):
     keep_updating = False
     game_update_all_thread.join()
     sys.exit(0)
+
+
+def game_add(game_id: UUID, game_data: dict):
+    with games_update_all_lock:
+        active_games[game_id] = game_data
+
+
+def game_remove(game_id: UUID):
+    with games_update_all_lock:
+        if game_id in active_games:
+            del active_games[game_id]
+
+
+def game_get(game_id: UUID):
+    with games_update_all_lock:
+        return active_games.get(game_id)

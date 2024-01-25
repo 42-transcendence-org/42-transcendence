@@ -13,7 +13,6 @@ from rest_framework.decorators import api_view, permission_classes, throttle_cla
 
 from . import serializers
 from .models import GameModel
-from .game_manager import GameManager, game_to_dict
 from .throttles import BurstRateThrottle
 
 

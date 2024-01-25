@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
-from . import constants as const
+from .serializers import GAME_TYPES, GAME_STATUSES
 
 
 class GameModel(models.Model):
@@ -23,8 +23,8 @@ class GameModel(models.Model):
     )
 
     # State
-    type = models.CharField(max_length=32, choices=const.GAME_TYPES)
-    status = models.CharField(max_length=32, choices=const.GAME_STATUSES)
+    type = models.CharField(max_length=32, choices=GAME_TYPES)
+    status = models.CharField(max_length=32, choices=GAME_STATUSES)
     player1_score = models.IntegerField(default=0)
     player2_score = models.IntegerField(default=0)
     player1_x = models.IntegerField(default=0)
