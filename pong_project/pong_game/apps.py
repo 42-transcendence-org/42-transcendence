@@ -1,15 +1,8 @@
-import sys
 import signal
+
 from django.apps import AppConfig
 
-
-def graceful_shutdown(signal, frame):
-    from .game_manager import GameManager
-
-    if GameManager.instance_exists():
-        game_manager = GameManager.get_instance()
-        game_manager.stop()
-    sys.exit(0)
+from .game import game_update_all_shutdown, game_update_all_thread
 
 
 class PongGameConfig(AppConfig):
@@ -17,4 +10,5 @@ class PongGameConfig(AppConfig):
     name = "pong_game"
 
     def ready(self):
-        signal.signal(signal.SIGINT, graceful_shutdown)
+        game_update_all_thread.start()
+        signal.signal(signal.SIGINT, game_update_all_shutdown)

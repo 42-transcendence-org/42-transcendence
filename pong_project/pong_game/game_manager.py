@@ -130,8 +130,7 @@ class GameManager:
             self.running = True
             self.game_sessions: Dict[UUID, Game] = {}
             self.load_active_games()
-            self.update_thread = threading.Thread(target=self.update_games)
-            self.update_thread.start()
+
 
     @classmethod
     def get_instance(cls):
@@ -143,30 +142,7 @@ class GameManager:
     def instance_exists(cls):
         return cls._instance is not None
 
-    def update_games(self):
-        update_interval = 1.0 / 60  # 60 updates per second
-        accumulator = 0.0
-        last_update_time = time.time()
 
-        while self.running:
-            current_time = time.time()
-            frame_time = current_time - last_update_time
-            last_update_time = current_time
-            accumulator += frame_time
-
-            while accumulator >= update_interval:
-                # Update game state
-                for id, game in self.game_sessions.items():
-                    if game.type == "ai":
-                        self.handle_ai_move(game)
-                    game.update(update_interval)
-
-                accumulator -= update_interval
-
-            # Calculate time to sleep to avoid spinning
-            time_to_sleep = update_interval - (time.time() - current_time)
-            if time_to_sleep > 0:
-                time.sleep(time_to_sleep)
 
     def stop(self):
         # TODO Save all games to DB
