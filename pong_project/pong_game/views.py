@@ -21,7 +21,7 @@ def index(request):
 
 
 @api_view(["POST"])
-def user_registration(request: Request) -> Response:
+def user_registration_view(request: Request) -> Response:
     serializer = serializers.UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         User.objects.create_user(**serializer.validated_data)
@@ -32,7 +32,7 @@ def user_registration(request: Request) -> Response:
 
 
 @api_view(["POST"])
-def user_login(request: Request) -> Response:
+def user_login_view(request: Request) -> Response:
     serializer = serializers.UserLoginSerializer(data=request.data)
     if serializer.is_valid():
         user = authenticate(**serializer.validated_data)
@@ -47,13 +47,13 @@ def user_login(request: Request) -> Response:
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def user_logout(request: Request) -> Response:
+def user_logout_view(request: Request) -> Response:
     logout(request)
     return Response({"message": "Successfully logged out"})
 
 
 @api_view(["GET"])
-def user_is_authenticated(request: Request) -> Response:
+def user_is_authenticated_view(request: Request) -> Response:
     user = request.user
     if user.is_authenticated:
         return Response({"isAuthenticated": True}, status=status.HTTP_200_OK)
@@ -63,7 +63,7 @@ def user_is_authenticated(request: Request) -> Response:
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def game_create(request: Request) -> Response:
+def game_create_view(request: Request) -> Response:
     serializer = serializers.CreateGameSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -105,7 +105,7 @@ def game_create(request: Request) -> Response:
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
-def game_state_update(request: Request, game_id: UUID) -> Response:
+def game_update_state_view(request: Request, game_id: UUID) -> Response:
     serializer = serializers.CreateGameSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -138,7 +138,7 @@ def game_state_update(request: Request, game_id: UUID) -> Response:
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
-def game_state_get(request: Request, game_id: UUID) -> Response:
+def game_get_state_view(request: Request, game_id: UUID) -> Response:
     user = request.user
     game = get_object_or_404(GameModel, id=game_id)
 
@@ -154,8 +154,8 @@ def game_state_get(request: Request, game_id: UUID) -> Response:
 
 @api_view(["GET", "PUT"])
 @permission_classes([IsAuthenticated])
-def game_state_dispatcher(request: Request, game_id: UUID) -> Response:
+def game_state_dispatcher_view(request: Request, game_id: UUID) -> Response:
     if request.method == "GET":
-        return game_state_get(request._request, game_id)
+        return game_get_state_view(request._request, game_id)
     elif request.method == "PUT":
-        return game_state_update(request._request, game_id)
+        return game_update_state_view(request._request, game_id)
