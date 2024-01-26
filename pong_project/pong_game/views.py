@@ -99,6 +99,7 @@ def game_create_view(request: Request) -> Response:
     return Response({"id": game_id}, status=status.HTTP_201_CREATED)
 
 
+# TODO Add security like checking that the player is part of the game
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
@@ -107,37 +108,38 @@ def game_update_state_view(request: Request, game_id: uuid.UUID) -> Response:
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    user = request.user
-    game_manager = GameManager.get_instance()
-    game_db = get_object_or_404(GameModel, id=game_id)
-
-    # Check if the user is part of the game
-    if game_db.player1 != user and game_db.player2 != user:
+    if g.game_add_input(
+        game_id,
+        (serializer.validated_data.get("id"), serializer.validated_data.get("action")),
+    ):
         return Response(
-            {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
+            {"message": "Action processed successfully"}, status=status.HTTP_200_OK
         )
-
-    action = serializer.validated_data.get("action")
-    player_id = serializer.validated_data.get("id")
-
-    game_instance = game_manager.get_game(game_id)
-    if game_instance is not None:
-        game_instance.add_action(player_id, action)
-    else:
-        return Response(
-            {"error": "No game with this id"}, status=status.HTTP_404_NOT_FOUND
-        )
-    return Response(
-        {"message": "Action processed successfully"}, status=status.HTTP_200_OK
-    )
+    return Response({"error": "No game with this id"}, status=status.HTTP_404_NOT_FOUND)
 
 
+# TODO Add security like checking the game_id exists or that the player is part of the game
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
 def game_get_state_view(request: Request, game_id: uuid.UUID) -> Response:
+    s = g.game_get_state(game_id)
     return Response(
-        g.game_state_to_json(g.game_get_state(game_id)), status=status.HTTP_200_OK
+        {
+            "ball": {
+                "x": s["ball"]["x"],
+                "y": s["ball"]["y"],
+            },
+            "player1": {
+                "x": s["player1"]["x"],
+                "score": s["player1"]["score"],
+            },
+            "player2": {
+                "x": s["player2"]["x"],
+                "score": s["player2"]["score"],
+            },
+        },
+        status=status.HTTP_200_OK,
     )
 
 

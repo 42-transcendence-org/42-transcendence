@@ -5,7 +5,7 @@ import queue
 import threading
 
 from uuid import UUID
-from typing import Dict, Union
+from typing import Dict, Union, Tuple
 
 BOARD_WIDTH = 600
 BOARD_HEIGHT = 800
@@ -175,6 +175,13 @@ def game_remove(game_id: UUID):
 def game_get_state(game_id: UUID):
     with games_update_all_lock:
         return active_games.get(game_id)
+
+
+def game_add_input(game_id: UUID, player_input: Tuple[str, str]) -> bool:
+    if game_id in active_games:
+        active_games[game_id]["inputs"].put(player_input)
+        return True
+    return False
 
 
 # TODO Use lock

@@ -148,16 +148,16 @@
 
 				// Draw player paddles
 				ctx.fillStyle = "white";
-				ctx.fillRect(gameData.player1_x, boardHeight - (paddleHeight + 16), paddleWidth, paddleHeight);
-				ctx.fillRect(gameData.player2_x, 16, paddleWidth, paddleHeight);
+				ctx.fillRect(gameData.player1.x, boardHeight - (paddleHeight + 16), paddleWidth, paddleHeight);
+				ctx.fillRect(gameData.player2.x, 16, paddleWidth, paddleHeight);
 
 				// Draw the ball
-				ctx.fillRect(gameData.ball_x, gameData.ball_y, ballSide, ballSide);
+				ctx.fillRect(gameData.ball.x, gameData.ball.y, ballSide, ballSide);
 
 				// Draw scores (optional)
 				ctx.font = "30px Code Page 437";
-				ctx.fillText(gameData.player1_score, 20, 50);
-				ctx.fillText(gameData.player2_score, 20, boardHeight - 30);
+				ctx.fillText(gameData.player1.score, 20, 50);
+				ctx.fillText(gameData.player2.score, 20, boardHeight - 30);
 			}
 
 			function startGameLoop(gameId) {
