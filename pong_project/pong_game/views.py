@@ -58,9 +58,9 @@ def user_logout_view(request: Request) -> Response:
 def user_is_authenticated_view(request: Request) -> Response:
     user = request.user
     if user.is_authenticated:
-        return Response({"isAuthenticated": True}, status=status.HTTP_200_OK)
+        return Response({"is_authenticated": True}, status=status.HTTP_200_OK)
     else:
-        return Response({"isAuthenticated": False}, status=status.HTTP_200_OK)
+        return Response({"is_authenticated": False}, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
