@@ -104,7 +104,7 @@ def game_create_view(request: Request) -> Response:
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
 def game_update_state_view(request: Request, game_id: uuid.UUID) -> Response:
-    serializer = serializers.CreateGameSerializer(data=request.data)
+    serializer = serializers.UpdateGameStateSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

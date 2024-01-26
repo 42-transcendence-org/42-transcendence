@@ -183,6 +183,7 @@
 				requestAnimationFrame(gameLoop);
 			}
 
+			let currentId;
 			function createGame(gameType, csrfToken) {
 				fetch('http://localhost:8000/api/games/', {
 					method: 'POST',
@@ -201,6 +202,7 @@
 							document.getElementById('game-launch-buttons').style.display = 'none';
 							document.getElementById('game-canvas').style.display = 'block';
 							// Start the game loop
+							currentId = data.id;
 							startGameLoop(data.id);
 						} else {
 							console.error('Game creation failed');
@@ -215,10 +217,46 @@
 				sendUserAction(keyName);
 			});
 
-			function sendUserAction(action) {
-				// Use fetch to send user action to the server
-				// Handle the server response to update the game state
+			function sendUserAction(keyName) {
+				let input;
+				if (!currentGame || !currentGame.id) return; // Ensure there is an active game
+
+				if (keyName === 'a') {
+					input = { id: "1", action: "left" };
+				} else if (keyName === 's') {
+					input = { id: "1", action: "right" };
+				} else if (keyName === 'k') {
+					input = { id: "2", action: "left" };
+				} else if (keyName === 'l') {
+					input = { id: "2", action: "right" };
+				} else {
+					return; // Ignore other keys
+				}
+
+				const csrfToken = getCookie('csrftoken'); // Get CSRF token
+
+				fetch(`http://localhost:8000/api/games/${currentId}/`, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRFToken': csrfToken
+					},
+					body: JSON.stringify(input)
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+						return response.json();
+					})
+					.then(data => {
+						console.log('Input sent successfully:', data);
+					})
+					.catch(error => {
+						console.error('Error sending input:', error);
+					});
 			}
+
 
 			document.addEventListener('DOMContentLoaded', function () {
 				const csrfToken = getCookie('csrftoken');
