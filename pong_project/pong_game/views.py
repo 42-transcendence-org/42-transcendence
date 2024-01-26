@@ -136,16 +136,8 @@ def game_update_state_view(request: Request, game_id: uuid.UUID) -> Response:
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
 def game_get_state_view(request: Request, game_id: uuid.UUID) -> Response:
-    user = request.user
-    game = get_object_or_404(GameModel, id=game_id)
-
-    if game.player1 != user and game.player2 != user:
-        return Response(
-            {"error": "User not part of the game"}, status=status.HTTP_403_FORBIDDEN
-        )
-    game_manager = GameManager.get_instance()
     return Response(
-        game_to_dict(game_manager.get_game(game_id)), status=status.HTTP_200_OK
+        g.game_state_to_json(g.game_get_state(game_id)), status=status.HTTP_200_OK
     )
 
 

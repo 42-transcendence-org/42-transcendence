@@ -1,4 +1,5 @@
 import sys
+import json
 import time
 import queue
 import threading
@@ -171,7 +172,7 @@ def game_remove(game_id: UUID):
             del active_games[game_id]
 
 
-def game_get(game_id: UUID):
+def game_get_state(game_id: UUID):
     with games_update_all_lock:
         return active_games.get(game_id)
 
@@ -203,3 +204,15 @@ def game_check_for_waiting(username: str) -> Union[UUID, None]:
             s["status"] == "active"
             return id
     return None
+
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, queue.Queue):
+            return []
+        return json.JSONEncoder.default(self, obj)
+
+
+# TODO Specify return type
+def game_state_to_json(game_state: dict):
+    return json.dumps(game_state, cls=CustomJSONEncoder)
