@@ -19,7 +19,6 @@ function add_all_listeners() {
 	document.getElementById('start-ai-game-btn').addEventListener('click', () => requests.send_game_creation_request('ai'));
 }
 
-
 document.addEventListener('DOMContentLoaded', function () {
 	add_all_listeners();
 	requests.send_status_request();

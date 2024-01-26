@@ -1,4 +1,4 @@
-import { set_current_game_id, g_current_game_id, game_start_loop } from './game.js';
+import { set_current_game_id, set_current_game_data, g_current_game_id, game_start_loop } from './game.js';
 import { get_cookie, div_handler } from './utils.js';
 
 /* Authentification */
@@ -114,14 +114,16 @@ export async function send_game_creation_request(game_type) {
 			body: JSON.stringify({ type: game_type }),
 		});
 
+		const data = await response.json();
+
 		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.message || 'Server error');
+			throw new Error(data.message || 'Server error');
 		}
 
-		const data = await response.json();
-		if (data && data.id) {
+		if (data) {
 			set_current_game_id(data.id);
+			set_current_game_data(data);
+			console.log(data.id);
 			div_handler("game-canvas-div");
 			game_start_loop();
 		} else {
@@ -131,4 +133,3 @@ export async function send_game_creation_request(game_type) {
 		console.error('Error:', error);
 	}
 }
-

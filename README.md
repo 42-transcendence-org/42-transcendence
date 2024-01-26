@@ -6,3 +6,4 @@
 - TODO Split game and user management in different apps
 - TODO Implement async views
   - This might require as little synchronous code as possible in the game app
+- Add doc strings and type hints

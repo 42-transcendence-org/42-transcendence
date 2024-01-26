@@ -1,5 +1,3 @@
-import { get_cookie, div_handler } from './utils.js';
-
 export let g_current_game_id = null;
 export let g_current_game_data = null;
 
@@ -15,6 +13,10 @@ let MARGIN = 16;
 
 export function set_current_game_id(id) {
 	g_current_game_id = id;
+}
+
+export function set_current_game_data(data) {
+	g_current_game_data = data;
 }
 
 export function game_start_loop() {

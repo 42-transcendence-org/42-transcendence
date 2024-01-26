@@ -21,8 +21,9 @@ keep_updating = True
 active_games: Dict[UUID, dict] = {}
 
 
-def game_create(type: str, status: str, name1: str, name2: str) -> dict:
+def game_create(id: UUID, type: str, status: str, name1: str, name2: str) -> dict:
     return {
+        "id": id,
         "type": type,
         "status": status,
         "ball": {
@@ -171,9 +172,25 @@ def game_remove(game_id: UUID):
             del active_games[game_id]
 
 
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, UUID):
+            return str(obj)
+        if isinstance(obj, queue.Queue):
+            return []
+        return json.JSONEncoder.default(self, obj)
+
+
 def game_get_state(game_id: UUID):
-    with games_update_all_lock:
-        return active_games.get(game_id)
+    if game_id in active_games:
+        with games_update_all_lock:
+            return active_games.get(game_id)
+
+
+def game_get_state_json(game_id: UUID):
+    if game_id in active_games:
+        with games_update_all_lock:
+            return json.dumps(active_games.get(game_id), cls=CustomJSONEncoder)
 
 
 def game_add_input(game_id: UUID, player_input: Tuple[str, str]) -> bool:
@@ -210,15 +227,3 @@ def game_check_for_waiting(username: str) -> Union[UUID, None]:
             s["status"] == "active"
             return id
     return None
-
-
-class CustomJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, queue.Queue):
-            return []
-        return json.JSONEncoder.default(self, obj)
-
-
-# TODO Specify return type
-def game_state_to_json(game_state: dict):
-    return json.dumps(game_state, cls=CustomJSONEncoder)

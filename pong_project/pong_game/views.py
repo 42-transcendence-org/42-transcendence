@@ -61,6 +61,7 @@ def user_is_authenticated_view(request: Request) -> Response:
         return Response({"is_authenticated": False}, status=status.HTTP_200_OK)
 
 
+# TODO The game state received by player1 needs to be updated when a second player joins
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def game_create_view(request: Request) -> Response:
@@ -81,7 +82,7 @@ def game_create_view(request: Request) -> Response:
     # Check if we have a game session waiting for a second player
     waiting_game = g.game_check_for_waiting(user.username)
     if waiting_game:
-        return Response({"id": waiting_game}, status=status.HTTP_200_OK)
+        return Response(g.game_get_state_json(waiting_game), status=status.HTTP_200_OK)
 
     # Create a new game
     game_id = uuid.uuid4()
@@ -89,13 +90,14 @@ def game_create_view(request: Request) -> Response:
     g.game_add(
         game_id,
         g.game_create(
+            game_id,
             game_type,
             "active" if game_type != "remote" else "waiting",
             user.username,
             "",
         ),
     )
-    return Response({"id": game_id}, status=status.HTTP_201_CREATED)
+    return Response(g.game_get_state_json(game_id), status=status.HTTP_201_CREATED)
 
 
 # TODO Add security like checking that the player is part of the game
