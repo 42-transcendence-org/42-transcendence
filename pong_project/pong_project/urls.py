@@ -35,8 +35,19 @@ urlpatterns = [
     ),
     path("api/games/", views.game_create_view, name="game_create_view"),
     path(
-        "api/games/<uuid:game_id>/",
-        views.game_state_dispatcher_view,
-        name="game_state_dispatcher_view",
+        "api/games/<uuid:game_id>/get/",
+        views.game_get_state_view,
+        name="game_get_state_view",
+    ),
+    path(
+        "api/games/<uuid:game_id>/update/",
+        views.game_update_state_view,
+        name="game_update_state_view",
     ),
 ]
+
+# path(
+#     "api/games/<uuid:game_id>/",
+#     views.game_state_dispatcher_view,
+#     name="game_state_dispatcher_view",
+# ),

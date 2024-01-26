@@ -1,9 +1,11 @@
 import uuid
+import time
+import json
 
-from django.db.models import Q
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.http import StreamingHttpResponse
+from django.contrib.auth import authenticate, login, logout
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,9 +13,8 @@ from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 
-from . import serializers
 from . import game as g
-from .models import GameModel
+from . import serializers
 from .throttles import BurstRateThrottle
 
 
@@ -112,41 +113,34 @@ def game_update_state_view(request: Request, game_id: uuid.UUID) -> Response:
         game_id,
         (serializer.validated_data.get("id"), serializer.validated_data.get("action")),
     ):
-        return Response(
-            {"message": "Action processed successfully"}, status=status.HTTP_200_OK
-        )
-    return Response({"error": "No game with this id"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 # TODO Add security like checking the game_id exists or that the player is part of the game
-@api_view(["GET"])
 @permission_classes([IsAuthenticated])
-@throttle_classes([BurstRateThrottle])
-def game_get_state_view(request: Request, game_id: uuid.UUID) -> Response:
-    s = g.game_get_state(game_id)
-    return Response(
-        {
-            "ball": {
-                "x": s["ball"]["x"],
-                "y": s["ball"]["y"],
-            },
-            "player1": {
-                "x": s["player1"]["x"],
-                "score": s["player1"]["score"],
-            },
-            "player2": {
-                "x": s["player2"]["x"],
-                "score": s["player2"]["score"],
-            },
-        },
-        status=status.HTTP_200_OK,
-    )
+def game_get_state_view(_, game_id: uuid.UUID):
+    sleep_time = 1 / 10
 
+    def event_stream():
+        while True:
+            try:
+                s = g.game_get_state(game_id)
+                data = {
+                    "ball": {"x": s["ball"]["x"], "y": s["ball"]["y"]},
+                    "player1": {"x": s["player1"]["x"], "score": s["player1"]["score"]},
+                    "player2": {"x": s["player2"]["x"], "score": s["player2"]["score"]},
+                }
+                yield f"data: {json.dumps(data)}\n\n"
+                time.sleep(sleep_time)  # Adjust the frequency of updates as needed
+            except GeneratorExit:
+                # Handle case where client disconnects
+                break
+            except Exception as e:
+                # Handle any other exceptions
+                yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n"
+                break
 
-@api_view(["GET", "PUT"])
-@permission_classes([IsAuthenticated])
-def game_state_dispatcher_view(request: Request, game_id: uuid.UUID) -> Response:
-    if request.method == "GET":
-        return game_get_state_view(request._request, game_id)
-    elif request.method == "PUT":
-        return game_update_state_view(request._request, game_id)
+    response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
+    response["Cache-Control"] = "no-cache"
+    return response

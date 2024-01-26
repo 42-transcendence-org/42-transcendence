@@ -161,27 +161,26 @@
 			}
 
 			function startGameLoop(gameId) {
-				const fetchInterval = 1000 / 30; // Polling every ~33.33 milliseconds
-				let gameData = null;
+				let eventSource = new EventSource(`http://localhost:8000/api/games/${gameId}/get/`);
 
-				function fetchGameState() {
-					fetch(`http://localhost:8000/api/games/${gameId}`)
-						.then(response => response.json())
-						.then(data => {
-							gameData = data; // Store the latest game state
-						})
-						.catch(error => console.error('Error:', error));
-				}
+				eventSource.onmessage = function (event) {
+					// Parse the event data and update the game state
+					let gameData = JSON.parse(event.data);
+					drawGame(gameData);
+				};
+
+				eventSource.onerror = function (error) {
+					console.error('EventSource failed:', error);
+					eventSource.close();
+				};
 
 				function gameLoop() {
-					if (gameData) {
-						drawGame(gameData);
-					}
 					requestAnimationFrame(gameLoop);
 				}
-				setInterval(fetchGameState, fetchInterval);
+
 				requestAnimationFrame(gameLoop);
 			}
+
 
 			let currentId;
 			function createGame(gameType, csrfToken) {

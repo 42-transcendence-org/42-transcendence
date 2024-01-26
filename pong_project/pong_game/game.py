@@ -14,7 +14,7 @@ PADDLE_HEIGHT = 16
 PADDLE_DX = 1000
 BALL_SIDE = 16
 BALL_DX = 0
-BALL_DY = 1
+BALL_DY = 100
 MARGIN = 16
 
 keep_updating = True
@@ -49,7 +49,6 @@ def game_create(type: str, status: str, name1: str, name2: str) -> dict:
 
 def game_update(game_state: dict, dt: float) -> bool:
     s = game_state
-
     # Process inputs and move the paddles accordingly
     while not s["inputs"].empty():
         i = s["inputs"].get()
@@ -127,7 +126,7 @@ def game_ai_move(game_state: dict):
 # TODO Save the game state to the database if someone scored
 def game_update_all():
     accumulator = 0.0
-    update_interval = 1.0 / 60
+    update_interval = 1.0 / 30
     last_update_time = time.time()
 
     while keep_updating:
