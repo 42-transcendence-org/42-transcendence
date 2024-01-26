@@ -27,9 +27,7 @@ def user_registration_view(request: Request) -> Response:
     serializer = serializers.UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         User.objects.create_user(**serializer.validated_data)
-        return Response(
-            {"message": "Registration successful"}, status=status.HTTP_201_CREATED
-        )
+        return Response(status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -40,7 +38,7 @@ def user_login_view(request: Request) -> Response:
         user = authenticate(**serializer.validated_data)
         if user:
             login(request, user)
-            return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
         return Response(
             {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
         )

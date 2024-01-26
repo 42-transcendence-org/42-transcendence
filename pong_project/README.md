@@ -1,6 +1,5 @@
 - TODO Split game and user management in different apps
 - TODO 	Implement async views
-- TODO User SSE
 - TODO User client side prediction and interpolation
 - Create function decorators to check if a user is part of a game
 Add a way to save all game states to the db when server quits

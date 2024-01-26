@@ -1,3 +1,8 @@
+import { get_cookie } from './utils.js';
+
+export let g_current_game_id = null;
+export let g_current_game_data = null;
+
 let BOARD_WIDTH = 600;
 let BOARD_HEIGHT = 800;
 let PADDLE_WIDTH = 64;
@@ -7,11 +12,6 @@ let BALL_SIDE = 16;
 let BALL_DX = 0;
 let BALL_DY = 100;
 let MARGIN = 16;
-
-let g_current_game_id = null;
-let g_current_game_data = null;
-
-import { get_cookie } from './utils'
 
 function game_create(game_type) {
 	fetch('http://localhost:8000/api/games/', {
@@ -27,7 +27,7 @@ function game_create(game_type) {
 		.then(data => {
 			if (data.id) {
 				g_current_game_id = data.id;
-				document.getElementById('game-launch-buttons').style.display = 'none';
+				document.getElementById('game-menu-div').style.display = 'none';
 				document.getElementById('game-canvas').style.display = 'block';
 				game_start_loop(data.id);
 			} else {
