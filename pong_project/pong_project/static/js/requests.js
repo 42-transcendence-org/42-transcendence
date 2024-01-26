@@ -1,4 +1,4 @@
-import { g_current_game_id } from './game.js';
+import { set_current_game_id, g_current_game_id, game_start_loop } from './game.js';
 import { get_cookie, div_handler } from './utils.js';
 
 /* Authentification */
@@ -67,7 +67,7 @@ export function send_register_request() {
 		.catch(error => console.error('Error:', error));
 }
 
-/* User inputs */
+/* Game */
 export function send_user_input(key_name) {
 	if (!g_current_game_id) return;
 
@@ -84,7 +84,7 @@ export function send_user_input(key_name) {
 		return;
 	}
 
-	fetch(`http://localhost:8000/api/games/${g_current_game_id}/`, {
+	fetch(`http://localhost:8000/api/games/${g_current_game_id}/update/`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -96,12 +96,39 @@ export function send_user_input(key_name) {
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
 			}
-			return response.json();
-		})
-		.then(data => {
-			console.log('Input sent successfully:', data);
 		})
 		.catch(error => {
 			console.error('Error sending input:', error);
 		});
 }
+
+export async function send_game_creation_request(game_type) {
+	try {
+		const response = await fetch('http://localhost:8000/api/games/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': get_cookie("csrftoken"),
+			},
+			credentials: 'include',
+			body: JSON.stringify({ type: game_type }),
+		});
+
+		if (!response.ok) {
+			const errorData = await response.json();
+			throw new Error(errorData.message || 'Server error');
+		}
+
+		const data = await response.json();
+		if (data && data.id) {
+			set_current_game_id(data.id);
+			div_handler("game-canvas-div");
+			game_start_loop();
+		} else {
+			console.error('Game creation failed');
+		}
+	} catch (error) {
+		console.error('Error:', error);
+	}
+}
+
