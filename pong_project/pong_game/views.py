@@ -1,4 +1,4 @@
-from uuid import UUID
+import uuid
 
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
@@ -12,6 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 
 from . import serializers
+from . import game as g
 from .models import GameModel
 from .throttles import BurstRateThrottle
 
@@ -71,41 +72,37 @@ def game_create_view(request: Request) -> Response:
     user = request.user
 
     # Check for an active game session for this user
-    active_games = GameModel.objects.filter(
-        (Q(player1=user) | Q(player2=user)),
-        status__in=["waiting", "active", "paused"],
-    )
-    if active_games.exists():
+    has_session = g.game_check_for_session(user.username)
+    if has_session:
         return Response(
             {"error": "User already has an active game session"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     # Check if we have a game session waiting for a second player
-    waiting_game = GameModel.objects.filter(
-        type="remote", player2__isnull=True, status="waiting"
-    ).first()
-    game_type = serializer.validated_data.get("type")
-
+    waiting_game = g.game_check_for_waiting(user.username)
     if waiting_game:
-        game_id = waiting_game.id
-        waiting_game.player2 = user
-        waiting_game.save()
-    else:
-        new_game = GameModel.objects.create(
-            type=game_type, status="waiting", player1=user
-        )
-        game_id = new_game.id
-    if waiting_game or game_type == "local" or game_type == "ai":
-        game_manager = GameManager.get_instance()
-        game_manager.add_game(game_id)
+        return Response({"id": waiting_game}, status=status.HTTP_200_OK)
+
+    # Create a new game
+    game_id = uuid.uuid4()
+    game_type = serializer.validated_data.get("type")
+    g.game_add(
+        game_id,
+        g.game_create(
+            game_type,
+            "active" if game_type != "remote" else "waiting",
+            user.username,
+            "",
+        ),
+    )
     return Response({"id": game_id}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
-def game_update_state_view(request: Request, game_id: UUID) -> Response:
+def game_update_state_view(request: Request, game_id: uuid.UUID) -> Response:
     serializer = serializers.CreateGameSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -138,7 +135,7 @@ def game_update_state_view(request: Request, game_id: UUID) -> Response:
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])
-def game_get_state_view(request: Request, game_id: UUID) -> Response:
+def game_get_state_view(request: Request, game_id: uuid.UUID) -> Response:
     user = request.user
     game = get_object_or_404(GameModel, id=game_id)
 
@@ -154,7 +151,7 @@ def game_get_state_view(request: Request, game_id: UUID) -> Response:
 
 @api_view(["GET", "PUT"])
 @permission_classes([IsAuthenticated])
-def game_state_dispatcher_view(request: Request, game_id: UUID) -> Response:
+def game_state_dispatcher_view(request: Request, game_id: uuid.UUID) -> Response:
     if request.method == "GET":
         return game_get_state_view(request._request, game_id)
     elif request.method == "PUT":

@@ -36,7 +36,7 @@ urlpatterns = [
     path("api/games/", views.game_create_view, name="game_create_view"),
     path(
         "api/games/<uuid:game_id>/",
-        views.game_state_dispatcher,
-        name="game_state_dispatcher",
+        views.game_state_dispatcher_view,
+        name="game_state_dispatcher_view",
     ),
 ]

@@ -4,7 +4,7 @@ import queue
 import threading
 
 from uuid import UUID
-from typing import Dict
+from typing import Dict, Union
 
 BOARD_WIDTH = 600
 BOARD_HEIGHT = 800
@@ -136,10 +136,11 @@ def game_update_all():
         accumulator += frame_time
 
         while accumulator >= update_interval:
-            for _, game_state in active_games:
+            for _, game_state in active_games.items():
                 if game_state["type"] == "ai":
                     game_ai_move(game_state)
-                game_update(game_state, update_interval)
+                if game_state["status"] != "waiting":
+                    game_update(game_state, update_interval)
             accumulator -= update_interval
 
         # Calculate time to sleep to avoid spinning
@@ -173,3 +174,32 @@ def game_remove(game_id: UUID):
 def game_get(game_id: UUID):
     with games_update_all_lock:
         return active_games.get(game_id)
+
+
+# TODO Use lock
+def game_check_for_session(username: str) -> bool:
+    for _, game_state in active_games.items():
+        if (
+            game_state["player1"]["name"] == username
+            or game_state["player2"]["name"] == username
+        ):
+            return True
+    return False
+
+
+# TODO Use lock
+def game_check_for_waiting(username: str) -> Union[UUID, None]:
+    """
+    If an open game sessions is found it is updated and its UUID is
+    returned, else None is returned.
+    """
+    for id, s in active_games.items():
+        if (
+            s["status"] == "waiting"
+            and s["type"] == "remote"
+            and s["player2"]["name"] == ""
+        ):
+            s["player2"]["name"] == username
+            s["status"] == "active"
+            return id
+    return None
