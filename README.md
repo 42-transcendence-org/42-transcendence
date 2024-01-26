@@ -1,3 +1,4 @@
+- TODO Fix game.id undefined bug
 - TODO Implement client side prediction and interpolation
 - TODO Configure the project to use nginx or uvicorn to test the app in an
   env closer to production env
