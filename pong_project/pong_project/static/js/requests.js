@@ -119,13 +119,9 @@ export async function send_game_creation_request(game_type) {
 		if (!response.ok) {
 			throw new Error(data.message || 'Server error');
 		}
-		console.log(data.id)
-		if (data) {
-			console.log(Object.keys(data));
-			console.log(data.id)
+		if (data && data.id) {
 			set_current_game_id(data.id);
 			set_current_game_data(data);
-			console.log(data);
 			div_handler("game-canvas-div");
 			game_start_loop();
 		} else {

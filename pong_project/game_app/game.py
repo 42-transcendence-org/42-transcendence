@@ -1,5 +1,4 @@
 import sys
-import json
 import time
 import queue
 import threading
@@ -13,7 +12,7 @@ PADDLE_WIDTH = 64
 PADDLE_HEIGHT = 16
 PADDLE_DX = 1000
 BALL_SIDE = 16
-BALL_DX = 0
+BALL_DX = 100
 BALL_DY = 100
 MARGIN = 16
 
@@ -59,10 +58,12 @@ def game_update(game_state: dict, dt: float) -> bool:
         else:
             p = s["player2"]
 
-        if i[1] == "left" and (p["x"] - p["dx"] * dt > 16):
-            p["x"] -= p["dx"] * dt
-        elif i[1] == "right" and (p["x"] + p["w"] + p["dx"] * dt < BOARD_WIDTH - 16):
-            p["x"] += p["dx"] * dt
+        if i[1] == "left" and (p["x"] - PADDLE_DX * dt > 16):
+            p["x"] -= PADDLE_DX * dt
+        elif i[1] == "right" and (
+            p["x"] + PADDLE_WIDTH + PADDLE_DX * dt < BOARD_WIDTH - 16
+        ):
+            p["x"] += PADDLE_DX * dt
 
     # Move the ball and check for collisions with walls
     b = s["ball"]
