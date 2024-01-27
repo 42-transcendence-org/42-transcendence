@@ -28,10 +28,7 @@ def game_create_view(request: Request) -> Response:
     # Check for an active game session for this user
     has_session = g.game_check_for_session(user.username)
     if has_session:
-        return Response(
-            {"error": "User already has an active game session"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response(g.game_get_state_json(has_session), status=status.HTTP_200_OK)
 
     # Check if we have a game session waiting for a second player
     waiting_game = g.game_check_for_waiting(user.username)

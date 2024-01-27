@@ -9,7 +9,6 @@ from django.contrib.auth import authenticate, login, logout
 
 from . import serializers
 
-
 @api_view(["POST"])
 def user_registration_view(request: Request) -> Response:
     serializer = serializers.UserRegistrationSerializer(data=request.data)
