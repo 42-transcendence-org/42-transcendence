@@ -1,5 +1,10 @@
-export let g_current_game_id = null;
+
+/* The original game data as it receive upon game creation */
 export let g_current_game_data = null;
+/* The updated game state received from the server */
+export let g_current_game_data_server = null;
+/* The game state maintained by the client */
+export let g_current_game_data_local = null;
 
 let BOARD_WIDTH = 600;
 let BOARD_HEIGHT = 800;
@@ -11,28 +16,51 @@ let BALL_DX = 0;
 let BALL_DY = 100;
 let MARGIN = 16;
 
-export function set_current_game_id(id) {
-	g_current_game_id = id;
-}
-
 export function set_current_game_data(data) {
 	g_current_game_data = data;
 }
 
+export function set_current_game_data_server(data) {
+	g_current_game_data_server = data;
+}
+
+export function set_current_game_data_local(data) {
+	g_current_game_data_local = data;
+}
+
+let currentInput = null;
+
+document.addEventListener('keydown', (event) => {
+	if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+		currentInput = event.key;
+	}
+});
+
+document.addEventListener('keyup', (event) => {
+	if ((event.key === 'ArrowLeft' && currentInput === 'ArrowLeft') ||
+		(event.key === 'ArrowRight' && currentInput === 'ArrowRight')) {
+		currentInput = null;
+	}
+});
+
 export function game_start_loop() {
-	let event_source = new EventSource(`http://localhost:8000/api/games/${g_current_game_id}/get/`);
+	let event_source = new EventSource(`http://localhost:8000/api/games/${g_current_game_data.id}/get/`);
 
 	event_source.onmessage = function (event) {
 		let game_state = JSON.parse(event.data);
-		game_draw(game_state);
+		g_current_game_data_server = game_state;
+		/* TODO Implement reconciliation */
 	};
-
 	event_source.onerror = function (error) {
 		console.error('EventSource failed:', error);
 		event_source.close();
 	};
 
 	function game_loop() {
+		// process input
+		// update state
+		// draw
+		game_draw(g_current_game_data_server);
 		requestAnimationFrame(game_loop);
 	}
 	requestAnimationFrame(game_loop);

@@ -52,6 +52,7 @@ def game_create_view(request: Request) -> Response:
 
 
 # TODO Add security like checking that the player is part of the game
+# TODO Add security to prevent taking control of the other player paddle
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 @throttle_classes([BurstRateThrottle])

@@ -1,105 +1,113 @@
-import { set_current_game_id, set_current_game_data, g_current_game_id, game_start_loop } from './game.js';
+import * as game from './game.js';
 import { get_cookie, div_handler } from './utils.js';
 
 /* Authentification */
-export function send_status_request() {
-	fetch('http://localhost:8000/api/auth/status/', {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		credentials: 'include'
-	})
-		.then(response => response.json())
-		.then(data => {
-			if (data.is_authenticated) {
-				div_handler("game-menu-div");
-			} else {
-				div_handler("auth-form-div");
-			}
-		})
-		.catch(error => console.error('Error:', error));
+export async function send_status_request() {
+	try {
+		const response = await fetch('http://localhost:8000/api/auth/status/', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': get_cookie("csrftoken"),
+			},
+			credentials: 'include',
+		});
+
+		const data = await response.json();
+
+		if (data.is_authenticated) {
+			div_handler("game-menu-div");
+		} else {
+			div_handler("auth-form-div");
+		}
+	} catch (error) {
+		console.error('Error:', error);
+	}
 }
 
-export function send_login_request() {
-	const username = document.getElementById('username').value;
-	const password = document.getElementById('password').value;
+export async function send_login_request() {
+	try {
+		const username = document.getElementById('username').value;
+		const password = document.getElementById('password').value;
 
-	fetch('http://localhost:8000/api/auth/login/', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'X-CSRFToken': get_cookie("csrftoken"),
-		},
-		credentials: 'include',
-		body: JSON.stringify({ username, password })
-	})
-		.then(response => {
-			if (response.ok) {
-				div_handler("game-menu-div");
-			} else {
-				throw new Error('Network response was not ok: ' + response.statusText);
-			}
-		})
-		.catch(error => console.error('Error:', error));
+		const response = await fetch('http://localhost:8000/api/auth/login/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': get_cookie("csrftoken"),
+			},
+			credentials: 'include',
+			body: JSON.stringify({ username, password }),
+		});
+
+		if (!response.ok) {
+			throw new Error('Network response was not ok: ' + response.statusText);
+		}
+
+		div_handler("game-menu-div");
+	} catch (error) {
+		console.error('Error:', error);
+	}
 }
 
-export function send_register_request() {
-	const username = document.getElementById('username').value;
-	const password = document.getElementById('password').value;
+export async function send_register_request() {
+	try {
+		const username = document.getElementById('username').value;
+		const password = document.getElementById('password').value;
 
-	fetch('http://localhost:8000/api/auth/register/', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'X-CSRFToken': get_cookie("csrftoken"),
-		},
-		credentials: 'include',
-		body: JSON.stringify({ username, password })
-	})
-		.then(response => {
-			if (response.ok) {
-				send_login_request();
-			} else {
-				throw new Error('Network response was not ok: ' + response.statusText);
-			}
-		})
-		.catch(error => console.error('Error:', error));
+		const response = await fetch('http://localhost:8000/api/auth/register/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': get_cookie("csrftoken"),
+			},
+			credentials: 'include',
+			body: JSON.stringify({ username, password }),
+		});
+
+		if (!response.ok) {
+			throw new Error('Network response was not ok: ' + response.statusText);
+		}
+
+		await send_login_request();
+	} catch (error) {
+		console.error('Error:', error);
+	}
 }
 
 /* Game */
-export function send_user_input(key_name) {
-	if (!g_current_game_id) return;
+export async function send_user_input(key_name) {
+	try {
+		if (!game.g_current_game_data) return;
 
-	let input;
-	if (key_name === 'a') {
-		input = { id: "1", action: "left" };
-	} else if (key_name === 's') {
-		input = { id: "1", action: "right" };
-	} else if (key_name === 'k') {
-		input = { id: "2", action: "left" };
-	} else if (key_name === 'l') {
-		input = { id: "2", action: "right" };
-	} else {
-		return;
-	}
+		let input;
+		if (key_name === 'a') {
+			input = { id: "1", action: "left" };
+		} else if (key_name === 's') {
+			input = { id: "1", action: "right" };
+		} else if (key_name === 'k' && game.g_current_game_data.type === "local") {
+			input = { id: "2", action: "left" };
+		} else if (key_name === 'l' && game.g_current_game_data.type === "local") {
+			input = { id: "2", action: "right" };
+		} else {
+			return;
+		}
 
-	fetch(`http://localhost:8000/api/games/${g_current_game_id}/update/`, {
-		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json',
-			'X-CSRFToken': get_cookie("csrftoken"),
-		},
-		body: JSON.stringify(input)
-	})
-		.then(response => {
-			if (!response.ok) {
-				throw new Error('Network response was not ok');
-			}
-		})
-		.catch(error => {
-			console.error('Error sending input:', error);
+		const response = await fetch(`http://localhost:8000/api/games/${game.g_current_game_data.id}/update/`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': get_cookie("csrftoken"),
+			},
+			body: JSON.stringify(input),
 		});
+
+		if (!response.ok) {
+			throw new Error('Network response was not ok: ' + response.statusText);
+		}
+	} catch (error) {
+		console.error('Error sending input:', error);
+	}
 }
 
 export async function send_game_creation_request(game_type) {
@@ -119,11 +127,13 @@ export async function send_game_creation_request(game_type) {
 		if (!response.ok) {
 			throw new Error(data.message || 'Server error');
 		}
-		if (data && data.id) {
-			set_current_game_id(data.id);
-			set_current_game_data(data);
+
+		if (data) {
+			game.set_current_game_data(data);
+			game.set_current_game_data_server(data);
+			game.set_current_game_data_local(data);
 			div_handler("game-canvas-div");
-			game_start_loop();
+			game.game_start_loop();
 		} else {
 			console.error('Game creation failed');
 		}
