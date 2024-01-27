@@ -7,7 +7,7 @@ from .game import game_update_all_shutdown, game_update_all_thread
 
 class PongGameConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "pong_game"
+    name = "game_app"
 
     def ready(self):
         game_update_all_thread.start()

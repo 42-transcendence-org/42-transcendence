@@ -15,39 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from pong_game import views
+from django.urls import path, include
+
+from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
     path("admin/", admin.site.urls),
-    path(
-        "api/auth/register/",
-        views.user_registration_view,
-        name="user_registration_view",
-    ),
-    path("api/auth/login/", views.user_login_view, name="user_login_view"),
-    path("api/auth/logout/", views.user_logout_view, name="user_logout_view"),
-    path(
-        "api/auth/status/",
-        views.user_is_authenticated_view,
-        name="user_is_authenticated_view",
-    ),
-    path("api/games/", views.game_create_view, name="game_create_view"),
-    path(
-        "api/games/<uuid:game_id>/get/",
-        views.game_get_state_view,
-        name="game_get_state_view",
-    ),
-    path(
-        "api/games/<uuid:game_id>/update/",
-        views.game_update_state_view,
-        name="game_update_state_view",
-    ),
+    path("api/auth/", include("auth_app.urls")),
+    path("api/games/", include("game_app.urls")),
 ]
-
-# path(
-#     "api/games/<uuid:game_id>/",
-#     views.game_state_dispatcher_view,
-#     name="game_state_dispatcher_view",
-# ),

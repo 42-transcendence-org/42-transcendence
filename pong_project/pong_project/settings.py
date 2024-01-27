@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "pong_game.apps.PongGameConfig",
+    "game_app.apps.PongGameConfig",
     "rest_framework",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -125,7 +125,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_CLASSES": [
-        "pong_game.throttles.BurstRateThrottle",
+        "game_app.throttles.BurstRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
         "burst": "60/second",
