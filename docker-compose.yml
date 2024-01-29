@@ -122,9 +122,11 @@ services:
     restart: on-failure
 
   prometheus:
-    image: prom/prometheus
+    build:
+      context: ./PONG/DevOps/Prometheus
+      dockerfile: Dockerfile
     volumes:
-      - ./prometheus:/etc/prometheus
+      - prometheus-storage:/etc/prometheus
     ports:
      - "9090:9090"
     networks:
@@ -133,7 +135,9 @@ services:
     restart: on-failure
 
   grafana:
-    image: grafana/grafana
+    build:
+      context: ./PONG/DevOps/Grafana
+      dockerfile: Dockerfile
     volumes:
       - grafana-storage:/var/lib/grafana
     environment:
