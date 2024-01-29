@@ -6,6 +6,12 @@ export let g_current_game_data_server = null;
 /* The game state maintained by the client */
 export let g_current_game_data_local = null;
 
+export let LEFT = 1;
+export let RIGHT = 2;
+
+/* 1_left, 1_right, 2_left, 2_right */
+let g_players_inputs = [0, 0];
+
 let BOARD_WIDTH = 600;
 let BOARD_HEIGHT = 800;
 let PADDLE_WIDTH = 64;
@@ -28,20 +34,88 @@ export function set_current_game_data_local(data) {
 	g_current_game_data_local = data;
 }
 
-let currentInput = null;
+export function set_player_input(player, input) {
+	g_players_inputs[player] = input;
+}
 
-document.addEventListener('keydown', (event) => {
-	if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-		currentInput = event.key;
-	}
-});
+function game_update_state(dt) {
+	let state = g_current_game_data_local;
+	let ball = state.ball;
+	let p1 = state.player1;
+	let p2 = state.player2;
+	let score1 = state.player1.score;
+	let score2 = state.player2.score;
+	let who_scored = 0;
 
-document.addEventListener('keyup', (event) => {
-	if ((event.key === 'ArrowLeft' && currentInput === 'ArrowLeft') ||
-		(event.key === 'ArrowRight' && currentInput === 'ArrowRight')) {
-		currentInput = null;
+	/* Move Player 1's paddle */
+	if (g_players_inputs[0] === LEFT && p1.x - PADDLE_DX * dt > 16) {
+		p1.x -= PADDLE_DX * dt;
+	} else if (g_players_inputs[0] === RIGHT && p1.x + PADDLE_WIDTH + PADDLE_DX * dt < BOARD_WIDTH - 16) {
+		p1.x += PADDLE_DX * dt;
 	}
-});
+	/* Move Player 1's paddle */
+	if (g_players_inputs[1] === LEFT && p2.x - PADDLE_DX * dt > 16) {
+		p2.x -= PADDLE_DX * dt;
+	} else if (g_players_inputs[1] === RIGHT && p2.x + PADDLE_WIDTH + PADDLE_DX * dt < BOARD_WIDTH - 16) {
+		p2.x += PADDLE_DX * dt;
+	}
+
+	/* Move the ball */
+	ball.x += ball.dx * dt;
+	ball.y += ball.dy * dt;
+
+	/* Check for collisions between the ball and the walls */
+	if (ball.x <= 0) { 	/* Left wall */
+		ball.x = 0;
+		ball.dx *= -1;
+	} else if (ball.x + BALL_SIDE >= BOARD_WIDTH) {  /* Right wall */
+		ball.x = BOARD_WIDTH - BALL_SIDE
+		ball.dx *= -1;
+	} else if (ball.y <= 0) { /* Top wall */
+		score1 += 1;
+		who_scored = 1;
+	} else if (ball.y + BALL_SIDE >= BOARD_HEIGHT) {  /* Bottom wall */
+		score2 += 1;
+		who_scored = 2;
+	}
+
+	if (score1 == 10 || score2 == 10) {
+		/* A player won, end the game */
+		state.status = "ended";
+	} else if (who_scored != 0) {
+		/* A player scored, reset the ball position */
+		ball.x = (BOARD_WIDTH - BALL_SIDE) / 2;
+		ball.y = (BOARD_HEIGHT - BALL_SIDE) / 2;
+		ball.dx = BALL_DX;
+		if (who_scored == 1) ball.dy = BALL_DY;
+		else ball.dy = -BALL_DY;
+	}
+
+	/* Check for collisions between the ball and the paddles */
+	if ((ball.y + BALL_SIDE >= p1.y && ball.x + BALL_SIDE >= p1.x && ball.x <= p1.x + PADDLE_WIDTH)
+		|| (ball.y <= p2.y + PADDLE_HEIGHT && ball.x + BALL_SIDE >= p2.x && ball.x <= p2.x + PADDLE_WIDTH)) {
+		ball.dy *= -1
+	}
+}
+
+let accumulator = 0.0;
+let lastFrameTime = performance.now();
+const fixedTimestep = 1 / 60;
+
+function game_loop() {
+	let currentFrameTime = performance.now();
+	let frameTime = (currentFrameTime - lastFrameTime) / 1000;
+	lastFrameTime = currentFrameTime;
+
+	accumulator += frameTime;
+
+	while (accumulator >= fixedTimestep) {
+		game_update_state(fixedTimestep);
+		accumulator -= fixedTimestep;
+	}
+	game_draw(g_current_game_data_local);
+	requestAnimationFrame(game_loop);
+}
 
 export function game_start_loop() {
 	let event_source = new EventSource(`http://localhost:8000/api/games/${g_current_game_data.id}/get/`);
@@ -55,14 +129,6 @@ export function game_start_loop() {
 		console.error('EventSource failed:', error);
 		event_source.close();
 	};
-
-	function game_loop() {
-		// process input
-		// update state
-		// draw
-		game_draw(g_current_game_data_server);
-		requestAnimationFrame(game_loop);
-	}
 	requestAnimationFrame(game_loop);
 }
 
@@ -81,7 +147,7 @@ function game_draw(game_state) {
 
 	/* Draw scores */
 	/* TODO The correct font is not used */
-	ctx.font = "30px Code Page 437";
+	ctx.font = "30px Arial";
 	ctx.fillText(game_state.player1.score, 20, 50);
 	ctx.fillText(game_state.player2.score, 20, BOARD_HEIGHT - 30);
 }

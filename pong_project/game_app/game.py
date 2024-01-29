@@ -74,7 +74,7 @@ def game_update(game_state: dict, dt: float) -> bool:
     score1 = s["player1"]["score"]
     score2 = s["player2"]["score"]
 
-    # Left wall
+
     if b["x"] <= 0:
         b["x"] = 0
         b["dx"] *= -1
@@ -97,8 +97,8 @@ def game_update(game_state: dict, dt: float) -> bool:
         return
     # A player scored, reset the ball position
     elif who_scored != 0:
-        b["x"] = BOARD_WIDTH - BALL_SIDE / 2
-        b["y"] = BOARD_HEIGHT - BALL_SIDE / 2
+        b["x"] = (BOARD_WIDTH - BALL_SIDE) / 2
+        b["y"] = (BOARD_HEIGHT - BALL_SIDE) / 2
         b["dx"] = BALL_DX
         if who_scored == 1:
             b["dy"] = BALL_DY
@@ -129,7 +129,7 @@ def game_ai_move(game_state: dict):
 # TODO Remove ended games
 def game_update_all():
     accumulator = 0.0
-    update_interval = 1.0 / 30
+    update_interval = 1.0 / 60
     last_update_time = time.time()
 
     while True:
