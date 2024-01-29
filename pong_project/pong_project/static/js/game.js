@@ -1,5 +1,5 @@
 
-/* The original game data as it receive upon game creation */
+/* The original game data as received upon game creation */
 export let g_current_game_data = null;
 /* The updated game state received from the server */
 export let g_current_game_data_server = null;
@@ -18,10 +18,11 @@ let PADDLE_HEIGHT = 16;
 let PADDLE_DX = 1000;
 let BALL_SIDE = 16;
 let BALL_DX = 0;
-let BALL_DY = 100;
+let BALL_DY = 0.5;
+let BALL_SPEED = 500;
 let MARGIN = 16;
-let MAX_BOUNCE_ANGLE = 1.309 /* 75 degrees */
-let BALL_SPEED = 100;
+// let MAX_BOUNCE_ANGLE = 1.309; /* 75 degrees */
+let MAX_BOUNCE_ANGLE = 0.785398;
 
 export function set_current_game_data(data) {
 	g_current_game_data = data;
@@ -46,22 +47,23 @@ function game_handle_ball_paddle_collision() {
 	let relative_intersect = 0;
 	let collision = false;
 
-	if (ball.dx > 0) { /* Ball is moving down toward Player 1 */
-		if (ball.y + BALL_SIDE >= p1.y && ball.x + BALL_SIDE >= p1.x && ball.x <= p1.x + PADDLE_WIDTH) {
-			relative_intersect = (p1.x + (PADDLE_WIDTH / 2)) - ball.x;
-			collision = true;
-		}
-	} else { /* Ball is moving up toward Player 2 */
-		if (ball.y <= p2.y + PADDLE_HEIGHT && ball.x + BALL_SIDE >= p2.x && ball.x <= p2.x + PADDLE_WIDTH) {
-			relative_intersect = (p2.x + (PADDLE_WIDTH / 2)) - ball.x;
-			collision = true;
-		}
+	if (ball.y + BALL_SIDE >= p1.y && ball.x + BALL_SIDE >= p1.x && ball.x <= p1.x + PADDLE_WIDTH) {
+		relative_intersect = (p1.x + (PADDLE_WIDTH / 2)) - (ball.x + (BALL_SIDE / 2));
+		ball.y = p1.y - BALL_SIDE;
+		collision = true;
+		console.log("collision with player 1: ", relative_intersect);
+	}
+	else if ((ball.y <= p2.y + PADDLE_HEIGHT) && ball.x + BALL_SIDE >= p2.x && ball.x <= p2.x + PADDLE_WIDTH) {
+		relative_intersect = (p2.x + (PADDLE_WIDTH / 2)) - (ball.x + (BALL_SIDE / 2));
+		ball.y = p2.y + PADDLE_HEIGHT;
+		collision = true;
+		console.log("collision with player 2: ", relative_intersect);
 	}
 	if (collision) {
-		let normalized_relative_intersection = (relative_intersect / (PADDLE_WIDTH / 2));
-		let bounce_angle = normalized_relative_intersection * MAX_BOUNCE_ANGLE;
-		ball.dx = BALL_SPEED * Math.cos(bounce_angle);
-		ball.dy = BALL_SPEED * -Math.sin(bounce_angle);
+		let normalized_relative_intersection = (relative_intersect / (PADDLE_WIDTH / 2)); // c
+		normalized_relative_intersection *= Math.PI / 4;
+		ball.dx = BALL_SPEED * Math.cos(normalized_relative_intersection);
+		ball.dy = BALL_SPEED * Math.sin(normalized_relative_intersection);
 	}
 }
 
@@ -103,7 +105,7 @@ function game_update_state(dt) {
 		who_scored = 1;
 	} else if (ball.y + BALL_SIDE >= BOARD_HEIGHT) {  /* Bottom wall */
 		score2 += 1;
-		who_scored = 2;
+		who_scored = -1;
 	}
 
 	if (score1 == 10 || score2 == 10) {
@@ -113,9 +115,10 @@ function game_update_state(dt) {
 		/* A player scored, reset the ball position */
 		ball.x = (BOARD_WIDTH - BALL_SIDE) / 2;
 		ball.y = (BOARD_HEIGHT - BALL_SIDE) / 2;
-		ball.dx = BALL_DX;
-		if (who_scored == 1) ball.dy = BALL_DY;
-		else ball.dy = -BALL_DY;
+		ball.dx = BALL_DX * BALL_SPEED;
+		ball.dy = BALL_DY * who_scored * BALL_SPEED;
+		// d.b = Math.floor(Math.random() * (m.height / 2 - d.height / 2)) + 100; // INTERESTING
+		// V(d, Math.floor(100 * Math.random()) / 100, !0); // INTERESTING
 	}
 
 	/* Check for collisions between the ball and the paddles */

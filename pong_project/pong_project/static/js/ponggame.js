@@ -55,7 +55,7 @@ var e,
 	S = 0,
 	T = 0,
 	ja = 1e3 / 60;
-function U(a) {
+function U(a) { // paddle constructor
 	this.c = a;
 	this.a = m.height / 2 - v / 2;
 	this.width = w;
@@ -65,7 +65,7 @@ function U(a) {
 U.prototype.f = function () {
 	return this.a + this.height / 2;
 };
-function ka() {
+function ka() { // ball constructor
 	this.c = this.i = 0;
 	this.h = !1;
 	this.height = this.width = w;
@@ -76,7 +76,7 @@ function ka() {
 }
 function V(a, c, d) {
 	c *= Math.PI / 4;
-	d = d && O ? E / 2 : E;
+	d = d && O ? E / 2 : E; // E = 10, O = !0 = true
 	a.i = (a.g ? 1 : -1) * Math.cos(c) * d;
 	a.c = Math.sin(c) * d;
 }
@@ -209,7 +209,7 @@ function ya(a) {
 }
 function xa() {
 	if (!L) {
-		q.clearRect(0, w, m.width, m.height - 2 * w); // clear the canvas 
+		q.clearRect(0, w, m.width, m.height - 2 * w); // clear the canvas
 		B && (I.a += (e.f() - I.f()) * x);
 		I.a += I.b; // move paddles
 		J.a += J.b; // move paddles
@@ -231,12 +231,13 @@ function xa() {
 			} else (F += 1), (ea.innerHTML = F), (a = 2);
 			(F >= N || G >= N) && ya(F > G ? 1 : 2);
 			setTimeout(function () {
+				// Init
 				M = 0 == P ? !M : 2 == P ? 2 == a : 1 == a;
 				var d = e;
 				d.g = M;
 				d.a = m.width / 2;
-				d.b = Math.floor(Math.random() * (m.height / 2 - d.height / 2)) + 100;
-				V(d, Math.floor(100 * Math.random()) / 100, !0);
+				d.b = Math.floor(Math.random() * (m.height / 2 - d.height / 2)) + 100; // INTERESTING
+				V(d, Math.floor(100 * Math.random()) / 100, !0); // INTERESTING
 				d.h = !1;
 			}, 450);
 		}
@@ -252,12 +253,13 @@ function xa() {
 					? 1
 					: 2
 				: 0;
-		if (0 != u) {
+		if (0 != u) { // if a collision occured
 			if (2 == u) {
 				var c = e.g ? J : I;
 				e.g = !e.g;
-				V(e, (e.f() - c.f()) / (c.height / 2), !1);
-			} else 1 == u && (e.c *= -1);
+				// f() -> this.b + this.height / 2;
+				V(e, (e.f() - c.f()) / (c.height / 2), !1); // !1 = false
+			} else 1 == u && (e.c *= -1);	
 			r && Q.play();
 		}
 		K && q.fillRect(e.a, e.b, e.width, e.height);
