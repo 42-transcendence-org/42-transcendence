@@ -20,6 +20,8 @@ let BALL_SIDE = 16;
 let BALL_DX = 0;
 let BALL_DY = 100;
 let MARGIN = 16;
+let MAX_BOUNCE_ANGLE = 1.309 /* 75 degrees */
+let BALL_SPEED = 100;
 
 export function set_current_game_data(data) {
 	g_current_game_data = data;
@@ -35,6 +37,32 @@ export function set_current_game_data_local(data) {
 
 export function set_player_input(player, input) {
 	g_players_inputs[player] = input;
+}
+
+function game_handle_ball_paddle_collision() {
+	let ball = g_current_game_data_local.ball;
+	let p1 = g_current_game_data_local.player1;
+	let p2 = g_current_game_data_local.player2;
+	let relative_intersect = 0;
+	let collision = false;
+
+	if (ball.dx > 0) { /* Ball is moving down toward Player 1 */
+		if (ball.y + BALL_SIDE >= p1.y && ball.x + BALL_SIDE >= p1.x && ball.x <= p1.x + PADDLE_WIDTH) {
+			relative_intersect = (p1.x + (PADDLE_WIDTH / 2)) - ball.x;
+			collision = true;
+		}
+	} else { /* Ball is moving up toward Player 2 */
+		if (ball.y <= p2.y + PADDLE_HEIGHT && ball.x + BALL_SIDE >= p2.x && ball.x <= p2.x + PADDLE_WIDTH) {
+			relative_intersect = (p2.x + (PADDLE_WIDTH / 2)) - ball.x;
+			collision = true;
+		}
+	}
+	if (collision) {
+		let normalized_relative_intersection = (relative_intersect / (PADDLE_WIDTH / 2));
+		let bounce_angle = normalized_relative_intersection * MAX_BOUNCE_ANGLE;
+		ball.dx = BALL_SPEED * Math.cos(bounce_angle);
+		ball.dy = BALL_SPEED * -Math.sin(bounce_angle);
+	}
 }
 
 function game_update_state(dt) {
@@ -91,10 +119,7 @@ function game_update_state(dt) {
 	}
 
 	/* Check for collisions between the ball and the paddles */
-	if ((ball.y + BALL_SIDE >= p1.y && ball.x + BALL_SIDE >= p1.x && ball.x <= p1.x + PADDLE_WIDTH)
-		|| (ball.y <= p2.y + PADDLE_HEIGHT && ball.x + BALL_SIDE >= p2.x && ball.x <= p2.x + PADDLE_WIDTH)) {
-		ball.dy *= -1
-	}
+	game_handle_ball_paddle_collision();
 }
 
 let accumulator = 0.0;

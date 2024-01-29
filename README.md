@@ -8,3 +8,6 @@
 - TODO Implement async views
   - This might require as little synchronous code as possible in the game app
 - Add doc strings and type hints
+
+
+http://drewblaisdell.com/writing/game-networking-techniques-explained-with-pong/
