@@ -79,7 +79,12 @@ def game_get_state_view(_, game_id: uuid.UUID):
             try:
                 s = g.game_get_state(game_id)
                 data = {
-                    "ball": {"x": s["ball"]["x"], "y": s["ball"]["y"]},
+                    "ball": {
+                        "x": s["ball"]["x"],
+                        "y": s["ball"]["y"],
+                        "dx": s["ball"]["dx"],
+                        "dy": s["ball"]["dy"],
+                    },
                     "player1": {"x": s["player1"]["x"], "score": s["player1"]["score"]},
                     "player2": {"x": s["player2"]["x"], "score": s["player2"]["score"]},
                 }

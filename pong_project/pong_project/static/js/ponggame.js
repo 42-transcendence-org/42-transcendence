@@ -209,7 +209,7 @@ function ya(a) {
 }
 function xa() {
 	if (!L) {
-		q.clearRect(0, w, m.width, m.height - 2 * w);
+		q.clearRect(0, w, m.width, m.height - 2 * w); // clear the canvas 
 		B && (I.a += (e.f() - I.f()) * x);
 		I.a += I.b; // move paddles
 		J.a += J.b; // move paddles

@@ -9,7 +9,6 @@ export let g_current_game_data_local = null;
 export let LEFT = 1;
 export let RIGHT = 2;
 
-/* 1_left, 1_right, 2_left, 2_right */
 let g_players_inputs = [0, 0];
 
 let BOARD_WIDTH = 600;
@@ -48,15 +47,15 @@ function game_update_state(dt) {
 	let who_scored = 0;
 
 	/* Move Player 1's paddle */
-	if (g_players_inputs[0] === LEFT && p1.x - PADDLE_DX * dt > 16) {
+	if (g_players_inputs[0] === LEFT && p1.x - PADDLE_DX * dt > MARGIN) {
 		p1.x -= PADDLE_DX * dt;
-	} else if (g_players_inputs[0] === RIGHT && p1.x + PADDLE_WIDTH + PADDLE_DX * dt < BOARD_WIDTH - 16) {
+	} else if (g_players_inputs[0] === RIGHT && p1.x + PADDLE_WIDTH + PADDLE_DX * dt < BOARD_WIDTH - MARGIN) {
 		p1.x += PADDLE_DX * dt;
 	}
-	/* Move Player 1's paddle */
-	if (g_players_inputs[1] === LEFT && p2.x - PADDLE_DX * dt > 16) {
+	/* Move Player 2's paddle */
+	if (g_players_inputs[1] === LEFT && p2.x - PADDLE_DX * dt > MARGIN) {
 		p2.x -= PADDLE_DX * dt;
-	} else if (g_players_inputs[1] === RIGHT && p2.x + PADDLE_WIDTH + PADDLE_DX * dt < BOARD_WIDTH - 16) {
+	} else if (g_players_inputs[1] === RIGHT && p2.x + PADDLE_WIDTH + PADDLE_DX * dt < BOARD_WIDTH - MARGIN) {
 		p2.x += PADDLE_DX * dt;
 	}
 
@@ -117,13 +116,26 @@ function game_loop() {
 	requestAnimationFrame(game_loop);
 }
 
+function game_reconcile() {
+	let lo = g_current_game_data_local;
+	let serv = g_current_game_data_server;
+	lo.player1.x = serv.player1.x;
+	lo.player1.score = serv.player1.score;
+	lo.player2.x = serv.player2.x;
+	lo.player2.score = serv.player1.score;
+	lo.ball.x = serv.ball.x;
+	lo.ball.y = serv.ball.y;
+	lo.ball.dx = serv.ball.dx;
+	lo.ball.dy = serv.ball.dy;
+}
+
 export function game_start_loop() {
 	let event_source = new EventSource(`http://localhost:8000/api/games/${g_current_game_data.id}/get/`);
 
 	event_source.onmessage = function (event) {
 		let game_state = JSON.parse(event.data);
 		g_current_game_data_server = game_state;
-		/* TODO Implement reconciliation */
+		// game_reconcile();
 	};
 	event_source.onerror = function (error) {
 		console.error('EventSource failed:', error);
