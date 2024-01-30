@@ -21,8 +21,8 @@ let BALL_DX = 0;
 let BALL_DY = 0.5;
 let BALL_SPEED = 500;
 let MARGIN = 16;
-// let MAX_BOUNCE_ANGLE = 1.309; /* 75 degrees */
-let MAX_BOUNCE_ANGLE = 0.785398;
+let MAX_BOUNCE_ANGLE = 0.523599; // 1.309; /* 75 degrees */
+// let MAX_BOUNCE_ANGLE = 0.785398;
 
 export function set_current_game_data(data) {
 	g_current_game_data = data;
@@ -40,30 +40,21 @@ export function set_player_input(player, input) {
 	g_players_inputs[player] = input;
 }
 
+function game_aabb(ball, player) {
+	return (ball.x < player.x + PADDLE_WIDTH && ball.x + BALL_SIDE > player.x
+		&& ball.y < player.y + PADDLE_HEIGHT && ball.y + BALL_SIDE > player.y);
+}
+
 function game_handle_ball_paddle_collision() {
 	let ball = g_current_game_data_local.ball;
-	let p1 = g_current_game_data_local.player1;
-	let p2 = g_current_game_data_local.player2;
-	let relative_intersect = 0;
-	let collision = false;
+	let normalized_relative_intersection = 0;
 
-	if (ball.y + BALL_SIDE >= p1.y && ball.x + BALL_SIDE >= p1.x && ball.x <= p1.x + PADDLE_WIDTH) {
-		relative_intersect = (p1.x + (PADDLE_WIDTH / 2)) - (ball.x + (BALL_SIDE / 2));
-		ball.y = p1.y - BALL_SIDE;
-		collision = true;
-		console.log("collision with player 1: ", relative_intersect);
-	}
-	else if ((ball.y <= p2.y + PADDLE_HEIGHT) && ball.x + BALL_SIDE >= p2.x && ball.x <= p2.x + PADDLE_WIDTH) {
-		relative_intersect = (p2.x + (PADDLE_WIDTH / 2)) - (ball.x + (BALL_SIDE / 2));
-		ball.y = p2.y + PADDLE_HEIGHT;
-		collision = true;
-		console.log("collision with player 2: ", relative_intersect);
-	}
-	if (collision) {
-		let normalized_relative_intersection = (relative_intersect / (PADDLE_WIDTH / 2)); // c
-		normalized_relative_intersection *= Math.PI / 4;
+	let p = ball.dy > 0 ? g_current_game_data_local.player1 : g_current_game_data_local.player2;
+	if (game_aabb(ball, p)) {
+		normalized_relative_intersection = ((p.x + (PADDLE_WIDTH / 2)) - (ball.x + (BALL_SIDE / 2)) / (PADDLE_WIDTH / 2));
+		normalized_relative_intersection *= MAX_BOUNCE_ANGLE;
 		ball.dx = BALL_SPEED * Math.cos(normalized_relative_intersection);
-		ball.dy = BALL_SPEED * Math.sin(normalized_relative_intersection);
+		ball.dy = BALL_SPEED * -Math.sin(normalized_relative_intersection);
 	}
 }
 

@@ -241,7 +241,7 @@ function xa() {
 				d.h = !1;
 			}, 450);
 		}
-		// Collision detection
+		// Collision detection, e.a = ball.x, e.b = ball.y
 		u = e.g
 			? e.a < J.c + J.width && e.a + e.width > J.c && e.b < J.a + J.height && e.b + e.height > J.a
 				? e.a > J.c + J.width / 2
@@ -259,7 +259,7 @@ function xa() {
 				e.g = !e.g;
 				// f() -> this.b + this.height / 2;
 				V(e, (e.f() - c.f()) / (c.height / 2), !1); // !1 = false
-			} else 1 == u && (e.c *= -1);	
+			} else 1 == u && (e.c *= -1);
 			r && Q.play();
 		}
 		K && q.fillRect(e.a, e.b, e.width, e.height);
