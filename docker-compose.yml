@@ -7,22 +7,12 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./PONG/frontend/src:/app
+    ports:
+      - "8001:8000"
     networks:
       - front
     depends_on:
       - frontend_db
-    restart: on-failure
-
-  nginx:
-    build:
-      context: ./PONG/frontend/nginx
-      dockerfile: Dockerfile
-    ports:
-      - "8001:8000"
-    depends_on:
-      - frontend
-    networks:
-      - front
     restart: on-failure
 
   frontend_db:
@@ -126,7 +116,7 @@ services:
       context: ./PONG/DevOps/Prometheus
       dockerfile: Dockerfile
     volumes:
-      - prometheus-storage:/etc/prometheus
+      - ./PONG/DevOps/Prometheus:/etc/prometheus
     ports:
      - "9090:9090"
     networks:
