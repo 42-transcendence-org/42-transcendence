@@ -31,9 +31,9 @@ scrape_configs:
     # scheme defaults to 'http'.
     metrics_path: '/prometheus/metrics'
     static_configs:
-    - targets: ['10.14.9.5:8001']
+    - targets: ['${HOST_IP}:8001']
 
   - job_name: 'auth'
     metrics_path: '/prometheus/metrics'
     static_configs:
-    - targets: ['10.14.9.5:8002']
+    - targets: ['${HOST_IP}:8002']
