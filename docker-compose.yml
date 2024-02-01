@@ -136,14 +136,33 @@ services:
       dockerfile: Dockerfile
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./PONG/DevOps/Grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./PONG/DevOps/Grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./PONG/DevOps/Grafana/dashboards:/var/lib/grafana/dashboards
     environment:
+      - HOST_IP=${HOST_IP}
       - GF_SECURITY_ADMIN_PASSWORD=yourpassword
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/config.json
     ports:
       - "3000:3000"
     networks:
     - front
     - auth
     restart: on-failure
+
+  node_exporter:
+    image: prom/node-exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - "/proc:/host/proc:ro"
+      - "/sys:/host/sys:ro"
+      - "/:/rootfs:ro"
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points'
+      - '^/(sys|proc|dev|host|etc)($$|/)'
 
 volumes:
   front_db:

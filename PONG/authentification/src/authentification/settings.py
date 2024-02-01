@@ -99,7 +99,7 @@ WSGI_APPLICATION = 'authentification.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django_prometheus.db.backends.postgresql',
         'NAME': 'authentification_db',
         'USER': 'postgres',
         'PASSWORD': 'yourpassword',
