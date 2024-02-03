@@ -1,38 +1,57 @@
 import math
 import random
 
+
 class Vector:
-    def __init__(self, x, y):
+    def __init__(self, x: float, y: float):
         self.x = x
         self.y = y
 
 
 class Rectangle:
-    def __init__(self, px, py, sx, sy, vx, vy):
+    def __init__(
+        self, px: float, py: float, sx: float, sy: float, vx: float, vy: float
+    ):
         self.size = Vector(sx, sy)
         self.position = Vector(px, py)
         self.velocity = Vector(vx, vy)
 
 
 class Collision:
-    def __init__(self, t, x, y, nx, ny):
+    def __init__(self, t: float, x: float, y: float, nx: float, ny: float):
         self.time = t
         self.point = Vector(x, y)
         self.normal = Vector(nx, ny)
 
 
 class Particle:
-    def __init__(self, px, py, sx, sy, vx, vy, t):
+    def __init__(
+        self, px: float, py: float, sx: float, sy: float, vx: float, vy: float, t: float
+    ):
         self.r = Rectangle(px, py, sx, sy, vx, vy)
         self.life = t
 
-def aabb_discrete_detection(r1, r2):
-	return r1.position.x < r2.position.x + r2.size.x and r1.position.x + r1.size.x > r2.position.x and r1.position.y < r2.position.y + r2.size.y and r1.position.y + r2.size.y > r2.position.y
+
+def aabb_discrete_detection(r1: Rectangle, r2: Rectangle) -> bool:
+    return (
+        r1.position.x < r2.position.x + r2.size.x
+        and r1.position.x + r1.size.x > r2.position.x
+        and r1.position.y < r2.position.y + r2.size.y
+        and r1.position.y + r2.size.y > r2.position.y
+    )
 
 
-def ray_rectangle_collision(origin, direction, target):
-    t_near = Vector((target.position.x - origin.x) / direction.x, (target.position.y - origin.y) / direction.y)
-    t_far = Vector((target.position.x + target.size.x - origin.x) / direction.x, (target.position.y + target.size.y - origin.y) / direction.y)
+def ray_rectangle_collision(
+    origin: Vector, direction: Vector, target: Rectangle
+) -> Collision:
+    t_near = Vector(
+        (target.position.x - origin.x) / direction.x,
+        (target.position.y - origin.y) / direction.y,
+    )
+    t_far = Vector(
+        (target.position.x + target.size.x - origin.x) / direction.x,
+        (target.position.y + target.size.y - origin.y) / direction.y,
+    )
 
     if t_near.x > t_far.x:
         t_near.x, t_far.x = t_far.x, t_near.x
@@ -54,15 +73,15 @@ def ray_rectangle_collision(origin, direction, target):
     collision.point.x = origin.x + t_hit_near * direction.x
     collision.point.y = origin.y + t_hit_near * direction.y
 
-    if (t_near.x > t_near.y):
-        if (direction.x < 0):
+    if t_near.x > t_near.y:
+        if direction.x < 0:
             collision.normal.x = 1
             collision.normal.y = 0
         else:
             collision.normal.x = -1
             collision.normal.y = 0
     elif t_near.x < t_near.y:
-        if (direction.y < 0):
+        if direction.y < 0:
             collision.normal.x = 0
             collision.normal.y = 1
         else:
@@ -72,32 +91,35 @@ def ray_rectangle_collision(origin, direction, target):
     return collision
 
 
-def aabb_continuous_resolve(r1, collision)
-     return Vector(
-    r1.velocity.x + collision.normal.x * abs(r1.velocity.x) * (1 - collision.time),
-    r1.velocity.y + collision.normal.y * abs(r1.velocity.y) * (1 - collision.time)
-)
+def aabb_continuous_resolve(r1: Rectangle, collision: Collision) -> Vector:
+    return Vector(
+        r1.velocity.x + collision.normal.x * abs(r1.velocity.x) * (1 - collision.time),
+        r1.velocity.y + collision.normal.y * abs(r1.velocity.y) * (1 - collision.time),
+    )
 
-def aabb_continuous_detection(r1, r2, dt):
-    if (r1.velocity.x == 0 and r1.velocity.y == 0):
+
+def aabb_continuous_detection(r1: Rectangle, r2: Rectangle, dt: float) -> Collision:
+    if r1.velocity.x == 0 and r1.velocity.y == 0:
         return Collision(-1, 0, 0, 0, 0)
 
     r2_expanded = Rectangle(
-		r2.position.x - r1.size.x / 2,
-		r2.position.y - r1.size.y / 2,
-		r2.size.x + r1.size.x,
-		r2.size.y + r1.size.y,
-		0, 0
-	)
+        r2.position.x - r1.size.x / 2,
+        r2.position.y - r1.size.y / 2,
+        r2.size.x + r1.size.x,
+        r2.size.y + r1.size.y,
+        0,
+        0,
+    )
     collision = ray_rectangle_collision(
-		Vector(r1.position.x + r1.size.x / 2, r1.position.y + r1.size.y / 2),
-		Vector(r1.velocity.x * dt, r1.velocity.y * dt),
-		r2_expanded
-	)
+        Vector(r1.position.x + r1.size.x / 2, r1.position.y + r1.size.y / 2),
+        Vector(r1.velocity.x * dt, r1.velocity.y * dt),
+        r2_expanded,
+    )
 
     return collision
 
-def get_vector_in_range(normal, max_angle):
+
+def get_vector_in_range(normal: Vector, max_angle: float) -> Vector:
     # Convert the normal vector to an angle
     normal_angle = math.atan2(normal.y, normal.x)
     # Generate a random angle within the specified range
@@ -105,20 +127,24 @@ def get_vector_in_range(normal, max_angle):
     # Create a velocity vector from the random angle
     return Vector(math.cos(random_angle), math.sin(random_angle))
 
-def particles_create(array, source, n):
+
+def particles_create(array: list, source: Rectangle, n: int) -> None:
     array.clear()
     for _ in range(n):
-        array.append(Particle(
-            source.position.x + source.size.x / 2,
-            source.position.y + source.size.y / 2,
-            4,
-            4,
-            (random.random() - 0.5) * 0.1,
-            (random.random() - 0.5) * 0.1,
-            1000
-        ))
+        array.append(
+            Particle(
+                source.position.x + source.size.x / 2,
+                source.position.y + source.size.y / 2,
+                4,
+                4,
+                (random.random() - 0.5) * 0.1,
+                (random.random() - 0.5) * 0.1,
+                1000,
+            )
+        )
 
-def particles_update(array, dt):
+
+def particles_update(array: list, dt: float) -> None:
     i = 0
     while i < len(array):
         p = array[i]

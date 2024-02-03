@@ -1,24 +1,18 @@
 import sys
 import time
-import queue
 import threading
+
+from physics import Rectangle
 
 from uuid import UUID
 from typing import Dict, Union, Tuple
 
-BOARD_WIDTH = 600
-BOARD_HEIGHT = 800
-PADDLE_WIDTH = 64
-PADDLE_HEIGHT = 16
-PADDLE_DX = 1000
-BALL_SIDE = 16
-BALL_DX = 0
-BALL_DY = 100
-MARGIN = 16
-
 keep_updating = True
 active_games: Dict[UUID, dict] = {}
 games_update_all_lock = threading.Lock()
+
+
+
 
 
 def game_create(id: UUID, type: str, status: str, name1: str, name2: str) -> dict:
@@ -26,134 +20,23 @@ def game_create(id: UUID, type: str, status: str, name1: str, name2: str) -> dic
         "id": id,
         "type": type,
         "status": status,
-        "ball": {
-            "x": (BOARD_WIDTH - BALL_SIDE) / 2,
-            "y": (BOARD_HEIGHT - BALL_SIDE) / 2,
-            "dx": BALL_DX,
-            "dy": BALL_DY,
-        },
-        "player1": {
-            "name": name1,
-            "x": (BOARD_WIDTH - PADDLE_WIDTH) / 2,
-            "y": BOARD_HEIGHT - (PADDLE_HEIGHT + MARGIN),
-            "score": 0,
-        },
-        "player2": {
-            "name": name2,
-            "x": (BOARD_WIDTH - PADDLE_WIDTH) / 2,
-            "y": MARGIN,
-            "score": 0,
-        },
-        "inputs": queue.Queue(),  # Thread-safe queue of tuples representing inputs i.e ("1", "right"), ("2", "left"), ("1", "pause")
+        "inputs": [0, 0],
+        "ball": physics.Rectangle(0, 0, 16, 16, 0, 0),
+        "player1": physics.Rectangle(0, 0, 64, 16, 0, 0),
+        "player2": physics.Rectangle(0, 0, 64, 16, 0, 0),
+        "player1_score": 0,
+        "player2_score": 0,
+        "player1_name": name1,
+        "player2_name": name2,
+        "who_scored": 0,
     }
-
-
-def game_update(game_state: dict, dt: float) -> bool:
-    s = game_state
-    # Process inputs and move the paddles accordingly
-    while not s["inputs"].empty():
-        i = s["inputs"].get()
-        if i[0] == "1":
-            p = s["player1"]
-        else:
-            p = s["player2"]
-
-        if i[1] == "left" and (p["x"] - PADDLE_DX * dt > 16):
-            p["x"] -= PADDLE_DX * dt
-        elif i[1] == "right" and (
-            p["x"] + PADDLE_WIDTH + PADDLE_DX * dt < BOARD_WIDTH - 16
-        ):
-            p["x"] += PADDLE_DX * dt
-
-    # Move the ball and check for collisions with walls
-    b = s["ball"]
-    b["x"] += b["dx"] * dt
-    b["y"] += b["dy"] * dt
-
-    who_scored = 0
-    score1 = s["player1"]["score"]
-    score2 = s["player2"]["score"]
-
-
-    if b["x"] <= 0:
-        b["x"] = 0
-        b["dx"] *= -1
-    # Right wall
-    elif b["x"] + BALL_SIDE >= BOARD_WIDTH:
-        b["x"] = BOARD_WIDTH - BALL_SIDE
-        b["dx"] *= -1
-    # Top wall
-    elif b["y"] <= 0:
-        score1 += 1
-        who_scored = 1
-    # Bottom wall
-    elif b["y"] + BALL_SIDE >= BOARD_HEIGHT:
-        score2 += 1
-        who_scored = 2
-
-    # A player won, end the game
-    if score1 == 10 or score2 == 10:
-        game_state["status"] = "ended"
-        return
-    # A player scored, reset the ball position
-    elif who_scored != 0:
-        b["x"] = (BOARD_WIDTH - BALL_SIDE) / 2
-        b["y"] = (BOARD_HEIGHT - BALL_SIDE) / 2
-        b["dx"] = BALL_DX
-        if who_scored == 1:
-            b["dy"] = BALL_DY
-        else:
-            b["dy"] = -BALL_DY
-
-    # Check for collisions between the ball and the paddles
-    p1 = s["player1"]
-    p2 = s["player2"]
-    if (
-        b["y"] + BALL_SIDE >= p1["y"]
-        and b["x"] + BALL_SIDE >= p1["x"]
-        and b["x"] <= p1["x"] + PADDLE_WIDTH
-    ) or (
-        b["y"] <= p2["y"] + PADDLE_HEIGHT
-        and b["x"] + BALL_SIDE >= p2["x"]
-        and b["x"] <= p2["x"] + PADDLE_WIDTH
-    ):
-        b["dy"] *= -1
-
-
-def game_ai_move(game_state: dict):
-    pass
 
 
 # TODO Double check the logic
 # TODO Save the game state to the database if someone scored
 # TODO Remove ended games
 def game_update_all():
-    accumulator = 0.0
-    update_interval = 1.0 / 60
-    last_update_time = time.time()
-
-    while True:
-        with games_update_all_lock:
-            if not keep_updating:
-                break
-        current_time = time.time()
-        frame_time = current_time - last_update_time
-        last_update_time = current_time
-        accumulator += frame_time
-
-        while accumulator >= update_interval:
-            with games_update_all_lock:
-                for _, game_state in active_games.items():
-                    if game_state["type"] == "ai":
-                        game_ai_move(game_state)
-                    if game_state["status"] != "waiting":
-                        game_update(game_state, update_interval)
-            accumulator -= update_interval
-
-        # Calculate time to sleep to avoid spinning
-        time_to_sleep = update_interval - (time.time() - current_time)
-        if time_to_sleep > 0:
-            time.sleep(time_to_sleep)
+    pass
 
 
 game_update_all_thread = threading.Thread(target=game_update_all)
