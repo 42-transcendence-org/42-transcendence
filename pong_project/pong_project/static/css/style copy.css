@@ -1,0 +1,44 @@
+@font-face {
+	font-family: 'Code Page 437';
+	src: url('../assets/code-page-437.ttf') format('truetype');
+}
+
+body {
+	font-family: 'Code Page 437';
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	background-color: #2B2A4C;
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+h1 {
+	color: #EEE2DE;
+	margin: 20px 0;
+	text-shadow: 5px 5px 0px #252442;
+}
+
+#game-canvas-div {
+	display: none;
+}
+
+#auth-form-div {
+	display: block;
+}
+
+#game-menu-div {
+	display: none;
+}
+
+button {
+	margin: 10px;
+}

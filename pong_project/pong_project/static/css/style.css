@@ -4,24 +4,73 @@
 }
 
 body {
-	font-family: 'Code Page 437', Arial, sans-serif;
-	font-size: 32px;
+	font-family: 'Code Page 437', sans-serif;
+	/* Fallback to sans-serif in case custom font fails */
 	margin: 0;
+	padding: 0;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: #ffffff;
-	background-color: #000000;
+	height: 100vh;
+	background-color: #2B2A4C;
 }
 
 main {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	align-items: center;
+	width: 100%;
+	/* Adjust based on preference */
+	max-width: 650px;
+	/* Limiting max width for larger screens */
 }
 
-#game-canvas {
-	border: 1px solid #fff;
+#auth-fields {
+	width: 100%;
+	/* Or any specific size */
+	padding: 10px;
+	/* Adjust padding */
+	margin: 10px 0;
+	/* Space between inputs */
+	border: 5px;
+	/* Hides the border */
+	background-color: transparent;
+	/* Matches the body background */
+	color: #EEE2DE;
+	/* Text color */
+	font-family: 'Code Page 437', sans-serif;
+	font-size: 16px;
+	/* Adjust font size */
+	text-align: center;
+	/* Centers the placeholder/typed text */
+}
+
+button {
+	width: 20%;
+	/* Adjust based on content */
+	padding: 10px 20px;
+	/* Button padding */
+	margin: 20px;
+	/* Space around buttons */
+	font-family: 'Code Page 437', sans-serif;
+	font-size: 16px;
+	/* Adjust font size */
+	cursor: pointer;
+	/* Changes cursor to pointer on hover */
+	border: none;
+	/* Optional: Hides the border */
+	background-color: #646FD4;
+	/* Button background color */
+	color: #EEE2DE;
+	/* Button text color */
+}
+
+h1 {
+	text-align: center;
+	color: #EEE2DE;
+	margin: 20px 0;
+	text-shadow: 5px 5px 0px #252442;
 }
 
 #game-canvas-div {
@@ -29,13 +78,11 @@ main {
 }
 
 #auth-form-div {
-	display: block;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 #game-menu-div {
 	display: none;
-}
-
-button {
-	margin: 10px;
 }
