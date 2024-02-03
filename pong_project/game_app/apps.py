@@ -7,7 +7,6 @@ from game.GameManager import GameManager
 
 manager = None
 
-
 def sigint_handler(signal, frame):
     global manager
 
