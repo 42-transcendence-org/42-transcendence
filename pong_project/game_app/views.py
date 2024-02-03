@@ -8,31 +8,6 @@ from django.http import JsonResponse, StreamingHttpResponse
 
 GAME_TYPES = ["local", "remote", "ai"]
 
-
-class CreateGameSerializer(serializers.Serializer):
-    type = serializers.ChoiceField(choices=GAME_TYPES)
-
-    def validate_type(self, value):
-        if value not in dict(GAME_TYPES).keys():
-            raise serializers.ValidationError("Invalid game type.")
-        return value
-
-
-class UpdateGameStateSerializer(serializers.Serializer):
-    id = serializers.ChoiceField(choices=PLAYER_ID)
-    action = serializers.ChoiceField(choices=GAME_ACTIONS)
-
-    def validate_id(self, value):
-        if value not in PLAYER_ID:
-            raise serializers.ValidationError("Invalid player ID.")
-        return value
-
-    def validate_action(self, value):
-        if value not in GAME_ACTIONS:
-            raise serializers.ValidationError("Invalid action.")
-        return value
-
-
 def game_add_alias(request):
     if request.method != "POST":
         response = JsonResponse(
