@@ -1,8 +1,19 @@
+import sys
 import signal
 
 from django.apps import AppConfig
 
-from .game import game_update_all_shutdown, game_update_all_thread
+from game.GameManager import GameManager
+
+manager = None
+
+
+def sigint_handler(signal, frame):
+    global manager
+
+    if manager is not None:
+        manager.thread_stop()
+    sys.exit(0)
 
 
 class PongGameConfig(AppConfig):
@@ -10,5 +21,9 @@ class PongGameConfig(AppConfig):
     name = "game_app"
 
     def ready(self):
-        game_update_all_thread.start()
-        signal.signal(signal.SIGINT, game_update_all_shutdown)
+        global manager
+
+        if manager is None:
+            manager = GameManager()
+        manager.thread_start()
+        signal.signal(signal.SIGINT, sigint_handler)

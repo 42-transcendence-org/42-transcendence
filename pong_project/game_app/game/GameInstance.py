@@ -2,12 +2,13 @@ import time
 import threading
 
 from uuid import UUID
+from typing import Dict
 
 from GameState import GameState
 
 dt = 1.0 / 60.0
 
-
+# FIXME Do we need state_lock ?
 class GameInstance:
     def __init__(self, id: UUID, type: str, name1: str, name2: str):
         self.id = id
@@ -33,38 +34,37 @@ class GameInstance:
             self.accumulator -= dt
             self.t += dt
 
-
-
-def game_get_state(game_id: UUID):
-    with games_update_all_lock:
-        if game_id in active_games:
-            return active_games.get(game_id)
-
-
-def game_get_state_json(game_id: UUID):
-    with games_update_all_lock:
-        if game_id in active_games:
-            s = active_games.get(game_id)
-            return {
-                "id": str(s["id"]),
-                "type": s["type"],
-                "status": s["status"],
-                "ball": {
-                    "x": s["ball"]["x"],
-                    "y": s["ball"]["y"],
-                    "dx": s["ball"]["dx"],
-                    "dy": s["ball"]["dy"],
-                },
-                "player1": {
-                    "name": s["player1"]["name"],
-                    "x": s["player1"]["x"],
-                    "y": s["player1"]["y"],
-                    "score": s["player1"]["score"],
-                },
-                "player2": {
-                    "name": s["player2"]["name"],
-                    "x": s["player2"]["x"],
-                    "y": s["player2"]["y"],
-                    "score": s["player2"]["score"],
-                },
-            }
+    def get_state(self) -> Dict:
+        return {
+            "id": str(self.id),
+            "type": self.type,
+            "status": self.state.status,
+            "ball": {
+                "x": self.state.ball.position.x,
+                "y": self.state.ball.position.y,
+                "w": self.state.ball.size.x,
+                "h": self.state.ball.size.y,
+                "vx": self.state.ball.velocity.x,
+                "vy": self.state.ball.velocity.y,
+            },
+            "player1": {
+                "name": self.player1_name,
+                "score": self.state.player1_score,
+                "x": self.state.player1.position.x,
+                "y": self.state.player1.position.y,
+                "w": self.state.player1.size.x,
+                "h": self.state.player1.size.y,
+                "vx": self.state.player1.velocity.x,
+                "vy": self.state.player1.velocity.y,
+            },
+            "player2": {
+                "name": self.player2_name,
+                "score": self.state.player2_score,
+                "x": self.state.player2.position.x,
+                "y": self.state.player2.position.y,
+                "w": self.state.player2.size.x,
+                "h": self.state.player2.size.y,
+                "vx": self.state.player2.velocity.x,
+                "vy": self.state.player2.velocity.y,
+            },
+        }

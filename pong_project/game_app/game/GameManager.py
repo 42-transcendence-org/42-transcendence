@@ -1,87 +1,68 @@
-
-
-import sys
 import threading
 
+from uuid import UUID
+from typing import Dict, Tuple, Union
 from GameInstance import GameInstance
-
-game_update_all_thread = threading.Thread(target=game_update_all)
 
 
 class GameManager:
     def __init__(self):
+        self.lock = threading.Lock()
         self.quit = False
-        self.instances = []
+        self.thread = threading.Thread(target=self.update_all())
+        self.instances: Dict[UUID, GameInstance] = {}
 
-def game_update_all():
-    for i in instances:
-        loop(i)
-    def game_update_all_shutdown(signal, frame):
-    global keep_updating
-    with games_update_all_lock:
-        keep_updating = False
-    game_update_all_thread.join()
-    sys.exit(0)
+    def thread_start(self):
+        self.thread.start()
 
+    def thread_stop(self):
+        with self.lock:
+            self.quit = True
+        self.thread.join()
 
-    def game_add(game_id: UUID, game_data: dict):
-        with games_update_all_lock:
-            active_games[game_id] = game_data
+    def update_all(self):
+        while self.quit == False:
+            with self.lock:
+                for _, i in self.instances.items():
+                    i.update_state()
 
+    def game_add(self, game_id: UUID, type: str, name1: str, name2: str):
+        with self.lock:
+            self.instances[game_id] = GameInstance(game_id, type, name1, name2)
 
-    def game_remove(game_id: UUID):
-        with games_update_all_lock:
-            if game_id in active_games:
-                del active_games[game_id]
+    def game_remove(self, game_id: UUID):
+        with self.lock:
+            if game_id in self.instances:
+                del self.instances[game_id]
 
+    # FIXME Don't access the state directly
+    def game_add_input(self, game_id: UUID, input: Tuple[int, int]):
+        with self.lock:
+            if game_id in self.instances:
+                self.instances[game_id].state.input_handler(input)
 
+    def game_check_for_session(self, username: str) -> Union[UUID, None]:
+        """
+        Check if the player identified by 'username' already has an active game
+        session. Returns the id of the game is he has, else returns None.
+        """
+        with self.lock:
+            for id, i in self.instances.items():
+                if i.player1_name == username or i.player2_name == username:
+                    return id
+        return None
 
-
-
-
-
-
-
-
-def game_add_input(game_id: UUID, player_input: Tuple[str, str]) -> bool:
-    with games_update_all_lock:
-        if game_id in active_games:
-            active_games[game_id]["inputs"].put(player_input)
-            return True
-    return False
-
-
-def game_check_for_session(username: str) -> Union[UUID, None]:
-    """
-    Check if the player identified by 'username' already has an active game
-    session. Returns the id of the game is he has, else returns None.
-    """
-    with games_update_all_lock:
-        for _, game_state in active_games.items():
-            if (
-                game_state["player1"]["name"] == username
-                or game_state["player2"]["name"] == username
-            ):
-                return game_state["id"]
-    return None
-
-
-def game_check_for_waiting(username: str) -> Union[UUID, None]:
-    """
-    If an open game sessions is found, it is updated to include the change
-    the status to 'active' and to add the username of the second player and
-    its UUID is returned.
-    If no open game sessions is found, None is
-    returned.
-    """
-    with games_update_all_lock:
-        for id, s in active_games.items():
-            if (
-                s["status"] == "waiting"
-                and s["type"] == "remote"
-                and s["player2"]["name"] == ""
-            ):
-                s["player2"]["name"] = username
-                s["status"] = "active"
-                return id
-    return None
+    def game_check_for_waiting(self, username: str) -> Union[UUID, None]:
+        """
+        If an open game sessions is found, it is updated to include the change
+        the status to 'active' and to add the username of the second player and
+        its UUID is returned.
+        If no open game sessions is found, None is
+        returned.
+        """
+        with self.lock:
+            for id, i in self.instances.items():
+                if i.type == "remote" and i.player2_name == "":
+                    i.player2_name = username
+                    return id
+        return None

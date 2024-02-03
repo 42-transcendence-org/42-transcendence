@@ -2,6 +2,8 @@ import math
 
 from . import physics
 
+from typing import Tuple
+
 CANVAS_WIDTH = 480
 CANVAS_HEIGHT = 650
 
@@ -39,6 +41,9 @@ class GameState:
         self.player1_score = 0
         self.player2_score = 0
         self.who_scored = 0
+
+    def input_handler(self, input: Tuple[int, int]):
+        self.inputs[input[0]] = input[1]
 
     def reset_ball(self, direction: physics.Vector) -> None:
         self.ball.position.x = (CANVAS_WIDTH - self.ball.size.x) / 2
