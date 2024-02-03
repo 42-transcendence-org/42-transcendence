@@ -66,3 +66,6 @@ class GameManager:
                     i.player2_name = username
                     return id
         return None
+
+
+g_manager = GameManager()

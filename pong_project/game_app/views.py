@@ -2,53 +2,107 @@ import uuid
 import time
 import json
 
-from django.http import StreamingHttpResponse
+from game.GameManager import g_manager
 
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from django.http import JsonResponse, StreamingHttpResponse
 
-from . import game as g
-from . import serializers
-from .throttles import BurstRateThrottle
+GAME_TYPES = ["local", "remote", "ai"]
 
 
-# TODO The game state received by player1 needs to be updated when a second player joins
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def game_create_view(request: Request) -> Response:
-    serializer = serializers.CreateGameSerializer(data=request.data)
-    if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class CreateGameSerializer(serializers.Serializer):
+    type = serializers.ChoiceField(choices=GAME_TYPES)
 
-    user = request.user
+    def validate_type(self, value):
+        if value not in dict(GAME_TYPES).keys():
+            raise serializers.ValidationError("Invalid game type.")
+        return value
+
+
+class UpdateGameStateSerializer(serializers.Serializer):
+    id = serializers.ChoiceField(choices=PLAYER_ID)
+    action = serializers.ChoiceField(choices=GAME_ACTIONS)
+
+    def validate_id(self, value):
+        if value not in PLAYER_ID:
+            raise serializers.ValidationError("Invalid player ID.")
+        return value
+
+    def validate_action(self, value):
+        if value not in GAME_ACTIONS:
+            raise serializers.ValidationError("Invalid action.")
+        return value
+
+
+def game_add_alias(request):
+    if request.method != "POST":
+        response = JsonResponse(
+            {"error": "Invalid HTTP method: POST required"}, status=405
+        )
+        response["Allow"] = "POST"
+        return response
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    alias = data.get("alias")
+    if not alias:
+        return JsonResponse({"error": "'alias' is a required field"}, status=400)
+
+    # TODO Check for uniqueness and validity of alias if necessary
+
+    request.session["alias"] = alias
+    return JsonResponse({"message": "Alias set successfully"}, status=200)
+
+
+def game_create_view(request):
+    # Check the HTTP method
+    if request.method != "POST":
+        response = JsonResponse(
+            {"error": "Invalid HTTP method: POST required"}, status=405
+        )
+        response["Allow"] = "POST"
+        return response
+
+    # Serialize the request's body to a dict
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    # Validate the data
+    game_type = data.get("type")
+    if game_type is None:
+        return JsonResponse({"error": "'type' is a required field"}, status=400)
+    if game_type not in GAME_TYPES:
+        return JsonResponse({"error": "Invalid value for field 'type'"}, status=400)
+
+    # Verify that the client has an alias
+    alias = request.session.get("alias")
+    if alias is None:
+        return JsonResponse(
+            {"error": "Please pick an alias before creating a game"}, status=400
+        )
+
+    global g_manager
 
     # Check for an active game session for this user
-    has_session = g.game_check_for_session(user.username)
+    has_session = g_manager.game_check_for_session(alias)
     if has_session:
-        return Response(g.game_get_state_json(has_session), status=status.HTTP_200_OK)
+        return JsonResponse(
+            {"error": "You already have an active game session"}, status=403
+        )
 
     # Check if we have a game session waiting for a second player
-    waiting_game = g.game_check_for_waiting(user.username)
+    waiting_game = g_manager.game_check_for_waiting(alias)
     if waiting_game:
-        return Response(g.game_get_state_json(waiting_game), status=status.HTTP_200_OK)
+        return JsonResponse({"id": waiting_game}, status=200)
 
     # Create a new game
     game_id = uuid.uuid4()
-    game_type = serializer.validated_data.get("type")
-    g.game_add(
-        game_id,
-        g.game_create(
-            game_id,
-            game_type,
-            "active" if game_type != "remote" else "waiting",
-            user.username,
-            "",
-        ),
-    )
-    return Response(g.game_get_state_json(game_id), status=status.HTTP_201_CREATED)
+    g_manager.game_add(game_id, game_type, alias, "")
+    return JsonResponse({"id": game_id}, status=201)
 
 
 # TODO Add security like checking that the player is part of the game
