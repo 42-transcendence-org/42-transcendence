@@ -124,7 +124,7 @@ class GameState:
             else:
                 player.position.x += player.velocity.x * dt
 
-    def update_state(self, dt: float) -> None:
+    def update(self, dt: float) -> None:
 
         if self.status == STATUS_WAITING:
             return
