@@ -2,36 +2,13 @@ import uuid
 import time
 import json
 
-from game.GameManager import g_manager
+from .game.GameManager import g_manager
 
 from django.http import JsonResponse, StreamingHttpResponse
 
 PLAYER_ID = [1, 2]
 GAME_INPUTS = [-1, 0, 1]
 GAME_TYPES = ["local", "remote", "ai"]
-
-
-def game_add_alias(request):
-    if request.method != "POST":
-        response = JsonResponse(
-            {"error": "Invalid HTTP method: POST required"}, status=405
-        )
-        response["Allow"] = "POST"
-        return response
-
-    try:
-        data = json.loads(request.body)
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
-
-    alias = data.get("alias")
-    if not alias:
-        return JsonResponse({"error": "'alias' is a required field"}, status=400)
-
-    # TODO Check for uniqueness and validity of alias if necessary
-
-    request.session["alias"] = alias
-    return JsonResponse({"message": "Alias set successfully"}, status=200)
 
 
 def game_create_view(request):
@@ -59,9 +36,7 @@ def game_create_view(request):
     # Verify that the client has an alias
     alias = request.session.get("alias")
     if alias is None:
-        return JsonResponse(
-            {"error": "Please pick an alias before creating a game"}, status=400
-        )
+        return JsonResponse({"error": "Please pick an alias first"}, status=400)
 
     global g_manager
 
@@ -101,9 +76,7 @@ def game_update_state_view(request, game_id: uuid.UUID) -> JsonResponse:
     # Verify that the client has an alias
     alias = request.session.get("alias")
     if alias is None:
-        return JsonResponse(
-            {"error": "Please pick an alias before creating a game"}, status=400
-        )
+        return JsonResponse({"error": "Please pick an alias first"}, status=400)
 
     # Validate the data
     player_id = data.get("id")
@@ -148,9 +121,7 @@ def game_get_state_view(request, game_id: uuid.UUID):
     # Verify that the client has an alias
     alias = request.session.get("alias")
     if alias is None:
-        return JsonResponse(
-            {"error": "Please pick an alias before creating a game"}, status=400
-        )
+        return JsonResponse({"error": "Please pick an alias first"}, status=400)
 
     global g_manager
 

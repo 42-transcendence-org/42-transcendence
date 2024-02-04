@@ -2,14 +2,14 @@ import threading
 
 from uuid import UUID
 from typing import Dict, Tuple, Union
-from GameInstance import GameInstance
+from .GameInstance import GameInstance
 
 
 class GameManager:
     def __init__(self):
         self.lock = threading.Lock()
         self.quit = False
-        self.thread = threading.Thread(target=self.update_all())
+        self.thread = threading.Thread(target=self.update_all)
         self.instances: Dict[UUID, GameInstance] = {}
 
     def thread_start(self):

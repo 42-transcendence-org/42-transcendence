@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,7 +32,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "game_app.apps.PongGameConfig",
-    "rest_framework",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -122,12 +122,3 @@ STATICFILES_DIRS = [BASE_DIR / "pong_project/static"]
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-REST_FRAMEWORK = {
-    "DEFAULT_THROTTLE_CLASSES": [
-        "game_app.throttles.BurstRateThrottle",
-    ],
-    "DEFAULT_THROTTLE_RATES": {
-        "burst": "60/second",
-    },
-}

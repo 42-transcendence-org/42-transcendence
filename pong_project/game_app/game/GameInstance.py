@@ -4,7 +4,7 @@ import threading
 from uuid import UUID
 from typing import Dict
 
-from GameState import GameState
+from .GameState import GameState
 
 dt = 1.0 / 60.0
 

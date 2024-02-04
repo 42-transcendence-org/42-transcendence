@@ -3,7 +3,7 @@ import signal
 
 from django.apps import AppConfig
 
-from game.GameManager import g_manager
+from .game.GameManager import g_manager
 
 
 def sigint_handler(signal, frame):
