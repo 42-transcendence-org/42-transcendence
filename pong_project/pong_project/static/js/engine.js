@@ -42,8 +42,8 @@ function loop() {
  * browser's refresh rate). This function should not accept any parameters
  * and is dedicated to drawing operations.
  */
-export function start_loop(user_init, user_update, user_draw) {
-	user_init();
+export function start_loop(user_init, user_update, user_draw, data) {
+	user_init(data);
 	render = user_draw;
 	integrate = user_update;
 	current_time = performance.now();

@@ -6,7 +6,7 @@ from game_app.game.GameManager import g_manager
 
 from django.http import JsonResponse, StreamingHttpResponse
 
-PLAYER_ID = [1, 2]
+PLAYER_ID = [0, 1]
 GAME_INPUTS = [-1, 0, 1]
 GAME_TYPES = ["local", "remote", "ai"]
 
@@ -54,7 +54,12 @@ def game_create_view(request):
 
     # Create a new game
     game_id = uuid.uuid4()
-    g_manager.game_add(game_id, game_type, alias, "")
+    player2_name = ""
+    if game_type == "ai":
+        player2_name = "Computer"
+    elif game_type == "local":
+        player2_name = "Player 2"
+    g_manager.game_add(game_id, game_type, alias, player2_name)
     return JsonResponse({"id": game_id}, status=201)
 
 

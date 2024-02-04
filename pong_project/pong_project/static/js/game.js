@@ -8,6 +8,7 @@ let ctx = canvas.getContext("2d");
 export const LEFT = -1;
 export const RIGHT = 1;
 export const NEUTRAL = 0;
+export let g_inputs = [0, 0];
 
 const MARGIN = 16;
 const CORRIDOR = 2 * MARGIN + 8;
@@ -22,36 +23,33 @@ const POINTS_TO_WIN = 10;
 
 const MAX_ANGLE = Math.PI / 6;
 
-let g_inputs = [0, 0];
-
 let particles = [];
 
-let who_scored = 0;
+let s = null;
+export let g_id = null;
 
-let state = {
-	status: "waiting",
-	ball: new physics.Rectangle(0, 0, 16, 16, 0, 0),
-	player1: new physics.Rectangle(0, 0, 64, 16, 0, 0),
-	player2: new physics.Rectangle(0, 0, 64, 16, 0, 0),
-	player1_score: 0,
-	player2_score: 0,
-	player1_name: "Player 1",
-	player2_name: "Player 2",
-};
-
-export function user_init() {
+export function user_init(data) {
+	let state = {
+		status: data.status,
+		ball: new physics.Rectangle(data.ball.x, data.ball.y, data.ball.w, data.ball.h, data.ball.vx, data.ball.vy),
+		player1: new physics.Rectangle(data.player1.x, data.player1.y, data.player1.w, data.player1.h, data.player1.vx, data.player1.vy),
+		player2: new physics.Rectangle(data.player2.x, data.player2.y, data.player2.w, data.player2.h, data.player2.vx, data.player2.vy),
+		player1_score: data.player1.score,
+		player2_score: data.player2.score,
+		player1_name: data.player1.name,
+		player2_name: data.player2.name,
+		who_scored: 0
+	};
+	s = state;
 	graphics.load_font(ctx);
-
-
-	game_reset();
 }
 
 function game_reset() {
-	state.player1.position.x = state.player2.position.x = (canvas.width - state.player1.size.x) / 2;
-	state.player1.position.y = canvas.height - (3 * MARGIN);
-	state.player2.position.y = 2 * MARGIN;
-	state.player1_score = 0;
-	state.player2_score = 0;
+	s.player1.position.x = s.player2.position.x = (canvas.width - s.player1.size.x) / 2;
+	s.player1.position.y = canvas.height - (3 * MARGIN);
+	s.player2.position.y = 2 * MARGIN;
+	s.player1_score = 0;
+	s.player2_score = 0;
 
 	reset_ball(new physics.Vector(0, 1));
 }
@@ -113,77 +111,77 @@ function update_paddle_position(input_id, player, ball, dt) {
 }
 
 function reset_ball(direction) {
-	state.ball.position.x = (canvas.width - state.ball.size.x) / 2;
-	state.ball.position.y = (canvas.height - state.ball.size.y) / 2;
-	state.ball.velocity = physics.get_vector_in_range(direction, Math.PI / 6);
-	state.ball.velocity.x *= BALL_SPEED_MIN;
-	state.ball.velocity.y *= BALL_SPEED_MIN;
+	s.ball.position.x = (canvas.width - s.ball.size.x) / 2;
+	s.ball.position.y = (canvas.height - s.ball.size.y) / 2;
+	s.ball.velocity = physics.get_vector_in_range(direction, Math.PI / 6);
+	s.ball.velocity.x *= BALL_SPEED_MIN;
+	s.ball.velocity.y *= BALL_SPEED_MIN;
 }
 
 export function user_update(dt) {
-	if (state.status === "waiting") return;
+	if (s.status === "waiting") return;
 
-	update_paddle_velocity(0, state.player1);
-	update_paddle_velocity(1, state.player2);
-	update_paddle_position(0, state.player1, state.ball, dt);
-	update_paddle_position(1, state.player2, state.ball, dt);
+	update_paddle_velocity(0, s.player1);
+	update_paddle_velocity(1, s.player2);
+	update_paddle_position(0, s.player1, s.ball, dt);
+	update_paddle_position(1, s.player2, s.ball, dt);
 
 	if (particles.length > 0) {
 		physics.particles_update(particles, dt);
 		if (particles.length > 0)
 			return;
-		if (who_scored === 1) reset_ball(new physics.Vector(0, 1));
+		if (s.who_scored === 1) reset_ball(new physics.Vector(0, 1));
 		else reset_ball(new physics.Vector(0, -1));
 	}
 
 	/* This allows for the particle effect to finish updating when the game is over */
-	if (state.status === "ended1" || state.status === "ended2") return;
+	if (s.status === "ended1" || s.status === "ended2") return;
 
 	let player = null;
 	let collision = null;
 
-	let c1 = physics.aabb_continuous_detection(state.ball, state.player1, dt);
-	let c2 = physics.aabb_continuous_detection(state.ball, state.player2, dt);
-	if (c1.time > 0) { player = state.player1; collision = c1; }
-	else if (c2.time > 0) { player = state.player2; collision = c2; }
+	let c1 = physics.aabb_continuous_detection(s.ball, s.player1, dt);
+	let c2 = physics.aabb_continuous_detection(s.ball, s.player2, dt);
+	if (c1.time > 0) { player = s.player1; collision = c1; }
+	else if (c2.time > 0) { player = s.player2; collision = c2; }
 
 	/* Collision resolution */
 	if (collision != null && collision.time > 0 && collision.time <= 1.0) {
-		physics.aabb_continuous_resolve(state.ball, collision);
+		physics.aabb_continuous_resolve(s.ball, collision);
 		sound.play_hit_sound();
-		update_ball_velocity(state.ball, player, collision);
-		state.ball.position.x += state.ball.velocity.x * (1 - collision.time);
-		state.ball.position.y += state.ball.velocity.y * (1 - collision.time);
+		update_ball_velocity(s.ball, player, collision);
+		s.ball.position.x += s.ball.velocity.x * (1 - collision.time);
+		s.ball.position.y += s.ball.velocity.y * (1 - collision.time);
 	} else {
-		state.ball.position.x += state.ball.velocity.x * dt;
-		state.ball.position.y += state.ball.velocity.y * dt;
+		s.ball.position.x += s.ball.velocity.x * dt;
+		s.ball.position.y += s.ball.velocity.y * dt;
 	}
 
-	if (state.ball.position.x <= MARGIN) {
+	if (s.ball.position.x <= MARGIN) {
 		/* Left wall */
-		state.ball.position.x = MARGIN;
-		state.ball.velocity.x *= -1;
+		s.ball.position.x = MARGIN;
+		s.ball.velocity.x *= -1;
 		sound.play_hit_sound();
-	} else if (state.ball.position.x + state.ball.size.x >= canvas.width - MARGIN) {
+	} else if (s.ball.position.x + s.ball.size.x >= canvas.width - MARGIN) {
 		/* Right wall */
-		state.ball.position.x = canvas.width - state.ball.size.x - MARGIN;
-		state.ball.velocity.x *= -1;
+		s.ball.position.x = canvas.width - s.ball.size.x - MARGIN;
+		s.ball.velocity.x *= -1;
 		sound.play_hit_sound();
-	} else if (state.ball.position.y <= MARGIN) {
+	} else if (s.ball.position.y <= MARGIN) {
 		/* Top wall */
-		who_scored = 1;
-		state.player1_score += 1;
-		physics.particles_create(particles, state.ball, 16);
+		s.who_scored = 1;
+		s.player1_score += 1;
+		physics.particles_create(particles, s.ball, 16);
 		sound.play_explosion_sound();
-	} else if (state.ball.position.y + state.ball.size.y >= canvas.height - MARGIN) {
+	} else if (s.ball.position.y + s.ball.size.y >= canvas.height - MARGIN) {
 		/* Bottom wall */
-		who_scored = 2;
-		state.player2_score += 1;
-		physics.particles_create(particles, state.ball, 16);
+		s.who_scored = 2;
+		s.player2_score += 1;
+		physics.particles_create(particles, s.ball, 16);
 		sound.play_explosion_sound();
 	}
-	if (state.player1_score === POINTS_TO_WIN) { state.status = "ended1"; sound.play_victory_sound(); }
-	else if (state.player2_score === POINTS_TO_WIN) { state.status = "ended2"; sound.play_victory_sound(); }
+	if (s.player1_score === POINTS_TO_WIN) { s.status = "ended1"; sound.play_victory_sound(); }
+	else if (s.player2_score === POINTS_TO_WIN) { s.status = "ended2"; sound.play_victory_sound(); }
 }
 
 const palette = {
@@ -221,38 +219,38 @@ export function user_draw() {
 
 	/* Draw scores shadows */
 	ctx.fillStyle = shadow
-	ctx.fillText(state.player1_score, canvas.width - double_fsize + shadow_offset_x, ((canvas.height / 2) + fsize) + shadow_offset_y);
-	ctx.fillText(state.player2_score, canvas.width - double_fsize + shadow_offset_x, ((canvas.height / 2) - (fsize / 3)) + shadow_offset_y);
+	ctx.fillText(s.player1_score, canvas.width - double_fsize + shadow_offset_x, ((canvas.height / 2) + fsize) + shadow_offset_y);
+	ctx.fillText(s.player2_score, canvas.width - double_fsize + shadow_offset_x, ((canvas.height / 2) - (fsize / 3)) + shadow_offset_y);
 
 	/* Draw scores */
 	ctx.fillStyle = palette.c4;
-	ctx.fillText(state.player1_score, canvas.width - double_fsize, (canvas.height / 2) + fsize);
-	ctx.fillText(state.player2_score, canvas.width - double_fsize, (canvas.height / 2) - (fsize / 3));
+	ctx.fillText(s.player1_score, canvas.width - double_fsize, (canvas.height / 2) + fsize);
+	ctx.fillText(s.player2_score, canvas.width - double_fsize, (canvas.height / 2) - (fsize / 3));
 
 	/* Draw the paddles and the ball shadows */
 	if (particles.length === 0) {
-		graphics.draw_rect_fill(ctx, state.ball.position.x + shadow_offset_x, state.ball.position.y + shadow_offset_y, state.ball.size.x, state.ball.size.y, shadow);
+		graphics.draw_rect_fill(ctx, s.ball.position.x + shadow_offset_x, s.ball.position.y + shadow_offset_y, s.ball.size.x, s.ball.size.y, shadow);
 	} else {
 		particles.forEach(p => {
 			graphics.draw_rect_fill(ctx, p.r.position.x + shadow_offset_x, p.r.position.y + shadow_offset_y, p.r.size.x, p.r.size.y, shadow);
 		});
 	}
-	graphics.draw_rect_fill(ctx, state.player1.position.x + shadow_offset_x, state.player1.position.y + shadow_offset_y, state.player1.size.x, state.player1.size.y, shadow);
-	graphics.draw_rect_fill(ctx, state.player2.position.x + shadow_offset_x, state.player2.position.y + shadow_offset_y, state.player2.size.x, state.player2.size.y, shadow);
+	graphics.draw_rect_fill(ctx, s.player1.position.x + shadow_offset_x, s.player1.position.y + shadow_offset_y, s.player1.size.x, s.player1.size.y, shadow);
+	graphics.draw_rect_fill(ctx, s.player2.position.x + shadow_offset_x, s.player2.position.y + shadow_offset_y, s.player2.size.x, s.player2.size.y, shadow);
 
 	/* Draw the paddles and the ball */
 	if (particles.length === 0) {
-		graphics.draw_rect_fill(ctx, state.ball.position.x, state.ball.position.y, state.ball.size.x, state.ball.size.y, palette.c3);
+		graphics.draw_rect_fill(ctx, s.ball.position.x, s.ball.position.y, s.ball.size.x, s.ball.size.y, palette.c3);
 	} else {
 		particles.forEach(p => {
 			graphics.draw_rect_fill(ctx, p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, palette.c3);
 		});
 	}
-	graphics.draw_rect_fill(ctx, state.player1.position.x, state.player1.position.y, state.player1.size.x, state.player1.size.y, palette.c3);
-	graphics.draw_rect_fill(ctx, state.player2.position.x, state.player2.position.y, state.player2.size.x, state.player2.size.y, palette.c3);
+	graphics.draw_rect_fill(ctx, s.player1.position.x, s.player1.position.y, s.player1.size.x, s.player1.size.y, palette.c3);
+	graphics.draw_rect_fill(ctx, s.player2.position.x, s.player2.position.y, s.player2.size.x, s.player2.size.y, palette.c3);
 
 
-	if (state.status === "waiting") {
+	if (s.status === "waiting") {
 		const text = "Press 'Space' to start";
 		const padding = 10;
 		const text_width = ctx.measureText(text).width;
@@ -278,9 +276,9 @@ export function user_draw() {
 		/* Draw text */
 		ctx.fillStyle = palette.c4;
 		ctx.fillText(text, text_x, text_y);
-	} else if (state.status === "ended1" || state.status === "ended2") {
+	} else if (s.status === "ended1" || s.status === "ended2") {
 		let text;
-		if (state.status === "ended1") text = "Player 1 won !";
+		if (s.status === "ended1") text = "Player 1 won !";
 		else text = "Player 2 won !";
 		let text_again = "Press 'Space' to play again"
 		let padding = 10;
@@ -291,7 +289,7 @@ export function user_draw() {
 		let box_x = (canvas.width - box_w) / 2;
 		let text_y, box_y;
 		let fourth = canvas.height / 4;
-		if (state.status === "ended1") {
+		if (s.status === "ended1") {
 			text_y = ((canvas.height + fsize / 2) / 2) + fourth;
 			box_y = ((canvas.height - box_h) / 2) + fourth;
 		} else {
