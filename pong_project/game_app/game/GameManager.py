@@ -46,12 +46,10 @@ class GameManager:
         with self.lock:
             if game_id in self.instances:
                 i = self.instances[game_id]
-                if player_id == 0 and (
-                    i.player1_name == name or i.player2_name == name
-                ):
+                if player_id == 0 and (i.name1 == name or i.name2 == name):
                     return True
-                if (i.player1_name == name and player_id == 1) or (
-                    i.player2_name == name and player_id == 2
+                if (i.name1 == name and player_id == 1) or (
+                    i.name2 == name and player_id == 2
                 ):
                     return True
         return False
@@ -75,7 +73,7 @@ class GameManager:
         """
         with self.lock:
             for id, i in self.instances.items():
-                if i.player1_name == username or i.player2_name == username:
+                if i.name1 == username or i.name2 == username:
                     return id
         return None
 
@@ -89,8 +87,8 @@ class GameManager:
         """
         with self.lock:
             for id, i in self.instances.items():
-                if i.type == "remote" and i.player2_name == "":
-                    i.player2_name = username
+                if i.type == "remote" and i.name2 == "":
+                    i.name2 = username
                     return id
         return None
 

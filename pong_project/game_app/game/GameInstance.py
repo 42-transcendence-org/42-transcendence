@@ -16,8 +16,8 @@ class GameInstance:
         self.t = 0.0
         self.accumulator = 0.0
         self.current_time = time.perf_counter()
-        self.player1_name = name1
-        self.player2_name = name2
+        self.name1 = name1
+        self.name2 = name2
         self.state = GameState()
         self.state_lock = threading.Lock()
 
@@ -48,8 +48,8 @@ class GameInstance:
                 "vy": self.state.ball.velocity.y,
             },
             "player1": {
-                "name": self.player1_name,
-                "score": self.state.player1_score,
+                "name": self.name1,
+                "score": self.state.score1,
                 "x": self.state.player1.position.x,
                 "y": self.state.player1.position.y,
                 "w": self.state.player1.size.x,
@@ -58,8 +58,8 @@ class GameInstance:
                 "vy": self.state.player1.velocity.y,
             },
             "player2": {
-                "name": self.player2_name,
-                "score": self.state.player2_score,
+                "name": self.name2,
+                "score": self.state.score2,
                 "x": self.state.player2.position.x,
                 "y": self.state.player2.position.y,
                 "w": self.state.player2.size.x,

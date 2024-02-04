@@ -83,8 +83,8 @@ export async function send_game_creation_request(game_type) {
 			throw new Error(data.error);
 		}
 
-		if (data && data.id) {
-			g_id = data.id;
+		if (data) {
+			/* TODO Create a new GameInstance */
 		} else {
 			console.error('Game creation failed');
 		}

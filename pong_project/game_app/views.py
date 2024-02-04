@@ -54,13 +54,15 @@ def game_create_view(request):
 
     # Create a new game
     game_id = uuid.uuid4()
-    player2_name = ""
+    name2 = ""
     if game_type == "ai":
-        player2_name = "Computer"
+        name2 = "Computer"
     elif game_type == "local":
-        player2_name = "Player 2"
-    g_manager.game_add(game_id, game_type, alias, player2_name)
-    return JsonResponse({"id": game_id}, status=201)
+        name2 = "Player 2"
+    g_manager.game_add(game_id, game_type, alias, name2)
+    return JsonResponse(
+        {"id": game_id, "type": game_type, "name1": alias, "name2": name2}, status=201
+    )
 
 
 def game_view(request, game_id: uuid.UUID):

@@ -18,10 +18,10 @@ document.addEventListener('keydown', (event) => {
 		g_inputs[1] = RIGHT;
 		requests.send_user_input(1, RIGHT);
 	} else if (key_name === ' ' && state.status === "waiting") {
-		state.status = "active";
+		state.status = STATUS_ACTIVE;
 		sound.play_music();
-	} else if (key_name === ' ' && (state.status === "ended1" || state.status === "ended2")) {
-		state.status = "active";
+	} else if (key_name === ' ' && (state.status === STATUS_ENDED_1 || state.status === STATUS_ENDED_2)) {
+		state.status = STATUS_ACTIVE;
 		game_reset();
 	}
 });

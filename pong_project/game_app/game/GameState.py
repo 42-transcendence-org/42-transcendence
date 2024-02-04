@@ -38,8 +38,8 @@ class GameState:
         self.ball = physics.Rectangle(0, 0, 16, 16, 0, 0)
         self.player1 = physics.Rectangle(0, 0, 64, 16, 0, 0)
         self.player2 = physics.Rectangle(0, 0, 64, 16, 0, 0)
-        self.player1_score = 0
-        self.player2_score = 0
+        self.score1 = 0
+        self.score2 = 0
         self.who_scored = 0
 
     def input_handler(self, input: Tuple[int, int]):
@@ -58,8 +58,8 @@ class GameState:
         ) / 2
         self.player1.position.y = CANVAS_HEIGHT - (3 * MARGIN)
         self.player2.position.y = 2 * MARGIN
-        self.player1_score = 0
-        self.player2_score = 0
+        self.score1 = 0
+        self.score2 = 0
         self.reset_ball(physics.Vector(0, 1))
 
     def update_paddle_velocity(self, inputs_id: int, paddle: physics.Rectangle) -> None:
@@ -186,15 +186,15 @@ class GameState:
         elif self.ball.position.y <= MARGIN:
             # Top wall
             self.who_scored = 1
-            self.player1_score += 1
+            self.score1 += 1
             physics.particles_create(self.particles, self.ball, 16)
         elif self.ball.position.y + self.ball.size.y >= CANVAS_HEIGHT - MARGIN:
             # Bottom wall
             self.who_scored = 2
-            self.player2_score += 1
+            self.score2 += 1
             physics.particles_create(self.particles, self.ball, 16)
 
-        if self.player1_score == POINTS_TO_WIN:
+        if self.score1 == POINTS_TO_WIN:
             self.status = STATUS_ENDED_1
-        elif self.player2_score == POINTS_TO_WIN:
+        elif self.score2 == POINTS_TO_WIN:
             self.status = STATUS_ENDED_2
