@@ -35,6 +35,33 @@ class GameManager:
             if game_id in self.instances:
                 del self.instances[game_id]
 
+    def game_exists(self, game_id: UUID) -> bool:
+        with self.lock:
+            if game_id in self.instances:
+                return True
+            else:
+                return False
+
+    def validate_player_id(self, game_id: UUID, name: str, player_id: int) -> bool:
+        with self.lock:
+            if game_id in self.instances:
+                i = self.instances[game_id]
+                if player_id == 0 and (
+                    i.player1_name == name or i.player2_name == name
+                ):
+                    return True
+                if (i.player1_name == name and player_id == 1) or (
+                    i.player2_name == name and player_id == 2
+                ):
+                    return True
+        return False
+
+    def game_get_state(self, game_id: UUID) -> Union[Dict, None]:
+        with self.lock:
+            if game_id in self.instances:
+                return self.instances[game_id].get_state()
+        return None
+
     # FIXME Don't access the state directly
     def game_add_input(self, game_id: UUID, input: Tuple[int, int]):
         with self.lock:
