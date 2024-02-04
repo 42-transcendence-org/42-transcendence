@@ -7,36 +7,55 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>ft_transcendence</title>
-	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+	<title>Pong</title>
+	<style>
+		@font-face {
+			font-family: 'Code Page 437';
+			src: url('./assets/code-page-437.ttf') format('truetype');
+		}
+
+		body {
+			font-family: 'Code Page 437';
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			background-color: #2B2A4C;
+		}
+
+		main {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		h1 {
+			color: #EEE2DE;
+			margin: 20px 0;
+			text-shadow: 5px 5px 0px #252442;
+		}
+	</style>
 </head>
 
 <body>
 	<main>
 		<h1>ft_transcendence</h1>
-		<div id="auth-form-div">
-			<div id="auth-fields">
-				<input type="text" id="username" placeholder="Username">
-				<input type="password" id="password" placeholder="Password">
-			</div>
-			<div id="auth-buttons">
-				<button id="login-btn">Login</button>
-				<button id="register-btn">Register</button>
-			</div>
-		</div>
-
-		<div id="game-menu-div">
-			<button id="start-local-game-btn">Play Local Game</button>
-			<button id="start-remote-game-btn">Play Remote Game</button>
-			<button id="start-ai-game-btn">Play Against AI</button>
-		</div>
-		<div id="game-canvas-div">
-			<canvas id="game-canvas" width="600" height="800"></canvas>
-		</div>
-		<script type="module" src='{% static "js/requests.js" %}'></script>
-		<script type="module" src='{% static "js/utils.js" %}'></script>
-		<script type="module" src='{% static "js/game.js" %}'></script>
-		<script type="module" src='{% static "js/events.js" %}'></script>
+		<canvas id="game-canvas" width="480" height="650"></canvas>
+		<script type="module" src='./game.js'></script>
+		<script type="module" src='./graphics.js'></script>
+		<script type="module" src='./engine.js'></script>
+		<script type="module" src='./physics.js'></script>
+		<script type="module" src='./sound.js'></script>
+		<script type="module">
+			import { start_loop } from './engine.js';
+			import { user_init, user_update, user_draw } from './game.js';
+			window.addEventListener('DOMContentLoaded', (event) => {
+				start_loop(user_init, user_update, user_draw);
+			});
+		</script>
 	</main>
 </body>
 
