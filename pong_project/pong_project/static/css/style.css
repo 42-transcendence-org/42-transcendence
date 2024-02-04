@@ -4,8 +4,7 @@
 }
 
 body {
-	font-family: 'Code Page 437', sans-serif;
-	/* Fallback to sans-serif in case custom font fails */
+	font-family: 'Code Page 437';
 	margin: 0;
 	padding: 0;
 	display: flex;
@@ -20,69 +19,16 @@ main {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	width: 100%;
-	/* Adjust based on preference */
-	max-width: 650px;
-	/* Limiting max width for larger screens */
-}
-
-#auth-fields {
-	width: 100%;
-	/* Or any specific size */
-	padding: 10px;
-	/* Adjust padding */
-	margin: 10px 0;
-	/* Space between inputs */
-	border: 5px;
-	/* Hides the border */
-	background-color: transparent;
-	/* Matches the body background */
-	color: #EEE2DE;
-	/* Text color */
-	font-family: 'Code Page 437', sans-serif;
-	font-size: 16px;
-	/* Adjust font size */
-	text-align: center;
-	/* Centers the placeholder/typed text */
-}
-
-button {
-	width: 20%;
-	/* Adjust based on content */
-	padding: 10px 20px;
-	/* Button padding */
-	margin: 20px;
-	/* Space around buttons */
-	font-family: 'Code Page 437', sans-serif;
-	font-size: 16px;
-	/* Adjust font size */
-	cursor: pointer;
-	/* Changes cursor to pointer on hover */
-	border: none;
-	/* Optional: Hides the border */
-	background-color: #646FD4;
-	/* Button background color */
-	color: #EEE2DE;
-	/* Button text color */
 }
 
 h1 {
-	text-align: center;
 	color: #EEE2DE;
 	margin: 20px 0;
 	text-shadow: 5px 5px 0px #252442;
 }
 
-#game-canvas-div {
-	display: none;
-}
-
-#auth-form-div {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-#game-menu-div {
+#alias-div,
+#game-menu-div,
+#game-div {
 	display: none;
 }
