@@ -2,7 +2,7 @@ import uuid
 import time
 import json
 
-from .game.GameManager import g_manager
+from game_app.game.GameManager import g_manager
 
 from django.http import JsonResponse, StreamingHttpResponse
 
@@ -58,104 +58,75 @@ def game_create_view(request):
     return JsonResponse({"id": game_id}, status=201)
 
 
-def game_update_state_view(request, game_id: uuid.UUID) -> JsonResponse:
-    # Check the HTTP method
-    if request.method != "PUT":
-        response = JsonResponse(
-            {"error": "Invalid HTTP method: PUT required"}, status=405
-        )
-        response["Allow"] = "PUT"
-        return response
-
-    # Serialize the request's body to a dict
-    try:
-        data = json.loads(request.body)
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+def game_view(request, game_id: uuid.UUID):
+    global g_manager
 
     # Verify that the client has an alias
     alias = request.session.get("alias")
     if alias is None:
         return JsonResponse({"error": "Please pick an alias first"}, status=400)
 
-    # Validate the data
-    player_id = data.get("id")
-    if player_id is None:
-        return JsonResponse({"error": "'id' is a required field"}, status=400)
-    if player_id not in PLAYER_ID:
-        return JsonResponse({"error": "Invalid value for field 'id'"}, status=400)
+    # Handle PUT request for updating game state
+    if request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-    player_input = data.get("input")
-    if player_input is None:
-        return JsonResponse({"error": "'input' is a required field"}, status=400)
-    if player_input not in GAME_INPUTS:
-        return JsonResponse({"error": "Invalid value for field 'input'"}, status=400)
+        player_id = data.get("id")
+        player_input = data.get("input")
+        if player_id is None or player_input is None:
+            return JsonResponse(
+                {"error": "'id' and 'input' are required fields"}, status=400
+            )
+        if player_id not in PLAYER_ID or player_input not in GAME_INPUTS:
+            return JsonResponse({"error": "Invalid 'id' or 'input'"}, status=400)
 
-    global g_manager
+        # Check that the game exists and the player is part of that game
+        if not g_manager.game_exists or not g_manager.validate_player_id(
+            game_id, alias, player_id
+        ):
+            return JsonResponse(
+                {"error": "Invalid game ID or player not part of the game"}, status=403
+            )
 
-    # Check that the game exists
-    if g_manager.game_exists is not True:
-        return JsonResponse(
-            {"error": "The provided game id does not exist"}, status=404
+        g_manager.game_add_input(game_id, (player_id, player_input))
+        return JsonResponse({"message": "Input processed successfully"}, status=200)
+
+    # Handle GET request for streaming game state
+    elif request.method == "GET":
+        # Check that the game exists and the player is part of that game
+        if not g_manager.game_exists or not g_manager.validate_player_id(
+            game_id, alias, 0
+        ):
+            return JsonResponse(
+                {"error": "Invalid game ID or player not part of the game"}, status=403
+            )
+
+        def event_stream():
+            sleep_time = 1 / 10
+            while True:
+                try:
+                    data = g_manager.game_get_state(game_id)
+                    yield f"data: {json.dumps(data)}\n\n".encode("utf-8")
+                    time.sleep(sleep_time)
+                except GeneratorExit:
+                    break
+                except Exception as e:
+                    yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n".encode(
+                        "utf-8"
+                    )
+                    break
+
+        response = StreamingHttpResponse(
+            event_stream(), content_type="text/event-stream"
         )
-
-    # Check that the player is part of that game
-    if g_manager.validate_player_id(game_id, alias, player_id) is not True:
-        return JsonResponse(
-            {"error": "You do not have access to this game instance"}, status=403
-        )
-
-    g_manager.game_add_input(game_id, (player_id, player_input))
-    return JsonResponse({"message": "Input processed successfully"}, status=200)
-
-
-def game_get_state_view(request, game_id: uuid.UUID):
-    # Check the HTTP method
-    if request.method != "GET":
-        response = JsonResponse(
-            {"error": "Invalid HTTP method: GET required"}, status=405
-        )
-        response["Allow"] = "GET"
+        response["Cache-Control"] = "no-cache"
         return response
 
-    # Verify that the client has an alias
-    alias = request.session.get("alias")
-    if alias is None:
-        return JsonResponse({"error": "Please pick an alias first"}, status=400)
-
-    global g_manager
-
-    # Check that the game exists
-    if g_manager.game_exists is not True:
-        return JsonResponse(
-            {"error": "The provided game id does not exist"}, status=404
+    else:
+        response = JsonResponse(
+            {"error": "Invalid HTTP method: GET or PUT required"}, status=405
         )
-
-    # Check that the player is part of that game
-    if g_manager.validate_player_id(game_id, alias, 0) is not True:
-        return JsonResponse(
-            {"error": "You do not have access to this game instance"}, status=403
-        )
-
-    sleep_time = 1 / 10
-
-    # FIXME: Comment and double check this
-    def event_stream():
-        while True:
-            try:
-                data = g_manager.game_get_state(game_id)
-                yield f"data: {json.dumps(data)}\n\n".encode("utf-8")
-                time.sleep(sleep_time)  # Adjust the frequency of updates as needed
-            except GeneratorExit:
-                # Handle case where client disconnects
-                break
-            except Exception as e:
-                # Handle any other exceptions
-                yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n".encode(
-                    "utf-8"
-                )
-                break
-
-    response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
-    response["Cache-Control"] = "no-cache"
-    return response
+        response["Allow"] = "GET, PUT"
+        return response

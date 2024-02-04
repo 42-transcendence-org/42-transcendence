@@ -1,43 +1,20 @@
 import * as game from './game.js';
 import { get_cookie, div_handler } from './utils.js';
 
-/* Authentification */
-export async function send_status_request() {
+import { LEFT, NEUTRAL, RIGHT } from './game.js'
+
+export async function send_alias_request() {
 	try {
-		const response = await fetch('http://localhost:8000/api/auth/status/', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-CSRFToken': get_cookie("csrftoken"),
-			},
-			credentials: 'include',
-		});
+		const alias = document.getElementById('alias').value;
 
-		const data = await response.json();
-
-		if (data.is_authenticated) {
-			div_handler("game-menu-div");
-		} else {
-			div_handler("auth-form-div");
-		}
-	} catch (error) {
-		console.error('Error:', error);
-	}
-}
-
-export async function send_login_request() {
-	try {
-		const username = document.getElementById('username').value;
-		const password = document.getElementById('password').value;
-
-		const response = await fetch('http://localhost:8000/api/auth/login/', {
+		const response = await fetch('http://localhost:8000/api/alias/', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'X-CSRFToken': get_cookie("csrftoken"),
 			},
 			credentials: 'include',
-			body: JSON.stringify({ username, password }),
+			body: JSON.stringify({ "alias": alias }),
 		});
 
 		if (!response.ok) {
@@ -50,48 +27,12 @@ export async function send_login_request() {
 	}
 }
 
-export async function send_register_request() {
-	try {
-		const username = document.getElementById('username').value;
-		const password = document.getElementById('password').value;
 
-		const response = await fetch('http://localhost:8000/api/auth/register/', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-CSRFToken': get_cookie("csrftoken"),
-			},
-			credentials: 'include',
-			body: JSON.stringify({ username, password }),
-		});
-
-		if (!response.ok) {
-			throw new Error('Network response was not ok: ' + response.statusText);
-		}
-
-		await send_login_request();
-	} catch (error) {
-		console.error('Error:', error);
-	}
-}
 
 /* Game */
-export async function send_user_input(key_name) {
+export async function send_user_input(player_id, player_input) {
 	try {
 		if (!game.g_current_game_data) return;
-
-		let input;
-		if (key_name === 'a') {
-			input = { id: "1", action: "left" };
-		} else if (key_name === 's') {
-			input = { id: "1", action: "right" };
-		} else if (key_name === 'k' && game.g_current_game_data.type === "local") {
-			input = { id: "2", action: "left" };
-		} else if (key_name === 'l' && game.g_current_game_data.type === "local") {
-			input = { id: "2", action: "right" };
-		} else {
-			return;
-		}
 
 		const response = await fetch(`http://localhost:8000/api/games/${game.g_current_game_data.id}/update/`, {
 			method: 'PUT',
@@ -99,7 +40,7 @@ export async function send_user_input(key_name) {
 				'Content-Type': 'application/json',
 				'X-CSRFToken': get_cookie("csrftoken"),
 			},
-			body: JSON.stringify(input),
+			body: JSON.stringify({ "id": player_id, "input": player_input }),
 		});
 
 		if (!response.ok) {

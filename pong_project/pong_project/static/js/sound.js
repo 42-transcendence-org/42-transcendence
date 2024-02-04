@@ -1,8 +1,9 @@
-let hit_sound = new Audio('./assets/hit.wav');
-let score_sound = new Audio('./assets/explosion.wav');
-let music = new Audio('./assets/glitchstairs.ogg');
+let music = new Audio(assets_url + "glitchstairs.ogg");
+let victory = new Audio(assets_url + "victory.wav");
+let hit_sound = new Audio(assets_url + "hit.wav");
+let score_sound = new Audio(assets_url + "explosion.wav");
+
 music.loop = true;
-let victory = new Audio('./assets/victory.wav');
 
 export function play_hit_sound() {
 	hit_sound.play().catch(error => {

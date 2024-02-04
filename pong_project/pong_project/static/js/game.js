@@ -5,9 +5,9 @@ import * as sound from "./sound.js";
 let canvas = document.getElementById("game-canvas");
 let ctx = canvas.getContext("2d");
 
-const LEFT = -1;
-const RIGHT = 1;
-const NEUTRAL = 0;
+export const LEFT = -1;
+export const RIGHT = 1;
+export const NEUTRAL = 0;
 
 const MARGIN = 16;
 const CORRIDOR = 2 * MARGIN + 8;
@@ -41,25 +41,7 @@ let state = {
 
 export function user_init() {
 	graphics.load_font(ctx);
-	document.addEventListener('keydown', (event) => {
-		const key_name = event.key;
 
-		if (key_name === 'a') g_inputs[0] = LEFT;
-		else if (key_name === 's') g_inputs[0] = RIGHT;
-		else if (key_name === 'k') g_inputs[1] = LEFT;
-		else if (key_name === 'l') g_inputs[1] = RIGHT;
-		else if (key_name === ' ' && state.status === "waiting") { state.status = "active"; sound.play_music(); }
-		else if (key_name === ' ' && (state.status === "ended1" || state.status === "ended2")) { state.status = "active"; game_reset(); }
-	});
-
-	document.addEventListener('keyup', (event) => {
-		const key_name = event.key;
-		if (key_name === 'a' || key_name === 's') {
-			g_inputs[0] = NEUTRAL;
-		} else if ((key_name === 'k' || key_name === 'l')) {
-			g_inputs[1] = NEUTRAL;
-		}
-	});
 
 	game_reset();
 }

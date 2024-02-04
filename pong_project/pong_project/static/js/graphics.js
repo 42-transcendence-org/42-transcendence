@@ -34,10 +34,8 @@ export function draw_rect(ctx, x, y, w, h, line_width, color) {
 }
 
 export function load_font(ctx) {
-	const font_file = new FontFace(
-		"Code Page 437",
-		'url(./assets/code-page-437.ttf)'
-	);
+	const font_url = assets_url + "code-page-437.ttf";
+	const font_file = new FontFace("Code Page 437", `url(${font_url})`);
 
 	font_file.load().then(
 		() => {
