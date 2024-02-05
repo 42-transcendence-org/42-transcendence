@@ -66,10 +66,7 @@ export class GameState {
 	reset_ball(direction) {
 		this.ball.position.x = (canvas.width - this.ball.size.x) / 2;
 		this.ball.position.y = (canvas.height - this.ball.size.y) / 2;
-		// this.ball.velocity = physics.get_vector_in_range(direction, Math.PI / 2);
 		this.ball.velocity = direction;
-		this.ball.velocity.x *= BALL_SPEED_MIN;
-		this.ball.velocity.y *= BALL_SPEED_MIN;
 	}
 
 	reset_game() {
@@ -80,7 +77,7 @@ export class GameState {
 		this.score2 = 0;
 		this.who_scored = 0;
 
-		this.reset_ball(new physics.Vector(0, 1));
+		this.reset_ball(new physics.Vector(0, BALL_SPEED_MIN));
 	}
 
 	update_paddle_velocity(id, player) {
@@ -158,13 +155,13 @@ export class GameState {
 			this.score1 += 1;
 			physics.particles_create(this.particles, this.ball, 16);
 			sound.play_explosion_sound();
-			this.reset_ball(new physics.Vector(0, this.who_scored));
+			this.reset_ball(new physics.Vector(0, BALL_SPEED_MIN));
 		} else if (this.ball.position.y + this.ball.size.y >= canvas.height - MARGIN) {
 			/* Bottom wall */
 			this.score2 += 1;
 			physics.particles_create(this.particles, this.ball, 16);
 			sound.play_explosion_sound();
-			this.reset_ball(new physics.Vector(0, this.who_scored));
+			this.reset_ball(new physics.Vector(0, -BALL_SPEED_MIN));
 		}
 	}
 

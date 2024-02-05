@@ -84,12 +84,12 @@ export function aabb_discrete_resolve(r1, r2) {
 
 export function ray_rectangle_collision(origin, direction, target) {
 	let t_near = new Vector(
-		direction.x == 0 ? Infinity : (target.position.x - origin.x) / direction.x,
-		direction.y == 0 ? Infinity : (target.position.y - origin.y) / direction.y
+		direction.x === 0 ? (target.position.x - origin.x) > 0 ? Infinity : -Infinity : (target.position.x - origin.x) / direction.x,
+		direction.y === 0 ? (target.position.y - origin.y) > 0 ? Infinity : -Infinity : (target.position.y - origin.y) / direction.y
 	);
 	let t_far = new Vector(
-		direction.x == 0 ? Infinity : (target.position.x + target.size.x - origin.x) / direction.x,
-		direction.y == 0 ? Infinity : (target.position.y + target.size.y - origin.y) / direction.y
+		direction.x === 0 ? (target.position.x + target.size.x - origin.x) > 0 ? Infinity : -Infinity : (target.position.x + target.size.x - origin.x) / direction.x,
+		direction.y === 0 ? (target.position.y + target.size.y - origin.y) > 0 ? Infinity : -Infinity : (target.position.y + target.size.y - origin.y) / direction.y
 	);
 
 	if (t_near.x > t_far.x) [t_near.x, t_far.x] = [t_far.x, t_near.x];
@@ -98,7 +98,6 @@ export function ray_rectangle_collision(origin, direction, target) {
 	let collision = new Collision(-1, 0, 0, 0, 0);
 
 	if (t_near.x > t_far.y || t_near.y > t_far.x) return collision;
-
 
 	let t_hit_near = Math.max(t_near.x, t_near.y);
 	let t_hit_far = Math.min(t_far.x, t_far.y);

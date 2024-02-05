@@ -1,6 +1,5 @@
 import { GameState } from "./GameState.js"
 
-let frames = 0;
 export class GameSession {
 	constructor(id, type, name1, name2) {
 		this.id = id;
@@ -21,12 +20,12 @@ export class GameSession {
 	reconcile(data) {
 		// this.state.player1.position.x = data.player1.x;
 		// this.state.player2.position.x = data.player2.x;
-		console.log(this.state.player1.velocity.x, data.player1.vx);
+		// console.log(this.state.player1.velocity.x, data.player1.vx);
 	}
 
 	update_start() {
 		this.event_source.onmessage = (event) => {
-			console.log(event.data);
+			// console.log(event.data);
 			this.reconcile(JSON.parse(event.data));
 		};
 		this.event_source.onerror = (error) => {
@@ -50,12 +49,6 @@ export class GameSession {
 			this.state.update(this.dt);
 			this.accumulator -= this.dt;
 			this.t += this.dt;
-		}
-		frames++;
-		if (new_time - this.lastTime >= 1000) { // One second has passed
-			console.log(`Frames per second: ${frames}`);
-			frames = 0;
-			this.lastTime = new_time;
 		}
 		this.state.draw();
 		requestAnimationFrame(this.update_state);

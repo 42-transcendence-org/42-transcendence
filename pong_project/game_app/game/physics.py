@@ -43,12 +43,12 @@ def aabb_discrete_detection(r1: Rectangle, r2: Rectangle) -> bool:
 
 def ray_rectangle_collision(origin: Vector, direction: Vector, target: Rectangle) -> Collision:
     t_near = Vector(
-        float('-inf') if direction.x == 0 else (target.position.x - origin.x) / direction.x,
-        float('-inf') if direction.y == 0 else(target.position.y - origin.y) / direction.y,
+        (target.position.x - origin.x) / direction.x if direction.x != 0 else (float('inf') if (target.position.x - origin.x) > 0 else float('-inf')),
+        (target.position.y - origin.y) / direction.y if direction.y != 0 else (float('inf') if (target.position.y - origin.y) > 0 else float('-inf')),
     )
     t_far = Vector(
-        float('-inf') if direction.x == 0 else (target.position.x + target.size.x - origin.x) / direction.x,
-        float('-inf') if direction.y == 0 else (target.position.y + target.size.y - origin.y) / direction.y,
+        (target.position.x + target.size.x - origin.x) / direction.x if direction.x != 0 else (float('inf') if (target.position.x + target.size.x - origin.x) > 0 else float('-inf')),
+        (target.position.y + target.size.y - origin.y) / direction.y if direction.y != 0 else (float('inf') if (target.position.y + target.size.y - origin.y) > 0 else float('-inf')),
     )
 
     if t_near.x > t_far.x:
