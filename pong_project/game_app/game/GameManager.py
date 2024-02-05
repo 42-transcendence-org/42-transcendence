@@ -2,7 +2,7 @@ import threading
 
 from uuid import UUID
 from typing import Dict, Tuple, Union
-from .GameInstance import GameInstance
+from .GameSession import GameSession
 
 
 class GameManager:
@@ -10,7 +10,7 @@ class GameManager:
         self.lock = threading.Lock()
         self.quit = False
         self.thread = threading.Thread(target=self.update_all)
-        self.instances: Dict[UUID, GameInstance] = {}
+        self.instances: Dict[UUID, GameSession] = {}
 
     def thread_start(self):
         self.thread.start()
@@ -28,7 +28,7 @@ class GameManager:
 
     def game_add(self, game_id: UUID, type: str, name1: str, name2: str):
         with self.lock:
-            self.instances[game_id] = GameInstance(game_id, type, name1, name2)
+            self.instances[game_id] = GameSession(game_id, type, name1, name2)
 
     def game_remove(self, game_id: UUID):
         with self.lock:

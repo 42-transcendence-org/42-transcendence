@@ -9,7 +9,7 @@ from .GameState import GameState
 dt = 1.0 / 60.0
 
 # FIXME Do we need state_lock ?
-class GameInstance:
+class GameSession:
     def __init__(self, id: UUID, type: str, name1: str, name2: str):
         self.id = id
         self.type = type

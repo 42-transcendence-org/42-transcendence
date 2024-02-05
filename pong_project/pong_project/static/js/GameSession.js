@@ -1,4 +1,6 @@
-export class GameInstance {
+import { GameState } from "./GameState.js"
+
+export class GameSession {
 	constructor(id, type, name1, name2) {
 		this.id = id;
 		this.type = type;
@@ -8,7 +10,7 @@ export class GameInstance {
 		this.current_time = 0.0;
 		this.name1 = name1;
 		this.name2 = name2;
-		this.state = GameState();
+		this.state = new GameState();
 	}
 
 	update_start() {

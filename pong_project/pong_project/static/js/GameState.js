@@ -1,9 +1,27 @@
 import * as sound from "./sound.js";
 import * as physics from "./physics.js";
+import * as graphics from "./graphics.js";
 
 export const LEFT = -1;
 export const RIGHT = 1;
 export const NEUTRAL = 0;
+
+const canvas = document.getElementById("game-canvas");
+const ctx = canvas.getContext("2d");
+
+const palette = {
+	c1: "#2B2A4C", /* purple */
+	c2: "#B31312", /* red */
+	c3: "#EA906C", /* flesh */
+	c4: "#EEE2DE", /* light grey */
+}
+const SHADOW = "#252442";
+const SHADOW_OFFSET_X = 5;
+const SHADOW_OFFSET_Y = 5;
+
+/* font size */
+const FSIZE = 24;
+const DOUBLE_FSIZE = 48;
 
 const STATUS_WAITING = 0;
 const STATUS_ACTIVE = 1;
@@ -26,11 +44,12 @@ const POINTS_TO_WIN = 10;
 
 const MAX_ANGLE = Math.PI / 6;
 
-class GameState {
+export class GameState {
 	constructor() {
 		this.status = STATUS_WAITING;
 		this.inputs = [0, 0];
 		this.particles = [];
+		this.net = new physics.Rectangle(MARGIN, (canvas.height - 2) / 2, canvas.width - (2 * MARGIN), 2, 0, 0);
 		this.ball = new physics.Rectangle(0, 0, BALL_SIDE, BALL_SIDE, 0, 0);
 		this.player1 = new physics.Rectangle(0, 0, PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.player2 = new physics.Rectangle(0, 0, PADDLE_WIDTH, BALL_SIDE, 0, 0);
@@ -193,6 +212,147 @@ class GameState {
 			sound.play_victory_sound();
 		}
 	}
+
+	draw() {
+		/* Draw the background */
+		graphics.draw_rect_fill(ctx, 0, 0, canvas.width, canvas.height, palette.c1);
+
+		/* Draw the margin */
+		graphics.draw_rect_fill(ctx, 0, 0, MARGIN, canvas.height, palette.c4);
+		graphics.draw_rect_fill(ctx, 0, 0, canvas.width, MARGIN, palette.c4);
+		graphics.draw_rect_fill(ctx, canvas.width - MARGIN, 0, MARGIN, canvas.height, palette.c4);
+		graphics.draw_rect_fill(ctx, 0, canvas.height - MARGIN, canvas.width, MARGIN, palette.c4);
+
+		/* Draw the vertical line in the middle of the table */
+		graphics.draw_rect_fill(ctx, ((canvas.width - (MARGIN / 2)) / 2), 0, MARGIN / 2, canvas.height, palette.c4);
+
+		/* Draw the net's shadow */
+		graphics.draw_rect_fill(ctx, this.net.position.x + SHADOW_OFFSET_X, this.net.position.y + SHADOW_OFFSET_Y - this.net.size.y - 1, this.net.size.x - SHADOW_OFFSET_X, this.net.size.y + 2, SHADOW);
+
+		/* Draw the net */
+		graphics.draw_rect_fill(ctx, this.net.position.x, this.net.position.y, this.net.size.x, this.net.size.y, palette.c4);
+
+		/* Draw scores shadows */
+		ctx.fillStyle = SHADOW
+		ctx.fillText(this.score1, canvas.width - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((canvas.height / 2) + FSIZE) + SHADOW_OFFSET_Y);
+		ctx.fillText(this.score2, canvas.width - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((canvas.height / 2) - (FSIZE / 3)) + SHADOW_OFFSET_Y);
+
+		/* Draw scores */
+		ctx.fillStyle = palette.c4;
+		ctx.fillText(this.score1, canvas.width - DOUBLE_FSIZE, (canvas.height / 2) + FSIZE);
+		ctx.fillText(this.score2, canvas.width - DOUBLE_FSIZE, (canvas.height / 2) - (FSIZE / 3));
+
+		/* Draw the paddles and the ball shadows */
+		if (particles.length === 0) {
+			graphics.draw_rect_fill(ctx, this.ball.position.x + SHADOW_OFFSET_X, this.ball.position.y + SHADOW_OFFSET_Y, this.ball.size.x, this.ball.size.y, SHADOW);
+		} else {
+			particles.forEach(p => {
+				graphics.draw_rect_fill(ctx, p.r.position.x + SHADOW_OFFSET_X, p.r.position.y + SHADOW_OFFSET_Y, p.r.size.x, p.r.size.y, SHADOW);
+			});
+		}
+		graphics.draw_rect_fill(ctx, this.player1.position.x + SHADOW_OFFSET_X, this.player1.position.y + SHADOW_OFFSET_Y, this.player1.size.x, this.player1.size.y, SHADOW);
+		graphics.draw_rect_fill(ctx, this.player2.position.x + SHADOW_OFFSET_X, this.player2.position.y + SHADOW_OFFSET_Y, this.player2.size.x, this.player2.size.y, SHADOW);
+
+		/* Draw the paddles and the ball */
+		if (particles.length === 0) {
+			graphics.draw_rect_fill(ctx, this.ball.position.x, this.ball.position.y, this.ball.size.x, this.ball.size.y, palette.c3);
+		} else {
+			particles.forEach(p => {
+				graphics.draw_rect_fill(ctx, p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, palette.c3);
+			});
+		}
+		graphics.draw_rect_fill(ctx, this.player1.position.x, this.player1.position.y, this.player1.size.x, this.player1.size.y, palette.c3);
+		graphics.draw_rect_fill(ctx, this.player2.position.x, this.player2.position.y, this.player2.size.x, this.player2.size.y, palette.c3);
+
+
+		if (this.status === "waiting") {
+			const text = "Press 'Space' to start";
+			const padding = 10;
+			const text_width = ctx.measureText(text).width;
+			const text_x = (canvas.width - text_width) / 2;
+			const text_y = (canvas.height + FSIZE / 2) / 2;
+			const box_w = text_width + padding * 2;
+			const box_h = DOUBLE_FSIZE;
+			const box_x = (canvas.width - box_w) / 2;
+			const box_y = (canvas.height - box_h) / 2;
+
+			/* Draw box shadow */
+			graphics.draw_rect(ctx, box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
+			graphics.draw_rect_fill(ctx, box_x, box_y, box_w, box_h, palette.c1);
+
+			/* Draw box */
+			graphics.draw_rect(ctx, box_x, box_y, box_w, box_h, 4, palette.c4);
+			graphics.draw_rect_fill(ctx, box_x, box_y, box_w, box_h, palette.c1);
+
+			/* Draw text's shadow */
+			ctx.fillStyle = SHADOW;
+			ctx.fillText(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y);
+
+			/* Draw text */
+			ctx.fillStyle = palette.c4;
+			ctx.fillText(text, text_x, text_y);
+		} else if (this.status === STATUS_ENDED_1 || this.status === STATUS_ENDED_2) {
+			let text;
+			if (this.status === STATUS_ENDED_1) text = "Player 1 won !";
+			else text = "Player 2 won !";
+			let text_again = "Press 'Space' to play again"
+			let padding = 10;
+			let text_width = ctx.measureText(text).width;
+			let box_w = text_width + padding * 2;
+			let box_h = DOUBLE_FSIZE;
+			let text_x = (canvas.width - text_width) / 2;
+			let box_x = (canvas.width - box_w) / 2;
+			let text_y, box_y;
+			let fourth = canvas.height / 4;
+			if (this.status === STATUS_ENDED_1) {
+				text_y = ((canvas.height + FSIZE / 2) / 2) + fourth;
+				box_y = ((canvas.height - box_h) / 2) + fourth;
+			} else {
+				text_y = ((canvas.height + FSIZE / 2) / 2) - fourth;
+				box_y = ((canvas.height - box_h) / 2) - fourth;
+			}
+
+			/* Draw box shadow */
+			graphics.draw_rect(ctx, box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
+
+			/* Draw box */
+			graphics.draw_rect(ctx, box_x, box_y, box_w, box_h, 4, palette.c4);
+			graphics.draw_rect_fill(ctx, box_x, box_y, box_w, box_h, palette.c1);
+
+			/* Draw text's shadow */
+			ctx.fillStyle = SHADOW;
+			ctx.fillText(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y);
+
+			/* Draw text */
+			ctx.fillStyle = palette.c4;
+			ctx.fillText(text, text_x, text_y);
+
+			let text_width_again = ctx.measureText(text_again).width;
+			let text_x_again = (canvas.width - text_width_again) / 2;
+			let text_y_again = ((canvas.height + FSIZE / 2) / 2);
+			let box_w_again = text_width_again + padding * 2;
+			let box_h_again = DOUBLE_FSIZE;
+			let box_x_again = (canvas.width - box_w_again) / 2;
+			let box_y_again = ((canvas.height - box_h_again) / 2);
+
+			/* Draw box shadow */
+			graphics.draw_rect(ctx, box_x_again + SHADOW_OFFSET_X - 1, box_y_again + SHADOW_OFFSET_Y - 1, box_w_again, box_h_again, 4, SHADOW);
+
+			/* Draw box */
+			graphics.draw_rect(ctx, box_x_again, box_y_again, box_w_again, box_h_again, 4, palette.c4);
+			graphics.draw_rect_fill(ctx, box_x_again, box_y_again, box_w_again, box_h_again, palette.c1);
+
+			/* Draw text's shadow */
+			ctx.fillStyle = SHADOW;
+			ctx.fillText(text_again, text_x_again + SHADOW_OFFSET_X, text_y_again + SHADOW_OFFSET_Y);
+
+			/* Draw text */
+			ctx.fillStyle = palette.c4;
+			ctx.fillText(text_again, text_x_again, text_y_again);
+
+		}
+	}
+
 }
 
 /* FIXME Put this in a proper spot */

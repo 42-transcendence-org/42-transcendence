@@ -35,21 +35,17 @@
 		<script type="text/javascript">
 			const assets_url = "{% static '' %}" + "assets/";
 		</script>
-		<script type="module" src="{% static 'js/engine.js' %}"></script>
-		<script type="module" src="{% static 'js/events.js' %}"></script>
-		<script type="module" src="{% static 'js/game.js' %}"></script>
+		<script type="text/javascript">
+			let g_session = null;
+		</script>
+		<script type="module" src="{% static 'js/GameSession.js' %}"></script>
+		<script type="module" src="{% static 'js/GameState.js' %}"></script>
 		<script type="module" src="{% static 'js/graphics.js' %}"></script>
 		<script type="module" src="{% static 'js/physics.js' %}"></script>
-		<script type="module" src='{% static "js/requests.js" %}'></script>
 		<script type="module" src='{% static "js/sound.js" %}'></script>
+		<script type="module" src="{% static 'js/events.js' %}"></script>
+		<script type="module" src='{% static "js/requests.js" %}'></script>
 		<script type="module" src='{% static "js/utils.js" %}'></script>
-		<script type="module">
-			import { start_loop } from '../static/js/engine.js';
-			import { user_init, update, user_draw } from '../static/js/game.js';
-			window.addEventListener('DOMContentLoaded', (event) => {
-				start_loop(user_init, update, user_draw);
-			});
-		</script>
 	</main>
 </body>
 

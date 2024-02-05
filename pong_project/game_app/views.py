@@ -43,8 +43,15 @@ def game_create_view(request):
     # Check for an active game session for this user
     has_session = g_manager.game_check_for_session(alias)
     if has_session:
+        data = g_manager.game_get_state(has_session)
         return JsonResponse(
-            {"error": "You already have an active game session"}, status=403
+            {
+                "id": data["id"],
+                "type": data["type"],
+                "name1": data["player1"]["name"],
+                "name2": data["player2"]["name"],
+            },
+            status=200,
         )
 
     # Check if we have a game session waiting for a second player

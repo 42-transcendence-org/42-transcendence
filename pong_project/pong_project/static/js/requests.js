@@ -1,4 +1,4 @@
-import { g_id } from './game.js';
+import { GameSession } from './GameSession.js';
 import { get_cookie, div_handler } from './utils.js';
 
 export async function send_alias_request() {
@@ -46,9 +46,9 @@ export async function send_get_alias_request() {
 
 export async function send_user_input(player_id, player_input) {
 	try {
-		if (g_id === null) return;
+		if (g_session === null) return;
 
-		const response = await fetch(`/api/games/${g_id}`, {
+		const response = await fetch(`/api/games/${g_session.id}`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -84,7 +84,8 @@ export async function send_game_creation_request(game_type) {
 		}
 
 		if (data) {
-			/* TODO Create a new GameInstance */
+			g_session = new GameSession(data.id, data.type, data.name1, data.name2);
+			div_handler("game-canvas-div");
 		} else {
 			console.error('Game creation failed');
 		}
