@@ -17,14 +17,20 @@ export class GameSession {
 		this.update_state = this.update_state.bind(this);
 	}
 
+	reconcile(data) {
+		// this.state.player1.position.x = data.player1.x;
+		// this.state.player2.position.x = data.player2.x;
+		// console.log(this.state.player1.position.x, data.player1.x, data.id);
+	}
+
 	update_start() {
-		this.event_source.onmessage = function (event) {
-			let game_state = JSON.parse(event.data);
+		this.event_source.onmessage = (event) => {
 			console.log(event.data);
+			this.reconcile(JSON.parse(event.data));
 		};
-		this.event_source.onerror = function (error) {
+		this.event_source.onerror = (error) => {
 			console.error('EventSource failed:', error);
-			event_source.close();
+			this.event_source.close(); // Ensure `this` is correct here as well
 		};
 
 		this.current_time = performance.now();

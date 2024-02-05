@@ -1,8 +1,10 @@
 import threading
 
 from uuid import UUID
-from typing import Dict, Tuple, Union
-from .GameSession import GameSession
+from typing import Dict, Union
+
+from game_app.game.GameState import STATUS_ACTIVE, SPACE
+from game_app.game.GameSession import GameSession
 
 
 class GameManager:
@@ -60,11 +62,13 @@ class GameManager:
                 return self.instances[game_id].get_state()
         return None
 
-    # FIXME Don't access the state directly
-    def game_add_input(self, game_id: UUID, input: Tuple[int, int]):
+    def game_add_input(self, game_id: UUID, player_id: int, player_input: int):
         with self.lock:
             if game_id in self.instances:
-                self.instances[game_id].state.input_handler(input)
+                if player_input != SPACE:  # FIXME Create literal
+                    self.instances[game_id].state.input_handler(player_id, player_input)
+                else:
+                    self.instances[game_id].state.status = STATUS_ACTIVE
 
     def game_check_for_session(self, username: str) -> Union[UUID, None]:
         """

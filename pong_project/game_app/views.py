@@ -7,7 +7,7 @@ from game_app.game.GameManager import g_manager
 from django.http import JsonResponse, StreamingHttpResponse
 
 PLAYER_ID = [0, 1]
-GAME_INPUTS = [-1, 0, 1]
+GAME_INPUTS = [-1, 0, 1, 2]  # left, neutral, right, space
 GAME_TYPES = ["local", "remote", "ai"]
 
 
@@ -113,7 +113,7 @@ def game_view(request, game_id: uuid.UUID):
                 {"error": "Invalid game ID or player not part of the game"}, status=403
             )
 
-        g_manager.game_add_input(game_id, (player_id, player_input))
+        g_manager.game_add_input(game_id, player_id, player_input)
         return JsonResponse({"message": "Input processed successfully"}, status=200)
 
     # Handle GET request for streaming game state

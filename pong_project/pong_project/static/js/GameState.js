@@ -5,6 +5,7 @@ import * as graphics from "./graphics.js";
 export const LEFT = -1;
 export const RIGHT = 1;
 export const NEUTRAL = 0;
+export const SPACE = 2;
 
 export const STATUS_WAITING = 0;
 export const STATUS_ACTIVE = 1;
@@ -31,11 +32,11 @@ const DOUBLE_FSIZE = 48;
 const MARGIN = 16;
 const CORRIDOR = 2 * MARGIN + 8;
 
-const BALL_SIDE = 16
+const BALL_SIDE = 16;
 const BALL_SPEED_MAX = 0.70;
 const BALL_SPEED_MIN = 0.40;
 
-const PADDLE_WIDTH = 64
+const PADDLE_WIDTH = 64;
 const PADDLE_SPEED_MAX = 1.0;
 const PADDLE_ACCELERATION = 1.0 / 8000;
 const PADDLE_DECCELERATION = 1.0 / 5000;
@@ -152,14 +153,12 @@ export class GameState {
 			sound.play_hit_sound();
 		} else if (this.ball.position.y <= MARGIN) {
 			/* Top wall */
-			this.who_scored = 1;
 			this.score1 += 1;
 			physics.particles_create(this.particles, this.ball, 16);
 			sound.play_explosion_sound();
 			this.reset_ball(new physics.Vector(0, this.who_scored));
 		} else if (this.ball.position.y + this.ball.size.y >= canvas.height - MARGIN) {
 			/* Bottom wall */
-			this.who_scored = -1;
 			this.score2 += 1;
 			physics.particles_create(this.particles, this.ball, 16);
 			sound.play_explosion_sound();
@@ -179,7 +178,6 @@ export class GameState {
 			physics.particles_update(this.particles, dt);
 			if (this.particles.length > 0)
 				return;
-			// this.reset_ball(new physics.Vector(0, this.who_scored));
 		}
 
 		/* This allows for the particle effect to finish updating when the game is over */
@@ -194,7 +192,7 @@ export class GameState {
 		else if (c2.time > 0) { player = this.player2; collision = c2; }
 
 		/* Collision resolution */
-		if (collision != null && collision.time > 0 && collision.time <= 1.0) {
+		if (collision != null && player != null && collision.time > 0 && collision.time <= 1.0) {
 			physics.aabb_continuous_resolve(this.ball, collision);
 			sound.play_hit_sound();
 			this.update_ball_velocity(player, collision);
