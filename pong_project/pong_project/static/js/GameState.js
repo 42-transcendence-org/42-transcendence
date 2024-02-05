@@ -40,7 +40,7 @@ const PADDLE_SPEED_MAX = 1.0;
 const PADDLE_ACCELERATION = 1.0 / 8000;
 const PADDLE_DECCELERATION = 1.0 / 5000;
 
-const POINTS_TO_WIN = 10;
+const POINTS_TO_WIN = 1;
 
 const MAX_ANGLE = Math.PI / 6;
 
@@ -65,7 +65,7 @@ export class GameState {
 	reset_ball(direction) {
 		this.ball.position.x = (canvas.width - this.ball.size.x) / 2;
 		this.ball.position.y = (canvas.height - this.ball.size.y) / 2;
-		this.ball.velocity = physics.get_vector_in_range(direction, Math.PI / 6);
+		this.ball.velocity = physics.get_vector_in_range(direction, Math.PI / 2);
 		this.ball.velocity.x *= BALL_SPEED_MIN;
 		this.ball.velocity.y *= BALL_SPEED_MIN;
 	}
@@ -76,6 +76,7 @@ export class GameState {
 		this.player2.position.y = 2 * MARGIN;
 		this.score1 = 0;
 		this.score2 = 0;
+		this.who_scored = 0;
 
 		this.reset_ball(new physics.Vector(0, 1));
 	}
@@ -121,14 +122,13 @@ export class GameState {
 	}
 
 	update_paddle_position(id, player, dt) {
-		// if (this.inputs[id] != NEUTRAL && player.position.x + player.velocity.x * dt > CORRIDOR && player.position.x + player.size.x + player.velocity.x * dt < canvas.width - (CORRIDOR)) {
-		if ((player.position.x + (player.velocity.x * dt) > CORRIDOR) && (player.position.x + player.size.x + (player.velocity.x * dt) < canvas.width - CORRIDOR)) {
+		if (this.inputs[id] != NEUTRAL && player.position.x + player.velocity.x * dt > CORRIDOR && player.position.x + player.size.x + player.velocity.x * dt < canvas.width - CORRIDOR) {
 			let collision = physics.aabb_continuous_detection(player, this.ball, dt);
 			if (collision.time > 0 && collision.time <= 1.0) {
 				physics.aabb_continuous_resolve(player, collision);
 				sound.play_hit_sound();
 				collision.normal.x *= -1;
-				update_ball_velocity(player, collision);
+				this.update_ball_velocity(player, collision);
 				this.ball.position.x += this.ball.velocity.x * (1 - collision.time);
 				this.ball.position.y += this.ball.velocity.y * (1 - collision.time);
 			}
@@ -168,13 +168,10 @@ export class GameState {
 	update(dt) {
 		if (this.status === STATUS_WAITING) return;
 
-		if (this.inputs[0] != NEUTRAL) {
-			
-		}
 		this.update_paddle_velocity(0, this.player1);
 		this.update_paddle_velocity(1, this.player2);
-		this.update_paddle_position(0, this.player1, this.ball, dt);
-		this.update_paddle_position(1, this.player2, this.ball, dt);
+		this.update_paddle_position(0, this.player1, dt);
+		this.update_paddle_position(1, this.player2, dt);
 
 		if (this.particles.length > 0) {
 			physics.particles_update(this.particles, dt);
