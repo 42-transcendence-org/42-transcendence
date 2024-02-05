@@ -57,7 +57,16 @@ def game_create_view(request):
     # Check if we have a game session waiting for a second player
     waiting_game = g_manager.game_check_for_waiting(alias)
     if waiting_game:
-        return JsonResponse({"id": waiting_game}, status=200)
+        data = g_manager.game_get_state(waiting_game)
+        return JsonResponse(
+            {
+                "id": data["id"],
+                "type": data["type"],
+                "name1": data["player1"]["name"],
+                "name2": data["player2"]["name"],
+            },
+            status=200,
+        )
 
     # Create a new game
     game_id = uuid.uuid4()

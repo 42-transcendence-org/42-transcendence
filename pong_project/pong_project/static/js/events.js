@@ -5,10 +5,10 @@ import { load_font } from './graphics.js';
 import { LEFT, NEUTRAL, RIGHT, STATUS_WAITING, STATUS_ACTIVE, STATUS_ENDED_1, STATUS_ENDED_2 } from './GameState.js';
 
 function add_all_listeners() {
-	/* FIXME: How to access this cleanly */
 	document.addEventListener('keydown', (event) => {
-		const key_name = event.key;
+		if (g_session === null || g_session.state === null) return;
 
+		const key_name = event.key;
 		if (key_name === 'a' && g_session.state.inputs[0] != LEFT) {
 			g_session.state.input_handler(0, LEFT);
 			requests.send_user_input(0, LEFT);
@@ -33,6 +33,8 @@ function add_all_listeners() {
 	});
 
 	document.addEventListener('keyup', (event) => {
+		if (g_session === null || g_session.state === null) return;
+
 		const key_name = event.key;
 		if (key_name === 'a' || key_name === 's') {
 			g_session.state.inputs[0] = NEUTRAL;

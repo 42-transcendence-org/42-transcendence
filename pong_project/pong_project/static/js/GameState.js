@@ -40,7 +40,7 @@ const PADDLE_SPEED_MAX = 1.0;
 const PADDLE_ACCELERATION = 1.0 / 8000;
 const PADDLE_DECCELERATION = 1.0 / 5000;
 
-const POINTS_TO_WIN = 1;
+const POINTS_TO_WIN = 5;
 
 const MAX_ANGLE = Math.PI / 6;
 
@@ -156,12 +156,14 @@ export class GameState {
 			this.score1 += 1;
 			physics.particles_create(this.particles, this.ball, 16);
 			sound.play_explosion_sound();
+			this.reset_ball(new physics.Vector(0, this.who_scored));
 		} else if (this.ball.position.y + this.ball.size.y >= canvas.height - MARGIN) {
 			/* Bottom wall */
 			this.who_scored = -1;
 			this.score2 += 1;
 			physics.particles_create(this.particles, this.ball, 16);
 			sound.play_explosion_sound();
+			this.reset_ball(new physics.Vector(0, this.who_scored));
 		}
 	}
 
@@ -177,7 +179,7 @@ export class GameState {
 			physics.particles_update(this.particles, dt);
 			if (this.particles.length > 0)
 				return;
-			this.reset_ball(new physics.Vector(0, this.who_scored));
+			// this.reset_ball(new physics.Vector(0, this.who_scored));
 		}
 
 		/* This allows for the particle effect to finish updating when the game is over */
