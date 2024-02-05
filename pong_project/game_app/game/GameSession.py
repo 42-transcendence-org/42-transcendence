@@ -4,35 +4,15 @@ import threading
 from uuid import UUID
 from typing import Dict
 
-from .GameState import GameState
+from game_app.game.GameState import GameState
 
-dt = 1.0 / 60.0
-
-# FIXME Do we need state_lock ?
 class GameSession:
     def __init__(self, id: UUID, type: str, name1: str, name2: str):
         self.id = id
         self.type = type
-        self.t = 0.0
-        self.accumulator = 0.0
-        self.current_time = time.perf_counter()
         self.name1 = name1
         self.name2 = name2
         self.state = GameState()
-        self.state_lock = threading.Lock()
-
-    def update_state(self) -> None:
-        new_time = time.perf_counter()
-        frame_time = new_time - self.current_time
-        self.current_time = new_time
-
-        self.accumulator += frame_time
-
-        while self.accumulator >= dt:
-            with self.state_lock:
-                self.state.update(dt)
-            self.accumulator -= dt
-            self.t += dt
 
     def get_state(self) -> Dict:
         return {

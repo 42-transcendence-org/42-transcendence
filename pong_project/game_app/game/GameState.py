@@ -26,8 +26,8 @@ BALL_SPEED_MIN = 0.40
 
 PADDLE_WIDTH = 64
 PADDLE_SPEED_MAX = 1.0
-PADDLE_ACCELERATION = 1.0 / 8000
-PADDLE_DECCELERATION = 1.0 / 5000
+PADDLE_ACCELERATION = PADDLE_SPEED_MAX / 8000
+PADDLE_DECCELERATION = PADDLE_SPEED_MAX / 5000
 
 POINTS_TO_WIN = 10
 
@@ -39,9 +39,9 @@ class GameState:
         self.status = STATUS_WAITING
         self.inputs = [0, 0]
         self.particles = []
-        self.ball = physics.Rectangle(0, 0, BALL_SIDE, BALL_SIDE, 0, 0)
-        self.player1 = physics.Rectangle(0, 0, PADDLE_WIDTH, BALL_SIDE, 0, 0)
-        self.player2 = physics.Rectangle(0, 0, PADDLE_WIDTH, BALL_SIDE, 0, 0)
+        self.ball = physics.Rectangle((CANVAS_WIDTH - BALL_SIDE) / 2, (CANVAS_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN)
+        self.player1 = physics.Rectangle((CANVAS_WIDTH - PADDLE_WIDTH) / 2, CANVAS_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, 0, 0)
+        self.player2 = physics.Rectangle((CANVAS_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, 0, 0)
         self.score1 = 0
         self.score2 = 0
         self.who_scored = 0
@@ -72,9 +72,7 @@ class GameState:
         if self.inputs[id] != NEUTRAL:
             dv = PADDLE_ACCELERATION * self.inputs[id]
             player.velocity.x += dv
-            player.velocity.x = min(
-                max(player.velocity.x, -PADDLE_SPEED_MAX), PADDLE_SPEED_MAX
-            )
+            player.velocity.x = min(max(player.velocity.x, -PADDLE_SPEED_MAX), PADDLE_SPEED_MAX)
         else:
             sign = (player.velocity.x > 0) - (player.velocity.x < 0)
             dv = -sign * PADDLE_DECCELERATION
@@ -118,12 +116,7 @@ class GameState:
         player: physics.Rectangle,
         dt: float,
     ) -> None:
-        if (
-            self.inputs[id] != NEUTRAL
-            and player.position.x + player.velocity.x * dt > CORRIDOR
-            and player.position.x + player.size.x + player.velocity.x * dt
-            < CANVAS_WIDTH - CORRIDOR
-        ):
+        if (self.inputs[id] != NEUTRAL and player.position.x + player.velocity.x * dt > CORRIDOR and player.position.x + player.size.x + player.velocity.x * dt < CANVAS_WIDTH - CORRIDOR):
             collision = physics.aabb_continuous_detection(player, self.ball, dt)
             if 0 < collision.time <= 1.0:
                 physics.aabb_continuous_resolve(player, collision)
@@ -155,7 +148,6 @@ class GameState:
             self.reset_ball(physics.Vector(0, -1))
 
     def update(self, dt: float) -> None:
-
         if self.status == STATUS_WAITING:
             return
 

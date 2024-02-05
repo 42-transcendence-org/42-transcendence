@@ -83,8 +83,14 @@ export function aabb_discrete_resolve(r1, r2) {
 }
 
 export function ray_rectangle_collision(origin, direction, target) {
-	let t_near = new Vector((target.position.x - origin.x) / direction.x, (target.position.y - origin.y) / direction.y);
-	let t_far = new Vector((target.position.x + target.size.x - origin.x) / direction.x, (target.position.y + target.size.y - origin.y) / direction.y);
+	let t_near = new Vector(
+		direction.x == 0 ? Infinity : (target.position.x - origin.x) / direction.x,
+		direction.y == 0 ? Infinity : (target.position.y - origin.y) / direction.y
+	);
+	let t_far = new Vector(
+		direction.x == 0 ? Infinity : (target.position.x + target.size.x - origin.x) / direction.x,
+		direction.y == 0 ? Infinity : (target.position.y + target.size.y - origin.y) / direction.y
+	);
 
 	if (t_near.x > t_far.x) [t_near.x, t_far.x] = [t_far.x, t_near.x];
 	if (t_near.y > t_far.y) [t_near.y, t_far.y] = [t_far.y, t_near.y];

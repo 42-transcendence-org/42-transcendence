@@ -51,9 +51,9 @@ export class GameState {
 		this.inputs = [0, 0];
 		this.particles = [];
 		this.net = new physics.Rectangle(MARGIN, (canvas.height - 2) / 2, canvas.width - (2 * MARGIN), 2, 0, 0);
-		this.ball = new physics.Rectangle(0, 0, BALL_SIDE, BALL_SIDE, 0, 0);
-		this.player1 = new physics.Rectangle(0, 0, PADDLE_WIDTH, BALL_SIDE, 0, 0);
-		this.player2 = new physics.Rectangle(0, 0, PADDLE_WIDTH, BALL_SIDE, 0, 0);
+		this.ball = new physics.Rectangle((canvas.width - BALL_SIDE) / 2, (canvas.height - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
+		this.player1 = new physics.Rectangle((canvas.width - PADDLE_WIDTH) / 2, canvas.height - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, 0, 0);
+		this.player2 = new physics.Rectangle((canvas.width - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.score1 = 0;
 		this.score2 = 0;
 		this.who_scored = 0;
@@ -66,7 +66,8 @@ export class GameState {
 	reset_ball(direction) {
 		this.ball.position.x = (canvas.width - this.ball.size.x) / 2;
 		this.ball.position.y = (canvas.height - this.ball.size.y) / 2;
-		this.ball.velocity = physics.get_vector_in_range(direction, Math.PI / 2);
+		// this.ball.velocity = physics.get_vector_in_range(direction, Math.PI / 2);
+		this.ball.velocity = direction;
 		this.ball.velocity.x *= BALL_SPEED_MIN;
 		this.ball.velocity.y *= BALL_SPEED_MIN;
 	}
@@ -91,7 +92,8 @@ export class GameState {
 			let sign = Math.sign(player.velocity.x);
 			let dv = -sign * PADDLE_DECCELERATION;
 			player.velocity.x += dv;
-			if (Math.abs(player.velocity.x) < PADDLE_DECCELERATION) player.velocity.x = 0;
+			if (Math.abs(player.velocity.x) < PADDLE_DECCELERATION)
+				player.velocity.x = 0;
 		}
 	}
 
