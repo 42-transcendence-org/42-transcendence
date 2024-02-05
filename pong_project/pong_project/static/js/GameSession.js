@@ -11,16 +11,19 @@ export class GameSession {
 		this.name1 = name1;
 		this.name2 = name2;
 		this.state = new GameState();
+
+		this.update_state = this.update_state.bind(this);
 	}
 
 	update_start() {
 		this.current_time = performance.now();
-		requestAnimationFrame(this.update_state());
+		this.state.reset_game();
+		requestAnimationFrame(this.update_state);
 	}
 
 	update_state() {
 		let new_time = performance.now();
-		let frame_time = new_time - current_time;
+		let frame_time = new_time - this.current_time;
 		this.current_time = new_time;
 
 		this.accumulator += frame_time;
@@ -28,9 +31,9 @@ export class GameSession {
 		while (this.accumulator >= this.dt) {
 			this.state.update(this.dt);
 			this.accumulator -= this.dt;
-			t += this.dt;
+			this.t += this.dt;
 		}
-		render();
-		requestAnimationFrame(this.update_state());
+		this.state.draw();
+		requestAnimationFrame(this.update_state);
 	}
 }

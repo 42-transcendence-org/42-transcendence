@@ -33,10 +33,8 @@
 			<canvas id="game-canvas" width="480" height="650"></canvas>
 		</div>
 		<script type="text/javascript">
-			const assets_url = "{% static '' %}" + "assets/";
-		</script>
-		<script type="text/javascript">
 			let g_session = null;
+			const assets_url = "{% static '' %}" + "assets/";
 		</script>
 		<script type="module" src="{% static 'js/GameSession.js' %}"></script>
 		<script type="module" src="{% static 'js/GameState.js' %}"></script>

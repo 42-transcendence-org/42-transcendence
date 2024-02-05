@@ -48,7 +48,7 @@ export async function send_user_input(player_id, player_input) {
 	try {
 		if (g_session === null) return;
 
-		const response = await fetch(`/api/games/${g_session.id}`, {
+		const response = await fetch(`/api/games/${g_session.id}/`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -85,7 +85,8 @@ export async function send_game_creation_request(game_type) {
 
 		if (data) {
 			g_session = new GameSession(data.id, data.type, data.name1, data.name2);
-			div_handler("game-canvas-div");
+			div_handler("game-div");
+			g_session.update_start();
 		} else {
 			console.error('Game creation failed');
 		}

@@ -1,7 +1,3 @@
-/***********/
-/* CLASSES */
-/***********/
-
 export class Vector {
 	constructor(x, y) {
 		this.x = x;
@@ -124,11 +120,6 @@ export function aabb_continuous_resolve(r1, collision) {
 	);
 }
 
-/**
- *
- * @param {Rectangle} r1
- * @param {Rectangle} r2
- */
 export function aabb_continuous_detection(r1, r2, dt) {
 	/* If r1 is not moving, a collision cannot occur */
 	if (r1.velocity.x == 0 && r1.velocity.y == 0) return new Collision(-1, 0, 0, 0, 0);

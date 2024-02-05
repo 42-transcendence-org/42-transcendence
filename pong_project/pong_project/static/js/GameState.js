@@ -6,6 +6,11 @@ export const LEFT = -1;
 export const RIGHT = 1;
 export const NEUTRAL = 0;
 
+export const STATUS_WAITING = 0;
+export const STATUS_ACTIVE = 1;
+export const STATUS_ENDED_1 = 2;
+export const STATUS_ENDED_2 = 3;
+
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
@@ -22,11 +27,6 @@ const SHADOW_OFFSET_Y = 5;
 /* font size */
 const FSIZE = 24;
 const DOUBLE_FSIZE = 48;
-
-const STATUS_WAITING = 0;
-const STATUS_ACTIVE = 1;
-const STATUS_ENDED_1 = 2;
-const STATUS_ENDED_2 = 3;
 
 const MARGIN = 16;
 const CORRIDOR = 2 * MARGIN + 8;
@@ -121,7 +121,8 @@ export class GameState {
 	}
 
 	update_paddle_position(id, player, dt) {
-		if (this.inputs[id] != NEUTRAL && player.position.x + player.velocity.x * dt > CORRIDOR && player.position.x + player.size.x + player.velocity.x * dt < canvas.width - (CORRIDOR)) {
+		// if (this.inputs[id] != NEUTRAL && player.position.x + player.velocity.x * dt > CORRIDOR && player.position.x + player.size.x + player.velocity.x * dt < canvas.width - (CORRIDOR)) {
+		if ((player.position.x + (player.velocity.x * dt) > CORRIDOR) && (player.position.x + player.size.x + (player.velocity.x * dt) < canvas.width - CORRIDOR)) {
 			let collision = physics.aabb_continuous_detection(player, this.ball, dt);
 			if (collision.time > 0 && collision.time <= 1.0) {
 				physics.aabb_continuous_resolve(player, collision);
@@ -165,8 +166,11 @@ export class GameState {
 	}
 
 	update(dt) {
-		if (this.status === "waiting") return;
+		if (this.status === STATUS_WAITING) return;
 
+		if (this.inputs[0] != NEUTRAL) {
+			
+		}
 		this.update_paddle_velocity(0, this.player1);
 		this.update_paddle_velocity(1, this.player2);
 		this.update_paddle_position(0, this.player1, this.ball, dt);
@@ -176,7 +180,7 @@ export class GameState {
 			physics.particles_update(this.particles, dt);
 			if (this.particles.length > 0)
 				return;
-			reset_ball(new physics.Vector(0, who_scored));
+			this.reset_ball(new physics.Vector(0, this.who_scored));
 		}
 
 		/* This allows for the particle effect to finish updating when the game is over */
@@ -194,7 +198,7 @@ export class GameState {
 		if (collision != null && collision.time > 0 && collision.time <= 1.0) {
 			physics.aabb_continuous_resolve(this.ball, collision);
 			sound.play_hit_sound();
-			update_ball_velocity(player, collision);
+			this.update_ball_velocity(player, collision);
 			this.ball.position.x += this.ball.velocity.x * (1 - collision.time);
 			this.ball.position.y += this.ball.velocity.y * (1 - collision.time);
 		} else {
@@ -215,57 +219,55 @@ export class GameState {
 
 	draw() {
 		/* Draw the background */
-		graphics.draw_rect_fill(ctx, 0, 0, canvas.width, canvas.height, palette.c1);
+		graphics.draw_rect_fill(0, 0, canvas.width, canvas.height, palette.c1);
 
 		/* Draw the margin */
-		graphics.draw_rect_fill(ctx, 0, 0, MARGIN, canvas.height, palette.c4);
-		graphics.draw_rect_fill(ctx, 0, 0, canvas.width, MARGIN, palette.c4);
-		graphics.draw_rect_fill(ctx, canvas.width - MARGIN, 0, MARGIN, canvas.height, palette.c4);
-		graphics.draw_rect_fill(ctx, 0, canvas.height - MARGIN, canvas.width, MARGIN, palette.c4);
+		graphics.draw_rect_fill(0, 0, MARGIN, canvas.height, palette.c4);
+		graphics.draw_rect_fill(0, 0, canvas.width, MARGIN, palette.c4);
+		graphics.draw_rect_fill(canvas.width - MARGIN, 0, MARGIN, canvas.height, palette.c4);
+		graphics.draw_rect_fill(0, canvas.height - MARGIN, canvas.width, MARGIN, palette.c4);
 
 		/* Draw the vertical line in the middle of the table */
-		graphics.draw_rect_fill(ctx, ((canvas.width - (MARGIN / 2)) / 2), 0, MARGIN / 2, canvas.height, palette.c4);
+		graphics.draw_rect_fill(((canvas.width - (MARGIN / 2)) / 2), 0, MARGIN / 2, canvas.height, palette.c4);
 
 		/* Draw the net's shadow */
-		graphics.draw_rect_fill(ctx, this.net.position.x + SHADOW_OFFSET_X, this.net.position.y + SHADOW_OFFSET_Y - this.net.size.y - 1, this.net.size.x - SHADOW_OFFSET_X, this.net.size.y + 2, SHADOW);
+		graphics.draw_rect_fill(this.net.position.x + SHADOW_OFFSET_X, this.net.position.y + SHADOW_OFFSET_Y - this.net.size.y - 1, this.net.size.x - SHADOW_OFFSET_X, this.net.size.y + 2, SHADOW);
 
 		/* Draw the net */
-		graphics.draw_rect_fill(ctx, this.net.position.x, this.net.position.y, this.net.size.x, this.net.size.y, palette.c4);
+		graphics.draw_rect_fill(this.net.position.x, this.net.position.y, this.net.size.x, this.net.size.y, palette.c4);
 
 		/* Draw scores shadows */
-		ctx.fillStyle = SHADOW
-		ctx.fillText(this.score1, canvas.width - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((canvas.height / 2) + FSIZE) + SHADOW_OFFSET_Y);
-		ctx.fillText(this.score2, canvas.width - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((canvas.height / 2) - (FSIZE / 3)) + SHADOW_OFFSET_Y);
+		graphics.draw_text(this.score1, canvas.width - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((canvas.height / 2) + FSIZE) + SHADOW_OFFSET_Y, SHADOW);
+		graphics.draw_text(this.score2, canvas.width - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((canvas.height / 2) - (FSIZE / 3)) + SHADOW_OFFSET_Y, SHADOW);
 
 		/* Draw scores */
-		ctx.fillStyle = palette.c4;
-		ctx.fillText(this.score1, canvas.width - DOUBLE_FSIZE, (canvas.height / 2) + FSIZE);
-		ctx.fillText(this.score2, canvas.width - DOUBLE_FSIZE, (canvas.height / 2) - (FSIZE / 3));
+		graphics.draw_text(this.score1, canvas.width - DOUBLE_FSIZE, (canvas.height / 2) + FSIZE, palette.c4);
+		graphics.draw_text(this.score2, canvas.width - DOUBLE_FSIZE, (canvas.height / 2) - (FSIZE / 3), palette.c4);
 
 		/* Draw the paddles and the ball shadows */
-		if (particles.length === 0) {
-			graphics.draw_rect_fill(ctx, this.ball.position.x + SHADOW_OFFSET_X, this.ball.position.y + SHADOW_OFFSET_Y, this.ball.size.x, this.ball.size.y, SHADOW);
+		if (this.particles.length === 0) {
+			graphics.draw_rect_fill(this.ball.position.x + SHADOW_OFFSET_X, this.ball.position.y + SHADOW_OFFSET_Y, this.ball.size.x, this.ball.size.y, SHADOW);
 		} else {
-			particles.forEach(p => {
-				graphics.draw_rect_fill(ctx, p.r.position.x + SHADOW_OFFSET_X, p.r.position.y + SHADOW_OFFSET_Y, p.r.size.x, p.r.size.y, SHADOW);
+			this.particles.forEach(p => {
+				graphics.draw_rect_fill(p.r.position.x + SHADOW_OFFSET_X, p.r.position.y + SHADOW_OFFSET_Y, p.r.size.x, p.r.size.y, SHADOW);
 			});
 		}
-		graphics.draw_rect_fill(ctx, this.player1.position.x + SHADOW_OFFSET_X, this.player1.position.y + SHADOW_OFFSET_Y, this.player1.size.x, this.player1.size.y, SHADOW);
-		graphics.draw_rect_fill(ctx, this.player2.position.x + SHADOW_OFFSET_X, this.player2.position.y + SHADOW_OFFSET_Y, this.player2.size.x, this.player2.size.y, SHADOW);
+		graphics.draw_rect_fill(this.player1.position.x + SHADOW_OFFSET_X, this.player1.position.y + SHADOW_OFFSET_Y, this.player1.size.x, this.player1.size.y, SHADOW);
+		graphics.draw_rect_fill(this.player2.position.x + SHADOW_OFFSET_X, this.player2.position.y + SHADOW_OFFSET_Y, this.player2.size.x, this.player2.size.y, SHADOW);
 
 		/* Draw the paddles and the ball */
-		if (particles.length === 0) {
-			graphics.draw_rect_fill(ctx, this.ball.position.x, this.ball.position.y, this.ball.size.x, this.ball.size.y, palette.c3);
+		if (this.particles.length === 0) {
+			graphics.draw_rect_fill(this.ball.position.x, this.ball.position.y, this.ball.size.x, this.ball.size.y, palette.c3);
 		} else {
-			particles.forEach(p => {
-				graphics.draw_rect_fill(ctx, p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, palette.c3);
+			this.particles.forEach(p => {
+				graphics.draw_rect_fill(p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, palette.c3);
 			});
 		}
-		graphics.draw_rect_fill(ctx, this.player1.position.x, this.player1.position.y, this.player1.size.x, this.player1.size.y, palette.c3);
-		graphics.draw_rect_fill(ctx, this.player2.position.x, this.player2.position.y, this.player2.size.x, this.player2.size.y, palette.c3);
+		graphics.draw_rect_fill(this.player1.position.x, this.player1.position.y, this.player1.size.x, this.player1.size.y, palette.c3);
+		graphics.draw_rect_fill(this.player2.position.x, this.player2.position.y, this.player2.size.x, this.player2.size.y, palette.c3);
 
 
-		if (this.status === "waiting") {
+		if (this.status === STATUS_WAITING) {
 			const text = "Press 'Space' to start";
 			const padding = 10;
 			const text_width = ctx.measureText(text).width;
@@ -277,20 +279,18 @@ export class GameState {
 			const box_y = (canvas.height - box_h) / 2;
 
 			/* Draw box shadow */
-			graphics.draw_rect(ctx, box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
-			graphics.draw_rect_fill(ctx, box_x, box_y, box_w, box_h, palette.c1);
+			graphics.draw_rect(box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
+			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
 
 			/* Draw box */
-			graphics.draw_rect(ctx, box_x, box_y, box_w, box_h, 4, palette.c4);
-			graphics.draw_rect_fill(ctx, box_x, box_y, box_w, box_h, palette.c1);
+			graphics.draw_rect(box_x, box_y, box_w, box_h, 4, palette.c4);
+			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
 
 			/* Draw text's shadow */
-			ctx.fillStyle = SHADOW;
-			ctx.fillText(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y);
+			graphics.draw_text(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y, SHADOW);
 
 			/* Draw text */
-			ctx.fillStyle = palette.c4;
-			ctx.fillText(text, text_x, text_y);
+			graphics.draw_text(text, text_x, text_y, palette.c4);
 		} else if (this.status === STATUS_ENDED_1 || this.status === STATUS_ENDED_2) {
 			let text;
 			if (this.status === STATUS_ENDED_1) text = "Player 1 won !";
@@ -313,19 +313,17 @@ export class GameState {
 			}
 
 			/* Draw box shadow */
-			graphics.draw_rect(ctx, box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
+			graphics.draw_rect(box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
 
 			/* Draw box */
-			graphics.draw_rect(ctx, box_x, box_y, box_w, box_h, 4, palette.c4);
-			graphics.draw_rect_fill(ctx, box_x, box_y, box_w, box_h, palette.c1);
+			graphics.draw_rect(box_x, box_y, box_w, box_h, 4, palette.c4);
+			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
 
 			/* Draw text's shadow */
-			ctx.fillStyle = SHADOW;
-			ctx.fillText(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y);
+			graphics.draw_text(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y, SHADOW);
 
 			/* Draw text */
-			ctx.fillStyle = palette.c4;
-			ctx.fillText(text, text_x, text_y);
+			graphics.draw_text(text, text_x, text_y, palette.c4);
 
 			let text_width_again = ctx.measureText(text_again).width;
 			let text_x_again = (canvas.width - text_width_again) / 2;
@@ -336,37 +334,19 @@ export class GameState {
 			let box_y_again = ((canvas.height - box_h_again) / 2);
 
 			/* Draw box shadow */
-			graphics.draw_rect(ctx, box_x_again + SHADOW_OFFSET_X - 1, box_y_again + SHADOW_OFFSET_Y - 1, box_w_again, box_h_again, 4, SHADOW);
+			graphics.draw_rect(box_x_again + SHADOW_OFFSET_X - 1, box_y_again + SHADOW_OFFSET_Y - 1, box_w_again, box_h_again, 4, SHADOW);
 
 			/* Draw box */
-			graphics.draw_rect(ctx, box_x_again, box_y_again, box_w_again, box_h_again, 4, palette.c4);
-			graphics.draw_rect_fill(ctx, box_x_again, box_y_again, box_w_again, box_h_again, palette.c1);
+			graphics.draw_rect(box_x_again, box_y_again, box_w_again, box_h_again, 4, palette.c4);
+			graphics.draw_rect_fill(box_x_again, box_y_again, box_w_again, box_h_again, palette.c1);
 
 			/* Draw text's shadow */
-			ctx.fillStyle = SHADOW;
-			ctx.fillText(text_again, text_x_again + SHADOW_OFFSET_X, text_y_again + SHADOW_OFFSET_Y);
+			graphics.draw_text(text_again, text_x_again + SHADOW_OFFSET_X, text_y_again + SHADOW_OFFSET_Y, SHADOW);
 
 			/* Draw text */
-			ctx.fillStyle = palette.c4;
-			ctx.fillText(text_again, text_x_again, text_y_again);
+			graphics.draw_text(text_again, text_x_again, text_y_again, palette.c4);
 
 		}
 	}
 
 }
-
-/* FIXME Put this in a proper spot */
-export function user_init(data) {
-	graphics.load_font(ctx);
-}
-
-
-
-
-
-
-
-
-
-
-
