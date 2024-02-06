@@ -60,15 +60,15 @@ document.addEventListener('keydown', (event) => {
 
 	const time = Date.now();
 	const key_name = event.key;
-	if (key_name === 'a') {
+	if (key_name === 'a' && g_session.state.player1.velocity.x != -PADDLE_SPEED) {
 		requests.send_user_input(LEFT, time);
 		g_session.input_handler(PLAYER1, LEFT, time);
-	} else if (key_name === 's') {
+	} else if (key_name === 's' && g_session.state.player1.velocity.x != PADDLE_SPEED) {
 		requests.send_user_input(RIGHT, time);
 		g_session.input_handler(PLAYER1, RIGHT, time);
-	} else if (key_name === 'k') {
+	} else if (key_name === 'k' && g_session.state.player2.velocity.x != -PADDLE_SPEED) {
 		g_session.input_handler(PLAYER2, LEFT, time);
-	} else if (key_name === 'l') {
+	} else if (key_name === 'l' && g_session.state.player2.velocity.x != PADDLE_SPEED) {
 		g_session.input_handler(PLAYER2, RIGHT, time);
 	} else if (key_name === ' ') {
 		requests.send_user_input(SPACE, time);
@@ -81,11 +81,10 @@ document.addEventListener('keyup', (event) => {
 
 	const time = Date.now();
 	const key_name = event.key;
-	if (key_name === 'a' || key_name === 's') {
+	if ((key_name === 'a' || key_name === 's') && g_session.state.player1.velocity.x != 0) {
 		requests.send_user_input(NEUTRAL, time);
 		g_session.input_handler(PLAYER1, NEUTRAL, time);
-	} else if (key_name === 'k' || key_name === 'l') {
-		requests.send_user_input(NEUTRAL, time);
+	} else if ((key_name === 'k' || key_name === 'l') && g_session.state.player2.velocity.x != 0) {
 		g_session.input_handler(PLAYER2, NEUTRAL, time);
 	}
 });
@@ -237,16 +236,17 @@ export class GameSession {
 		this.inputs = [];
 	}
 
-	/* Check for collisions with walls */
 	update_ball_position(dt) {
 		this.state.ball.position.x += this.state.ball.velocity.x * dt;
 		this.state.ball.position.y += this.state.ball.velocity.y * dt;
 
 		if (physics.aabb_discrete_detection(this.state.ball, this.state.player1)) {
+			/* Player 1 */
 			sound.play_hit_sound();
 			const normal = physics.aabb_discrete_resolve(this.state.ball, this.state.player1);
 			this.update_ball_velocity(this.state.player1, normal);
 		} else if (physics.aabb_discrete_detection(this.state.ball, this.state.player2)) {
+			/* Player 2 */
 			sound.play_hit_sound();
 			const normal = physics.aabb_discrete_resolve(this.state.ball, this.state.player2);
 			this.update_ball_velocity(this.state.player2, normal);
