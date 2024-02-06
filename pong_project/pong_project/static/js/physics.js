@@ -50,7 +50,7 @@ export function aabb_discrete_resolve(r1, r2) {
 		Math.min(r1.position.y + r1.size.y - r2.position.y, r2.position.y + r2.size.y - r1.position.y)
 	);
 
-	const buffer = 1;
+	const buffer = 0;
 	/* Resolve the collision along the axis of minimum overlap */
 	if (overlap.x < overlap.y) {
 		/* Horizontal collision */

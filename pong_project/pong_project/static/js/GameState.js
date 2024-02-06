@@ -36,14 +36,14 @@ const FSIZE = 24;
 const DOUBLE_FSIZE = 48;
 
 const MARGIN = 16;
-const CORRIDOR = 2 * MARGIN + 8;
+const CORRIDOR = 2 * MARGIN;
 
 const BALL_SIDE = 16;
 const BALL_SPEED_MIN = (BOARD_HEIGHT / 2) - MARGIN;
-const BALL_SPEED_MAX = BALL_SPEED_MIN * 1.25;
+const BALL_SPEED_MAX = BALL_SPEED_MIN * 2.0;
 
 const PADDLE_WIDTH = 64;
-const PADDLE_SPEED_MAX = BOARD_WIDTH - (2 * CORRIDOR);
+const PADDLE_SPEED = BOARD_WIDTH;
 
 const POINTS_TO_WIN = 5;
 
@@ -55,20 +55,20 @@ export class GameState {
 		this.inputs = [0, 0];
 		this.particles = [];
 		this.net = new physics.Rectangle(MARGIN, (BOARD_HEIGHT - 2) / 2, BOARD_WIDTH - (2 * MARGIN), 2, 0, 0);
-		this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN) - 3, BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
-		// this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
-		this.player1 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, BOARD_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED_MAX, 0);
-		this.player2 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED_MAX, 0);
+		// this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN) - 3, BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
+		this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
+		this.player1 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, BOARD_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED, 0);
+		this.player2 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED, 0);
 		this.score1 = 0;
 		this.score2 = 0;
 	}
 
 	input_handler(id, input) {
 		this.inputs[id] = input;
-		if (id === PLAYER1 && input === LEFT) this.player1.velocity.x = -PADDLE_SPEED_MAX;
-		else if (id === PLAYER1 && input === RIGHT) this.player1.velocity.x = PADDLE_SPEED_MAX;
-		else if (id === PLAYER2 && input === LEFT) this.player2.velocity.x = -PADDLE_SPEED_MAX;
-		else if (id === PLAYER2 && input === RIGHT) this.player2.velocity.x = PADDLE_SPEED_MAX;
+		if (id === PLAYER1 && input === LEFT) this.player1.velocity.x = -PADDLE_SPEED;
+		else if (id === PLAYER1 && input === RIGHT) this.player1.velocity.x = PADDLE_SPEED;
+		else if (id === PLAYER2 && input === LEFT) this.player2.velocity.x = -PADDLE_SPEED;
+		else if (id === PLAYER2 && input === RIGHT) this.player2.velocity.x = PADDLE_SPEED;
 	}
 
 	reset_ball(direction) {
@@ -88,7 +88,6 @@ export class GameState {
 	}
 
 	update_ball_velocity(player, normal) {
-		console.log(normal.x, normal.y);
 		const b_center = new physics.Vector(this.ball.position.x + this.ball.size.x / 2, this.ball.position.y + this.ball.size.y / 2);
 		const p_center = new physics.Vector(player.position.x + player.size.x / 2, player.position.y + player.size.y / 2);
 		if (normal.x != 0) {
