@@ -14,11 +14,11 @@ export class GameSession {
 
 		this.event_source = new EventSource(`http://localhost:8000/api/games/${id}/`);
 
+		this.update_start = this.update_start.bind(this);
 		this.update_state = this.update_state.bind(this);
 	}
 
 	reconcile(data) {
-		console.log(this.state.player1.position.x, data.player1.x);
 		// this.state.player1.position.x = data.player1.x;
 		// this.state.player2.position.x = data.player2.x;
 		// this.state.player1.velocity.x = data.player1.vx;
@@ -49,6 +49,7 @@ export class GameSession {
 		this.current_time = new_time;
 
 		this.accumulator += frame_time;
+		// console.log(this.accumulator, frame_time);
 
 		while (this.accumulator >= this.dt) {
 			this.state.update(this.dt);

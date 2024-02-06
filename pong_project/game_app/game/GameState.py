@@ -21,16 +21,13 @@ MARGIN = 16
 CORRIDOR = 2 * MARGIN + 8
 
 BALL_SIDE = 16
-# BALL_SPEED_MAX = 0.70
-# BALL_SPEED_MIN = 0.40
+BALL_SPEED_MAX = 0.70
+BALL_SPEED_MIN = 0.40
 
 PADDLE_WIDTH = 64
-# PADDLE_SPEED_MAX = 1.0
-# PADDLE_ACCELERATION = PADDLE_SPEED_MAX / 8000
-# PADDLE_DECCELERATION = PADDLE_SPEED_MAX / 5000
-PADDLE_SPEED_MAX = 1000
-PADDLE_ACCELERATION = PADDLE_SPEED_MAX / 8
-PADDLE_DECCELERATION = PADDLE_SPEED_MAX / 5
+PADDLE_SPEED_MAX = 1.0
+PADDLE_ACCELERATION = PADDLE_SPEED_MAX / 8000
+PADDLE_DECCELERATION = PADDLE_SPEED_MAX / 5000
 BALL_SPEED_MAX = 70
 BALL_SPEED_MIN = 40
 
@@ -123,7 +120,7 @@ class GameState:
             if 0 < collision.time <= 1.0:
                 physics.aabb_continuous_resolve(player, collision)
                 collision.normal.x *= -1
-                self.update_ball_velocity(self.ball, player, collision)
+                self.update_ball_velocity(player, collision)
                 self.ball.position.x += self.ball.velocity.x * (1 - collision.time)
                 self.ball.position.y += self.ball.velocity.y * (1 - collision.time)
             else:
@@ -152,7 +149,7 @@ class GameState:
     def update(self, dt: float) -> None:
         if self.status == STATUS_WAITING:
             return
-
+        
         self.update_paddle_velocity(0, self.player1)
         self.update_paddle_velocity(1, self.player2)
         self.update_paddle_position(0, self.player1, dt)
@@ -183,7 +180,7 @@ class GameState:
         # Collision resolution
         if collision is not None and player is not None and 0 < collision.time <= 1.0:
             physics.aabb_continuous_resolve(self.ball, collision)
-            self.update_ball_velocity(self.ball, player, collision)
+            self.update_ball_velocity(player, collision)
             self.ball.position.x += self.ball.velocity.x * (1 - collision.time)
             self.ball.position.y += self.ball.velocity.y * (1 - collision.time)
         else:
