@@ -21,18 +21,22 @@ MARGIN = 16
 CORRIDOR = 2 * MARGIN + 8
 
 BALL_SIDE = 16
-BALL_SPEED_MAX = 0.70
-BALL_SPEED_MIN = 0.40
+# BALL_SPEED_MAX = 0.70
+# BALL_SPEED_MIN = 0.40
 
 PADDLE_WIDTH = 64
-PADDLE_SPEED_MAX = 1.0
-PADDLE_ACCELERATION = PADDLE_SPEED_MAX / 8000
-PADDLE_DECCELERATION = PADDLE_SPEED_MAX / 5000
+# PADDLE_SPEED_MAX = 1.0
+# PADDLE_ACCELERATION = PADDLE_SPEED_MAX / 8000
+# PADDLE_DECCELERATION = PADDLE_SPEED_MAX / 5000
+PADDLE_SPEED_MAX = 1000
+PADDLE_ACCELERATION = PADDLE_SPEED_MAX / 8
+PADDLE_DECCELERATION = PADDLE_SPEED_MAX / 5
+BALL_SPEED_MAX = 70
+BALL_SPEED_MIN = 40
 
 POINTS_TO_WIN = 10
 
 MAX_ANGLE = math.pi / 6
-
 
 class GameState:
     def __init__(self):
@@ -52,9 +56,7 @@ class GameState:
     def reset_ball(self, direction: physics.Vector) -> None:
         self.ball.position.x = (CANVAS_WIDTH - self.ball.size.x) / 2
         self.ball.position.y = (CANVAS_HEIGHT - self.ball.size.y) / 2
-        self.ball.velocity = physics.get_vector_in_range(direction, MAX_ANGLE)
-        self.ball.velocity.x *= BALL_SPEED_MIN
-        self.ball.velocity.y *= BALL_SPEED_MIN
+        self.ball.velocity = direction
 
     def reset_game(self) -> None:
         self.player1.position.x = self.player2.position.x = (
@@ -66,7 +68,7 @@ class GameState:
         self.score2 = 0
         self.who_scored = 0
 
-        self.reset_ball(physics.Vector(0, 1))
+        self.reset_ball(physics.Vector(0, BALL_SPEED_MIN))
 
     def update_paddle_velocity(self, id: int, player: physics.Rectangle) -> None:
         if self.inputs[id] != NEUTRAL:
@@ -140,12 +142,12 @@ class GameState:
             # Top wall
             self.score1 += 1
             physics.particles_create(self.particles, self.ball, 16)
-            self.reset_ball(physics.Vector(0, 1))
+            self.reset_ball(physics.Vector(0, BALL_SPEED_MIN))
         elif self.ball.position.y + self.ball.size.y >= CANVAS_HEIGHT - MARGIN:
             # Bottom wall
             self.score2 += 1
             physics.particles_create(self.particles, self.ball, 16)
-            self.reset_ball(physics.Vector(0, -1))
+            self.reset_ball(physics.Vector(0, -BALL_SPEED_MIN))
 
     def update(self, dt: float) -> None:
         if self.status == STATUS_WAITING:

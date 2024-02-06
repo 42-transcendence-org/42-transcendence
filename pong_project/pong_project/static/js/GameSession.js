@@ -18,14 +18,19 @@ export class GameSession {
 	}
 
 	reconcile(data) {
+		console.log(this.state.player1.position.x, data.player1.x);
 		// this.state.player1.position.x = data.player1.x;
 		// this.state.player2.position.x = data.player2.x;
-		// console.log(this.state.player1.velocity.x, data.player1.vx);
+		// this.state.player1.velocity.x = data.player1.vx;
+		// this.state.player2.velocity.x = data.player2.vx;
+		// this.state.ball.position.x = data.ball.x;
+		// this.state.ball.position.y = data.ball.y;
+		// this.state.ball.velocity.x = data.ball.vx;
+		// this.state.ball.velocity.y = data.ball.vy;
 	}
 
 	update_start() {
 		this.event_source.onmessage = (event) => {
-			// console.log(event.data);
 			this.reconcile(JSON.parse(event.data));
 		};
 		this.event_source.onerror = (error) => {
