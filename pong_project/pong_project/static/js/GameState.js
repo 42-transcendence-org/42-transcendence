@@ -3,8 +3,8 @@ import * as physics from "./physics.js";
 import * as graphics from "./graphics.js";
 
 export const LEFT = -1;
-export const RIGHT = 1;
 export const NEUTRAL = 0;
+export const RIGHT = 1;
 export const SPACE = 2;
 
 export const STATUS_WAITING = 0;
@@ -14,6 +14,12 @@ export const STATUS_ENDED_2 = 3;
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
+
+const BOARD_WIDTH = canvas.width;
+const BOARD_HEIGHT = canvas.height;
+
+const PLAYER1 = 0;
+const PLAYER2 = 1;
 
 const palette = {
 	c1: "#2B2A4C", /* purple */
@@ -33,13 +39,11 @@ const MARGIN = 16;
 const CORRIDOR = 2 * MARGIN + 8;
 
 const BALL_SIDE = 16;
-const BALL_SPEED_MAX = 0.70;
-const BALL_SPEED_MIN = 0.40;
+const BALL_SPEED_MIN = (BOARD_HEIGHT / 2) - MARGIN;
+const BALL_SPEED_MAX = BALL_SPEED_MIN * 1.25;
 
 const PADDLE_WIDTH = 64;
-const PADDLE_SPEED_MAX = 1.0;
-const PADDLE_ACCELERATION = 1.0 / 8000;
-const PADDLE_DECCELERATION = 1.0 / 5000;
+const PADDLE_SPEED_MAX = BOARD_WIDTH - (2 * CORRIDOR);
 
 const POINTS_TO_WIN = 5;
 
@@ -50,48 +54,36 @@ export class GameState {
 		this.status = STATUS_WAITING;
 		this.inputs = [0, 0];
 		this.particles = [];
-		this.net = new physics.Rectangle(MARGIN, (canvas.height - 2) / 2, canvas.width - (2 * MARGIN), 2, 0, 0);
-		this.ball = new physics.Rectangle((canvas.width - BALL_SIDE) / 2, (canvas.height - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
-		this.player1 = new physics.Rectangle((canvas.width - PADDLE_WIDTH) / 2, canvas.height - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, 0, 0);
-		this.player2 = new physics.Rectangle((canvas.width - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, 0, 0);
+		this.net = new physics.Rectangle(MARGIN, (BOARD_HEIGHT - 2) / 2, BOARD_WIDTH - (2 * MARGIN), 2, 0, 0);
+		this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
+		this.player1 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, BOARD_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED_MAX, 0);
+		this.player2 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED_MAX, 0);
 		this.score1 = 0;
 		this.score2 = 0;
-		this.who_scored = 0;
 	}
 
 	input_handler(id, input) {
-		this.inputs[id] = input
+		this.inputs[id] = input;
+		if (id === PLAYER1 && input === LEFT) this.player1.velocity.x = -PADDLE_SPEED_MAX;
+		else if (id === PLAYER1 && input === RIGHT) this.player1.velocity.x = PADDLE_SPEED_MAX;
+		else if (id === PLAYER2 && input === LEFT) this.player2.velocity.x = -PADDLE_SPEED_MAX;
+		else if (id === PLAYER2 && input === RIGHT) this.player2.velocity.x = PADDLE_SPEED_MAX;
 	}
 
 	reset_ball(direction) {
-		this.ball.position.x = (canvas.width - this.ball.size.x) / 2;
-		this.ball.position.y = (canvas.height - this.ball.size.y) / 2;
+		this.ball.position.x = (BOARD_WIDTH - this.ball.size.x) / 2;
+		this.ball.position.y = (BOARD_HEIGHT - this.ball.size.y) / 2;
 		this.ball.velocity = direction;
 	}
 
 	reset_game() {
-		this.player1.position.x = this.player2.position.x = (canvas.width - this.player1.size.x) / 2;
-		this.player1.position.y = canvas.height - (3 * MARGIN);
+		this.player1.position.x = this.player2.position.x = (BOARD_WIDTH - this.player1.size.x) / 2;
+		this.player1.position.y = BOARD_HEIGHT - (3 * MARGIN);
 		this.player2.position.y = 2 * MARGIN;
 		this.score1 = 0;
 		this.score2 = 0;
-		this.who_scored = 0;
 
 		this.reset_ball(new physics.Vector(0, BALL_SPEED_MIN));
-	}
-
-	update_paddle_velocity(id, player) {
-		if (this.inputs[id] != NEUTRAL) {
-			let dv = PADDLE_ACCELERATION * this.inputs[id];
-			player.velocity.x += dv;
-			player.velocity.x = Math.min(Math.max(player.velocity.x, -PADDLE_SPEED_MAX), PADDLE_SPEED_MAX);
-		} else {
-			let sign = Math.sign(player.velocity.x);
-			let dv = -sign * PADDLE_DECCELERATION;
-			player.velocity.x += dv;
-			if (Math.abs(player.velocity.x) < PADDLE_DECCELERATION)
-				player.velocity.x = 0;
-		}
 	}
 
 	/* Give a new direction to the ball based on where it hits the paddle */
@@ -121,21 +113,13 @@ export class GameState {
 		}
 	}
 
-	update_paddle_position(id, player, dt) {
-		if (this.inputs[id] != NEUTRAL && player.position.x + player.velocity.x * dt > CORRIDOR && player.position.x + player.size.x + player.velocity.x * dt < canvas.width - CORRIDOR) {
-			let collision = physics.aabb_continuous_detection(player, this.ball, dt);
-			if (collision.time > 0 && collision.time <= 1.0) {
-				physics.aabb_continuous_resolve(player, collision);
-				sound.play_hit_sound();
-				collision.normal.x *= -1;
-				this.update_ball_velocity(player, collision);
-				this.ball.position.x += this.ball.velocity.x * (1 - collision.time);
-				this.ball.position.y += this.ball.velocity.y * (1 - collision.time);
-			}
-			else {
-				player.position.x += player.velocity.x * dt;
-			}
-		}
+	update_paddle_position(dt) {
+		if (this.inputs[PLAYER1] != NEUTRAL && this.player1.position.x + this.player1.velocity.x * dt > CORRIDOR && this.player1.position.x + this.player1.size.x + this.player1.velocity.x * dt < BOARD_WIDTH - CORRIDOR)
+			this.player1.position.x += this.player1.velocity.x * dt;
+		if (this.inputs[PLAYER2] != NEUTRAL && this.player2.position.x + this.player2.velocity.x * dt > CORRIDOR && this.player2.position.x + this.player2.size.x + this.player2.velocity.x * dt < BOARD_WIDTH - CORRIDOR)
+			this.player2.position.x += this.player2.velocity.x * dt;
+
+		if (physics.aabb_discrete_detection(this.player1, this.ball))
 	}
 
 	/* Check for collisions with walls */
@@ -145,9 +129,9 @@ export class GameState {
 			this.ball.position.x = MARGIN;
 			this.ball.velocity.x *= -1;
 			sound.play_hit_sound();
-		} else if (this.ball.position.x + this.ball.size.x >= canvas.width - MARGIN) {
+		} else if (this.ball.position.x + this.ball.size.x >= BOARD_WIDTH - MARGIN) {
 			/* Right wall */
-			this.ball.position.x = canvas.width - this.ball.size.x - MARGIN;
+			this.ball.position.x = BOARD_WIDTH - this.ball.size.x - MARGIN;
 			this.ball.velocity.x *= -1;
 			sound.play_hit_sound();
 		} else if (this.ball.position.y <= MARGIN) {
@@ -156,7 +140,7 @@ export class GameState {
 			physics.particles_create(this.particles, this.ball, 16);
 			sound.play_explosion_sound();
 			this.reset_ball(new physics.Vector(0, BALL_SPEED_MIN));
-		} else if (this.ball.position.y + this.ball.size.y >= canvas.height - MARGIN) {
+		} else if (this.ball.position.y + this.ball.size.y >= BOARD_HEIGHT - MARGIN) {
 			/* Bottom wall */
 			this.score2 += 1;
 			physics.particles_create(this.particles, this.ball, 16);
@@ -168,10 +152,7 @@ export class GameState {
 	update(dt) {
 		if (this.status === STATUS_WAITING) return;
 
-		this.update_paddle_velocity(0, this.player1);
-		this.update_paddle_velocity(1, this.player2);
-		this.update_paddle_position(0, this.player1, dt);
-		this.update_paddle_position(1, this.player2, dt);
+		this.update_paddle_position(dt);
 
 		if (this.particles.length > 0) {
 			physics.particles_update(this.particles, dt);
@@ -215,16 +196,16 @@ export class GameState {
 
 	draw() {
 		/* Draw the background */
-		graphics.draw_rect_fill(0, 0, canvas.width, canvas.height, palette.c1);
+		graphics.draw_rect_fill(0, 0, BOARD_WIDTH, BOARD_HEIGHT, palette.c1);
 
 		/* Draw the margin */
-		graphics.draw_rect_fill(0, 0, MARGIN, canvas.height, palette.c4);
-		graphics.draw_rect_fill(0, 0, canvas.width, MARGIN, palette.c4);
-		graphics.draw_rect_fill(canvas.width - MARGIN, 0, MARGIN, canvas.height, palette.c4);
-		graphics.draw_rect_fill(0, canvas.height - MARGIN, canvas.width, MARGIN, palette.c4);
+		graphics.draw_rect_fill(0, 0, MARGIN, BOARD_HEIGHT, palette.c4);
+		graphics.draw_rect_fill(0, 0, BOARD_WIDTH, MARGIN, palette.c4);
+		graphics.draw_rect_fill(BOARD_WIDTH - MARGIN, 0, MARGIN, BOARD_HEIGHT, palette.c4);
+		graphics.draw_rect_fill(0, BOARD_HEIGHT - MARGIN, BOARD_WIDTH, MARGIN, palette.c4);
 
 		/* Draw the vertical line in the middle of the table */
-		graphics.draw_rect_fill(((canvas.width - (MARGIN / 2)) / 2), 0, MARGIN / 2, canvas.height, palette.c4);
+		graphics.draw_rect_fill(((BOARD_WIDTH - (MARGIN / 2)) / 2), 0, MARGIN / 2, BOARD_HEIGHT, palette.c4);
 
 		/* Draw the net's shadow */
 		graphics.draw_rect_fill(this.net.position.x + SHADOW_OFFSET_X, this.net.position.y + SHADOW_OFFSET_Y - this.net.size.y - 1, this.net.size.x - SHADOW_OFFSET_X, this.net.size.y + 2, SHADOW);
@@ -233,12 +214,12 @@ export class GameState {
 		graphics.draw_rect_fill(this.net.position.x, this.net.position.y, this.net.size.x, this.net.size.y, palette.c4);
 
 		/* Draw scores shadows */
-		graphics.draw_text(this.score1, canvas.width - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((canvas.height / 2) + FSIZE) + SHADOW_OFFSET_Y, SHADOW);
-		graphics.draw_text(this.score2, canvas.width - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((canvas.height / 2) - (FSIZE / 3)) + SHADOW_OFFSET_Y, SHADOW);
+		graphics.draw_text(this.score1, BOARD_WIDTH - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((BOARD_HEIGHT / 2) + FSIZE) + SHADOW_OFFSET_Y, SHADOW);
+		graphics.draw_text(this.score2, BOARD_WIDTH - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((BOARD_HEIGHT / 2) - (FSIZE / 3)) + SHADOW_OFFSET_Y, SHADOW);
 
 		/* Draw scores */
-		graphics.draw_text(this.score1, canvas.width - DOUBLE_FSIZE, (canvas.height / 2) + FSIZE, palette.c4);
-		graphics.draw_text(this.score2, canvas.width - DOUBLE_FSIZE, (canvas.height / 2) - (FSIZE / 3), palette.c4);
+		graphics.draw_text(this.score1, BOARD_WIDTH - DOUBLE_FSIZE, (BOARD_HEIGHT / 2) + FSIZE, palette.c4);
+		graphics.draw_text(this.score2, BOARD_WIDTH - DOUBLE_FSIZE, (BOARD_HEIGHT / 2) - (FSIZE / 3), palette.c4);
 
 		/* Draw the paddles and the ball shadows */
 		if (this.particles.length === 0) {
@@ -267,12 +248,12 @@ export class GameState {
 			const text = "Press 'Space' to start";
 			const padding = 10;
 			const text_width = ctx.measureText(text).width;
-			const text_x = (canvas.width - text_width) / 2;
-			const text_y = (canvas.height + FSIZE / 2) / 2;
+			const text_x = (BOARD_WIDTH - text_width) / 2;
+			const text_y = (BOARD_HEIGHT + FSIZE / 2) / 2;
 			const box_w = text_width + padding * 2;
 			const box_h = DOUBLE_FSIZE;
-			const box_x = (canvas.width - box_w) / 2;
-			const box_y = (canvas.height - box_h) / 2;
+			const box_x = (BOARD_WIDTH - box_w) / 2;
+			const box_y = (BOARD_HEIGHT - box_h) / 2;
 
 			/* Draw box shadow */
 			graphics.draw_rect(box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
@@ -296,16 +277,16 @@ export class GameState {
 			let text_width = ctx.measureText(text).width;
 			let box_w = text_width + padding * 2;
 			let box_h = DOUBLE_FSIZE;
-			let text_x = (canvas.width - text_width) / 2;
-			let box_x = (canvas.width - box_w) / 2;
+			let text_x = (BOARD_WIDTH - text_width) / 2;
+			let box_x = (BOARD_WIDTH - box_w) / 2;
 			let text_y, box_y;
-			let fourth = canvas.height / 4;
+			let fourth = BOARD_HEIGHT / 4;
 			if (this.status === STATUS_ENDED_1) {
-				text_y = ((canvas.height + FSIZE / 2) / 2) + fourth;
-				box_y = ((canvas.height - box_h) / 2) + fourth;
+				text_y = ((BOARD_HEIGHT + FSIZE / 2) / 2) + fourth;
+				box_y = ((BOARD_HEIGHT - box_h) / 2) + fourth;
 			} else {
-				text_y = ((canvas.height + FSIZE / 2) / 2) - fourth;
-				box_y = ((canvas.height - box_h) / 2) - fourth;
+				text_y = ((BOARD_HEIGHT + FSIZE / 2) / 2) - fourth;
+				box_y = ((BOARD_HEIGHT - box_h) / 2) - fourth;
 			}
 
 			/* Draw box shadow */
@@ -322,12 +303,12 @@ export class GameState {
 			graphics.draw_text(text, text_x, text_y, palette.c4);
 
 			let text_width_again = ctx.measureText(text_again).width;
-			let text_x_again = (canvas.width - text_width_again) / 2;
-			let text_y_again = ((canvas.height + FSIZE / 2) / 2);
+			let text_x_again = (BOARD_WIDTH - text_width_again) / 2;
+			let text_y_again = ((BOARD_HEIGHT + FSIZE / 2) / 2);
 			let box_w_again = text_width_again + padding * 2;
 			let box_h_again = DOUBLE_FSIZE;
-			let box_x_again = (canvas.width - box_w_again) / 2;
-			let box_y_again = ((canvas.height - box_h_again) / 2);
+			let box_x_again = (BOARD_WIDTH - box_w_again) / 2;
+			let box_y_again = ((BOARD_HEIGHT - box_h_again) / 2);
 
 			/* Draw box shadow */
 			graphics.draw_rect(box_x_again + SHADOW_OFFSET_X - 1, box_y_again + SHADOW_OFFSET_Y - 1, box_w_again, box_h_again, 4, SHADOW);

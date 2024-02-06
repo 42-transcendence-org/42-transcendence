@@ -172,9 +172,9 @@ export function particles_create(array, source, n) {
 			source.position.y + source.size.y / 2,
 			4,
 			4,
-			(Math.random() - 0.5) * 0.1,
-			(Math.random() - 0.5) * 0.1,
-			1000)
+			(Math.random() - 0.5) * 100,
+			(Math.random() - 0.5) * 100,
+			1.5)
 		);
 	}
 }

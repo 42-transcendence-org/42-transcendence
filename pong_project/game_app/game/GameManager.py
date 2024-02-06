@@ -33,8 +33,7 @@ class GameManager:
             self.current_time = new_time
 
             self.accumulator += frame_time
-            # print(self.accumulator, frame_time)
-
+            global calls
             while self.accumulator >= self.dt:
                 with self.lock:
                     for _, session in self.sessions.items():

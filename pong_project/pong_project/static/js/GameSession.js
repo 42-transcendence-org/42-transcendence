@@ -1,5 +1,6 @@
 import { GameState } from "./GameState.js"
 
+let calls = 0;
 export class GameSession {
 	constructor(id, type, name1, name2) {
 		this.id = id;
@@ -48,15 +49,19 @@ export class GameSession {
 		let frame_time = new_time - this.current_time;
 		this.current_time = new_time;
 
-		this.accumulator += frame_time;
-		// console.log(this.accumulator, frame_time);
+		/* Convert the frame time from milliseconds to seconds before
+		adding it */
+		this.accumulator += (frame_time / 1000);
 
 		while (this.accumulator >= this.dt) {
 			this.state.update(this.dt);
 			this.accumulator -= this.dt;
 			this.t += this.dt;
 		}
+
 		this.state.draw();
 		requestAnimationFrame(this.update_state);
 	}
 }
+
+
