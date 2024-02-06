@@ -55,7 +55,6 @@ export class GameState {
 		this.inputs = [0, 0];
 		this.particles = [];
 		this.net = new physics.Rectangle(MARGIN, (BOARD_HEIGHT - 2) / 2, BOARD_WIDTH - (2 * MARGIN), 2, 0, 0);
-		// this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN) - 3, BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
 		this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
 		this.player1 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, BOARD_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED, 0);
 		this.player2 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED, 0);
