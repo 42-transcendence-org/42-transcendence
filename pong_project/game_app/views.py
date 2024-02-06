@@ -91,6 +91,7 @@ def game_view(request, game_id: uuid.UUID):
 
     # Handle PUT request for updating game state
     if request.method == "PUT":
+        return JsonResponse({}, status=200) # DEBUG
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:

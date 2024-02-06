@@ -1,4 +1,4 @@
-import { GameSession } from './GameSession.js';
+import { GameSession } from './pong/main.js';
 import { get_cookie, div_handler } from './utils.js';
 
 export async function send_alias_request() {
@@ -44,7 +44,7 @@ export async function send_get_alias_request() {
 	}
 }
 
-export async function send_user_input(player_id, player_input) {
+export async function send_user_input(input, time) {
 	try {
 		if (g_session === null) return;
 
@@ -54,7 +54,7 @@ export async function send_user_input(player_id, player_input) {
 				'Content-Type': 'application/json',
 				'X-CSRFToken': get_cookie("csrftoken"),
 			},
-			body: JSON.stringify({ "id": player_id, "input": player_input }),
+			body: JSON.stringify({ "input": input, "timestamp": time }),
 		});
 
 		if (!response.ok) {
