@@ -55,7 +55,8 @@ export class GameState {
 		this.inputs = [0, 0];
 		this.particles = [];
 		this.net = new physics.Rectangle(MARGIN, (BOARD_HEIGHT - 2) / 2, BOARD_WIDTH - (2 * MARGIN), 2, 0, 0);
-		this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
+		this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN) - 3, BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
+		// this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
 		this.player1 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, BOARD_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED_MAX, 0);
 		this.player2 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, PADDLE_SPEED_MAX, 0);
 		this.score1 = 0;
@@ -86,30 +87,18 @@ export class GameState {
 		this.reset_ball(new physics.Vector(0, BALL_SPEED_MIN));
 	}
 
-	/* Give a new direction to the ball based on where it hits the paddle */
-	update_ball_velocity(player, collision) {
-		let expanded = new physics.Rectangle(
-			player.position.x - this.ball.size.x / 2,
-			player.position.y - this.ball.size.y / 2,
-			player.size.x + this.ball.size.x,
-			player.size.y + this.ball.size.y,
-			0, 0
-		);
-		if (collision.normal.x != 0) {
-			let r1_center = this.ball.position.y + this.ball.size.y / 2;
-			let r2_center = expanded.position.y + expanded.size.y / 2;
-			let c = (r1_center - r2_center) / (expanded.size.y / 2);
-			c *= MAX_ANGLE;
-			this.ball.velocity.x = collision.normal.x * Math.cos(c) * BALL_SPEED_MAX;
+	update_ball_velocity(player, normal) {
+		console.log(normal.x, normal.y);
+		const b_center = new physics.Vector(this.ball.position.x + this.ball.size.x / 2, this.ball.position.y + this.ball.size.y / 2);
+		const p_center = new physics.Vector(player.position.x + player.size.x / 2, player.position.y + player.size.y / 2);
+		if (normal.x != 0) {
+			let c = ((b_center.y - p_center.y) / (player.size.y / 2)) * MAX_ANGLE;
+			this.ball.velocity.x = normal.x * Math.cos(c) * BALL_SPEED_MAX;
 			this.ball.velocity.y = Math.sin(c) * BALL_SPEED_MAX;
-		}
-		if (collision.normal.y != 0) {
-			let r1_center = this.ball.position.x + this.ball.size.x / 2;
-			let r2_center = expanded.position.x + expanded.size.x / 2;
-			let c = (r1_center - r2_center) / (expanded.size.x / 2);
-			c *= MAX_ANGLE;
+		} else if (normal.y != 0) {
+			let c = ((b_center.x - p_center.x) / (player.size.x / 2)) * MAX_ANGLE;
 			this.ball.velocity.x = Math.sin(c) * BALL_SPEED_MAX;
-			this.ball.velocity.y = collision.normal.y * Math.cos(c) * BALL_SPEED_MAX;
+			this.ball.velocity.y = normal.y * Math.cos(c) * BALL_SPEED_MAX;
 		}
 	}
 
@@ -119,12 +108,33 @@ export class GameState {
 		if (this.inputs[PLAYER2] != NEUTRAL && this.player2.position.x + this.player2.velocity.x * dt > CORRIDOR && this.player2.position.x + this.player2.size.x + this.player2.velocity.x * dt < BOARD_WIDTH - CORRIDOR)
 			this.player2.position.x += this.player2.velocity.x * dt;
 
-		if (physics.aabb_discrete_detection(this.player1, this.ball))
+		if (physics.aabb_discrete_detection(this.player1, this.ball)) {
+			sound.play_hit_sound();
+			const normal = physics.aabb_discrete_resolve(this.ball, this.player1);
+			normal.x *= -1;
+			this.update_ball_velocity(this.player1, normal);
+		} else if (physics.aabb_discrete_detection(this.player2, this.ball)) {
+			sound.play_hit_sound();
+			const normal = physics.aabb_discrete_resolve(this.ball, this.player2);
+			normal.x *= -1;
+			this.update_ball_velocity(this.player2, normal);
+		}
 	}
 
 	/* Check for collisions with walls */
-	update_ball_position() {
-		if (this.ball.position.x <= MARGIN) {
+	update_ball_position(dt) {
+		this.ball.position.x += this.ball.velocity.x * dt;
+		this.ball.position.y += this.ball.velocity.y * dt;
+
+		if (physics.aabb_discrete_detection(this.ball, this.player1)) {
+			sound.play_hit_sound();
+			const normal = physics.aabb_discrete_resolve(this.ball, this.player1);
+			this.update_ball_velocity(this.player1, normal);
+		} else if (physics.aabb_discrete_detection(this.ball, this.player2)) {
+			sound.play_hit_sound();
+			const normal = physics.aabb_discrete_resolve(this.ball, this.player2);
+			this.update_ball_velocity(this.player2, normal);
+		} else if (this.ball.position.x <= MARGIN) {
 			/* Left wall */
 			this.ball.position.x = MARGIN;
 			this.ball.velocity.x *= -1;
@@ -163,27 +173,7 @@ export class GameState {
 		/* This allows for the particle effect to finish updating when the game is over */
 		if (this.status === STATUS_ENDED_1 || this.status === STATUS_ENDED_2) return;
 
-		let player = null;
-		let collision = null;
-
-		let c1 = physics.aabb_continuous_detection(this.ball, this.player1, dt);
-		let c2 = physics.aabb_continuous_detection(this.ball, this.player2, dt);
-		if (c1.time > 0) { player = this.player1; collision = c1; }
-		else if (c2.time > 0) { player = this.player2; collision = c2; }
-
-		/* Collision resolution */
-		if (collision != null && player != null && collision.time > 0 && collision.time <= 1.0) {
-			physics.aabb_continuous_resolve(this.ball, collision);
-			sound.play_hit_sound();
-			this.update_ball_velocity(player, collision);
-			this.ball.position.x += this.ball.velocity.x * (1 - collision.time);
-			this.ball.position.y += this.ball.velocity.y * (1 - collision.time);
-		} else {
-			this.ball.position.x += this.ball.velocity.x * dt;
-			this.ball.position.y += this.ball.velocity.y * dt;
-		}
-
-		this.update_ball_position();
+		this.update_ball_position(dt);
 
 		if (this.score1 === POINTS_TO_WIN) {
 			this.status = STATUS_ENDED_1;
