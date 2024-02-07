@@ -2,7 +2,6 @@ import * as sound from "./sound.js";
 import * as physics from "./physics.js";
 import * as graphics from "./graphics.js";
 import * as requests from "../requests.js";
-import { div_handler } from "../utils.js";
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -15,12 +14,15 @@ const INPUT_LEFT = 0;
 const INPUT_RIGHT = 1;
 const INPUT_SPACE = 2;
 const INPUT_NEUTRAL = 3;
+const INPUT_PAUSE = 4;
+const INPUT_QUIT = 5;
 
 /* STATUSES */
 const STATUS_WAITING = 0;
 const STATUS_ACTIVE = 1;
 const STATUS_ENDED_1 = 2;
 const STATUS_ENDED_2 = 3;
+const STATUS_PAUSED = 4;
 
 /* GAME TYPES */
 export const TYPE_REMOTE = 0;
@@ -203,6 +205,8 @@ export class GameSession {
 					if (this.state.status === STATUS_WAITING) {
 						this.state.status = STATUS_ACTIVE;
 						sound.play_music();
+					} else if (this.state.status === STATUS_ACTIVE || this.state.status === STATUS_PAUSED) {
+						this.state.status = this.state.status === STATUS_ACTIVE ? STATUS_PAUSED : STATUS_ACTIVE;
 					} else if (this.state.status === STATUS_ENDED_1 || this.state.status === STATUS_ENDED_2) {
 						this.state.status = STATUS_ACTIVE;
 						this.reset_game();
@@ -299,7 +303,8 @@ export class GameSession {
 	update(dt) {
 		this.process_inputs();
 
-		if (this.state.status === STATUS_WAITING) return;
+		if (this.state.status === STATUS_WAITING || this.state.status === STATUS_PAUSED)
+			return;
 
 		this.update_paddle_position(this.state.player1, this.dt);
 		this.update_paddle_position(this.state.player2, this.dt);
@@ -398,6 +403,31 @@ export class GameSession {
 
 			/* Draw text */
 			graphics.draw_text(text, text_x, text_y, palette.c4);
+		} else if (this.state.status === STATUS_PAUSED) {
+			const text = "Paused";
+			const padding = 10;
+			const text_width = ctx.measureText(text).width;
+			const text_x = (BOARD_WIDTH - text_width) / 2;
+			const text_y = (BOARD_HEIGHT + FSIZE / 2) / 2;
+			const box_w = text_width + padding * 2;
+			const box_h = DOUBLE_FSIZE;
+			const box_x = (BOARD_WIDTH - box_w) / 2;
+			const box_y = (BOARD_HEIGHT - box_h) / 2;
+
+			/* Draw box shadow */
+			graphics.draw_rect(box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
+			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
+
+			/* Draw box */
+			graphics.draw_rect(box_x, box_y, box_w, box_h, 4, palette.c4);
+			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
+
+			/* Draw text's shadow */
+			graphics.draw_text(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y, SHADOW);
+
+			/* Draw text */
+			graphics.draw_text(text, text_x, text_y, palette.c4);
+
 		} else if (this.state.status === STATUS_ENDED_1 || this.state.status === STATUS_ENDED_2) {
 			let text;
 			if (this.state.status === STATUS_ENDED_1) text = "Player 1 won !";
