@@ -1,7 +1,7 @@
-let music = new Audio(assets_url + "glitchstairs.ogg");
-let victory = new Audio(assets_url + "victory.wav");
-let hit_sound = new Audio(assets_url + "hit.wav");
-let score_sound = new Audio(assets_url + "explosion.wav");
+const music = new Audio(assets_url + "glitchstairs.ogg");
+const victory = new Audio(assets_url + "victory.wav");
+const hit_sound = new Audio(assets_url + "hit.wav");
+const score_sound = new Audio(assets_url + "explosion.wav");
 
 music.loop = true;
 
@@ -33,7 +33,7 @@ export function play_music() {
 
 export function stop_music() {
 	if (music) {
-		music.pause(); // Stop the music
-		music.currentTime = 0; // Optionally reset the time to the start
+		music.pause();
+		music.currentTime = 0;
 	}
 }

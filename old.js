@@ -168,3 +168,26 @@ export function aabb_discrete_resolve(r1, r2) {
 		}
 	}
 }
+
+
+function draw_line(p1, p2, color) {
+	ctx.beginPath();
+	ctx.moveTo(p1.x, p1.y);
+	ctx.lineTo(p2.x, p2.y);
+	ctx.strokeStyle = color;
+	ctx.stroke();
+}
+
+function draw_disc(x, y, radius, color) {
+	ctx.beginPath();
+	ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+	ctx.fillStyle = color;
+	ctx.fill();
+}
+
+function draw_circle(x, y, radius, color) {
+	ctx.beginPath();
+	ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+	ctx.strokeStyle = color;
+	ctx.stroke();
+}

@@ -4,8 +4,7 @@ import threading
 from uuid import UUID
 from typing import Dict, Union
 
-from game_app.pong.GameState import STATUS_ACTIVE, INPUT_SPACE
-from pong_project.game_app.pong.main import GameSession
+from .main import GameSession
 
 class GameManager:
     def __init__(self):

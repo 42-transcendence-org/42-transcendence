@@ -1,4 +1,5 @@
-import { GameSession, TYPE_AI, TYPE_LOCAL } from './pong/main.js';
+import { GameSession } from './pong/main.js';
+import {TYPE_AI, TYPE_LOCAL} from './pong/state.js';
 
 export function get_cookie(name) {
 	let cookie_value = null;

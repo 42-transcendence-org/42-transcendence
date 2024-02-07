@@ -1,9 +1,9 @@
 import uuid
 import json
-import time
 
-from pong_project.game_app.pong.manager import g_manager
-from pong_project.game_app.pong.main import INPUTS
+
+from .pong.manager import g_manager
+from .pong.main import INPUTS
 
 from django.http import JsonResponse, StreamingHttpResponse
 
@@ -105,7 +105,7 @@ def game_view(request, game_id: uuid.UUID):
                 try:
                     data = g_manager.game_get_state(game_id)
                     yield f"data: {json.dumps(data)}\n\n".encode("utf-8")
-                    time.sleep(sleep_time)  
+                    time.sleep(sleep_time)
                 except GeneratorExit:
                     break
                 except Exception as e:

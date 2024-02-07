@@ -86,7 +86,7 @@ export async function send_game_creation_request(game_type) {
 		if (data) {
 			g_session = new GameSession(data.id, data.type, data.name1, data.name2);
 			div_handler("game-div");
-			g_session.update_start();
+			g_session.loop_start();
 		} else {
 			console.error('Game creation failed');
 		}

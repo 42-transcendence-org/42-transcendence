@@ -1,7 +1,7 @@
 import * as requests from './requests.js';
 import { load_font } from './pong/graphics.js';
 import { create_game } from './utils.js';
-import { TYPE_AI, TYPE_LOCAL } from './pong/main.js';
+import { TYPE_AI, TYPE_LOCAL } from './pong/state.js';
 
 /* FIXME Move load font somewhere else */
 document.addEventListener('DOMContentLoaded', function () {
