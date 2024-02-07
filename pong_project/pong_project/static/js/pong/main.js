@@ -106,8 +106,8 @@ class GameState {
 	constructor() {
 		this.status = STATUS_WAITING;
 		this.particles = [];
-		this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
-		// this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN), BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
+		// this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
+		this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN), BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
 		this.player1 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, BOARD_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.player2 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.score1 = 0;
@@ -232,8 +232,9 @@ export class GameSession {
 		let collision = physics.aabb_continuous_detection(paddle, this.state.ball, dt);
 		if (collision.time > 0 && collision.time <= 1.0) {
 			sound.play_hit_sound();
-			/* Move the paddle just enough to be in contact with the ball */
+			/* Scale the paddle velocity and move it so that it comes in contact with the ball without colliding with it */
 			physics.aabb_continuous_resolve(paddle, collision);
+			paddle.position.x += paddle.velocity.x * dt;
 			/* Invert the normal in x to get the direction the ball need to go in */
 			collision.normal.x *= -1;
 			/* Update the ball velocity based on the contact point with paddle */
@@ -255,13 +256,13 @@ export class GameSession {
 
 		/* Collision resolution */
 		if (collision != null && player != null && collision.time > 0 && collision.time <= 1.0) {
-			/* Move the ball just enough to be in contact with the paddle */
-			physics.aabb_continuous_resolve(this.state.ball, collision);
 			sound.play_hit_sound();
+			/* Scale the ball velocity and move it so that it comes in contact with the paddle without colliding with it */
+			physics.aabb_continuous_resolve(this.state.ball, collision);
+			this.state.ball.position.x += this.state.ball.velocity.x * dt;
+			this.state.ball.position.y += this.state.ball.velocity.y * dt;
 			/* Update the ball velocity based on where it hits the paddle */
 			this.update_ball_velocity(player, collision.normal);
-			this.state.ball.position.x += this.state.ball.velocity.x * (1 - collision.time);
-			this.state.ball.position.y += this.state.ball.velocity.y * (1 - collision.time);
 		} else {
 			this.state.ball.position.x += this.state.ball.velocity.x * dt;
 			this.state.ball.position.y += this.state.ball.velocity.y * dt;
