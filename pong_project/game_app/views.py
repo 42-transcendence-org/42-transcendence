@@ -10,7 +10,7 @@ PLAYER_ID = [0, 1]
 GAME_INPUTS = [-1, 0, 1, 2]  # left, neutral, right, space
 GAME_TYPES = ["local", "remote", "ai"]
 
-
+# FIXME Remove everything not related to "remote"
 def game_create_view(request):
     # Check the HTTP method
     if request.method != "POST":
@@ -120,7 +120,7 @@ def game_view(request, game_id: uuid.UUID):
     # Handle GET request for streaming game state
     elif request.method == "GET":
         # Check that the game exists and the player is part of that game
-        if not g_manager.game_exists or not g_manager.validate_player_id(
+        if not g_manager.game_exists(game_id) or not g_manager.validate_player_id(
             game_id, alias, 0
         ):
             return JsonResponse(

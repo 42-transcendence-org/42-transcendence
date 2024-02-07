@@ -97,7 +97,7 @@ class Input {
 	}
 }
 
-export class GameState {
+class GameState {
 	constructor() {
 		this.status = STATUS_WAITING;
 		this.particles = [];
@@ -115,7 +115,7 @@ export class GameSession {
 		this.type = type;
 		this.inputs = [];
 		this.t = 0.0;
-		this.dt = 1.0 / 60.0;
+		this.dt = 1.0 / 30.0;
 		this.accumulator = 0.0;
 		this.old_time = 0.0;
 		this.name1 = name1;
@@ -173,6 +173,7 @@ export class GameSession {
 		this.state.ball.velocity = direction;
 	}
 
+	/* FIXME Could be replaced by this.state = new GameState() */
 	reset_game() {
 		this.state.player1.position.x = this.state.player2.position.x = (BOARD_WIDTH - this.state.player1.size.x) / 2;
 		this.state.player1.position.y = BOARD_HEIGHT - (3 * MARGIN);
@@ -198,14 +199,18 @@ export class GameSession {
 	}
 
 	update_paddle_position(paddle, dt) {
-		if (paddle.position.x + paddle.velocity.x * dt > CORRIDOR && paddle.position.x + paddle.size.x + paddle.velocity.x * dt < BOARD_WIDTH - CORRIDOR)
-			paddle.position.x += paddle.velocity.x * dt;
-
-		if (physics.aabb_discrete_detection(paddle, this.state.ball)) {
-			sound.play_hit_sound();
-			const normal = physics.aabb_discrete_resolve(this.state.ball, paddle);
-			normal.x *= -1;
-			this.update_ball_velocity(paddle, normal);
+		if (paddle.position.x + paddle.velocity.x * dt > CORRIDOR && paddle.position.x + paddle.size.x + paddle.velocity.x * dt < BOARD_WIDTH - CORRIDOR) {
+			let collision = physics.aabb_continuous_detection(paddle, this.ball, dt);
+			if (collision.time > 0 && collision.time <= 1.0) {
+				physics.aabb_continuous_resolve(paddle, collision);
+				sound.play_hit_sound();
+				collision.normal.x *= -1;
+				this.update_ball_velocity(paddle, collision.normal);
+				this.ball.position.x += this.ball.velocity.x * (1 - collision.time);
+				this.ball.position.y += this.ball.velocity.y * (1 - collision.time);
+			} else {
+				paddle.position.x += paddle.velocity.x * dt;
+			}
 		}
 	}
 
@@ -250,7 +255,8 @@ export class GameSession {
 			sound.play_hit_sound();
 			const normal = physics.aabb_discrete_resolve(this.state.ball, this.state.player2);
 			this.update_ball_velocity(this.state.player2, normal);
-		} else if (this.state.ball.position.x <= MARGIN) {
+		}
+		if (this.state.ball.position.x <= MARGIN) {
 			/* Left wall */
 			this.state.ball.position.x = MARGIN;
 			this.state.ball.velocity.x *= -1;

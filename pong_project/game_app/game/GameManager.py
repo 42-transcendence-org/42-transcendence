@@ -33,7 +33,6 @@ class GameManager:
             self.current_time = new_time
 
             self.accumulator += frame_time
-            global calls
             while self.accumulator >= self.dt:
                 with self.lock:
                     for _, session in self.sessions.items():
@@ -65,10 +64,7 @@ class GameManager:
     def validate_player_id(self, game_id: UUID, name: str, player_id: int) -> bool:
         with self.lock:
             if game_id in self.sessions:
-                i = self.sessions[game_id]
-                if player_id == 0 and (i.name1 == name or i.name2 == name):
-                    return True
-                if i.name1 == name and player_id == 1 or i.name2 == name and player_id == 2:
+                if self.sessions[game_id].name1 == name or self.sessions[game_id].name2 == name:
                     return True
         return False
 

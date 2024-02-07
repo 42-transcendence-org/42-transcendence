@@ -106,3 +106,84 @@ export function particles_update(array, dt) {
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+export class Collision {
+	constructor(t, x, y, nx, ny) {
+		this.time = t;
+		this.point = new Vector(x, y);
+		this.normal = new Vector(nx, ny);
+	}
+}
+
+export function ray_rectangle_collision(origin, direction, target) {
+	let t_near = new Vector(
+		direction.x === 0 ? (target.position.x - origin.x) > 0 ? Infinity : -Infinity : (target.position.x - origin.x) / direction.x,
+		direction.y === 0 ? (target.position.y - origin.y) > 0 ? Infinity : -Infinity : (target.position.y - origin.y) / direction.y
+	);
+	let t_far = new Vector(
+		direction.x === 0 ? (target.position.x + target.size.x - origin.x) > 0 ? Infinity : -Infinity : (target.position.x + target.size.x - origin.x) / direction.x,
+		direction.y === 0 ? (target.position.y + target.size.y - origin.y) > 0 ? Infinity : -Infinity : (target.position.y + target.size.y - origin.y) / direction.y
+	);
+
+	if (t_near.x > t_far.x) [t_near.x, t_far.x] = [t_far.x, t_near.x];
+	if (t_near.y > t_far.y) [t_near.y, t_far.y] = [t_far.y, t_near.y];
+
+	let collision = new Collision(-1, 0, 0, 0, 0);
+
+	if (t_near.x > t_far.y || t_near.y > t_far.x) return collision;
+
+	let t_hit_near = Math.max(t_near.x, t_near.y);
+	let t_hit_far = Math.min(t_far.x, t_far.y);
+
+	if (t_hit_far < 0) return collision;
+
+	collision.time = t_hit_near;
+	collision.point.x = origin.x + t_hit_near * direction.x;
+	collision.point.y = origin.y + t_hit_near * direction.y;
+
+	if (t_near.x > t_near.y) {
+		if (direction.x < 0) { collision.normal.x = 1; collision.normal.y = 0; }
+		else { collision.normal.x = -1; collision.normal.y = 0; }
+	} else if (t_near.x < t_near.y) {
+		if (direction.y < 0) { collision.normal.x = 0; collision.normal.y = 1; }
+		else { collision.normal.x = 0; collision.normal.y = -1; }
+	}
+	return collision;
+}
+
+export function aabb_continuous_resolve(r1, collision) {
+	return new Vector(
+		r1.velocity.x + collision.normal.x * Math.abs(r1.velocity.x) * (1 - collision.time),
+		r1.velocity.y + collision.normal.y * Math.abs(r1.velocity.y) * (1 - collision.time)
+	);
+}
+
+
+export function aabb_continuous_detection(r1, r2, dt) {
+	/* If r1 is not moving, a collision cannot occur */
+	if (r1.velocity.x == 0 && r1.velocity.y == 0) return new Collision(-1, 0, 0, 0, 0);
+
+	/* Create an expanded target to check against so that we can detect and resolve the collision properly */
+	let r2_expanded = new Rectangle(
+		r2.position.x - r1.size.x / 2,
+		r2.position.y - r1.size.y / 2,
+		r2.size.x + r1.size.x,
+		r2.size.y + r1.size.y,
+		0, 0
+	);
+	let collision = ray_rectangle_collision(
+		new Vector(r1.position.x + r1.size.x / 2, r1.position.y + r1.size.y / 2),
+		new Vector(r1.velocity.x * dt, r1.velocity.y * dt),
+		r2_expanded
+	);
+
+	return collision;
+}
