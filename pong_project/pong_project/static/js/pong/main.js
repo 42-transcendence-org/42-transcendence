@@ -10,10 +10,10 @@ const BOARD_WIDTH = canvas.width;
 const BOARD_HEIGHT = canvas.height;
 
 /* INPUTS */
-const LEFT = 0;
-const RIGHT = 1;
-const SPACE = 2;
-const NEUTRAL = 3;
+const INPUT_LEFT = 0;
+const INPUT_RIGHT = 1;
+const INPUT_SPACE = 2;
+const INPUT_NEUTRAL = 3;
 
 /* STATUSES */
 const STATUS_WAITING = 0;
@@ -27,8 +27,8 @@ const TYPE_LOCAL = 1;
 const TYPE_CPU = 2;
 
 /* PLAYERS' IDS */
-const PLAYER1 = 0;
-const PLAYER2 = 1;
+const ID_PLAYER1 = 0;
+const ID_PLAYER2 = 1;
 
 const palette = {
 	c1: "#2B2A4C", /* purple */
@@ -66,18 +66,18 @@ document.addEventListener('keydown', (event) => {
 	const time = Date.now();
 	const key_name = event.key;
 	if (key_name === 'a' && g_session.state.player1.velocity.x != -PADDLE_SPEED) {
-		requests.send_user_input(LEFT, time);
-		g_session.input_handler(PLAYER1, LEFT, time);
+		requests.send_user_input(INPUT_LEFT, time);
+		g_session.input_handler(ID_PLAYER1, INPUT_LEFT, time);
 	} else if (key_name === 's' && g_session.state.player1.velocity.x != PADDLE_SPEED) {
-		requests.send_user_input(RIGHT, time);
-		g_session.input_handler(PLAYER1, RIGHT, time);
+		requests.send_user_input(INPUT_RIGHT, time);
+		g_session.input_handler(ID_PLAYER1, INPUT_RIGHT, time);
 	} else if (key_name === 'k' && g_session.state.player2.velocity.x != -PADDLE_SPEED) {
-		g_session.input_handler(PLAYER2, LEFT, time);
+		g_session.input_handler(ID_PLAYER2, INPUT_LEFT, time);
 	} else if (key_name === 'l' && g_session.state.player2.velocity.x != PADDLE_SPEED) {
-		g_session.input_handler(PLAYER2, RIGHT, time);
+		g_session.input_handler(ID_PLAYER2, INPUT_RIGHT, time);
 	} else if (key_name === ' ') {
-		requests.send_user_input(SPACE, time);
-		g_session.input_handler(PLAYER1, SPACE, time);
+		requests.send_user_input(INPUT_SPACE, time);
+		g_session.input_handler(ID_PLAYER1, INPUT_SPACE, time);
 	}
 });
 
@@ -87,10 +87,10 @@ document.addEventListener('keyup', (event) => {
 	const time = Date.now();
 	const key_name = event.key;
 	if ((key_name === 'a' || key_name === 's') && g_session.state.player1.velocity.x != 0) {
-		requests.send_user_input(NEUTRAL, time);
-		g_session.input_handler(PLAYER1, NEUTRAL, time);
+		requests.send_user_input(INPUT_NEUTRAL, time);
+		g_session.input_handler(ID_PLAYER1, INPUT_NEUTRAL, time);
 	} else if ((key_name === 'k' || key_name === 'l') && g_session.state.player2.velocity.x != 0) {
-		g_session.input_handler(PLAYER2, NEUTRAL, time);
+		g_session.input_handler(ID_PLAYER2, INPUT_NEUTRAL, time);
 	}
 });
 
@@ -106,8 +106,7 @@ class GameState {
 	constructor() {
 		this.status = STATUS_WAITING;
 		this.particles = [];
-		// this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
-		this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN), BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
+		this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
 		this.player1 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, BOARD_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.player2 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.score1 = 0;
@@ -186,18 +185,18 @@ export class GameSession {
 
 	process_inputs() {
 		this.inputs.forEach((input) => {
-			let player = (input.id === PLAYER1 ? this.state.player1 : this.state.player2);
+			let player = (input.id === ID_PLAYER1 ? this.state.player1 : this.state.player2);
 			switch (input.input) {
-				case NEUTRAL:
+				case INPUT_NEUTRAL:
 					player.velocity.x = 0;
 					break;
-				case LEFT:
+				case INPUT_LEFT:
 					player.velocity.x = -PADDLE_SPEED;
 					break;
-				case RIGHT:
+				case INPUT_RIGHT:
 					player.velocity.x = PADDLE_SPEED;
 					break;
-				case SPACE:
+				case INPUT_SPACE:
 					if (this.state.status === STATUS_WAITING) {
 						this.state.status = STATUS_ACTIVE;
 						sound.play_music();
@@ -228,6 +227,7 @@ export class GameSession {
 		}
 	}
 
+	/* FIXME The ball passes through the paddle when stuck against the wall and paddle in the x-axis */
 	update_paddle_position(paddle, dt) {
 		let collision = physics.aabb_continuous_detection(paddle, this.state.ball, dt);
 		if (collision.time > 0 && collision.time <= 1.0) {

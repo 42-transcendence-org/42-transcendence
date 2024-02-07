@@ -26,7 +26,7 @@
 // }
 
 update_paddle_position(id, player, dt) {
-	if (this.inputs[id] === NEUTRAL)
+	if (this.inputs[id] === INPUT_NEUTRAL)
 		return;
 
 	if (player.position.x + player.velocity.x * dt > CORRIDOR && player.position.x + player.size.x + player.velocity.x * dt < BOARD_WIDTH - CORRIDOR) {
@@ -46,17 +46,17 @@ update_paddle_position(id, player, dt) {
 }
 
 
-if (this.inputs[PLAYER1] == LEFT && this.player1.position.x + this.player1.velocity.x * dt > CORRIDOR)
+if (this.inputs[ID_PLAYER1] == LEFT && this.player1.position.x + this.player1.velocity.x * dt > CORRIDOR)
 	this.player1.position.x += this.player1.velocity.x * dt;
-else if (this.inputs[PLAYER1] == RIGHT && this.player1.position.x + this.player1.size.x + this.player1.velocity.x * dt < BOARD_WIDTH - CORRIDOR)
+else if (this.inputs[ID_PLAYER1] == INPUT_RIGHT && this.player1.position.x + this.player1.size.x + this.player1.velocity.x * dt < BOARD_WIDTH - CORRIDOR)
 	this.player1.position.x += this.player1.velocity.x * dt;
-if (this.inputs[PLAYER2] == LEFT && this.player2.position.x + this.player2.velocity.x * dt > CORRIDOR)
+if (this.inputs[ID_PLAYER2] == LEFT && this.player2.position.x + this.player2.velocity.x * dt > CORRIDOR)
 	this.player2.position.x += this.player2.velocity.x * dt;
-else if (this.inputs[PLAYER2] == RIGHT && this.player2.position.x + this.player2.size.x + this.player2.velocity.x * dt < BOARD_WIDTH - CORRIDOR)
+else if (this.inputs[ID_PLAYER2] == INPUT_RIGHT && this.player2.position.x + this.player2.size.x + this.player2.velocity.x * dt < BOARD_WIDTH - CORRIDOR)
 	this.player2.position.x += this.player2.velocity.x * dt;
 
 update_paddle_velocity(id, player) {
-	if (this.inputs[id] != NEUTRAL) {
+	if (this.inputs[id] != INPUT_NEUTRAL) {
 		let dv = PADDLE_ACCELERATION * this.inputs[id];
 		player.velocity.x += dv;
 		player.velocity.x = Math.min(Math.max(player.velocity.x, -PADDLE_SPEED_MAX), PADDLE_SPEED_MAX);

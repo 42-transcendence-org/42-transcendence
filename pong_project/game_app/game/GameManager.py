@@ -4,7 +4,7 @@ import threading
 from uuid import UUID
 from typing import Dict, Union
 
-from game_app.game.GameState import STATUS_ACTIVE, SPACE
+from game_app.game.GameState import STATUS_ACTIVE, INPUT_SPACE
 from game_app.game.GameSession import GameSession
 
 class GameManager:
@@ -77,7 +77,7 @@ class GameManager:
     def game_add_input(self, game_id: UUID, player_id: int, player_input: int):
         with self.lock:
             if game_id in self.sessions:
-                if player_input != SPACE:
+                if player_input != INPUT_SPACE:
                     self.sessions[game_id].state.input_handler(player_id, player_input)
                 else:
                     self.sessions[game_id].state.status = STATUS_ACTIVE

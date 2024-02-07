@@ -7,10 +7,10 @@ from typing import Tuple
 CANVAS_WIDTH = 480
 CANVAS_HEIGHT = 650
 
-LEFT = -1
-RIGHT = 1
-NEUTRAL = 0
-SPACE = 2
+INPUT_LEFT = -1
+INPUT_RIGHT = 1
+INPUT_NEUTRAL = 0
+INPUT_SPACE = 2
 
 STATUS_WAITING = 0
 STATUS_ACTIVE = 1
@@ -68,7 +68,7 @@ class GameState:
         self.reset_ball(physics.Vector(0, BALL_SPEED_MIN))
 
     def update_paddle_velocity(self, id: int, player: physics.Rectangle) -> None:
-        if self.inputs[id] != NEUTRAL:
+        if self.inputs[id] != INPUT_NEUTRAL:
             dv = PADDLE_ACCELERATION * self.inputs[id]
             player.velocity.x += dv
             player.velocity.x = min(max(player.velocity.x, -PADDLE_SPEED_MAX), PADDLE_SPEED_MAX)
@@ -115,7 +115,7 @@ class GameState:
         player: physics.Rectangle,
         dt: float,
     ) -> None:
-        if (self.inputs[id] != NEUTRAL and player.position.x + player.velocity.x * dt > CORRIDOR and player.position.x + player.size.x + player.velocity.x * dt < CANVAS_WIDTH - CORRIDOR):
+        if (self.inputs[id] != INPUT_NEUTRAL and player.position.x + player.velocity.x * dt > CORRIDOR and player.position.x + player.size.x + player.velocity.x * dt < CANVAS_WIDTH - CORRIDOR):
             collision = physics.aabb_continuous_detection(player, self.ball, dt)
             if 0 < collision.time <= 1.0:
                 physics.aabb_continuous_resolve(player, collision)
@@ -149,7 +149,7 @@ class GameState:
     def update(self, dt: float) -> None:
         if self.status == STATUS_WAITING:
             return
-        
+
         self.update_paddle_velocity(0, self.player1)
         self.update_paddle_velocity(1, self.player2)
         self.update_paddle_position(0, self.player1, dt)
