@@ -363,21 +363,17 @@ export class GameSession {
 		/* Draw the vertical line in the middle of the table */
 		graphics.draw_rect_fill(((BOARD_WIDTH - (MARGIN / 2)) / 2), 0, MARGIN / 2, BOARD_HEIGHT, palette.c4);
 
-		/* Draw the net's shadow */
-		graphics.draw_rect_fill(net.position.x + SHADOW_OFFSET_X, net.position.y + SHADOW_OFFSET_Y - net.size.y - 1, net.size.x - SHADOW_OFFSET_X, net.size.y + 2, SHADOW);
-
 		/* Draw the net */
+		graphics.draw_rect_fill(net.position.x + SHADOW_OFFSET_X, net.position.y + SHADOW_OFFSET_Y - net.size.y - 1, net.size.x - SHADOW_OFFSET_X, net.size.y + 2, SHADOW);
 		graphics.draw_rect_fill(net.position.x, net.position.y, net.size.x, net.size.y, palette.c4);
 
-		/* Draw scores shadows */
+		/* Draw scores */
 		graphics.draw_text(this.state.score1, BOARD_WIDTH - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((BOARD_HEIGHT / 2) + FSIZE) + SHADOW_OFFSET_Y, SHADOW);
 		graphics.draw_text(this.state.score2, BOARD_WIDTH - DOUBLE_FSIZE + SHADOW_OFFSET_X, ((BOARD_HEIGHT / 2) - (FSIZE / 3)) + SHADOW_OFFSET_Y, SHADOW);
-
-		/* Draw scores */
 		graphics.draw_text(this.state.score1, BOARD_WIDTH - DOUBLE_FSIZE, (BOARD_HEIGHT / 2) + FSIZE, palette.c4);
 		graphics.draw_text(this.state.score2, BOARD_WIDTH - DOUBLE_FSIZE, (BOARD_HEIGHT / 2) - (FSIZE / 3), palette.c4);
 
-		/* Draw the paddles and the ball shadows */
+		/* Draw ball, paddles and particles */
 		if (this.state.particles.length === 0) {
 			graphics.draw_rect_fill(this.state.ball.position.x + SHADOW_OFFSET_X, this.state.ball.position.y + SHADOW_OFFSET_Y, this.state.ball.size.x, this.state.ball.size.y, SHADOW);
 		} else {
@@ -387,8 +383,6 @@ export class GameSession {
 		}
 		graphics.draw_rect_fill(this.state.player1.position.x + SHADOW_OFFSET_X, this.state.player1.position.y + SHADOW_OFFSET_Y, this.state.player1.size.x, this.state.player1.size.y, SHADOW);
 		graphics.draw_rect_fill(this.state.player2.position.x + SHADOW_OFFSET_X, this.state.player2.position.y + SHADOW_OFFSET_Y, this.state.player2.size.x, this.state.player2.size.y, SHADOW);
-
-		/* Draw the paddles and the ball */
 		if (this.state.particles.length === 0) {
 			graphics.draw_rect_fill(this.state.ball.position.x, this.state.ball.position.y, this.state.ball.size.x, this.state.ball.size.y, palette.c3);
 		} else {
@@ -399,57 +393,32 @@ export class GameSession {
 		graphics.draw_rect_fill(this.state.player1.position.x, this.state.player1.position.y, this.state.player1.size.x, this.state.player1.size.y, palette.c3);
 		graphics.draw_rect_fill(this.state.player2.position.x, this.state.player2.position.y, this.state.player2.size.x, this.state.player2.size.y, palette.c3);
 
+		/* Draw message boxes */
+		if (this.state.status === STATUS_WAITING || this.state.status === STATUS_PAUSED) {
 
-		if (this.state.status === STATUS_WAITING) {
-			const text = "Press 'Space' to start";
+			const text = this.state.status === STATUS_WAITING ? "Hit 'Space' to start" : "Paused";
 			const padding = 10;
-			const text_width = ctx.measureText(text).width;
-			const text_x = (BOARD_WIDTH - text_width) / 2;
+
+			const text_w = ctx.measureText(text).width;
+			const text_x = (BOARD_WIDTH - text_w) / 2;
 			const text_y = (BOARD_HEIGHT + FSIZE / 2) / 2;
-			const box_w = text_width + padding * 2;
+
+			const box_w = text_w + padding * 2;
 			const box_h = DOUBLE_FSIZE;
 			const box_x = (BOARD_WIDTH - box_w) / 2;
 			const box_y = (BOARD_HEIGHT - box_h) / 2;
 
-			/* Draw box shadow */
-			graphics.draw_rect(box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
-			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
-
 			/* Draw box */
+			graphics.draw_rect(box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
 			graphics.draw_rect(box_x, box_y, box_w, box_h, 4, palette.c4);
 			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
 
-			/* Draw text's shadow */
-			graphics.draw_text(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y, SHADOW);
-
 			/* Draw text */
-			graphics.draw_text(text, text_x, text_y, palette.c4);
-		} else if (this.state.status === STATUS_PAUSED) {
-			const text = "Paused";
-			const padding = 10;
-			const text_width = ctx.measureText(text).width;
-			const text_x = (BOARD_WIDTH - text_width) / 2;
-			const text_y = (BOARD_HEIGHT + FSIZE / 2) / 2;
-			const box_w = text_width + padding * 2;
-			const box_h = DOUBLE_FSIZE;
-			const box_x = (BOARD_WIDTH - box_w) / 2;
-			const box_y = (BOARD_HEIGHT - box_h) / 2;
-
-			/* Draw box shadow */
-			graphics.draw_rect(box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
-			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
-
-			/* Draw box */
-			graphics.draw_rect(box_x, box_y, box_w, box_h, 4, palette.c4);
-			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
-
-			/* Draw text's shadow */
 			graphics.draw_text(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y, SHADOW);
-
-			/* Draw text */
 			graphics.draw_text(text, text_x, text_y, palette.c4);
 
 		} else if (this.state.status === STATUS_ENDED_1 || this.state.status === STATUS_ENDED_2) {
+
 			const text_victory = this.state.status === STATUS_ENDED_1 ? "Player 1 won !" : "Player 2 won !";
 			const text_again = "Hit 'Space' to play again";
 			const text_quit = "or 'Escape' to quit";
