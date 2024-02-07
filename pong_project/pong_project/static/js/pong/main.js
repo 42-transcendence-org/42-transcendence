@@ -106,8 +106,8 @@ class GameState {
 	constructor() {
 		this.status = STATUS_WAITING;
 		this.particles = [];
-		// this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
-		this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN), BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
+		this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
+		// this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN), BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
 		this.player1 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, BOARD_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.player2 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.score1 = 0;
@@ -179,38 +179,40 @@ export class GameSession {
 		this.state.ball.velocity = direction;
 	}
 
-	/* FIXME Could be replaced by this.state = new GameState() */
 	reset_game() {
-		this.state.player1.position.x = this.state.player2.position.x = (BOARD_WIDTH - this.state.player1.size.x) / 2;
-		this.state.player1.position.y = BOARD_HEIGHT - (3 * MARGIN);
-		this.state.player2.position.y = 2 * MARGIN;
-		this.state.score1 = 0;
-		this.state.score2 = 0;
-
-		this.reset_ball(new physics.Vector(0, BALL_SPEED_MIN));
+		this.state = new GameState();
+		this.state.status = STATUS_ACTIVE;
 	}
 
-	// update_ball_velocity(player, collision) {
-	// 	let expanded = new physics.Rectangle(player.position.x - this.ball.size.x / 2, player.position.y - this.ball.size.y / 2, player.size.x + this.ball.size.x, player.size.y + this.ball.size.y, 0, 0);
-	// 	if (collision.normal.x != 0) {
-	// 		let r1_center = this.ball.position.y + this.ball.size.y / 2;
-	// 		let r2_center = expanded.position.y + expanded.size.y / 2;
-	// 		let c = (r1_center - r2_center) / (expanded.size.y / 2);
-	// 		c *= MAX_ANGLE;
-	// 		this.ball.velocity.x = collision.normal.x * Math.cos(c) * BALL_SPEED_MAX;
-	// 		this.ball.velocity.y = Math.sin(c) * BALL_SPEED_MAX;
-	// 	}
-	// 	if (collision.normal.y != 0) {
-	// 		let r1_center = this.ball.position.x + this.ball.size.x / 2;
-	// 		let r2_center = expanded.position.x + expanded.size.x / 2;
-	// 		let c = (r1_center - r2_center) / (expanded.size.x / 2);
-	// 		c *= MAX_ANGLE;
-	// 		this.ball.velocity.x = Math.sin(c) * BALL_SPEED_MAX;
-	// 		this.ball.velocity.y = collision.normal.y * Math.cos(c) * BALL_SPEED_MAX;
-	// 	}
-	// }
+	process_inputs() {
+		this.inputs.forEach((input) => {
+			let player = (input.id === PLAYER1 ? this.state.player1 : this.state.player2);
+			switch (input.input) {
+				case NEUTRAL:
+					player.velocity.x = 0;
+					break;
+				case LEFT:
+					player.velocity.x = -PADDLE_SPEED;
+					break;
+				case RIGHT:
+					player.velocity.x = PADDLE_SPEED;
+					break;
+				case SPACE:
+					if (this.state.status === STATUS_WAITING) {
+						this.state.status = STATUS_ACTIVE;
+						sound.play_music();
+					} else if (this.state.status === STATUS_ENDED_1 || this.state.status === STATUS_ENDED_2) {
+						this.state.status = STATUS_ACTIVE;
+						this.reset_game();
+					}
+					break;
+			}
+		});
+		if (this.type != TYPE_REMOTE)
+			this.inputs = [];
+	}
 
-	/* FIXME Should we use the contact point insead ? */
+	/* FIXME Should we use the contact point instead ? */
 	update_ball_velocity(player, normal) {
 		const expanded = new physics.Rectangle(player.position.x - this.state.ball.size.x / 2, player.position.y - this.state.ball.size.y / 2, player.size.x + this.state.ball.size.x, player.size.y + this.state.ball.size.y, 0, 0);
 		const b_center = new physics.Vector(this.state.ball.position.x + this.state.ball.size.x / 2, this.state.ball.position.y + this.state.ball.size.y / 2);
@@ -242,34 +244,6 @@ export class GameSession {
 		}
 	}
 
-	process_inputs() {
-		this.inputs.forEach((input) => {
-			let player = (input.id === PLAYER1 ? this.state.player1 : this.state.player2);
-			switch (input.input) {
-				case NEUTRAL:
-					player.velocity.x = 0;
-					break;
-				case LEFT:
-					player.velocity.x = -PADDLE_SPEED;
-					break;
-				case RIGHT:
-					player.velocity.x = PADDLE_SPEED;
-					break;
-				case SPACE:
-					if (this.state.status === STATUS_WAITING) {
-						this.state.status = STATUS_ACTIVE;
-						sound.play_music();
-					} else if (this.state.status === STATUS_ENDED_1 || this.state.status === STATUS_ENDED_2) {
-						this.state.status = STATUS_ACTIVE;
-						this.reset_game();
-					}
-					break;
-			}
-		});
-		if (this.type != TYPE_REMOTE)
-			this.inputs = [];
-	}
-
 	update_ball_position(dt) {
 		let player = null;
 		let collision = null;
@@ -281,13 +255,13 @@ export class GameSession {
 
 		/* Collision resolution */
 		if (collision != null && player != null && collision.time > 0 && collision.time <= 1.0) {
-			/* Move the paddle just enough to be in contact with the ball */
+			/* Move the ball just enough to be in contact with the paddle */
 			physics.aabb_continuous_resolve(this.state.ball, collision);
 			sound.play_hit_sound();
 			/* Update the ball velocity based on where it hits the paddle */
 			this.update_ball_velocity(player, collision.normal);
-			// this.state.ball.position.x += this.state.ball.velocity.x * (1 - collision.time);
-			// this.state.ball.position.y += this.state.ball.velocity.y * (1 - collision.time);
+			this.state.ball.position.x += this.state.ball.velocity.x * (1 - collision.time);
+			this.state.ball.position.y += this.state.ball.velocity.y * (1 - collision.time);
 		} else {
 			this.state.ball.position.x += this.state.ball.velocity.x * dt;
 			this.state.ball.position.y += this.state.ball.velocity.y * dt;
