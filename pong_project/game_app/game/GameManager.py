@@ -45,9 +45,9 @@ class GameManager:
             if sleep_time > 0:
                 time.sleep(sleep_time)
 
-    def game_add(self, game_id: UUID, type: str, name1: str, name2: str):
+    def game_create(self, game_id: UUID, name: str):
         with self.lock:
-            self.sessions[game_id] = GameSession(game_id, type, name1, name2)
+            self.sessions[game_id] = GameSession(game_id, name)
 
     def game_remove(self, game_id: UUID):
         with self.lock:
@@ -61,7 +61,7 @@ class GameManager:
             else:
                 return False
 
-    def validate_player_id(self, game_id: UUID, name: str, player_id: int) -> bool:
+    def validate_player_id(self, game_id: UUID, name: str) -> bool:
         with self.lock:
             if game_id in self.sessions:
                 if self.sessions[game_id].name1 == name or self.sessions[game_id].name2 == name:

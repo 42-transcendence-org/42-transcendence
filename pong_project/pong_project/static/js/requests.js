@@ -54,7 +54,7 @@ export async function send_user_input(input, time) {
 				'Content-Type': 'application/json',
 				'X-CSRFToken': get_cookie("csrftoken"),
 			},
-			body: JSON.stringify({ "input": input, "timestamp": time }),
+			body: JSON.stringify({ "input": input, "time": time }),
 		});
 
 		if (!response.ok) {

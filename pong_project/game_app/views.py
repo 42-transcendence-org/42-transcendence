@@ -6,11 +6,16 @@ from game_app.game.GameManager import g_manager
 
 from django.http import JsonResponse, StreamingHttpResponse
 
-PLAYER_ID = [0, 1]
-GAME_INPUTS = [-1, 0, 1, 2]  # left, neutral, right, space
-GAME_TYPES = ["local", "remote", "ai"]
+# FIXME Move this in main.py later
+TYPE_REMOTE = 0
+INPUT_LEFT = 0
+INPUT_RIGHT = 1
+INPUT_SPACE = 2
+INPUT_NEUTRAL = 3
+INPUT_QUIT = 4
+INPUTS = [INPUT_LEFT, INPUT_RIGHT, INPUT_SPACE, INPUT_NEUTRAL, INPUT_QUIT]
 
-# FIXME Remove everything not related to "remote"
+
 def game_create_view(request):
     # Check the HTTP method
     if request.method != "POST":
@@ -19,19 +24,6 @@ def game_create_view(request):
         )
         response["Allow"] = "POST"
         return response
-
-    # Serialize the request's body to a dict
-    try:
-        data = json.loads(request.body)
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
-
-    # Validate the data
-    game_type = data.get("type")
-    if game_type is None:
-        return JsonResponse({"error": "'type' is a required field"}, status=400)
-    if game_type not in GAME_TYPES:
-        return JsonResponse({"error": "Invalid value for field 'type'"}, status=400)
 
     # Verify that the client has an alias
     alias = request.session.get("alias")
@@ -70,15 +62,8 @@ def game_create_view(request):
 
     # Create a new game
     game_id = uuid.uuid4()
-    name2 = ""
-    if game_type == "ai":
-        name2 = "Computer"
-    elif game_type == "local":
-        name2 = "Player 2"
-    g_manager.game_add(game_id, game_type, alias, name2)
-    return JsonResponse(
-        {"id": game_id, "type": game_type, "name1": alias, "name2": name2}, status=201
-    )
+    g_manager.game_create(game_id, alias)
+    return JsonResponse({"id": game_id, "name1": alias}, status=201)
 
 
 def game_view(request, game_id: uuid.UUID):
@@ -91,41 +76,37 @@ def game_view(request, game_id: uuid.UUID):
 
     # Handle PUT request for updating game state
     if request.method == "PUT":
-        return JsonResponse({}, status=200) # DEBUG
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-        player_id = data.get("id")
-        player_input = data.get("input")
-        if player_id is None or player_input is None:
-            return JsonResponse(
-                {"error": "'id' and 'input' are required fields"}, status=400
-            )
-        if player_id not in PLAYER_ID or player_input not in GAME_INPUTS:
-            return JsonResponse({"error": "Invalid 'id' or 'input'"}, status=400)
+        input, time = data.get("input"), data.get("time")
+        if time is None or input is None:
+            return JsonResponse({"error": "'input' and 'time' are required fields"}, status=400)
+        if input not in INPUTS:
+            return JsonResponse({"error": "Invalid value for 'input'"}, status=400)
 
-        # Check that the game exists and the player is part of that game
-        if not g_manager.game_exists or not g_manager.validate_player_id(
-            game_id, alias, player_id
-        ):
-            return JsonResponse(
-                {"error": "Invalid game ID or player not part of the game"}, status=403
-            )
+        # Check that the game exists
+        if not g_manager.game_exists(game_id):
+            return JsonResponse({"error": "Invalid game ID"}, status=403)
 
-        g_manager.game_add_input(game_id, player_id, player_input)
-        return JsonResponse({"message": "Input processed successfully"}, status=200)
+        # Check if the player is part of that game
+        if not g_manager.validate_player_id(game_id, alias):
+            return JsonResponse({"error": "You are not part of this game"}, status=403)
+
+        g_manager.game_add_input(game_id, input, time)
+        return JsonResponse(status=200)
 
     # Handle GET request for streaming game state
     elif request.method == "GET":
-        # Check that the game exists and the player is part of that game
-        if not g_manager.game_exists(game_id) or not g_manager.validate_player_id(
-            game_id, alias, 0
-        ):
-            return JsonResponse(
-                {"error": "Invalid game ID or player not part of the game"}, status=403
-            )
+        # Check that the game exists
+        if not g_manager.game_exists(game_id):
+            return JsonResponse({"error": "Invalid game ID"}, status=403)
+
+        # Check if the player is part of that game
+        if not g_manager.validate_player_id(game_id, alias):
+            return JsonResponse({"error": "You are not part of this game"}, status=403)
 
         def event_stream():
             sleep_time = 1 / 10
@@ -142,15 +123,11 @@ def game_view(request, game_id: uuid.UUID):
                     )
                     break
 
-        response = StreamingHttpResponse(
-            event_stream(), content_type="text/event-stream"
-        )
+        response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
         response["Cache-Control"] = "no-cache"
         return response
 
     else:
-        response = JsonResponse(
-            {"error": "Invalid HTTP method: GET or PUT required"}, status=405
-        )
+        response = JsonResponse({"error": "Invalid HTTP method: GET or PUT required"}, status=405)
         response["Allow"] = "GET, PUT"
         return response
