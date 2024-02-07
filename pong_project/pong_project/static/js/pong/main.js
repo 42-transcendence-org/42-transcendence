@@ -2,6 +2,7 @@ import * as sound from "./sound.js";
 import * as physics from "./physics.js";
 import * as graphics from "./graphics.js";
 import * as requests from "../requests.js";
+import { div_handler } from "../utils.js";
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -22,9 +23,9 @@ const STATUS_ENDED_1 = 2;
 const STATUS_ENDED_2 = 3;
 
 /* GAME TYPES */
-const TYPE_REMOTE = 0;
-const TYPE_LOCAL = 1;
-const TYPE_CPU = 2;
+export const TYPE_REMOTE = 0;
+export const TYPE_LOCAL = 1;
+export const TYPE_AI = 2;
 
 /* PLAYERS' IDS */
 const ID_PLAYER1 = 0;
@@ -66,17 +67,17 @@ document.addEventListener('keydown', (event) => {
 	const time = Date.now();
 	const key_name = event.key;
 	if (key_name === 'a' && g_session.state.player1.velocity.x != -PADDLE_SPEED) {
-		requests.send_user_input(INPUT_LEFT, time);
+		if (g_session.id != 0) requests.send_user_input(INPUT_LEFT, time);
 		g_session.input_handler(ID_PLAYER1, INPUT_LEFT, time);
 	} else if (key_name === 's' && g_session.state.player1.velocity.x != PADDLE_SPEED) {
-		requests.send_user_input(INPUT_RIGHT, time);
+		if (g_session.id != 0) requests.send_user_input(INPUT_RIGHT, time);
 		g_session.input_handler(ID_PLAYER1, INPUT_RIGHT, time);
 	} else if (key_name === 'k' && g_session.state.player2.velocity.x != -PADDLE_SPEED) {
 		g_session.input_handler(ID_PLAYER2, INPUT_LEFT, time);
 	} else if (key_name === 'l' && g_session.state.player2.velocity.x != PADDLE_SPEED) {
 		g_session.input_handler(ID_PLAYER2, INPUT_RIGHT, time);
 	} else if (key_name === ' ') {
-		requests.send_user_input(INPUT_SPACE, time);
+		if (g_session.id != 0) requests.send_user_input(INPUT_SPACE, time);
 		g_session.input_handler(ID_PLAYER1, INPUT_SPACE, time);
 	}
 });
@@ -87,7 +88,7 @@ document.addEventListener('keyup', (event) => {
 	const time = Date.now();
 	const key_name = event.key;
 	if ((key_name === 'a' || key_name === 's') && g_session.state.player1.velocity.x != 0) {
-		requests.send_user_input(INPUT_NEUTRAL, time);
+		if (g_session.id != 0) requests.send_user_input(INPUT_NEUTRAL, time);
 		g_session.input_handler(ID_PLAYER1, INPUT_NEUTRAL, time);
 	} else if ((key_name === 'k' || key_name === 'l') && g_session.state.player2.velocity.x != 0) {
 		g_session.input_handler(ID_PLAYER2, INPUT_NEUTRAL, time);
@@ -127,7 +128,7 @@ export class GameSession {
 		this.name2 = name2;
 		this.state = new GameState();
 
-		this.event_source = new EventSource(`http://localhost:8000/api/games/${id}/`);
+		this.event_source = id === 0 ? null : new EventSource(`http://localhost:8000/api/games/${id}/`);
 
 		this.update_start = this.update_start.bind(this);
 		this.update_state = this.update_state.bind(this);
@@ -137,14 +138,16 @@ export class GameSession {
 	}
 
 	update_start() {
-		this.event_source.onmessage = (event) => {
-			this.reconcile(JSON.parse(event.data));
-		};
-		this.event_source.onerror = (error) => {
-			console.error('EventSource failed:', error);
-			this.event_source.close();
-			/* FIXME: Handle this properly */
-		};
+		if (this.id != 0) {
+			this.event_source.onmessage = (event) => {
+				this.reconcile(JSON.parse(event.data));
+			};
+			this.event_source.onerror = (error) => {
+				console.error('EventSource failed:', error);
+				this.event_source.close();
+				/* FIXME: Handle this properly */
+			};
+		}
 
 		this.old_time = performance.now();
 		requestAnimationFrame(this.update_state);
@@ -454,3 +457,5 @@ export class GameSession {
 	}
 
 }
+
+

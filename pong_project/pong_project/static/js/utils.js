@@ -1,3 +1,5 @@
+import { GameSession, TYPE_AI, TYPE_LOCAL } from './pong/main.js';
+
 export function get_cookie(name) {
 	let cookie_value = null;
 	if (document.cookie && document.cookie !== '') {
@@ -23,4 +25,16 @@ export function div_handler(div_to_show) {
 			div.style.display = 'none';
 		}
 	});
+}
+
+export function create_game(type) {
+	if (type != TYPE_LOCAL && type != TYPE_AI)
+		return;
+	if (g_session != null) {
+		div_handler("game-div");
+		return;
+	}
+	g_session = new GameSession(0, type, "Player 1", type === TYPE_LOCAL ? "Player 2" : "Computer");
+	div_handler("game-div");
+	g_session.update_start();
 }
