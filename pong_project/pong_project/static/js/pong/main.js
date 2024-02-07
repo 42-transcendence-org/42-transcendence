@@ -64,6 +64,7 @@ const MAX_ANGLE = Math.PI / 6;
 
 const net = new physics.Rectangle(MARGIN, (BOARD_HEIGHT - 2) / 2, BOARD_WIDTH - (2 * MARGIN), 2, 0, 0);
 
+/* FIXME: Would be more efficient to send all inputs in one request */
 document.addEventListener('keydown', (event) => {
 	if (g_session === null || g_session.state === null) return;
 
