@@ -24,7 +24,16 @@ export function play_victory_sound() {
 }
 
 export function play_music() {
-	music.play().catch(error => {
-		console.warn("Audio play failed:", error);
-	});
+	if (music) {
+		music.play().catch(error => {
+			console.warn("Audio play failed:", error);
+		});
+	}
+}
+
+export function stop_music() {
+	if (music) {
+		music.pause(); // Stop the music
+		music.currentTime = 0; // Optionally reset the time to the start
+	}
 }

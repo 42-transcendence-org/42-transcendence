@@ -2,6 +2,7 @@ import * as sound from "./sound.js";
 import * as physics from "./physics.js";
 import * as graphics from "./graphics.js";
 import * as requests from "../requests.js";
+import { div_handler } from "../utils.js";
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -14,8 +15,7 @@ const INPUT_LEFT = 0;
 const INPUT_RIGHT = 1;
 const INPUT_SPACE = 2;
 const INPUT_NEUTRAL = 3;
-const INPUT_PAUSE = 4;
-const INPUT_QUIT = 5;
+const INPUT_QUIT = 4;
 
 /* STATUSES */
 const STATUS_WAITING = 0;
@@ -23,6 +23,7 @@ const STATUS_ACTIVE = 1;
 const STATUS_ENDED_1 = 2;
 const STATUS_ENDED_2 = 3;
 const STATUS_PAUSED = 4;
+const STATUS_QUIT = 5;
 
 /* GAME TYPES */
 export const TYPE_REMOTE = 0;
@@ -57,7 +58,7 @@ const BALL_SPEED_MAX = BALL_SPEED_MIN * 2.0;
 const PADDLE_WIDTH = 64;
 const PADDLE_SPEED = BOARD_WIDTH - (2 * CORRIDOR);
 
-const POINTS_TO_WIN = 5;
+const POINTS_TO_WIN = 1;
 
 const MAX_ANGLE = Math.PI / 6;
 
@@ -81,6 +82,9 @@ document.addEventListener('keydown', (event) => {
 	} else if (key_name === ' ') {
 		if (g_session.id != 0) requests.send_user_input(INPUT_SPACE, time);
 		g_session.input_handler(ID_PLAYER1, INPUT_SPACE, time);
+	} else if (key_name === 'Escape') {
+		if (g_session.id != 0) requests.send_user_input(INPUT_QUIT, time);
+		g_session.input_handler(ID_PLAYER1, INPUT_QUIT, time);
 	}
 });
 
@@ -117,6 +121,11 @@ class GameState {
 	}
 }
 
+class AI {
+	constructor() {
+	}
+}
+
 export class GameSession {
 	constructor(id, type, name1, name2) {
 		this.id = id;
@@ -130,6 +139,7 @@ export class GameSession {
 		this.name2 = name2;
 		this.state = new GameState();
 
+		this.ai = type === TYPE_AI ? new AI() : null;
 		this.event_source = id === 0 ? null : new EventSource(`http://localhost:8000/api/games/${id}/`);
 
 		this.update_start = this.update_start.bind(this);
@@ -167,6 +177,12 @@ export class GameSession {
 			this.update(this.dt);
 			this.accumulator -= this.dt;
 			this.t += this.dt;
+		}
+		if (this.state.status === STATUS_QUIT) {
+			sound.stop_music();
+			div_handler("game-menu-div");
+			g_session = null;
+			return;
 		}
 
 		this.draw();
@@ -210,6 +226,11 @@ export class GameSession {
 					} else if (this.state.status === STATUS_ENDED_1 || this.state.status === STATUS_ENDED_2) {
 						this.state.status = STATUS_ACTIVE;
 						this.reset_game();
+					}
+					break;
+				case INPUT_QUIT:
+					if (this.state.status === STATUS_ENDED_1 || this.state.status === STATUS_ENDED_2) {
+						this.state.status = STATUS_QUIT;
 					}
 					break;
 			}
@@ -303,7 +324,7 @@ export class GameSession {
 	update(dt) {
 		this.process_inputs();
 
-		if (this.state.status === STATUS_WAITING || this.state.status === STATUS_PAUSED)
+		if (this.state.status === STATUS_WAITING || this.state.status === STATUS_PAUSED || this.state.status === STATUS_QUIT)
 			return;
 
 		this.update_paddle_position(this.state.player1, this.dt);
@@ -429,63 +450,57 @@ export class GameSession {
 			graphics.draw_text(text, text_x, text_y, palette.c4);
 
 		} else if (this.state.status === STATUS_ENDED_1 || this.state.status === STATUS_ENDED_2) {
-			let text;
-			if (this.state.status === STATUS_ENDED_1) text = "Player 1 won !";
-			else text = "Player 2 won !";
-			let text_again = "Press 'Space' to play again"
-			let padding = 10;
-			let text_width = ctx.measureText(text).width;
-			let box_w = text_width + padding * 2;
+			const text_victory = this.state.status === STATUS_ENDED_1 ? "Player 1 won !" : "Player 2 won !";
+			const text_again = "Hit 'Space' to play again";
+			const text_quit = "or 'Escape' to quit";
+			const fourth = BOARD_HEIGHT / 4;
+			const padding = 10;
+
+			let text_w = ctx.measureText(text_victory).width;
+			let box_w = text_w + padding * 2;
 			let box_h = DOUBLE_FSIZE;
-			let text_x = (BOARD_WIDTH - text_width) / 2;
 			let box_x = (BOARD_WIDTH - box_w) / 2;
-			let text_y, box_y;
-			let fourth = BOARD_HEIGHT / 4;
-			if (this.state.status === STATUS_ENDED_1) {
-				text_y = ((BOARD_HEIGHT + FSIZE / 2) / 2) + fourth;
-				box_y = ((BOARD_HEIGHT - box_h) / 2) + fourth;
-			} else {
-				text_y = ((BOARD_HEIGHT + FSIZE / 2) / 2) - fourth;
-				box_y = ((BOARD_HEIGHT - box_h) / 2) - fourth;
-			}
+			let box_y = this.state.status === STATUS_ENDED_1 ? ((BOARD_HEIGHT - box_h) / 2) + fourth : ((BOARD_HEIGHT - box_h) / 2) - fourth;
 
-			/* Draw box shadow */
+			let text_x = (BOARD_WIDTH - text_w) / 2;
+			let text_y = this.state.status === STATUS_ENDED_1 ? ((BOARD_HEIGHT + FSIZE / 2) / 2) + fourth : ((BOARD_HEIGHT + FSIZE / 2) / 2) - fourth;
+
+			/* Draw victory box */
 			graphics.draw_rect(box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
-
-			/* Draw box */
 			graphics.draw_rect(box_x, box_y, box_w, box_h, 4, palette.c4);
 			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
 
-			/* Draw text's shadow */
-			graphics.draw_text(text, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y, SHADOW);
+			/* Draw victory text */
+			graphics.draw_text(text_victory, text_x + SHADOW_OFFSET_X, text_y + SHADOW_OFFSET_Y, SHADOW);
+			graphics.draw_text(text_victory, text_x, text_y, palette.c4);
 
-			/* Draw text */
-			graphics.draw_text(text, text_x, text_y, palette.c4);
+			let text_again_w = ctx.measureText(text_again).width;
+			let text_quit_w = ctx.measureText(text_quit).width;
+			let max_text_w = Math.max(text_again_w, text_quit_w);
 
-			let text_width_again = ctx.measureText(text_again).width;
-			let text_x_again = (BOARD_WIDTH - text_width_again) / 2;
-			let text_y_again = ((BOARD_HEIGHT + FSIZE / 2) / 2);
-			let box_w_again = text_width_again + padding * 2;
-			let box_h_again = DOUBLE_FSIZE;
-			let box_x_again = (BOARD_WIDTH - box_w_again) / 2;
-			let box_y_again = ((BOARD_HEIGHT - box_h_again) / 2);
+			box_w = max_text_w + padding * 2;
+			box_h = 2 * DOUBLE_FSIZE;
+			box_x = (BOARD_WIDTH - box_w) / 2;
+			box_y = (BOARD_HEIGHT - box_h) / 2;
 
-			/* Draw box shadow */
-			graphics.draw_rect(box_x_again + SHADOW_OFFSET_X - 1, box_y_again + SHADOW_OFFSET_Y - 1, box_w_again, box_h_again, 4, SHADOW);
+			let text_again_x = (BOARD_WIDTH - text_again_w) / 2;
+			let text_quit_x = (BOARD_WIDTH - text_quit_w) / 2;
 
-			/* Draw box */
-			graphics.draw_rect(box_x_again, box_y_again, box_w_again, box_h_again, 4, palette.c4);
-			graphics.draw_rect_fill(box_x_again, box_y_again, box_w_again, box_h_again, palette.c1);
+			let text_again_y = box_y + FSIZE + padding;
+			let text_quit_y = box_y + box_h - FSIZE;
 
-			/* Draw text's shadow */
-			graphics.draw_text(text_again, text_x_again + SHADOW_OFFSET_X, text_y_again + SHADOW_OFFSET_Y, SHADOW);
+			/* Draw info box */
+			graphics.draw_rect(box_x + SHADOW_OFFSET_X - 1, box_y + SHADOW_OFFSET_Y - 1, box_w, box_h, 4, SHADOW);
+			graphics.draw_rect(box_x, box_y, box_w, box_h, 4, palette.c4);
+			graphics.draw_rect_fill(box_x, box_y, box_w, box_h, palette.c1);
 
-			/* Draw text */
-			graphics.draw_text(text_again, text_x_again, text_y_again, palette.c4);
-
+			/* Draw info text */
+			graphics.draw_text(text_again, text_again_x + SHADOW_OFFSET_X, text_again_y + SHADOW_OFFSET_Y, SHADOW);
+			graphics.draw_text(text_quit, text_quit_x + SHADOW_OFFSET_X, text_quit_y + SHADOW_OFFSET_Y, SHADOW);
+			graphics.draw_text(text_again, text_again_x, text_again_y, palette.c4);
+			graphics.draw_text(text_quit, text_quit_x, text_quit_y, palette.c4);
 		}
 	}
-
 }
 
 
