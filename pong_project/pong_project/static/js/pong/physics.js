@@ -20,79 +20,45 @@ export class Particle {
 	}
 }
 
-/**
- * Tests if two rectangles collide using a discrete Axis-Aligned Bounding
- * Box (AABB) method. This method checks for collision at a specific
- * instance in time, unlike continuous methods like swept AABB which
- * consider an object's path over time.
- *
- * @param {Rectangle} r1 - The rectangle to test for collision
- * @param {Rectangle} r2 - The static rectangle against which r1 is tested
- * @returns {boolean} - True if the two rectangles are in collision, else returns false.
- */
-export function aabb_discrete_detection(r1, r2) {
-	return (r1.position.x < r2.position.x + r2.size.x && r1.position.x + r1.size.x > r2.position.x
-		&& r1.position.y < r2.position.y + r2.size.y && r1.position.y + r2.size.y > r2.position.y);
-}
-
-/**
- * Tests if two rectangles collide using a discrete Axis-Aligned Bounding
- * Box (AABB) method. If the two rectangles are in collision, the collision
- * is resolved by moving r1 along the axis of minimum overlap.
- *
- * @param {Rectangle} r1 - The rectangle to test for collision
- * @param {Rectangle} r2 - The static rectangle against which r1 is tested
- * @returns {Vector} - The collision normal
- */
-export function aabb_discrete_resolve(r1, r2) {
-	let overlap = new Vector(
-		Math.min(r1.position.x + r1.size.x - r2.position.x, r2.position.x + r2.size.x - r1.position.x),
-		Math.min(r1.position.y + r1.size.y - r2.position.y, r2.position.y + r2.size.y - r1.position.y)
-	);
-
-	const buffer = 0;
-	/* Resolve the collision along the axis of minimum overlap */
-	if (overlap.x < overlap.y) {
-		/* Horizontal collision */
-
-		if (r1.position.x < r2.position.x) {
-			/* r1 is to the left of r2 */
-			r1.position.x -= overlap.x + buffer;
-			return new Vector(-1, 0);
-		} else {
-			/* r1 is to the right of r2 */
-			r1.position.x += overlap.x + buffer;
-			return new Vector(1, 0);
-		}
-	} else {
-		/* Vertical collision */
-		if (r1.position.y < r2.position.y) {
-			/* r1 is above r2 */
-			r1.position.y -= overlap.y + buffer;
-			return new Vector(0, -1);
-		} else {
-			/* r1 is below r2 */
-			r1.position.y += overlap.y + buffer;
-			return new Vector(0, 1);
-		}
+export class Collision {
+	constructor(t, x, y, nx, ny) {
+		this.time = t;
+		this.point = new Vector(x, y);
+		this.normal = new Vector(nx, ny);
 	}
 }
 
-export function particles_create(array, source, n) {
-	array.length = 0;
+/**
+ *
+ * @param {Vector} source - The point of origin for the particles.
+ * @param {int} n - The number of particles to create.
+ * @param {int} w - The width of a particle.
+ * @param {int} h - The height of a particle.
+ * @param {float} t - The lifetime of a particle.
+ * @param {float} speed - The speed of a particle.
+ * @returns {Array<Particle>} - An array filled with n Particle objects.
+ */
+export function particles_create(source, n, w, h, t, speed) {
+	let array = [];
 	for (let i = 0; i < n; i++) {
 		array.push(new Particle(
-			source.position.x + source.size.x / 2,
-			source.position.y + source.size.y / 2,
-			4,
-			4,
-			(Math.random() - 0.5) * 100,
-			(Math.random() - 0.5) * 100,
-			1.5)
+			source.x,
+			source.y,
+			w,
+			h,
+			(Math.random() - 0.5) * speed,
+			(Math.random() - 0.5) * speed,
+			t)
 		);
 	}
+	return array;
 }
 
+/**
+ *
+ * @param {Array<Particle>} array - The array containing the paricles
+ * @param {float} dt
+ */
 export function particles_update(array, dt) {
 	for (let i = 0; i < array.length; i++) {
 		let p = array[i];
@@ -107,22 +73,16 @@ export function particles_update(array, dt) {
 	}
 }
 
-
-
-
-
-
-
-
-
-export class Collision {
-	constructor(t, x, y, nx, ny) {
-		this.time = t;
-		this.point = new Vector(x, y);
-		this.normal = new Vector(nx, ny);
-	}
-}
-
+/**
+ * Checks if a ray intersects with a rectangle.
+ *
+ * @param {Vector} origin - The origin of the ray.
+ * @param {Vector} direction - The direction of the ray.
+ * @param {Rectangle} target - The rectangle to test against
+ * @returns {Collision} - A Collision object containing all the
+ * informations about the collision. If no collision what detected, the 't'
+ * parameter of the object is set to -1.
+ */
 export function ray_rectangle_collision(origin, direction, target) {
 	let t_near = new Vector(
 		direction.x === 0 ? (target.position.x - origin.x) > 0 ? Infinity : -Infinity : (target.position.x - origin.x) / direction.x,
@@ -159,17 +119,32 @@ export function ray_rectangle_collision(origin, direction, target) {
 	return collision;
 }
 
+/**
+ * Update the velocity of r1 to bring it in contact with the object the ray
+ * collided with.
+ *
+ * @param {Rectangle} r1 - The moving rectangle.
+ * @param {Collision} collision - An object containing the collision time and normal.
+ */
 export function aabb_continuous_resolve(r1, collision) {
-	return new Vector(
-		r1.velocity.x + collision.normal.x * Math.abs(r1.velocity.x) * (1 - collision.time),
-		r1.velocity.y + collision.normal.y * Math.abs(r1.velocity.y) * (1 - collision.time)
-	);
+	r1.velocity.x += collision.normal.x * Math.abs(r1.velocity.x) * (1 - collision.time);
+	r1.velocity.y += collision.normal.y * Math.abs(r1.velocity.y) * (1 - collision.time);
 }
 
-
+/**
+ * Test one moving rectangle against one static rectangle for collision.
+ *
+ * @param {Rectangle} r1 - The moving rectangle to test for collision.
+ * @param {Rectangle} r2 - The static rectangle to test against.
+ * @param {float} dt
+ * @returns {Collision} - A Collision object containing all the
+ * informations about the collision. If no collision what detected, the 't'
+ * parameter of the object is set to -1.
+ */
 export function aabb_continuous_detection(r1, r2, dt) {
 	/* If r1 is not moving, a collision cannot occur */
-	if (r1.velocity.x == 0 && r1.velocity.y == 0) return new Collision(-1, 0, 0, 0, 0);
+	if (r1.velocity.x == 0 && r1.velocity.y == 0)
+		return new Collision(-1, 0, 0, 0, 0);
 
 	/* Create an expanded target to check against so that we can detect and resolve the collision properly */
 	let r2_expanded = new Rectangle(

@@ -21,6 +21,11 @@ const STATUS_ACTIVE = 1;
 const STATUS_ENDED_1 = 2;
 const STATUS_ENDED_2 = 3;
 
+/* GAME TYPES */
+const TYPE_REMOTE = 0;
+const TYPE_LOCAL = 1;
+const TYPE_CPU = 2;
+
 /* PLAYERS' IDS */
 const PLAYER1 = 0;
 const PLAYER2 = 1;
@@ -101,7 +106,8 @@ class GameState {
 	constructor() {
 		this.status = STATUS_WAITING;
 		this.particles = [];
-		this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
+		// this.ball = new physics.Rectangle((BOARD_WIDTH - BALL_SIDE) / 2, (BOARD_HEIGHT - BALL_SIDE) / 2, BALL_SIDE, BALL_SIDE, 0, BALL_SPEED_MIN);
+		this.ball = new physics.Rectangle(20, BOARD_HEIGHT - (3 * MARGIN), BALL_SIDE, BALL_SIDE, BALL_SPEED_MIN, 0);
 		this.player1 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, BOARD_HEIGHT - (3 * MARGIN), PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.player2 = new physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, 0, 0);
 		this.score1 = 0;
@@ -115,7 +121,7 @@ export class GameSession {
 		this.type = type;
 		this.inputs = [];
 		this.t = 0.0;
-		this.dt = 1.0 / 30.0;
+		this.dt = 1.0 / 60.0;
 		this.accumulator = 0.0;
 		this.old_time = 0.0;
 		this.name1 = name1;
@@ -184,33 +190,55 @@ export class GameSession {
 		this.reset_ball(new physics.Vector(0, BALL_SPEED_MIN));
 	}
 
+	// update_ball_velocity(player, collision) {
+	// 	let expanded = new physics.Rectangle(player.position.x - this.ball.size.x / 2, player.position.y - this.ball.size.y / 2, player.size.x + this.ball.size.x, player.size.y + this.ball.size.y, 0, 0);
+	// 	if (collision.normal.x != 0) {
+	// 		let r1_center = this.ball.position.y + this.ball.size.y / 2;
+	// 		let r2_center = expanded.position.y + expanded.size.y / 2;
+	// 		let c = (r1_center - r2_center) / (expanded.size.y / 2);
+	// 		c *= MAX_ANGLE;
+	// 		this.ball.velocity.x = collision.normal.x * Math.cos(c) * BALL_SPEED_MAX;
+	// 		this.ball.velocity.y = Math.sin(c) * BALL_SPEED_MAX;
+	// 	}
+	// 	if (collision.normal.y != 0) {
+	// 		let r1_center = this.ball.position.x + this.ball.size.x / 2;
+	// 		let r2_center = expanded.position.x + expanded.size.x / 2;
+	// 		let c = (r1_center - r2_center) / (expanded.size.x / 2);
+	// 		c *= MAX_ANGLE;
+	// 		this.ball.velocity.x = Math.sin(c) * BALL_SPEED_MAX;
+	// 		this.ball.velocity.y = collision.normal.y * Math.cos(c) * BALL_SPEED_MAX;
+	// 	}
+	// }
+
+	/* FIXME Should we use the contact point insead ? */
 	update_ball_velocity(player, normal) {
+		const expanded = new physics.Rectangle(player.position.x - this.state.ball.size.x / 2, player.position.y - this.state.ball.size.y / 2, player.size.x + this.state.ball.size.x, player.size.y + this.state.ball.size.y, 0, 0);
 		const b_center = new physics.Vector(this.state.ball.position.x + this.state.ball.size.x / 2, this.state.ball.position.y + this.state.ball.size.y / 2);
-		const p_center = new physics.Vector(player.position.x + player.size.x / 2, player.position.y + player.size.y / 2);
+		const p_center = new physics.Vector(expanded.position.x + expanded.size.x / 2, expanded.position.y + expanded.size.y / 2);
 		if (normal.x != 0) {
-			let c = ((b_center.y - p_center.y) / (player.size.y / 2)) * MAX_ANGLE;
+			let c = ((b_center.y - p_center.y) / (expanded.size.y / 2)) * MAX_ANGLE;
 			this.state.ball.velocity.x = normal.x * Math.cos(c) * BALL_SPEED_MAX;
 			this.state.ball.velocity.y = Math.sin(c) * BALL_SPEED_MAX;
 		} else if (normal.y != 0) {
-			let c = ((b_center.x - p_center.x) / (player.size.x / 2)) * MAX_ANGLE;
+			let c = ((b_center.x - p_center.x) / (expanded.size.x / 2)) * MAX_ANGLE;
 			this.state.ball.velocity.x = Math.sin(c) * BALL_SPEED_MAX;
 			this.state.ball.velocity.y = normal.y * Math.cos(c) * BALL_SPEED_MAX;
 		}
 	}
 
 	update_paddle_position(paddle, dt) {
-		if (paddle.position.x + paddle.velocity.x * dt > CORRIDOR && paddle.position.x + paddle.size.x + paddle.velocity.x * dt < BOARD_WIDTH - CORRIDOR) {
-			let collision = physics.aabb_continuous_detection(paddle, this.ball, dt);
-			if (collision.time > 0 && collision.time <= 1.0) {
-				physics.aabb_continuous_resolve(paddle, collision);
-				sound.play_hit_sound();
-				collision.normal.x *= -1;
-				this.update_ball_velocity(paddle, collision.normal);
-				this.ball.position.x += this.ball.velocity.x * (1 - collision.time);
-				this.ball.position.y += this.ball.velocity.y * (1 - collision.time);
-			} else {
-				paddle.position.x += paddle.velocity.x * dt;
-			}
+		let collision = physics.aabb_continuous_detection(paddle, this.state.ball, dt);
+		if (collision.time > 0 && collision.time <= 1.0) {
+			sound.play_hit_sound();
+			/* Move the paddle just enough to be in contact with the ball */
+			physics.aabb_continuous_resolve(paddle, collision);
+			/* Invert the normal in x to get the direction the ball need to go in */
+			collision.normal.x *= -1;
+			/* Update the ball velocity based on the contact point with paddle */
+			this.update_ball_velocity(paddle, collision.normal);
+		} else if (paddle.position.x + paddle.velocity.x * dt > CORRIDOR && paddle.position.x + paddle.size.x + paddle.velocity.x * dt < BOARD_WIDTH - CORRIDOR) {
+			/* No collision, move the paddle normally */
+			paddle.position.x += paddle.velocity.x * dt;
 		}
 	}
 
@@ -238,25 +266,28 @@ export class GameSession {
 					break;
 			}
 		});
-		this.inputs = [];
+		if (this.type != TYPE_REMOTE)
+			this.inputs = [];
 	}
 
 	update_ball_position(dt) {
 		let player = null;
 		let collision = null;
 
-		let c1 = physics.aabb_continuous_detection(this.state.ball, this.state.player1, dt);
-		let c2 = physics.aabb_continuous_detection(this.state.ball, this.state.player2, dt);
+		const c1 = physics.aabb_continuous_detection(this.state.ball, this.state.player1, dt);
+		const c2 = physics.aabb_continuous_detection(this.state.ball, this.state.player2, dt);
 		if (c1.time > 0) { player = this.state.player1; collision = c1; }
 		else if (c2.time > 0) { player = this.state.player2; collision = c2; }
 
 		/* Collision resolution */
 		if (collision != null && player != null && collision.time > 0 && collision.time <= 1.0) {
+			/* Move the paddle just enough to be in contact with the ball */
 			physics.aabb_continuous_resolve(this.state.ball, collision);
 			sound.play_hit_sound();
-			this.update_ball_velocity(player, collision);
-			this.state.ball.position.x += this.state.ball.velocity.x * (1 - collision.time);
-			this.state.ball.position.y += this.state.ball.velocity.y * (1 - collision.time);
+			/* Update the ball velocity based on where it hits the paddle */
+			this.update_ball_velocity(player, collision.normal);
+			// this.state.ball.position.x += this.state.ball.velocity.x * (1 - collision.time);
+			// this.state.ball.position.y += this.state.ball.velocity.y * (1 - collision.time);
 		} else {
 			this.state.ball.position.x += this.state.ball.velocity.x * dt;
 			this.state.ball.position.y += this.state.ball.velocity.y * dt;
@@ -275,13 +306,13 @@ export class GameSession {
 		} else if (this.state.ball.position.y <= MARGIN) {
 			/* Top wall */
 			this.state.score1 += 1;
-			physics.particles_create(this.state.particles, this.state.ball, 16);
+			this.state.particles = physics.particles_create(new physics.Vector(this.state.ball.position.x + this.state.ball.size.x / 2, this.state.ball.position.y + this.state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
 			sound.play_explosion_sound();
 			this.reset_ball(new physics.Vector(0, BALL_SPEED_MIN));
 		} else if (this.state.ball.position.y + this.state.ball.size.y >= BOARD_HEIGHT - MARGIN) {
 			/* Bottom wall */
 			this.state.score2 += 1;
-			physics.particles_create(this.state.particles, this.state.ball, 16);
+			this.state.particles = physics.particles_create(new physics.Vector(this.state.ball.position.x + this.state.ball.size.x / 2, this.state.ball.position.y + this.state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
 			sound.play_explosion_sound();
 			this.reset_ball(new physics.Vector(0, -BALL_SPEED_MIN));
 		}
