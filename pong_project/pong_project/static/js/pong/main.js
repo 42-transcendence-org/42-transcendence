@@ -242,20 +242,26 @@ export class GameSession {
 	}
 
 	update_ball_position(dt) {
-		this.state.ball.position.x += this.state.ball.velocity.x * dt;
-		this.state.ball.position.y += this.state.ball.velocity.y * dt;
+		let player = null;
+		let collision = null;
 
-		if (physics.aabb_discrete_detection(this.state.ball, this.state.player1)) {
-			/* Player 1 */
+		let c1 = physics.aabb_continuous_detection(this.state.ball, this.state.player1, dt);
+		let c2 = physics.aabb_continuous_detection(this.state.ball, this.state.player2, dt);
+		if (c1.time > 0) { player = this.state.player1; collision = c1; }
+		else if (c2.time > 0) { player = this.state.player2; collision = c2; }
+
+		/* Collision resolution */
+		if (collision != null && player != null && collision.time > 0 && collision.time <= 1.0) {
+			physics.aabb_continuous_resolve(this.state.ball, collision);
 			sound.play_hit_sound();
-			const normal = physics.aabb_discrete_resolve(this.state.ball, this.state.player1);
-			this.update_ball_velocity(this.state.player1, normal);
-		} else if (physics.aabb_discrete_detection(this.state.ball, this.state.player2)) {
-			/* Player 2 */
-			sound.play_hit_sound();
-			const normal = physics.aabb_discrete_resolve(this.state.ball, this.state.player2);
-			this.update_ball_velocity(this.state.player2, normal);
+			this.update_ball_velocity(player, collision);
+			this.state.ball.position.x += this.state.ball.velocity.x * (1 - collision.time);
+			this.state.ball.position.y += this.state.ball.velocity.y * (1 - collision.time);
+		} else {
+			this.state.ball.position.x += this.state.ball.velocity.x * dt;
+			this.state.ball.position.y += this.state.ball.velocity.y * dt;
 		}
+
 		if (this.state.ball.position.x <= MARGIN) {
 			/* Left wall */
 			this.state.ball.position.x = MARGIN;
