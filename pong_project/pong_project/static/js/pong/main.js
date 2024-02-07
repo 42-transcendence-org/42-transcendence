@@ -61,7 +61,7 @@ export class GameSession {
 		if (this.state.status === state.STATUS_QUIT) {
 			sound.stop_music();
 			div_handler("game-menu-div");
-			g_session = null;
+			window.game_session = null;
 			return;
 		}
 

@@ -36,7 +36,7 @@ function draw_text(text, x, y, color) {
 }
 
 function load_font() {
-	const font_url = assets_url + "code-page-437.ttf";
+	const font_url = ASSETS_URL + "code-page-437.ttf";
 	const font_file = new FontFace("Code Page 437", `url(${font_url})`);
 
 	font_file.load().then(

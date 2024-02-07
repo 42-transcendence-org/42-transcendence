@@ -1,7 +1,7 @@
-const music = new Audio(assets_url + "glitchstairs.ogg");
-const victory = new Audio(assets_url + "victory.wav");
-const hit_sound = new Audio(assets_url + "hit.wav");
-const score_sound = new Audio(assets_url + "explosion.wav");
+const music = new Audio(ASSETS_URL + "glitchstairs.ogg");
+const victory = new Audio(ASSETS_URL + "victory.wav");
+const hit_sound = new Audio(ASSETS_URL + "hit.wav");
+const score_sound = new Audio(ASSETS_URL + "explosion.wav");
 
 music.loop = true;
 

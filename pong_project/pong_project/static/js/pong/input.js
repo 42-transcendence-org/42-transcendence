@@ -9,39 +9,39 @@ const INPUT_QUIT = 4;
 
 /* FIXME: Would be more efficient to send all inputs in one request */
 document.addEventListener('keydown', (event) => {
-	if (g_session === null || g_session.state === null) return;
+	if (window.game_session === null || window.game_session.state === null) return;
 
 	const time = Date.now();
 	const key_name = event.key;
-	if (key_name === 'a' && g_session.state.player1.velocity.x > 0) {
-		if (g_session.id != 0) requests.send_user_input(state.INPUT_LEFT, time);
-		g_session.input_handler(state.ID_PLAYER1, state.INPUT_LEFT, time);
-	} else if (key_name === 's' && g_session.state.player1.velocity.x < 0) {
-		if (g_session.id != 0) requests.send_user_input(state.INPUT_RIGHT, time);
-		g_session.input_handler(state.ID_PLAYER1, state.INPUT_RIGHT, time);
-	} else if (key_name === 'k' && g_session.state.player2.velocity.x > 0) {
-		g_session.input_handler(state.ID_PLAYER2, state.INPUT_LEFT, time);
-	} else if (key_name === 'l' && g_session.state.player2.velocity.x < 0) {
-		g_session.input_handler(state.ID_PLAYER2, state.INPUT_RIGHT, time);
+	if (key_name === 'a' && window.game_session.state.player1.velocity.x > 0) {
+		if (window.game_session.id != 0) requests.send_user_input(state.INPUT_LEFT, time);
+		window.game_session.input_handler(state.ID_PLAYER1, state.INPUT_LEFT, time);
+	} else if (key_name === 's' && window.game_session.state.player1.velocity.x < 0) {
+		if (window.game_session.id != 0) requests.send_user_input(state.INPUT_RIGHT, time);
+		window.game_session.input_handler(state.ID_PLAYER1, state.INPUT_RIGHT, time);
+	} else if (key_name === 'k' && window.game_session.state.player2.velocity.x > 0) {
+		window.game_session.input_handler(state.ID_PLAYER2, state.INPUT_LEFT, time);
+	} else if (key_name === 'l' && window.game_session.state.player2.velocity.x < 0) {
+		window.game_session.input_handler(state.ID_PLAYER2, state.INPUT_RIGHT, time);
 	} else if (key_name === ' ') {
-		if (g_session.id != 0) requests.send_user_input(state.INPUT_SPACE, time);
-		g_session.input_handler(state.ID_PLAYER1, state.INPUT_SPACE, time);
+		if (window.game_session.id != 0) requests.send_user_input(state.INPUT_SPACE, time);
+		window.game_session.input_handler(state.ID_PLAYER1, state.INPUT_SPACE, time);
 	} else if (key_name === 'Escape') {
-		if (g_session.id != 0) requests.send_user_input(state.INPUT_QUIT, time);
-		g_session.input_handler(state.ID_PLAYER1, state.INPUT_QUIT, time);
+		if (window.game_session.id != 0) requests.send_user_input(state.INPUT_QUIT, time);
+		window.game_session.input_handler(state.ID_PLAYER1, state.INPUT_QUIT, time);
 	}
 });
 
 document.addEventListener('keyup', (event) => {
-	if (g_session === null || g_session.state === null) return;
+	if (window.game_session === null || window.game_session.state === null) return;
 
 	const time = Date.now();
 	const key_name = event.key;
-	if ((key_name === 'a' || key_name === 's') && g_session.state.player1.velocity.x != 0) {
-		if (g_session.id != 0) requests.send_user_input(state.INPUT_NEUTRAL, time);
-		g_session.input_handler(state.ID_PLAYER1, state.INPUT_NEUTRAL, time);
-	} else if ((key_name === 'k' || key_name === 'l') && g_session.state.player2.velocity.x != 0) {
-		g_session.input_handler(state.ID_PLAYER2, state.INPUT_NEUTRAL, time);
+	if ((key_name === 'a' || key_name === 's') && window.game_session.state.player1.velocity.x != 0) {
+		if (window.game_session.id != 0) requests.send_user_input(state.INPUT_NEUTRAL, time);
+		window.game_session.input_handler(state.ID_PLAYER1, state.INPUT_NEUTRAL, time);
+	} else if ((key_name === 'k' || key_name === 'l') && window.game_session.state.player2.velocity.x != 0) {
+		window.game_session.input_handler(state.ID_PLAYER2, state.INPUT_NEUTRAL, time);
 	}
 });
 

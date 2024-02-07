@@ -46,9 +46,9 @@ export async function send_get_alias_request() {
 
 export async function send_user_input(input, time) {
 	try {
-		if (g_session === null) return;
+		if (window.game_session === null) return;
 
-		const response = await fetch(`/api/games/${g_session.id}/`, {
+		const response = await fetch(`/api/games/${window.game_session.id}/`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export async function send_user_input(input, time) {
 	}
 }
 
-export async function send_game_creation_request(game_type) {
+export async function send_game_creation_request() {
 	try {
 		const response = await fetch('/api/games/', {
 			method: 'POST',
@@ -74,7 +74,6 @@ export async function send_game_creation_request(game_type) {
 				'X-CSRFToken': get_cookie("csrftoken"),
 			},
 			credentials: 'include',
-			body: JSON.stringify({ type: game_type }),
 		});
 
 		const data = await response.json();
@@ -84,9 +83,9 @@ export async function send_game_creation_request(game_type) {
 		}
 
 		if (data) {
-			g_session = new GameSession(data.id, data.type, data.name1, data.name2);
+			window.game_session = new GameSession(data.id, data.type, data.name1, data.name2);
 			div_handler("game-div");
-			g_session.loop_start();
+			window.game_session.loop_start();
 		} else {
 			console.error('Game creation failed');
 		}

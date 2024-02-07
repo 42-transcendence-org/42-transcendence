@@ -1,2 +1,4 @@
-let g_session = null;
-const assets_url = "{% static '' %}" + "assets/";
+
+window.game_session = null;
+
+window.ASSETS_URL = "{% static '' %}" + "assets/";
