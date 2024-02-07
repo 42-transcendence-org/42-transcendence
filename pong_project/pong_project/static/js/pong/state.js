@@ -80,8 +80,6 @@ function reset_state(state) {
 	state.score2 = 0;
 }
 
-
-
 /* FIXME Should we use the contact point instead ? */
 /**
  * Update the paddle velocity based on where it hit the paddle.
