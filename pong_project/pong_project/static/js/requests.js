@@ -83,6 +83,7 @@ export async function send_game_creation_request() {
 		}
 
 		if (data) {
+			/* FIXME: Move this elsewhere, in main.js */
 			window.game_session = new GameSession(data.id, data.type, data.name1, data.name2);
 			div_handler("game-div");
 			window.game_session.loop_start();
