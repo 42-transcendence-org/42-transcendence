@@ -1,7 +1,8 @@
 import * as ai from './ai.js';
-import * as state from './state.js';
 import * as input from './input.js';
 import * as graphic from './graphic.js';
+
+import * as g from './global.js';
 
 import { div_handler } from "../utils.js";
 
@@ -18,7 +19,7 @@ export class GameSession {
 		this.name2 = name2;
 		this.state = new state.GameState();
 
-		this.ai = type === state.TYPE_AI ? new ai.AI() : null;
+		this.ai = type === state.g.TYPE_AI ? new ai.AI() : null;
 		this.event_source = id === 0 ? null : new EventSource(`http://localhost:8000/api/games/${id}/`);
 
 		this.loop_start = this.loop_start.bind(this);
@@ -59,7 +60,7 @@ export class GameSession {
 			this.accumulator -= this.dt;
 			this.t += this.dt;
 		}
-		if (this.state.status === state.STATUS_QUIT) {
+		if (this.state.status === g.STATUS_QUIT) {
 			sound.stop_music();
 			div_handler("game-menu-div");
 			window.game_session = null;

@@ -5,45 +5,45 @@ from typing import Dict
 
 import game_app.pong.physics as physics
 
-BOARD_WIDTH = 480
-BOARD_HEIGHT = 650
+g.BOARD_WIDTH = 480
+g.BOARD_HEIGHT = 650
 
 # INPUTS
-INPUT_LEFT = 0
-INPUT_RIGHT = 1
-INPUT_SPACE = 2
-INPUT_NEUTRAL = 3
-INPUT_QUIT = 4
-INPUTS = [INPUT_LEFT, INPUT_RIGHT, INPUT_SPACE, INPUT_NEUTRAL, INPUT_QUIT]
+g.INPUT_LEFT = 0
+g.INPUT_RIGHT = 1
+g.INPUT_SPACE = 2
+g.INPUT_NEUTRAL = 3
+g.INPUT_QUIT = 4
+INPUTS = [g.INPUT_LEFT, g.INPUT_RIGHT, g.INPUT_SPACE, g.INPUT_NEUTRAL, g.INPUT_QUIT]
 
 # STATUSES
-STATUS_WAITING = 0
-STATUS_ACTIVE = 1
-STATUS_ENDED_1 = 2
-STATUS_ENDED_2 = 3
-STATUS_PAUSED = 4
-STATUS_QUIT = 5
+g.STATUS_WAITING = 0
+g.STATUS_ACTIVE = 1
+g.STATUS_ENDED_1 = 2
+g.STATUS_ENDED_2 = 3
+g.STATUS_PAUSED = 4
+g.STATUS_QUIT = 5
 
 # GAME TYPES
-TYPE_REMOTE = 0
+g.TYPE_REMOTE = 0
 
 # PLAYERS' IDS
-ID_PLAYER1 = 0
-ID_PLAYER2 = 1
+g.ID_PLAYER1 = 0
+g.ID_PLAYER2 = 1
 
-MARGIN = 16
-CORRIDOR = 2 * MARGIN
+g.BOARD_MARGIN = 16
+g.BOARD_CORRIDOR = 2 * g.BOARD_MARGIN
 
-BALL_SIDE = 16
-BALL_SPEED_MIN = (BOARD_HEIGHT / 2) - MARGIN
-BALL_SPEED_MAX = BALL_SPEED_MIN * 2.0
+g.BALL_SIDE = 16
+g.BALL_SPEED_MIN = (g.BOARD_HEIGHT / 2) - g.BOARD_MARGIN
+g.BALL_SPEED_MAX = g.BALL_SPEED_MIN * 2.0
 
-PADDLE_WIDTH = 64
-PADDLE_SPEED = BOARD_WIDTH - (2 * CORRIDOR)
+g.PADDLE_WIDTH = 64
+g.PADDLE_SPEED = g.BOARD_WIDTH - (2 * g.BOARD_CORRIDOR)
 
-POINTS_TO_WIN = 1
+g.POINTS_TO_WIN = 1
 
-MAX_ANGLE = math.pi / 6
+g.BALL_MAX_ANGLE = math.pi / 6
 
 
 class Input:
@@ -55,25 +55,27 @@ class Input:
 
 class GameState:
     def __init__(self):
-        self.status = STATUS_WAITING
+        self.status = g.STATUS_WAITING
         self.particles = []
         self.ball = physics.Rectangle(
-            (BOARD_WIDTH - BALL_SIDE) / 2,
-            (BOARD_HEIGHT - BALL_SIDE) / 2,
-            BALL_SIDE,
-            BALL_SIDE,
+            (g.BOARD_WIDTH - g.BALL_SIDE) / 2,
+            (g.BOARD_HEIGHT - g.BALL_SIDE) / 2,
+            g.BALL_SIDE,
+            g.BALL_SIDE,
             0,
-            BALL_SPEED_MIN,
+            g.BALL_SPEED_MIN,
         )
         self.player1 = physics.Rectangle(
-            (BOARD_WIDTH - PADDLE_WIDTH) / 2,
-            BOARD_HEIGHT - (3 * MARGIN),
-            PADDLE_WIDTH,
-            BALL_SIDE,
+            (g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2,
+            g.BOARD_HEIGHT - (3 * g.BOARD_MARGIN),
+            g.PADDLE_WIDTH,
+            g.BALL_SIDE,
             0,
             0,
         )
-        self.player2 = physics.Rectangle((BOARD_WIDTH - PADDLE_WIDTH) / 2, 2 * MARGIN, PADDLE_WIDTH, BALL_SIDE, 0, 0)
+        self.player2 = physics.Rectangle(
+            (g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, 2 * g.BOARD_MARGIN, g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0
+        )
         self.score1 = 0
         self.score2 = 0
 
@@ -94,39 +96,39 @@ class GameSession:
         self.inputs.sort(key=lambda input: input.timestamp)
 
     def reset_ball(self, direction):
-        self.state.ball.position.x = (BOARD_WIDTH - self.state.ball.size.x) / 2
-        self.state.ball.position.y = (BOARD_HEIGHT - self.state.ball.size.y) / 2
+        self.state.ball.position.x = (g.BOARD_WIDTH - self.state.ball.size.x) / 2
+        self.state.ball.position.y = (g.BOARD_HEIGHT - self.state.ball.size.y) / 2
         self.state.ball.velocity = direction
 
     def reset_game(self):
         # FIXME Save the game state to the database before creating a new one
         self.state = GameState()
-        self.state.status = STATUS_ACTIVE
+        self.state.status = g.STATUS_ACTIVE
 
     def process_inputs(self):
         for input in self.inputs:
-            if input.id == ID_PLAYER1:
+            if input.id == g.ID_PLAYER1:
                 player = self.state.player1
             else:
                 player = self.state.player2
 
-            if input.input == INPUT_NEUTRAL:
+            if input.input == g.INPUT_NEUTRAL:
                 player.velocity.x = 0
-            elif input.input == INPUT_LEFT:
-                player.velocity.x = -PADDLE_SPEED
-            elif input.input == INPUT_RIGHT:
-                player.velocity.x = PADDLE_SPEED
-            elif input.input == INPUT_SPACE:
-                if self.state.status == STATUS_WAITING:
-                    self.state.status = STATUS_ACTIVE
-                elif self.state.status in [STATUS_ACTIVE, STATUS_PAUSED]:
-                    self.state.status = STATUS_ACTIVE if self.state.status == STATUS_PAUSED else STATUS_PAUSED
-                elif self.state.status in [STATUS_ENDED_1, STATUS_ENDED_2]:
-                    self.state.status = STATUS_ACTIVE
+            elif input.input == g.INPUT_LEFT:
+                player.velocity.x = -g.PADDLE_SPEED
+            elif input.input == g.INPUT_RIGHT:
+                player.velocity.x = g.PADDLE_SPEED
+            elif input.input == g.INPUT_SPACE:
+                if self.state.status == g.STATUS_WAITING:
+                    self.state.status = g.STATUS_ACTIVE
+                elif self.state.status in [g.STATUS_ACTIVE, g.STATUS_PAUSED]:
+                    self.state.status = g.STATUS_ACTIVE if self.state.status == g.STATUS_PAUSED else g.STATUS_PAUSED
+                elif self.state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
+                    self.state.status = g.STATUS_ACTIVE
                     self.reset_game()
-            elif input.input == INPUT_QUIT:
-                if self.state.status in [STATUS_ENDED_1, STATUS_ENDED_2]:
-                    self.state.status = STATUS_QUIT
+            elif input.input == g.INPUT_QUIT:
+                if self.state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
+                    self.state.status = g.STATUS_QUIT
         # Store the last processed input and clear the array
         self.last_input = self.inputs[-1].time
         self.inputs.clear()

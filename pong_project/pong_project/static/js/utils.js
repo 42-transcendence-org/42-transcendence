@@ -1,5 +1,5 @@
 import { GameSession } from './pong/main.js';
-import { TYPE_AI, TYPE_LOCAL } from './pong/state.js';
+import { g.TYPE_AI, g.TYPE_LOCAL } from './pong/state.js';
 
 export function get_cookie(name) {
 	let cookie_value = null;
@@ -29,13 +29,13 @@ export function div_handler(div_to_show) {
 }
 
 export function create_game(type) {
-	if (type != TYPE_LOCAL && type != TYPE_AI)
+	if (type != g.TYPE_LOCAL && type != g.TYPE_AI)
 		return;
 	if (window.game_session != null) {
 		div_handler("game-div");
 		return;
 	}
-	window.game_session = new GameSession(0, type, "Player 1", type === TYPE_LOCAL ? "Player 2" : "Computer");
+	window.game_session = new GameSession(0, type, "Player 1", type === g.TYPE_LOCAL ? "Player 2" : "Computer");
 	div_handler("game-div");
 	window.game_session.loop_start();
 }

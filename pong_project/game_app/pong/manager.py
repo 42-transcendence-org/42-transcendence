@@ -6,6 +6,7 @@ from typing import Dict, Union
 
 from .main import GameSession
 
+
 class GameManager:
     def __init__(self):
         self.lock = threading.Lock()
@@ -76,10 +77,10 @@ class GameManager:
     def game_add_input(self, game_id: UUID, player_id: int, player_input: int):
         with self.lock:
             if game_id in self.sessions:
-                if player_input != INPUT_SPACE:
+                if player_input != g.INPUT_SPACE:
                     self.sessions[game_id].state.input_handler(player_id, player_input)
                 else:
-                    self.sessions[game_id].state.status = STATUS_ACTIVE
+                    self.sessions[game_id].state.status = g.STATUS_ACTIVE
 
     def game_check_for_session(self, username: str) -> Union[UUID, None]:
         """
