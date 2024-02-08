@@ -1,4 +1,4 @@
-import { GameSession } from './pong/main.js';
+import { create_session } from './pong/session.js';
 import { get_cookie, div_handler } from './utils.js';
 
 export async function send_alias_request() {
@@ -83,10 +83,7 @@ export async function send_game_creation_request() {
 		}
 
 		if (data) {
-			/* FIXME: Move this elsewhere, in main.js */
-			window.game_session = new GameSession(data.id, data.type, data.name1, data.name2);
-			div_handler("game-div");
-			window.game_session.loop_start();
+			create_session(data.id, data.type, data.name1, data.name2);
 		} else {
 			console.error('Game creation failed');
 		}

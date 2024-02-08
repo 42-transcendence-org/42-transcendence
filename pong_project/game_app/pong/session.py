@@ -56,14 +56,14 @@ def session_is_in(id, name):
 
 
 def session_has(name):
-    for id, session in game_sessions:
+    for id, session in game_sessions.items():
         if name == session.name1 or name == session.name2:
             return id
     return None
 
 
 def session_waiting(alias):
-    for id, session in game_sessions:
+    for id, session in game_sessions.items():
         if session.name2 == "":
             session.name2 == alias
             return id
