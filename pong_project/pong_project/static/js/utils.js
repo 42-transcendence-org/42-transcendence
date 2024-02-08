@@ -37,5 +37,5 @@ export function create_game(type) {
 	}
 	window.game_session = new GameSession(0, type, "Player 1", type === TYPE_LOCAL ? "Player 2" : "Computer");
 	div_handler("game-div");
-	window.game_session.update_start();
+	window.game_session.loop_start();
 }

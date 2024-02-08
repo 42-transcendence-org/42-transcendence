@@ -1,4 +1,4 @@
-
+import { BOARD_HEIGHT, BOARD_WIDTH, MARGIN, STATUS_ENDED_1, STATUS_ENDED_2, STATUS_PAUSED, STATUS_WAITING } from './state.js';
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -36,7 +36,7 @@ function draw_text(text, x, y, color) {
 }
 
 function load_font() {
-	const font_url = ASSETS_URL + "code-page-437.ttf";
+	const font_url = window.ASSETS_URL + "code-page-437.ttf";
 	const font_file = new FontFace("Code Page 437", `url(${font_url})`);
 
 	font_file.load().then(
@@ -49,6 +49,8 @@ function load_font() {
 		}
 	);
 }
+
+load_font();
 
 export function draw_state(state) {
 	/* Draw the background */

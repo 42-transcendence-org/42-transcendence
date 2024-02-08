@@ -1,6 +1,7 @@
 import * as ai from './ai.js';
 import * as state from './state.js';
 import * as input from './input.js';
+import * as graphic from './graphic.js';
 
 import { div_handler } from "../utils.js";
 
@@ -20,8 +21,8 @@ export class GameSession {
 		this.ai = type === state.TYPE_AI ? new ai.AI() : null;
 		this.event_source = id === 0 ? null : new EventSource(`http://localhost:8000/api/games/${id}/`);
 
-		this.update_start = this.loop_start.bind(this);
-		this.update_state = this.loop.bind(this);
+		this.loop_start = this.loop_start.bind(this);
+		this.loop = this.loop.bind(this);
 	}
 
 
@@ -65,7 +66,7 @@ export class GameSession {
 			return;
 		}
 
-		state.draw_state(this.state);
+		graphic.draw_state(this.state);
 		requestAnimationFrame(this.loop);
 	}
 }
