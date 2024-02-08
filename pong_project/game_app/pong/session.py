@@ -12,6 +12,7 @@ class GameSession:
         self.id = id
         self.type = type
         self.inputs = []
+        self.last_input = 0
         self.t = 0.0
         self.dt = 1.0 / 60.0
         self.accumulator = 0.0
@@ -30,9 +31,8 @@ def session_loop(session):
     session.accumulator += frame_time
 
     while session.accumulator >= session.dt:
-        input.apply_inputs(session.state, session.inputs)
-        if session.type != g.TYPE_REMOTE:
-            session.inputs = []
+        session.last_input = input.apply_inputs(session.state, session.inputs)
+        session.inputs = []
         state.state_update(session.state, session.dt, session.t)
         session.accumulator -= session.dt
         session.t += session.dt
@@ -115,5 +115,29 @@ def session_get_state(id):
             "h": s.state.player2.size.y,
             "vx": s.state.player2.velocity.x,
             "vy": s.state.player2.velocity.y,
+        },
+    }
+
+
+def session_get_state_small(id):
+    s = game_sessions[id]
+    return {
+        "last_input": s.last_input,
+        "status": s.state.status,
+        "ball": {
+            "x": s.state.ball.position.x,
+            "y": s.state.ball.position.y,
+            "vx": s.state.ball.velocity.x,
+            "vy": s.state.ball.velocity.y,
+        },
+        "player1": {
+            "score": s.state.score1,
+            "x": s.state.player1.position.x,
+            "vx": s.state.player1.velocity.x,
+        },
+        "player2": {
+            "score": s.state.score2,
+            "x": s.state.player2.position.x,
+            "vx": s.state.player2.velocity.x,
         },
     }

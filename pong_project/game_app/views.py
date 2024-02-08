@@ -100,7 +100,7 @@ def game_view(request, game_id: uuid.UUID):
             while True:
                 try:
                     session.session_update(game_id)
-                    data = session.session_get_state(game_id)
+                    data = session.session_get_state_small(game_id)
                     yield f"data: {json.dumps(data)}\n\n".encode("utf-8")
                     time.sleep(sleep_time)
                 except GeneratorExit:

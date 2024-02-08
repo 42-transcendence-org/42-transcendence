@@ -28,6 +28,26 @@ export class GameSession {
 
 
 	reconcile(data) {
+		let server_state = new state.GameState();
+		server_state.status = data.status;
+		server_state.ball.position.x = data.ball.x;
+		server_state.ball.position.y = data.ball.y;
+		server_state.ball.velocity.x = data.ball.vx;
+		server_state.ball.velocity.y = data.ball.vy;
+		server_state.player1.position.x = data.player1.x;
+		server_state.player2.position.x = data.player2.x;
+		server_state.player1.velocity.x = data.player1.vx;
+		server_state.player2.velocity.x = data.player2.vx;
+		server_state.score1 = data.player1.score;
+		server_state.score2 = data.player2.score;
+
+		let new_inputs = this.inputs.filter(input => input.timestamp > data.last_input);
+		this.inputs = new_inputs;
+
+		input.apply_inputs(server_state, this.inputs);
+		state.state_update(server_state, this.dt, this.t);
+
+		this.state = server_state;
 	}
 
 	loop_start() {

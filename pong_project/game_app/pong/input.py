@@ -9,6 +9,7 @@ class Input:
 
 
 def apply_inputs(state, inputs):
+    last_time = None
     for input in inputs:
         player = state.player1 if input.id == g.ID_PLAYER1 else state.player2
         if input.input == g.INPUT_NEUTRAL:
@@ -28,3 +29,5 @@ def apply_inputs(state, inputs):
         elif input.input == g.INPUT_QUIT:
             if state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
                 state.status = g.STATUS_QUIT
+        last_time = input.timestamp
+    return last_time
