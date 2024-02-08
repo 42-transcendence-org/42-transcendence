@@ -2,7 +2,7 @@ import * as ai from './ai.js';
 import * as g from './global.js';
 import * as state from './state.js';
 import * as input from './input.js';
-import * as graphic from './graphics.js';
+import * as graphics from './graphics.js';
 
 import { div_handler } from "../utils.js";
 
@@ -46,6 +46,7 @@ export class GameSession {
 		requestAnimationFrame(this.loop);
 	}
 
+	/* FIXME Move all this out of the class */
 	loop() {
 		let new_time = performance.now();
 		let frame_time = new_time - this.old_time;

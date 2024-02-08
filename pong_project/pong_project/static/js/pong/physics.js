@@ -145,11 +145,6 @@ export function aabb_continuous_resolve(r1, collision) {
  */
 export function aabb_continuous_detection(r1, r2, dt) {
 
-	// if (aabb_discrete_detection(r1, r2)) {
-	// 	console.log("overlap");
-	// 	aabb_discrete_resolve(r1, r2);
-	// 	return new Collision(-1, 0, 0, 0, 0);
-	// }
 	/* If r1 is not moving, a collision cannot occur */
 	if (r1.velocity.x == 0 && r1.velocity.y == 0)
 		return new Collision(-1, 0, 0, 0, 0);
