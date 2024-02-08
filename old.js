@@ -191,3 +191,84 @@ function draw_circle(x, y, radius, color) {
 	ctx.strokeStyle = color;
 	ctx.stroke();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function update_ball_position(state, dt) {
+	const c1 = physics.aabb_continuous_detection(state.ball, state.player1, dt);
+	const c2 = physics.aabb_continuous_detection(state.ball, state.player2, dt);
+	const c_top = physics.aabb_continuous_detection(state.ball, state.top_wall, dt);
+	const c_bot = physics.aabb_continuous_detection(state.ball, state.bot_wall, dt);
+	const c_left = physics.aabb_continuous_detection(state.ball, state.left_wall, dt);
+	const c_right = physics.aabb_continuous_detection(state.ball, state.right_wall, dt);
+
+	// console.log("1:", c1.time, "2:", c2.time, "L:", c_left.time, "R:", c_right.time, "T:", c_top.time, "B:", c_bot.time);
+
+	let collision_happened = false;
+
+	/* Paddle */
+	if ((c1.time > 0 && c1.time <= 1.0) || (c2.time > 0 && c2.time <= 1.0)) {
+		collision_happened = true;
+		const c = (c1.time > 0 && c1.time <= 1.0) ? c1 : c2;
+		const player = (c1.time > 0 && c1.time <= 1.0) ? state.player1 : state.player2;
+		const v = physics.aabb_continuous_resolve(state.ball, c);
+		state.ball.position.x += v.x * dt;
+		state.ball.position.y += v.y * dt;
+		update_ball_velocity(state.ball, player, c.normal);
+		sound.play_hit_sound();
+	} else if ((c_top.time > 0 && c_top.time <= 1.0) || (c_bot.time > 0 && c_bot.time <= 1.0)) {
+		/* Top and bottom walls */
+		collision_happened = true;
+		const dir = (c_top.time > 0 && c_top.time <= 1.0) ? new physics.Vector(0, g.BALL_SPEED_MIN) : new physics.Vector(0, -g.BALL_SPEED_MIN)
+		const c = (c_top.time > 0 && c_top.time <= 1.0) ? c_top : c_bot;
+		const v = physics.aabb_continuous_resolve(state.ball, c);
+		state.ball.position.x += v.x * dt;
+		state.ball.position.y += v.y * dt;
+		state.ball.velocity.x *= -1;
+		if (c_top.time > 0 && c_top.time <= 1.0) {
+			state.score1 += 1;
+		} else if (c_bot.time > 0 && c_bot.time <= 1.0) {
+			state.score2 += 1;
+		}
+		state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
+		reset_ball(state.ball, dir);
+		sound.play_explosion_sound();
+	} else if ((c_left.time > 0 && c_left.time <= 1.0) || (c_right.time > 0 && c_right.time <= 1.0)) {
+		/* Left and right walls */
+		collision_happened = true;
+		const c = (c_left.time > 0 && c_left.time <= 1.0) ? c_left : c_right;
+		const v = physics.aabb_continuous_resolve(state.ball, c);
+		state.ball.position.x += v.x * dt;
+		state.ball.position.y += v.y * dt;
+		state.ball.velocity.x *= -1;
+		sound.play_hit_sound();
+	} else {
+		state.ball.position.x += state.ball.velocity.x * dt;
+		state.ball.position.y += state.ball.velocity.y * dt;
+	}
+
+
+	// if (collision_happened === false) {
+	// 	state.ball.position.x += state.ball.velocity.x * dt;
+	// 	state.ball.position.y += state.ball.velocity.y * dt;
+	// }
+}

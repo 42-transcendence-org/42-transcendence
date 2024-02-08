@@ -7,7 +7,7 @@ export const ctx = canvas.getContext("2d");
 export const BOARD_WIDTH = canvas.width;
 export const BOARD_HEIGHT = canvas.height;
 export const BOARD_MARGIN = 16;
-export const BOARD_CORRIDOR = 2 * BOARD_MARGIN;
+export const BOARD_CORRIDOR = 2 * BOARD_MARGIN + 10;
 
 /* COLORS */
 export const PALETTE = {
