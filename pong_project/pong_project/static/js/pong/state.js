@@ -87,18 +87,25 @@ function update_ball_velocity(ball, paddle, normal) {
 }
 
 /* FIXME The ball passes through the paddle when stuck against the wall and paddle in the x-axis */
-function update_paddle_position(ball, paddle, dt) {
-	let collision = physics.aabb_continuous_detection(paddle, ball, dt);
-	if (collision.time > 0 && collision.time <= 1.0) {
+function update_paddle_position(ball, paddle, corridor, dt) {
+
+	if (paddle.velocity.x === 0) return;
+
+	const ball_collision = physics.aabb_continuous_detection(paddle, ball, dt);
+	const corridor_collision = physics.aabb_continuous_detection(paddle, corridor, dt);
+
+	if (ball_collision.time > 0 && ball_collision.time <= 1.0) {
 		sound.play_hit_sound();
 		/* Scale the paddle velocity and move it so that it comes in contact with the ball without colliding with it */
-		physics.aabb_continuous_resolve(paddle, collision);
+		physics.aabb_continuous_resolve(paddle, ball_collision);
 		paddle.position.x += paddle.velocity.x * dt;
 		/* Invert the normal in x to get the direction the ball need to go in */
-		collision.normal.x *= -1;
+		ball_collision.normal.x *= -1;
 		/* Update the ball velocity based on the contact point with paddle */
-		update_ball_velocity(ball, paddle, collision.normal);
-	} else if (paddle.position.x + paddle.velocity.x * dt > g.BOARD_CORRIDOR && paddle.position.x + paddle.size.x + paddle.velocity.x * dt < g.BOARD_WIDTH - g.BOARD_CORRIDOR) {
+		update_ball_velocity(ball, paddle, ball_collision.normal);
+	} else if (corridor_collision.time > 0 && corridor_collision.time <= 1.0) {
+		paddle.velocity.x = 0;
+	} else {
 		/* No collision, move the paddle normally */
 		paddle.position.x += paddle.velocity.x * dt;
 	}
@@ -156,8 +163,8 @@ export function state_update(state, dt, t) {
 	if (state.status === g.STATUS_WAITING || state.status === g.STATUS_PAUSED || state.status === g.STATUS_QUIT)
 		return;
 
-	update_paddle_position(state.ball, state.player1, dt);
-	update_paddle_position(state.ball, state.player2, dt);
+	update_paddle_position(state.ball, state.player1, state.player1.velocity.x < 0 ? state.left_corridor : state.right_corridor, dt);
+	update_paddle_position(state.ball, state.player2, state.player2.velocity.x < 0 ? state.left_corridor : state.right_corridor, dt);
 
 	if (state.particles.length > 0) {
 		physics.particles_update(state.particles, dt);
