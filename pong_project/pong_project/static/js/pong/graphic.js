@@ -1,4 +1,5 @@
 import * as g from './global.js';
+import { Rectangle } from './physic.js';
 
 function draw_rect_fill(ctx, x, y, w, h, color) {
 	ctx.fillStyle = color;
@@ -35,22 +36,23 @@ function load_font(ctx) {
 
 load_font(g.ctx);
 
+const net = new Rectangle(g.BOARD_MARGIN, (g.BOARD_HEIGHT - 2) / 2, g.BOARD_WIDTH - (2 * g.BOARD_MARGIN), 2, 0, 0);
 export function draw_state(ctx, state) {
 	/* Draw the background */
 	draw_rect_fill(ctx, 0, 0, g.BOARD_WIDTH, g.BOARD_HEIGHT, g.PALETTE.C1);
 
 	/* Draw the walls */
-	draw_rect_fill(ctx, state.top_wall.position.x, state.top_wall.position.y, state.top_wall.size.x, state.top_wall.size.y, g.PALETTE.C4);
-	draw_rect_fill(ctx, state.bot_wall.position.x, state.bot_wall.position.y, state.bot_wall.size.x, state.bot_wall.size.y, g.PALETTE.C4);
-	draw_rect_fill(ctx, state.left_wall.position.x, state.left_wall.position.y, state.left_wall.size.x, state.left_wall.size.y, g.PALETTE.C4);
-	draw_rect_fill(ctx, state.right_wall.position.x, state.right_wall.position.y, state.right_wall.size.x, state.right_wall.size.y, g.PALETTE.C4);
+	draw_rect_fill(ctx, 0, 0, g.BOARD_MARGIN, g.BOARD_HEIGHT, g.PALETTE.C4);
+	draw_rect_fill(ctx, 0, 0, g.BOARD_WIDTH, g.BOARD_MARGIN, g.PALETTE.C4);
+	draw_rect_fill(ctx, g.BOARD_WIDTH - g.BOARD_MARGIN, 0, g.BOARD_MARGIN, g.BOARD_HEIGHT, g.PALETTE.C4);
+	draw_rect_fill(ctx, 0, g.BOARD_HEIGHT - g.BOARD_MARGIN, g.BOARD_WIDTH, g.BOARD_MARGIN, g.PALETTE.C4);
 
 	/* Draw the vertical line in the middle of the table */
 	draw_rect_fill(ctx, ((g.BOARD_WIDTH - (g.BOARD_MARGIN / 2)) / 2), 0, g.BOARD_MARGIN / 2, g.BOARD_HEIGHT, g.PALETTE.C4);
 
 	/* Draw the net */
-	draw_rect_fill(ctx, state.net.position.x + g.SHADOW_OFFSET_X, state.net.position.y + g.SHADOW_OFFSET_Y - state.net.size.y - 1, state.net.size.x - g.SHADOW_OFFSET_X, state.net.size.y + 2, g.SHADOW_COLOR);
-	draw_rect_fill(ctx, state.net.position.x, state.net.position.y, state.net.size.x, state.net.size.y, g.PALETTE.C4);
+	draw_rect_fill(ctx, net.position.x + g.SHADOW_OFFSET_X, net.position.y + g.SHADOW_OFFSET_Y - net.size.y - 1, net.size.x - g.SHADOW_OFFSET_X, net.size.y + 2, g.SHADOW_COLOR);
+	draw_rect_fill(ctx, net.position.x, net.position.y, net.size.x, net.size.y, g.PALETTE.C4);
 
 	/* Draw scores */
 	draw_text(ctx, state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) + g.FSIZE) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);

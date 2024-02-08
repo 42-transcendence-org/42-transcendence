@@ -6,20 +6,11 @@ export class GameState {
 	constructor() {
 		this.status = g.STATUS_WAITING;
 		this.particles = [];
-		this.ball = new physics.Rectangle(20, g.BOARD_HEIGHT - (3 * g.BOARD_MARGIN), g.BALL_SIDE, g.BALL_SIDE, g.BALL_SPEED_MIN, 0);
-		// this.ball = new physics.Rectangle((g.BOARD_WIDTH - g.BALL_SIDE) / 2, (g.BOARD_HEIGHT - g.BALL_SIDE) / 2, g.BALL_SIDE, g.BALL_SIDE, 0, g.BALL_SPEED_MIN);
+		this.ball = new physics.Rectangle((g.BOARD_WIDTH - g.BALL_SIDE) / 2, (g.BOARD_HEIGHT - g.BALL_SIDE) / 2, g.BALL_SIDE, g.BALL_SIDE, 0, g.BALL_SPEED_MIN);
 		this.player1 = new physics.Rectangle((g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, g.BOARD_HEIGHT - (3 * g.BOARD_MARGIN), g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0);
 		this.player2 = new physics.Rectangle((g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, 2 * g.BOARD_MARGIN, g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0);
 		this.score1 = 0;
 		this.score2 = 0;
-
-		this.top_wall = new physics.Rectangle(0, 0, g.BOARD_WIDTH, g.BOARD_MARGIN, 0, 0);
-		this.bot_wall = new physics.Rectangle(0, g.BOARD_HEIGHT - g.BOARD_MARGIN, g.BOARD_WIDTH, g.BOARD_MARGIN, 0, 0);
-		this.left_wall = new physics.Rectangle(0, 0, g.BOARD_MARGIN, g.BOARD_HEIGHT, 0, 0);
-		this.right_wall = new physics.Rectangle(g.BOARD_WIDTH - g.BOARD_MARGIN, 0, g.BOARD_MARGIN, g.BOARD_HEIGHT, 0, 0);
-		this.left_corridor = new physics.Rectangle(0, 0, g.BOARD_CORRIDOR, g.BOARD_HEIGHT, 0, 0);
-		this.right_corridor = new physics.Rectangle(g.BOARD_WIDTH - g.BOARD_CORRIDOR, 0, g.BOARD_CORRIDOR, g.BOARD_HEIGHT, 0, 0);
-		this.net = new physics.Rectangle(g.BOARD_MARGIN, (g.BOARD_HEIGHT - 2) / 2, g.BOARD_WIDTH - (2 * g.BOARD_MARGIN), 2, 0, 0);
 	}
 }
 
@@ -48,7 +39,6 @@ export function reset_state(state) {
 	state.score2 = 0;
 }
 
-/* FIXME Should we use the contact point instead ? */
 /**
  * Update the paddle velocity based on where it hit the paddle.
  * @param {physics.Rectangle} ball - A Rectangle representing the ball.
