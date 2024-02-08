@@ -80,7 +80,6 @@ function update_ball_velocity(ball, paddle, normal) {
 function update_paddle_position(ball, paddle, dt) {
 	let c_ball = physics.aabb_continuous_detection(paddle, ball, dt);
 	if (c_ball.time > 0 && c_ball.time <= 1.0) {
-		console.log("hey");
 		sound.play_hit_sound();
 		let v = physics.aabb_continuous_resolve(paddle, c_ball);
 		paddle.position.x += v.x * dt;

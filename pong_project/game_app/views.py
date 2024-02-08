@@ -1,18 +1,16 @@
 import uuid
 import json
 
-
-from .pong.manager import g_manager
-from .pong.main import INPUTS
+import pong_project.game_app.pong.session as session
+import pong_project.game_app.pong.constants as g
 
 from django.http import JsonResponse, StreamingHttpResponse
+
 
 def game_create_view(request):
     # Check the HTTP method
     if request.method != "POST":
-        response = JsonResponse(
-            {"error": "Invalid HTTP method: POST required"}, status=405
-        )
+        response = JsonResponse({"error": "Invalid HTTP method: POST required"}, status=405)
         response["Allow"] = "POST"
         return response
 
@@ -21,10 +19,8 @@ def game_create_view(request):
     if alias is None:
         return JsonResponse({"error": "Please pick an alias first"}, status=400)
 
-    global g_manager
-
     # Check for an active game session for this user
-    has_session = g_manager.game_check_for_session(alias)
+    has_session = session.session_has(alias)
     if has_session:
         data = g_manager.game_get_state(has_session)
         return JsonResponse(
@@ -109,9 +105,7 @@ def game_view(request, game_id: uuid.UUID):
                 except GeneratorExit:
                     break
                 except Exception as e:
-                    yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n".encode(
-                        "utf-8"
-                    )
+                    yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n".encode("utf-8")
                     break
 
         response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
