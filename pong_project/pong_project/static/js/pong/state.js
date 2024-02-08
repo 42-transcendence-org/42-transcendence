@@ -1,6 +1,6 @@
 import * as g from './global.js';
 import * as sound from "./sound.js";
-import * as physics from "./physic.js";
+import * as physics from "./physics.js";
 
 export class GameState {
 	constructor() {

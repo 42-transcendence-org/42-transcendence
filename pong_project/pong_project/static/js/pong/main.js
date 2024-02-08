@@ -2,7 +2,7 @@ import * as ai from './ai.js';
 import * as g from './global.js';
 import * as state from './state.js';
 import * as input from './input.js';
-import * as graphic from './graphic.js';
+import * as graphic from './graphics.js';
 
 import { div_handler } from "../utils.js";
 
@@ -71,7 +71,7 @@ export class GameSession {
 			return;
 		}
 
-		graphic.draw_state(g.ctx, this.state);
+		graphics.draw_state(g.ctx, this.state);
 		requestAnimationFrame(this.loop);
 	}
 }

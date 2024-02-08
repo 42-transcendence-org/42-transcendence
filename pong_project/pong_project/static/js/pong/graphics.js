@@ -1,5 +1,5 @@
 import * as g from './global.js';
-import { Rectangle } from './physic.js';
+import { Rectangle } from './physics.js';
 
 function draw_rect_fill(ctx, x, y, w, h, color) {
 	ctx.fillStyle = color;

@@ -108,7 +108,7 @@ def ray_rectangle_collision(origin: Vector, direction: Vector, target: Rectangle
 
     return collision
 
-
+# FIXME Incorrect 
 def aabb_continuous_resolve(r1: Rectangle, collision: Collision) -> None:
     r1.velocity.x += collision.normal.x * abs(r1.velocity.x) * (1 - collision.time)
     r1.velocity.y += collision.normal.y * abs(r1.velocity.y) * (1 - collision.time)
