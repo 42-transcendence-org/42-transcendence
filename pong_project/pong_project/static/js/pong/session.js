@@ -17,6 +17,7 @@ export class GameSession {
 		this.name1 = name1;
 		this.name2 = name2;
 		this.state = new state.GameState();
+		this.server_state = null;
 	}
 }
 
@@ -50,9 +51,8 @@ function reconcile(data, session) {
 	session.inputs = new_inputs;
 
 	input.apply_inputs(server_state, session.inputs);
-	state.state_update(server_state, session.dt, session.t);
 
-	session.state = server_state;
+	session.server_state = server_state;
 }
 
 function update_loop_start(session) {
@@ -79,6 +79,11 @@ function update_loop(session) {
 
 	/* Convert the frame time from milliseconds to seconds before adding it */
 	session.accumulator += (frame_time / 1000);
+
+	if (session.server_state != null) {
+		session.state = session.server_state;
+		session.server_state = null;
+	}
 
 	while (session.accumulator >= session.dt) {
 		input.apply_inputs(session.state, session.inputs);
