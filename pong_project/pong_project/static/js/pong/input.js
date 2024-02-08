@@ -1,9 +1,6 @@
 import * as g from './global.js';
 import * as requests from "../requests.js";
 
-
-
-
 export class Input {
 	constructor(id, input, time) {
 		this.id = id;

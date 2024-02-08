@@ -1,11 +1,11 @@
 import * as g from './global.js';
 
-function draw_rect_fill(x, y, w, h, color) {
+function draw_rect_fill(ctx, x, y, w, h, color) {
 	ctx.fillStyle = color;
 	ctx.fillRect(x, y, w, h);
 }
 
-function draw_rect(x, y, w, h, line_width, color) {
+function draw_rect(ctx, x, y, w, h, line_width, color) {
 	ctx.beginPath();
 	ctx.rect(x, y, w, h);
 	ctx.strokeStyle = color;
@@ -13,12 +13,12 @@ function draw_rect(x, y, w, h, line_width, color) {
 	ctx.stroke();
 }
 
-function draw_text(text, x, y, color) {
+function draw_text(ctx, text, x, y, color) {
 	ctx.fillStyle = color;
 	ctx.fillText(text, x, y);
 }
 
-function load_font() {
+function load_font(ctx) {
 	const font_url = window.ASSETS_URL + "code-page-437.ttf";
 	const font_file = new FontFace("Code Page 437", `url(${font_url})`);
 
@@ -35,48 +35,48 @@ function load_font() {
 
 load_font();
 
-export function draw_state(state) {
+export function draw_state(ctx, state) {
 	/* Draw the background */
-	draw_rect_fill(0, 0, g.BOARD_WIDTH, g.BOARD_HEIGHT, g.PALETTE.C1);
+	draw_rect_fill(ctx, 0, 0, g.BOARD_WIDTH, g.BOARD_HEIGHT, g.PALETTE.C1);
 
 	/* Draw the walls */
-	draw_rect_fill(state.top_wall.position.x, state.top_wall.position.y, state.top_wall.size.x, state.top_wall.size.y, g.PALETTE.C4);
-	draw_rect_fill(state.bot_wall.position.x, state.bot_wall.position.y, state.bot_wall.size.x, state.bot_wall.size.y, g.PALETTE.C4);
-	draw_rect_fill(state.left_wall.position.x, state.left_wall.position.y, state.left_wall.size.x, state.left_wall.size.y, g.PALETTE.C4);
-	draw_rect_fill(state.right_wall.position.x, state.right_wall.position.y, state.right_wall.size.x, state.right_wall.size.y, g.PALETTE.C4);
+	draw_rect_fill(ctx, state.top_wall.position.x, state.top_wall.position.y, state.top_wall.size.x, state.top_wall.size.y, g.PALETTE.C4);
+	draw_rect_fill(ctx, state.bot_wall.position.x, state.bot_wall.position.y, state.bot_wall.size.x, state.bot_wall.size.y, g.PALETTE.C4);
+	draw_rect_fill(ctx, state.left_wall.position.x, state.left_wall.position.y, state.left_wall.size.x, state.left_wall.size.y, g.PALETTE.C4);
+	draw_rect_fill(ctx, state.right_wall.position.x, state.right_wall.position.y, state.right_wall.size.x, state.right_wall.size.y, g.PALETTE.C4);
 
 	/* Draw the vertical line in the middle of the table */
-	draw_rect_fill(((g.BOARD_WIDTH - (g.BOARD_MARGIN / 2)) / 2), 0, g.BOARD_MARGIN / 2, g.BOARD_HEIGHT, g.PALETTE.C4);
+	draw_rect_fill(ctx, ((g.BOARD_WIDTH - (g.BOARD_MARGIN / 2)) / 2), 0, g.BOARD_MARGIN / 2, g.BOARD_HEIGHT, g.PALETTE.C4);
 
 	/* Draw the net */
-	draw_rect_fill(state.net.position.x + g.SHADOW_OFFSET_X, state.net.position.y + g.SHADOW_OFFSET_Y - state.net.size.y - 1, state.net.size.x - g.SHADOW_OFFSET_X, state.net.size.y + 2, g.SHADOW_COLOR);
-	draw_rect_fill(state.net.position.x, state.net.position.y, state.net.size.x, state.net.size.y, g.PALETTE.C4);
+	draw_rect_fill(ctx, state.net.position.x + g.SHADOW_OFFSET_X, state.net.position.y + g.SHADOW_OFFSET_Y - state.net.size.y - 1, state.net.size.x - g.SHADOW_OFFSET_X, state.net.size.y + 2, g.SHADOW_COLOR);
+	draw_rect_fill(ctx, state.net.position.x, state.net.position.y, state.net.size.x, state.net.size.y, g.PALETTE.C4);
 
 	/* Draw scores */
-	draw_text(state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) + g.FSIZE) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
-	draw_text(state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) - (g.FSIZE / 3)) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
-	draw_text(state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) + g.FSIZE, g.PALETTE.C4);
-	draw_text(state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) - (g.FSIZE / 3), g.PALETTE.C4);
+	draw_text(ctx, state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) + g.FSIZE) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
+	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) - (g.FSIZE / 3)) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
+	draw_text(ctx, state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) + g.FSIZE, g.PALETTE.C4);
+	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) - (g.FSIZE / 3), g.PALETTE.C4);
 
 	/* Draw ball, paddles and particles */
 	if (state.particles.length === 0) {
-		draw_rect_fill(state.ball.position.x + g.SHADOW_OFFSET_X, state.ball.position.y + g.SHADOW_OFFSET_Y, state.ball.size.x, state.ball.size.y, g.SHADOW_COLOR);
+		draw_rect_fill(ctx, state.ball.position.x + g.SHADOW_OFFSET_X, state.ball.position.y + g.SHADOW_OFFSET_Y, state.ball.size.x, state.ball.size.y, g.SHADOW_COLOR);
 	} else {
 		state.particles.forEach(p => {
-			draw_rect_fill(p.r.position.x + g.SHADOW_OFFSET_X, p.r.position.y + g.SHADOW_OFFSET_Y, p.r.size.x, p.r.size.y, g.SHADOW_COLOR);
+			draw_rect_fill(ctx, p.r.position.x + g.SHADOW_OFFSET_X, p.r.position.y + g.SHADOW_OFFSET_Y, p.r.size.x, p.r.size.y, g.SHADOW_COLOR);
 		});
 	}
-	draw_rect_fill(state.player1.position.x + g.SHADOW_OFFSET_X, state.player1.position.y + g.SHADOW_OFFSET_Y, state.player1.size.x, state.player1.size.y, g.SHADOW_COLOR);
-	draw_rect_fill(state.player2.position.x + g.SHADOW_OFFSET_X, state.player2.position.y + g.SHADOW_OFFSET_Y, state.player2.size.x, state.player2.size.y, g.SHADOW_COLOR);
+	draw_rect_fill(ctx, state.player1.position.x + g.SHADOW_OFFSET_X, state.player1.position.y + g.SHADOW_OFFSET_Y, state.player1.size.x, state.player1.size.y, g.SHADOW_COLOR);
+	draw_rect_fill(ctx, state.player2.position.x + g.SHADOW_OFFSET_X, state.player2.position.y + g.SHADOW_OFFSET_Y, state.player2.size.x, state.player2.size.y, g.SHADOW_COLOR);
 	if (state.particles.length === 0) {
-		draw_rect_fill(state.ball.position.x, state.ball.position.y, state.ball.size.x, state.ball.size.y, g.PALETTE.C3);
+		draw_rect_fill(ctx, state.ball.position.x, state.ball.position.y, state.ball.size.x, state.ball.size.y, g.PALETTE.C3);
 	} else {
 		state.particles.forEach(p => {
-			draw_rect_fill(p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, g.PALETTE.C3);
+			draw_rect_fill(ctx, p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, g.PALETTE.C3);
 		});
 	}
-	draw_rect_fill(state.player1.position.x, state.player1.position.y, state.player1.size.x, state.player1.size.y, g.PALETTE.C3);
-	draw_rect_fill(state.player2.position.x, state.player2.position.y, state.player2.size.x, state.player2.size.y, g.PALETTE.C3);
+	draw_rect_fill(ctx, state.player1.position.x, state.player1.position.y, state.player1.size.x, state.player1.size.y, g.PALETTE.C3);
+	draw_rect_fill(ctx, state.player2.position.x, state.player2.position.y, state.player2.size.x, state.player2.size.y, g.PALETTE.C3);
 
 	/* Draw message boxes */
 	if (state.status === g.STATUS_WAITING || state.status === g.STATUS_PAUSED) {
@@ -94,13 +94,13 @@ export function draw_state(state) {
 		const box_y = (g.BOARD_HEIGHT - box_h) / 2;
 
 		/* Draw box */
-		draw_rect(box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
-		draw_rect(box_x, box_y, box_w, box_h, 4, g.PALETTE.C4);
-		draw_rect_fill(box_x, box_y, box_w, box_h, g.PALETTE.C1);
+		draw_rect(ctx, box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
+		draw_rect(ctx, box_x, box_y, box_w, box_h, 4, g.PALETTE.C4);
+		draw_rect_fill(ctx, box_x, box_y, box_w, box_h, g.PALETTE.C1);
 
 		/* Draw text */
-		draw_text(text, text_x + g.SHADOW_OFFSET_X, text_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
-		draw_text(text, text_x, text_y, g.PALETTE.C4);
+		draw_text(ctx, text, text_x + g.SHADOW_OFFSET_X, text_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
+		draw_text(ctx, text, text_x, text_y, g.PALETTE.C4);
 
 	} else if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) {
 
@@ -122,11 +122,11 @@ export function draw_state(state) {
 		/* Draw victory box */
 		draw_rect(box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
 		draw_rect(box_x, box_y, box_w, box_h, 4, g.PALETTE.C4);
-		draw_rect_fill(box_x, box_y, box_w, box_h, g.PALETTE.C1);
+		draw_rect_fill(ctx, box_x, box_y, box_w, box_h, g.PALETTE.C1);
 
 		/* Draw victory text */
-		draw_text(text_victory, text_x + g.SHADOW_OFFSET_X, text_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
-		draw_text(text_victory, text_x, text_y, g.PALETTE.C4);
+		draw_text(ctx, text_victory, text_x + g.SHADOW_OFFSET_X, text_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
+		draw_text(ctx, text_victory, text_x, text_y, g.PALETTE.C4);
 
 		let text_again_w = ctx.measureText(text_again).width;
 		let text_quit_w = ctx.measureText(text_quit).width;
@@ -144,14 +144,14 @@ export function draw_state(state) {
 		let text_quit_y = box_y + box_h - g.FSIZE;
 
 		/* Draw info box */
-		draw_rect(box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
-		draw_rect(box_x, box_y, box_w, box_h, 4, g.PALETTE.C4);
-		draw_rect_fill(box_x, box_y, box_w, box_h, g.PALETTE.C1);
+		draw_rect(ctx, box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
+		draw_rect(ctx, box_x, box_y, box_w, box_h, 4, g.PALETTE.C4);
+		draw_rect_fill(ctx, box_x, box_y, box_w, box_h, g.PALETTE.C1);
 
 		/* Draw info text */
-		draw_text(text_again, text_again_x + g.SHADOW_OFFSET_X, text_again_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
-		draw_text(text_quit, text_quit_x + g.SHADOW_OFFSET_X, text_quit_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
-		draw_text(text_again, text_again_x, text_again_y, g.PALETTE.C4);
-		draw_text(text_quit, text_quit_x, text_quit_y, g.PALETTE.C4);
+		draw_text(ctx, text_again, text_again_x + g.SHADOW_OFFSET_X, text_again_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
+		draw_text(ctx, text_quit, text_quit_x + g.SHADOW_OFFSET_X, text_quit_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
+		draw_text(ctx, text_again, text_again_x, text_again_y, g.PALETTE.C4);
+		draw_text(ctx, text_quit, text_quit_x, text_quit_y, g.PALETTE.C4);
 	}
 }

@@ -1,8 +1,7 @@
 import * as ai from './ai.js';
+import * as g from './global.js';
 import * as input from './input.js';
 import * as graphic from './graphic.js';
-
-import * as g from './global.js';
 
 import { div_handler } from "../utils.js";
 
@@ -60,6 +59,8 @@ export class GameSession {
 			this.accumulator -= this.dt;
 			this.t += this.dt;
 		}
+		/* FIXME: Is there a cleaner way to it ? */
+		/* FIXME: Use cancelAnimationFrame */
 		if (this.state.status === g.STATUS_QUIT) {
 			sound.stop_music();
 			div_handler("game-menu-div");
@@ -67,7 +68,19 @@ export class GameSession {
 			return;
 		}
 
-		graphic.draw_state(this.state);
+		graphic.draw_state(g.ctx, this.state);
 		requestAnimationFrame(this.loop);
 	}
+}
+
+export function create_session(type) {
+	if (type != g.TYPE_LOCAL && type != g.TYPE_AI)
+		return;
+	if (window.game_session != null) {
+		div_handler("game-div");
+		return;
+	}
+	window.game_session = new GameSession(0, type, "Player 1", type === g.TYPE_LOCAL ? "Player 2" : "Computer");
+	div_handler("game-div");
+	window.game_session.loop_start();
 }
