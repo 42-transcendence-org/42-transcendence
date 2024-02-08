@@ -12,7 +12,7 @@ export class GameSession {
 		this.type = type;
 		this.inputs = [];
 		this.t = 0.0;
-		this.dt = 1.0 / 10.0;
+		this.dt = 1.0 / 120.0;
 		this.accumulator = 0.0;
 		this.old_time = 0.0;
 		this.name1 = name1;

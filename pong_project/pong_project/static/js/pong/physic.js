@@ -127,8 +127,10 @@ export function ray_rectangle_collision(origin, direction, target) {
  * @param {Collision} collision - An object containing the collision time and normal.
  */
 export function aabb_continuous_resolve(r1, collision) {
-	r1.velocity.x += collision.normal.x * Math.abs(r1.velocity.x) * (1 - collision.time);
-	r1.velocity.y += collision.normal.y * Math.abs(r1.velocity.y) * (1 - collision.time);
+	return new Vector(
+		r1.velocity.x += collision.normal.x * Math.abs(r1.velocity.x) * (1 - collision.time),
+		r1.velocity.y += collision.normal.y * Math.abs(r1.velocity.y) * (1 - collision.time)
+	);
 }
 
 /**

@@ -6,7 +6,8 @@ export class GameState {
 	constructor() {
 		this.status = g.STATUS_WAITING;
 		this.particles = [];
-		this.ball = new physics.Rectangle((g.BOARD_WIDTH - g.BALL_SIDE) / 2, (g.BOARD_HEIGHT - g.BALL_SIDE) / 2, g.BALL_SIDE, g.BALL_SIDE, 0, g.BALL_SPEED_MIN);
+		this.ball = new physics.Rectangle(20, g.BOARD_HEIGHT - (3 * g.BOARD_MARGIN), g.BALL_SIDE, g.BALL_SIDE, g.BALL_SPEED_MIN, 0);
+		// this.ball = new physics.Rectangle((g.BOARD_WIDTH - g.BALL_SIDE) / 2, (g.BOARD_HEIGHT - g.BALL_SIDE) / 2, g.BALL_SIDE, g.BALL_SIDE, 0, g.BALL_SPEED_MIN);
 		this.player1 = new physics.Rectangle((g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, g.BOARD_HEIGHT - (3 * g.BOARD_MARGIN), g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0);
 		this.player2 = new physics.Rectangle((g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, 2 * g.BOARD_MARGIN, g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0);
 		this.score1 = 0;
@@ -91,22 +92,18 @@ function update_paddle_position(ball, paddle, corridor, dt) {
 
 	if (paddle.velocity.x === 0) return;
 
-	const ball_collision = physics.aabb_continuous_detection(paddle, ball, dt);
-	const corridor_collision = physics.aabb_continuous_detection(paddle, corridor, dt);
+	const c_ball = physics.aabb_continuous_detection(paddle, ball, dt);
+	const c_corridor = physics.aabb_continuous_detection(paddle, corridor, dt);
 
-	if (ball_collision.time > 0 && ball_collision.time <= 1.0) {
+	if (c_ball.time > 0 && c_ball.time <= 1.0) {
 		sound.play_hit_sound();
-		/* Scale the paddle velocity and move it so that it comes in contact with the ball without colliding with it */
-		physics.aabb_continuous_resolve(paddle, ball_collision);
-		paddle.position.x += paddle.velocity.x * dt;
-		/* Invert the normal in x to get the direction the ball need to go in */
-		ball_collision.normal.x *= -1;
-		/* Update the ball velocity based on the contact point with paddle */
-		update_ball_velocity(ball, paddle, ball_collision.normal);
-	} else if (corridor_collision.time > 0 && corridor_collision.time <= 1.0) {
+		const v = physics.aabb_continuous_resolve(paddle, c_ball);
+		paddle.position.x += v.x * dt;
+		c_ball.normal.x *= -1;
+		update_ball_velocity(ball, paddle, c_ball.normal);
+	} else if (c_corridor.time > 0 && c_corridor.time <= 1.0) {
 		paddle.velocity.x = 0;
 	} else {
-		/* No collision, move the paddle normally */
 		paddle.position.x += paddle.velocity.x * dt;
 	}
 }
@@ -117,45 +114,47 @@ function update_ball_position(state, dt) {
 
 	const c1 = physics.aabb_continuous_detection(state.ball, state.player1, dt);
 	const c2 = physics.aabb_continuous_detection(state.ball, state.player2, dt);
-	if (c1.time > 0) { player = state.player1; collision = c1; }
-	else if (c2.time > 0) { player = state.player2; collision = c2; }
+	const c_top = physics.aabb_continuous_detection(state.ball, state.top_wall, dt);
+	const c_bot = physics.aabb_continuous_detection(state.ball, state.bot_wall, dt);
+	const c_left = physics.aabb_continuous_detection(state.ball, state.left_wall, dt);
+	const c_right = physics.aabb_continuous_detection(state.ball, state.right_wall, dt);
 
-	/* Collision resolution */
+	if (c1.time > 0) {
+		player = state.player1; collision = c1;
+	} else if (c2.time > 0) {
+		player = state.player2; collision = c2;
+	}
+
 	if (collision != null && player != null && collision.time > 0 && collision.time <= 1.0) {
 		sound.play_hit_sound();
-		/* Scale the ball velocity and move it so that it comes in contact with the paddle without colliding with it */
-		physics.aabb_continuous_resolve(state.ball, collision);
-		state.ball.position.x += state.ball.velocity.x * dt;
-		state.ball.position.y += state.ball.velocity.y * dt;
-		/* Update the ball velocity based on where it hits the paddle */
+		const v = physics.aabb_continuous_resolve(state.ball, collision);
+		state.ball.position.x += v.x * dt;
+		state.ball.position.y += v.y * dt;
 		update_ball_velocity(state.ball, player, collision.normal);
+	} else if ((c_top.time > 0 && c_top.time <= 1.0) || (c_bot.time > 0 && c_bot.time <= 1.0)) {
+		/* Top and bottom walls */
+		let score = (c_top.time > 0 && c_top.time <= 1.0) ? state.score1 : state.score2;
+		const dir = (c_top.time > 0 && c_top.time <= 1.0) ? new physics.Vector(0, g.BALL_SPEED_MIN) : new physics.Vector(0, -g.BALL_SPEED_MIN)
+		const c = (c_top.time > 0 && c_top.time <= 1.0) ? c_top : c_bot;
+		const v = physics.aabb_continuous_resolve(state.ball, c_top);
+		state.ball.position.x += v.x * dt;
+		state.ball.position.y += v.y * dt;
+		state.ball.velocity.x *= -1;
+		score += 1;
+		state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
+		sound.play_explosion_sound();
+		reset_ball(state.ball, dir);
+	} else if ((c_left.time > 0 && c_left.time <= 1.0) || (c_right.time > 0 && c_right.time <= 1.0)) {
+		/* Left and right walls */
+		const c = (c_left.time > 0 && c_left.time <= 1.0) ? c_left : c_right;
+		const v = physics.aabb_continuous_resolve(state.ball, c);
+		state.ball.position.x += v.x * dt;
+		state.ball.position.y += v.y * dt;
+		state.ball.velocity.x *= -1;
+		sound.play_hit_sound();
 	} else {
 		state.ball.position.x += state.ball.velocity.x * dt;
 		state.ball.position.y += state.ball.velocity.y * dt;
-	}
-
-	if (state.ball.position.x <= g.BOARD_MARGIN) {
-		/* Left wall */
-		state.ball.position.x = g.BOARD_MARGIN;
-		state.ball.velocity.x *= -1;
-		sound.play_hit_sound();
-	} else if (state.ball.position.x + state.ball.size.x >= g.BOARD_WIDTH - g.BOARD_MARGIN) {
-		/* Right wall */
-		state.ball.position.x = g.BOARD_WIDTH - state.ball.size.x - g.BOARD_MARGIN;
-		state.ball.velocity.x *= -1;
-		sound.play_hit_sound();
-	} else if (state.ball.position.y <= g.BOARD_MARGIN) {
-		/* Top wall */
-		state.score1 += 1;
-		state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
-		sound.play_explosion_sound();
-		reset_ball(state.ball, new physics.Vector(0, g.BALL_SPEED_MIN));
-	} else if (state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN) {
-		/* Bottom wall */
-		state.score2 += 1;
-		state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
-		sound.play_explosion_sound();
-		reset_ball(state.ball, new physics.Vector(0, -g.BALL_SPEED_MIN));
 	}
 }
 
