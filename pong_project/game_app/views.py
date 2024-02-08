@@ -22,7 +22,7 @@ def game_create_view(request):
     # Check for an active game session for this user
     has_session = session.session_has(alias)
     if has_session:
-        data = g_manager.game_get_state(has_session)
+        data = session.session_get_state(has_session)
         return JsonResponse(
             {
                 "id": data["id"],
@@ -34,9 +34,9 @@ def game_create_view(request):
         )
 
     # Check if we have a game session waiting for a second player
-    waiting_game = g_manager.game_check_for_waiting(alias)
+    waiting_game = session.session_waiting(alias)
     if waiting_game:
-        data = g_manager.game_get_state(waiting_game)
+        data = session.session_get_state(waiting_game)
         return JsonResponse(
             {
                 "id": data["id"],
@@ -49,12 +49,11 @@ def game_create_view(request):
 
     # Create a new game
     game_id = uuid.uuid4()
-    g_manager.game_create(game_id, alias)
+    session.session_create(game_id, alias)
     return JsonResponse({"id": game_id, "name1": alias}, status=201)
 
 
 def game_view(request, game_id: uuid.UUID):
-    global g_manager
 
     # Verify that the client has an alias
     alias = request.session.get("alias")
@@ -71,35 +70,36 @@ def game_view(request, game_id: uuid.UUID):
         input, time = data.get("input"), data.get("time")
         if time is None or input is None:
             return JsonResponse({"error": "'input' and 'time' are required fields"}, status=400)
-        if input not in INPUTS:
+        if input not in g.INPUTS:
             return JsonResponse({"error": "Invalid value for 'input'"}, status=400)
 
         # Check that the game exists
-        if not g_manager.game_exists(game_id):
+        if not session.session_exists(game_id):
             return JsonResponse({"error": "Invalid game ID"}, status=403)
 
         # Check if the player is part of that game
-        if not g_manager.validate_player_id(game_id, alias):
+        if not session.session_is_in(game_id, alias):
             return JsonResponse({"error": "You are not part of this game"}, status=403)
 
-        g_manager.game_add_input(game_id, input, time)
+        session.session_add_input(game_id, alias, input, time)
         return JsonResponse(status=200)
 
     # Handle GET request for streaming game state
     elif request.method == "GET":
         # Check that the game exists
-        if not g_manager.game_exists(game_id):
+        if not session.session_exists(game_id):
             return JsonResponse({"error": "Invalid game ID"}, status=403)
 
         # Check if the player is part of that game
-        if not g_manager.validate_player_id(game_id, alias):
+        if not session.session_is_in(game_id, alias):
             return JsonResponse({"error": "You are not part of this game"}, status=403)
 
         def event_stream():
             sleep_time = 1 / 10
             while True:
                 try:
-                    data = g_manager.game_get_state(game_id)
+                    session.session_update(game_id)
+                    data = session.session_get_state(game_id)
                     yield f"data: {json.dumps(data)}\n\n".encode("utf-8")
                     time.sleep(sleep_time)
                 except GeneratorExit:
