@@ -15,7 +15,7 @@ export class GameState {
 		this.top_wall = new physics.Rectangle(0, 0, g.BOARD_WIDTH, g.BOARD_MARGIN, 0, 0);
 		this.bot_wall = new physics.Rectangle(0, g.BOARD_HEIGHT - g.BOARD_MARGIN, g.BOARD_WIDTH, g.BOARD_MARGIN, 0, 0);
 		this.left_wall = new physics.Rectangle(0, 0, g.BOARD_MARGIN, g.BOARD_HEIGHT, 0, 0);
-		this.right_wall = new physics.Rectangle(0, g.BOARD_WIDTH - g.BOARD_MARGIN, g.BOARD_MARGIN, g.BOARD_HEIGHT, 0, 0);
+		this.right_wall = new physics.Rectangle(g.BOARD_WIDTH - g.BOARD_MARGIN, 0, g.BOARD_MARGIN, g.BOARD_HEIGHT, 0, 0);
 		this.left_corridor = new physics.Rectangle(0, 0, g.BOARD_CORRIDOR, g.BOARD_HEIGHT, 0, 0);
 		this.right_corridor = new physics.Rectangle(g.BOARD_WIDTH - g.BOARD_CORRIDOR, 0, g.BOARD_CORRIDOR, g.BOARD_HEIGHT, 0, 0);
 		this.net = new physics.Rectangle(g.BOARD_MARGIN, (g.BOARD_HEIGHT - 2) / 2, g.BOARD_WIDTH - (2 * g.BOARD_MARGIN), 2, 0, 0);
@@ -37,7 +37,7 @@ function reset_ball(ball, direction) {
  * Reset the game to its initial state.
  * @param {GameState} state - A game state.
  */
-function reset_state(state) {
+export function reset_state(state) {
 	state.status = g.STATUS_ACTIVE;
 	state.particles = [];
 	state.ball = new physics.Rectangle((g.BOARD_WIDTH - g.BALL_SIDE) / 2, (g.BOARD_HEIGHT - g.BALL_SIDE) / 2, g.BALL_SIDE, g.BALL_SIDE, 0, g.BALL_SPEED_MIN);
@@ -97,7 +97,7 @@ function update_paddle_position(ball, paddle, dt) {
 		/* Invert the normal in x to get the direction the ball need to go in */
 		collision.normal.x *= -1;
 		/* Update the ball velocity based on the contact point with paddle */
-		this.update_ball_velocity(paddle, collision.normal);
+		update_ball_velocity(ball, paddle, collision.normal);
 	} else if (paddle.position.x + paddle.velocity.x * dt > g.BOARD_CORRIDOR && paddle.position.x + paddle.size.x + paddle.velocity.x * dt < g.BOARD_WIDTH - g.BOARD_CORRIDOR) {
 		/* No collision, move the paddle normally */
 		paddle.position.x += paddle.velocity.x * dt;
@@ -121,7 +121,7 @@ function update_ball_position(state, dt) {
 		state.ball.position.x += state.ball.velocity.x * dt;
 		state.ball.position.y += state.ball.velocity.y * dt;
 		/* Update the ball velocity based on where it hits the paddle */
-		update_ball_velocity(player, collision.normal);
+		update_ball_velocity(state.ball, player, collision.normal);
 	} else {
 		state.ball.position.x += state.ball.velocity.x * dt;
 		state.ball.position.y += state.ball.velocity.y * dt;
@@ -142,13 +142,13 @@ function update_ball_position(state, dt) {
 		state.score1 += 1;
 		state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
 		sound.play_explosion_sound();
-		reset_ball(new physics.Vector(0, g.BALL_SPEED_MIN));
+		reset_ball(state.ball, new physics.Vector(0, g.BALL_SPEED_MIN));
 	} else if (state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN) {
 		/* Bottom wall */
 		state.score2 += 1;
 		state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
 		sound.play_explosion_sound();
-		reset_ball(new physics.Vector(0, -g.BALL_SPEED_MIN));
+		reset_ball(state.ball, new physics.Vector(0, -g.BALL_SPEED_MIN));
 	}
 }
 

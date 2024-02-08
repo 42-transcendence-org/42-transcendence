@@ -56,6 +56,8 @@ export class GameSession {
 
 		while (this.accumulator >= this.dt) {
 			input.apply_inputs(this.state, this.inputs);
+			if (this.state.type != g.TYPE_REMOTE)
+				this.inputs = [];
 			state.state_update(this.state, this.dt, this.t);
 			this.accumulator -= this.dt;
 			this.t += this.dt;

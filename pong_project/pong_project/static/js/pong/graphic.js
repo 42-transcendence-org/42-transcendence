@@ -120,8 +120,8 @@ export function draw_state(ctx, state) {
 		let text_y = state.status === g.STATUS_ENDED_1 ? ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) + fourth : ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) - fourth;
 
 		/* Draw victory box */
-		draw_rect(box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
-		draw_rect(box_x, box_y, box_w, box_h, 4, g.PALETTE.C4);
+		draw_rect(ctx, box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
+		draw_rect(ctx, box_x, box_y, box_w, box_h, 4, g.PALETTE.C4);
 		draw_rect_fill(ctx, box_x, box_y, box_w, box_h, g.PALETTE.C1);
 
 		/* Draw victory text */

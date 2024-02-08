@@ -1,6 +1,7 @@
 import * as g from './global.js';
 import * as sound from "./sound.js";
 import * as requests from "../requests.js";
+import { reset_state } from './state.js';
 
 export class Input {
 	constructor(id, input, time) {
@@ -10,21 +11,20 @@ export class Input {
 	}
 }
 
-/* FIXME: Would be more efficient to send all inputs in one request */
 document.addEventListener('keydown', (event) => {
 	if (window.game_session === null || window.game_session.state === null) return;
 
 	const time = Date.now();
 	const key_name = event.key;
-	if (key_name === 'a' && window.game_session.state.player1.velocity.x > 0) {
+	if (key_name === 'a' && window.game_session.state.player1.velocity.x != -g.PADDLE_SPEED) {
 		if (window.game_session.id != 0) requests.send_user_input(g.INPUT_LEFT, time);
 		window.game_session.inputs.push(new Input(g.ID_PLAYER1, g.INPUT_LEFT, time));
-	} else if (key_name === 's' && window.game_session.state.player1.velocity.x < 0) {
+	} else if (key_name === 's' && window.game_session.state.player1.velocity.x != g.PADDLE_SPEED) {
 		if (window.game_session.id != 0) requests.send_user_input(g.INPUT_RIGHT, time);
 		window.game_session.inputs.push(new Input(g.ID_PLAYER1, g.INPUT_RIGHT, time));
-	} else if (key_name === 'k' && window.game_session.state.player2.velocity.x > 0) {
+	} else if (key_name === 'k' && window.game_session.state.player2.velocity.x != -g.PADDLE_SPEED) {
 		window.game_session.inputs.push(new Input(g.ID_PLAYER2, g.INPUT_LEFT, time));
-	} else if (key_name === 'l' && window.game_session.state.player2.velocity.x < 0) {
+	} else if (key_name === 'l' && window.game_session.state.player2.velocity.x != g.PADDLE_SPEED) {
 		window.game_session.inputs.push(new Input(g.ID_PLAYER2, g.INPUT_RIGHT, time));
 	} else if (key_name === ' ') {
 		if (window.game_session.id != 0) requests.send_user_input(g.INPUT_SPACE, time);
@@ -74,7 +74,7 @@ export function apply_inputs(state, inputs) {
 					state.status = state.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE;
 				} else if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) {
 					state.status = g.STATUS_ACTIVE;
-					reset_game();
+					reset_state(state);
 				}
 				break;
 			case g.INPUT_QUIT:
@@ -84,7 +84,4 @@ export function apply_inputs(state, inputs) {
 				break;
 		}
 	});
-	/* FIXME Move this somewhere else */
-	if (state.type != g.TYPE_REMOTE)
-		inputs = [];
 }
