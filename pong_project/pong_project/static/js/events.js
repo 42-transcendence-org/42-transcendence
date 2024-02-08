@@ -1,3 +1,4 @@
+import * as g from './pong/global.js';
 import * as requests from './requests.js';
 import { create_session } from './pong/main.js';
 

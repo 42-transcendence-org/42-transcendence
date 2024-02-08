@@ -1,5 +1,6 @@
 import * as ai from './ai.js';
 import * as g from './global.js';
+import * as state from './state.js';
 import * as input from './input.js';
 import * as graphic from './graphic.js';
 
@@ -18,7 +19,7 @@ export class GameSession {
 		this.name2 = name2;
 		this.state = new state.GameState();
 
-		this.ai = type === state.g.TYPE_AI ? new ai.AI() : null;
+		this.ai = type === g.TYPE_AI ? new ai.AI() : null;
 		this.event_source = id === 0 ? null : new EventSource(`http://localhost:8000/api/games/${id}/`);
 
 		this.loop_start = this.loop_start.bind(this);

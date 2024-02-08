@@ -33,7 +33,7 @@ function load_font(ctx) {
 	);
 }
 
-load_font();
+load_font(g.ctx);
 
 export function draw_state(ctx, state) {
 	/* Draw the background */

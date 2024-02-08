@@ -156,8 +156,8 @@ export function state_update(state, dt, t) {
 	if (state.status === g.STATUS_WAITING || state.status === g.STATUS_PAUSED || state.status === g.STATUS_QUIT)
 		return;
 
-	update_paddle_position(state.player1, dt);
-	update_paddle_position(state.player2, dt);
+	update_paddle_position(state.ball, state.player1, dt);
+	update_paddle_position(state.ball, state.player2, dt);
 
 	if (state.particles.length > 0) {
 		physics.particles_update(state.particles, dt);
@@ -168,7 +168,7 @@ export function state_update(state, dt, t) {
 	/* This allows for the particle effect to finish updating when the game is over */
 	if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) return;
 
-	update_ball_position(dt);
+	update_ball_position(state, dt);
 
 	if (state.score1 === g.POINTS_TO_WIN) {
 		state.status = g.STATUS_ENDED_1;

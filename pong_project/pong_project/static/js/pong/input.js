@@ -1,4 +1,5 @@
 import * as g from './global.js';
+import * as sound from "./sound.js";
 import * as requests from "../requests.js";
 
 export class Input {
