@@ -4,39 +4,47 @@
 }
 
 body {
-	font-family: 'Code Page 437';
-	margin: 5%;
-	padding: 5%;
+	font-family: 'Code Page 437', sans-serif;
+	margin: 0;
+	padding: 0;
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-start;
 	justify-content: center;
 	align-items: center;
 	background-color: #2B2A4C;
+	min-height: 100vh;
+	/* Ensure the body takes up at least the viewport height */
 }
 
 main {
-	/* width: 50vw;
-	height: 50vh; */
+	width: auto;
+	/* Adjusted to auto to not restrict main's width, allowing centering */
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-	/* Adjusts items to start from the top */
 	align-items: center;
-	height: 80vh;
-	/* Or a specific height to make the div taller */
-	padding-top: 20px;
-	/* Adds space at the top */
+	height: auto;
+	/* Changed to auto for dynamic content height */
+	padding: 20px;
+	/* Added padding for some spacing inside main */
+	box-sizing: border-box;
+	/* Ensure padding doesn't add to the width */
+}
+
+header {
+	text-align: center;
+	/* Ensure everything in the header is centered */
+	width: 100%;
+	/* Ensure header takes full width of its container */
+	margin-bottom: 20px;
+	/* Adds space between the header and the div below */
 }
 
 h1 {
 	color: #EEE2DE;
-	margin: 20px 0;
+	margin: 0 auto;
+	/* Center the title and reset other margins */
 	text-shadow: 5px 5px 0px #252442;
-	margin-top: 0;
-	/* Adjust as needed to position the title closer to the top */
-	margin-bottom: auto;
-	/* Keeps the title at the top and pushes the rest down */
 }
 
 #alias-div,
