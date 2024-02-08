@@ -1,8 +1,9 @@
+import time
 import uuid
 import json
 
-import pong_project.game_app.pong.session as session
-import pong_project.game_app.pong.constants as g
+import game_app.pong.session as session
+import game_app.pong.constants as g
 
 from django.http import JsonResponse, StreamingHttpResponse
 
@@ -67,8 +68,8 @@ def game_view(request, game_id: uuid.UUID):
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-        input, time = data.get("input"), data.get("time")
-        if time is None or input is None:
+        input, timestamp = data.get("input"), data.get("time")
+        if timestamp is None or input is None:
             return JsonResponse({"error": "'input' and 'time' are required fields"}, status=400)
         if input not in g.INPUTS:
             return JsonResponse({"error": "Invalid value for 'input'"}, status=400)
@@ -81,8 +82,8 @@ def game_view(request, game_id: uuid.UUID):
         if not session.session_is_in(game_id, alias):
             return JsonResponse({"error": "You are not part of this game"}, status=403)
 
-        session.session_add_input(game_id, alias, input, time)
-        return JsonResponse(status=200)
+        session.session_add_input(game_id, alias, input, timestamp)
+        return JsonResponse({}, status=200)
 
     # Handle GET request for streaming game state
     elif request.method == "GET":

@@ -1,24 +1,24 @@
 import time
 
-import pong_project.game_app.pong.input as state
-import pong_project.game_app.pong.input as input
-import pong_project.game_app.pong.constants as g
+import game_app.pong.state as state
+import game_app.pong.input as input
+import game_app.pong.constants as g
 
 game_sessions = {}
 
 
 class GameSession:
-    def __init__(s, id, type, name1, name2) -> None:
-        s.id = id
-        s.type = type
-        s.inputs = []
-        s.t = 0.0
-        s.dt = 1.0 / 60.0
-        s.accumulator = 0.0
-        s.old_time = time.perf_counter()
-        s.name1 = name1
-        s.name2 = name2
-        s.state = state.GameState()
+    def __init__(self, id, type, name1, name2) -> None:
+        self.id = id
+        self.type = type
+        self.inputs = []
+        self.t = 0.0
+        self.dt = 1.0 / 60.0
+        self.accumulator = 0.0
+        self.old_time = time.perf_counter()
+        self.name1 = name1
+        self.name2 = name2
+        self.state = state.GameState()
 
 
 def session_loop(session):
@@ -31,7 +31,7 @@ def session_loop(session):
 
     while session.accumulator >= session.dt:
         input.apply_inputs(session.state, session.inputs)
-        if session.state.type != g.TYPE_REMOTE:
+        if session.type != g.TYPE_REMOTE:
             session.inputs = []
         state.state_update(session.state, session.dt, session.t)
         session.accumulator -= session.dt

@@ -33,6 +33,7 @@ export class GameSession {
 	loop_start() {
 		if (this.id != 0) {
 			this.event_source.onmessage = (event) => {
+				console.log(event.data);
 				this.reconcile(JSON.parse(event.data));
 			};
 			this.event_source.onerror = (error) => {
@@ -57,7 +58,7 @@ export class GameSession {
 
 		while (this.accumulator >= this.dt) {
 			input.apply_inputs(this.state, this.inputs);
-			if (this.state.type != g.TYPE_REMOTE)
+			if (this.type != g.TYPE_REMOTE)
 				this.inputs = [];
 			state.state_update(this.state, this.dt, this.t);
 			this.accumulator -= this.dt;

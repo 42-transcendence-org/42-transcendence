@@ -1,7 +1,7 @@
 import math
 
-import pong_project.game_app.pong.constants as g
-import pong_project.game_app.pong.physics as physics
+import game_app.pong.constants as g
+import game_app.pong.physics as physics
 
 
 class GameState:

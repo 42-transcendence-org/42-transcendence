@@ -1,4 +1,4 @@
-import pong_project.game_app.pong.constants as g
+import game_app.pong.constants as g
 
 
 class Input:
