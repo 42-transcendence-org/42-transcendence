@@ -61,22 +61,18 @@ export function draw_state(ctx, state) {
 	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) - (g.FSIZE / 3), g.PALETTE.C4);
 
 	/* Draw ball, paddles and particles */
-	if (state.particles.length === 0) {
-		draw_rect_fill(ctx, state.ball.position.x + g.SHADOW_OFFSET_X, state.ball.position.y + g.SHADOW_OFFSET_Y, state.ball.size.x, state.ball.size.y, g.SHADOW_COLOR);
-	} else {
+	if (state.particles.length != 0) {
 		state.particles.forEach(p => {
 			draw_rect_fill(ctx, p.r.position.x + g.SHADOW_OFFSET_X, p.r.position.y + g.SHADOW_OFFSET_Y, p.r.size.x, p.r.size.y, g.SHADOW_COLOR);
-		});
-	}
-	draw_rect_fill(ctx, state.player1.position.x + g.SHADOW_OFFSET_X, state.player1.position.y + g.SHADOW_OFFSET_Y, state.player1.size.x, state.player1.size.y, g.SHADOW_COLOR);
-	draw_rect_fill(ctx, state.player2.position.x + g.SHADOW_OFFSET_X, state.player2.position.y + g.SHADOW_OFFSET_Y, state.player2.size.x, state.player2.size.y, g.SHADOW_COLOR);
-	if (state.particles.length === 0) {
-		draw_rect_fill(ctx, state.ball.position.x, state.ball.position.y, state.ball.size.x, state.ball.size.y, g.PALETTE.C3);
-	} else {
-		state.particles.forEach(p => {
 			draw_rect_fill(ctx, p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, g.PALETTE.C3);
 		});
+	} else {
+		draw_rect_fill(ctx, state.ball.position.x + g.SHADOW_OFFSET_X, state.ball.position.y + g.SHADOW_OFFSET_Y, state.ball.size.x, state.ball.size.y, g.SHADOW_COLOR);
+		draw_rect_fill(ctx, state.ball.position.x, state.ball.position.y, state.ball.size.x, state.ball.size.y, g.PALETTE.C3);
 	}
+
+	draw_rect_fill(ctx, state.player1.position.x + g.SHADOW_OFFSET_X, state.player1.position.y + g.SHADOW_OFFSET_Y, state.player1.size.x, state.player1.size.y, g.SHADOW_COLOR);
+	draw_rect_fill(ctx, state.player2.position.x + g.SHADOW_OFFSET_X, state.player2.position.y + g.SHADOW_OFFSET_Y, state.player2.size.x, state.player2.size.y, g.SHADOW_COLOR);
 	draw_rect_fill(ctx, state.player1.position.x, state.player1.position.y, state.player1.size.x, state.player1.size.y, g.PALETTE.C3);
 	draw_rect_fill(ctx, state.player2.position.x, state.player2.position.y, state.player2.size.x, state.player2.size.y, g.PALETTE.C3);
 

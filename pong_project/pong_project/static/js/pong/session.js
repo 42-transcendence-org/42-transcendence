@@ -11,7 +11,8 @@ export class GameSession {
 		this.type = type;
 		this.inputs = [];
 		this.t = 0.0;
-		this.dt = 1.0 / 120.0;
+		this.old_t = 0.0;
+		this.dt = 1.0 / 60.0;
 		this.accumulator = 0.0;
 		this.old_time = 0.0;
 		this.name1 = name1;
@@ -96,7 +97,7 @@ function update_loop(session) {
 		input.apply_inputs(session.state, session.inputs);
 		if (session.type != g.TYPE_REMOTE)
 			session.inputs = [];
-		state.state_update(session.state, session.dt, session.t);
+		state.state_update(session, session.state);
 		session.accumulator -= session.dt;
 		session.t += session.dt;
 	}

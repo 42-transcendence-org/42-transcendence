@@ -16,7 +16,6 @@ export class Rectangle {
 export class Particle {
 	constructor(px, py, sx, sy, vx, vy, t) {
 		this.r = new Rectangle(px, py, sx, sy, vx, vy);
-		this.life = t;
 	}
 }
 
@@ -38,7 +37,7 @@ export class Collision {
  * @param {float} speed - The speed of a particle.
  * @returns {Array<Particle>} - An array filled with n Particle objects.
  */
-export function particles_create(source, n, w, h, t, speed) {
+export function particles_create(source, n, w, h, speed) {
 	let array = [];
 	for (let i = 0; i < n; i++) {
 		array.push(new Particle(
@@ -48,8 +47,7 @@ export function particles_create(source, n, w, h, t, speed) {
 			h,
 			(Math.random() - 0.5) * speed,
 			(Math.random() - 0.5) * speed,
-			t)
-		);
+		));
 	}
 	return array;
 }
@@ -64,12 +62,6 @@ export function particles_update(array, dt) {
 		let p = array[i];
 		p.r.position.x += p.r.velocity.x * dt;
 		p.r.position.y += p.r.velocity.y * dt;
-		p.life -= dt;
-
-		/* Remove dead particles */
-		if (p.life <= 0) {
-			array.splice(i, 1);
-		}
 	}
 }
 

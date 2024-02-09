@@ -128,12 +128,12 @@ def update_ball_position(state, dt):
     elif state.ball.position.y <= g.BOARD_MARGIN:
         # Top wall
         state.score1 += 1
-        state.status = g.STATUS_WAIT
+        state.status = g.STATUS_DELAY
         reset_ball(state.ball, physics.Vector(0, g.BALL_SPEED_MIN))
     elif state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN:
         # Bottom wall
         state.score2 += 1
-        state.status = g.STATUS_WAIT
+        state.status = g.STATUS_DELAY
         reset_ball(state.ball, physics.Vector(0, -g.BALL_SPEED_MIN))
 
 
@@ -144,9 +144,12 @@ def state_update(state, dt, t, old_t):
     update_paddle_position(state.ball, state.player1, dt)
     update_paddle_position(state.ball, state.player2, dt)
 
-    if state.status == g.STATUS_WAIT:
+    if state.status == g.STATUS_DELAY:
+        print(t - old_t)
         if t - old_t < 1.5:
             return
+        else:
+            state.status = g.STATUS_ACTIVE
 
     old_t = t
     # This allows for the particle effect to finish updating when the game is over

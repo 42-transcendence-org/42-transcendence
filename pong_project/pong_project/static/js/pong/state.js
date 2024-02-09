@@ -114,6 +114,7 @@ function update_ball_position(state, dt) {
 		state.ball.position.y += state.ball.velocity.y * dt;
 	}
 
+	/* FIXME: Merge into two else if */
 	if (state.ball.position.x <= g.BOARD_MARGIN) {
 		/* Left wall */
 		state.ball.position.x = g.BOARD_MARGIN;
@@ -127,35 +128,44 @@ function update_ball_position(state, dt) {
 	} else if (state.ball.position.y <= g.BOARD_MARGIN) {
 		/* Top wall */
 		state.score1 += 1;
-		state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
-		sound.play_explosion_sound();
-		reset_ball(state.ball, new physics.Vector(0, g.BALL_SPEED_MIN));
+		state.status = g.STATUS_SCORE;
 	} else if (state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN) {
 		/* Bottom wall */
 		state.score2 += 1;
-		state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 1.5, 100);
-		sound.play_explosion_sound();
-		reset_ball(state.ball, new physics.Vector(0, -g.BALL_SPEED_MIN));
+		state.status = g.STATUS_SCORE;
 	}
 }
 
-export function state_update(state, dt, t) {
+export function state_update(session, state) {
 	if (state.status === g.STATUS_BEGIN || state.status === g.STATUS_PAUSED || state.status === g.STATUS_QUIT)
 		return;
 
-	update_paddle_position(state.ball, state.player1, dt);
-	update_paddle_position(state.ball, state.player2, dt);
+	update_paddle_position(state.ball, state.player1, session.dt);
+	update_paddle_position(state.ball, state.player2, session.dt);
 
-	if (state.particles.length > 0) {
-		physics.particles_update(state.particles, dt);
-		if (state.particles.length > 0)
+	if (state.status === g.STATUS_SCORE) {
+		if (state.particles.length === 0) {
+			sound.play_explosion_sound();
+			state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 100);
+
+		}
+
+		physics.particles_update(state.particles, session.dt);
+
+		if (session.t - session.old_t < 1.5) {
 			return;
+		} else {
+			state.status = g.STATUS_ACTIVE;
+			state.particles = [];
+			reset_ball(state.ball, new physics.Vector(0, -g.BALL_SPEED_MIN));
+		}
 	}
 
+	session.old_t = session.t;
 	/* This allows for the particle effect to finish updating when the game is over */
 	if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) return;
 
-	update_ball_position(state, dt);
+	update_ball_position(state, session.dt);
 
 	if (state.score1 === g.POINTS_TO_WIN || state.score2 === g.POINTS_TO_WIN) {
 		state.status = state.score1 === g.POINTS_TO_WIN ? g.STATUS_ENDED_1 : g.STATUS_ENDED_2;
