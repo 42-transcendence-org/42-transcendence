@@ -1,3 +1,4 @@
+import * as g from './pong/global.js';
 import { session_create } from './pong/session.js';
 import { get_cookie, div_handler } from './utils.js';
 
@@ -36,9 +37,14 @@ export async function send_get_alias_request() {
 			credentials: 'include',
 		});
 
-		if (!response.ok) div_handler("alias-div");
-		else div_handler("game-menu-div");
+		const data = await response.json();
 
+		if (!response.ok) {
+			div_handler("alias-div");
+		} else {
+			div_handler("game-menu-div");
+			window.alias = data.alias;
+		}
 	} catch (error) {
 		console.error('Error:', error);
 	}
@@ -83,7 +89,7 @@ export async function send_game_creation_request() {
 		}
 
 		if (data) {
-			session_create(data.id, data.type, data.name1, data.name2);
+			session_create(data.id, g.TYPE_REMOTE);
 		} else {
 			console.error('Game creation failed');
 		}

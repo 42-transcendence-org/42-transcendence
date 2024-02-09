@@ -2,6 +2,7 @@ window.game_session = null;
 window.request_id = null;
 window.event_source = null;
 window.server_data = null;
+window.alias = null;
 
 export const canvas = document.getElementById("game-canvas");
 export const ctx = canvas.getContext("2d");
@@ -37,6 +38,7 @@ export const INPUT_NEUTRAL = 3;
 export const INPUT_QUIT = 4;
 
 /* STATUSES */
+/* FIXME Add comments */
 export const STATUS_BEGIN = 0;
 export const STATUS_ACTIVE = 1;
 export const STATUS_ENDED_1 = 2;
@@ -44,6 +46,7 @@ export const STATUS_ENDED_2 = 3;
 export const STATUS_PAUSED = 4;
 export const STATUS_QUIT = 5;
 export const STATUS_SCORE = 6;
+export const STATUS_WAITING =7;
 
 /* GAME TYPES */
 export const TYPE_REMOTE = 0;
@@ -64,4 +67,4 @@ export const BALL_MAX_ANGLE = Math.PI / 6;
 export const PADDLE_WIDTH = 64;
 export const PADDLE_SPEED = BOARD_WIDTH - (2 * BOARD_CORRIDOR);
 
-export const POINTS_TO_WIN = 10;
+export const POINTS_TO_WIN = 3;

@@ -37,7 +37,7 @@ function load_font(ctx) {
 load_font(g.ctx);
 
 const net = new Rectangle(g.BOARD_MARGIN, (g.BOARD_HEIGHT - 2) / 2, g.BOARD_WIDTH - (2 * g.BOARD_MARGIN), 2, 0, 0);
-export function draw_state(ctx, state) {
+export function draw_state(ctx, session, state) {
 	/* Draw the background */
 	draw_rect_fill(ctx, 0, 0, g.BOARD_WIDTH, g.BOARD_HEIGHT, g.PALETTE.C1);
 
@@ -77,9 +77,22 @@ export function draw_state(ctx, state) {
 	draw_rect_fill(ctx, state.player2.position.x, state.player2.position.y, state.player2.size.x, state.player2.size.y, g.PALETTE.C3);
 
 	/* Draw message boxes */
-	if (state.status === g.STATUS_BEGIN || state.status === g.STATUS_PAUSED) {
+	if (state.status === g.STATUS_BEGIN || state.status === g.STATUS_PAUSED || state.status === g.STATUS_WAITING) {
 
-		const text = state.status === g.STATUS_BEGIN ? "Hit 'Space' to start" : "Paused";
+		let text;
+		if (state.status === g.STATUS_BEGIN) {
+			text = "Hit 'Space' to start";
+			if (session.type === g.TYPE_REMOTE) {
+				let rdy = (session.ready1 === true ? 1 : 0) + (session.ready2 === true ? 1 : 0);
+				text += ": " + rdy + "/2"
+			}
+		}
+
+		else if (state.status === g.STATUS_PAUSED)
+			text = "Paused";
+		else
+			text = "Waiting for player...";
+
 		const padding = 10;
 
 		const text_w = ctx.measureText(text).width;

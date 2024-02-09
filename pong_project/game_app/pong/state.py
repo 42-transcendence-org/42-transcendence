@@ -6,7 +6,7 @@ import game_app.pong.physics as physics
 
 class GameState:
     def __init__(self):
-        self.status = g.STATUS_BEGIN
+        self.status = g.STATUS_WAITING
         self.particles = []
         self.ball = physics.Rectangle(
             (g.BOARD_WIDTH - g.BALL_SIDE) / 2,

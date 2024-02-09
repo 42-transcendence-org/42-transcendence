@@ -17,13 +17,19 @@ class GameSession:
         self.old_t = 0.0
         self.dt = 1.0 / 60.0
         self.accumulator = 0.0
-        self.old_time = time.perf_counter()
+        self.old_time = 0
         self.name1 = name1
         self.name2 = name2
+        self.ready1 = False
+        self.ready2 = False
         self.state = state.GameState()
 
 
 def session_loop(session):
+
+    if session.state.status == g.STATUS_WAITING:
+        return
+
     new_time = time.perf_counter()
     frame_time = new_time - session.old_time
     session.old_time = new_time
@@ -32,7 +38,7 @@ def session_loop(session):
     session.accumulator += frame_time
 
     while session.accumulator >= session.dt:
-        session.last_input = input.apply_inputs(session.state, session.inputs)
+        session.last_input = input.apply_inputs(session, session.state)
         session.inputs = []
         state.state_update(session, session.state)
         session.accumulator -= session.dt
@@ -53,12 +59,12 @@ def session_exists(id):
 
 def session_is_in(id, name):
     session = game_sessions[id]
-    return name == session.name1 or name == session.name2
+    return name in [session.name1, session.name2]
 
 
 def session_has(name):
     for id, session in game_sessions.items():
-        if name == session.name1 or name == session.name2:
+        if name in [session.name1, session.name2]:
             return id
     return None
 
@@ -66,7 +72,8 @@ def session_has(name):
 def session_waiting(alias):
     for id, session in game_sessions.items():
         if session.name2 == "":
-            session.name2 == alias
+            session.name2 = alias
+            session.state.status = g.STATUS_BEGIN
             return id
     return None
 
@@ -119,10 +126,12 @@ def session_get_state(id):
         },
     }
 
-
+# FIXME Send only what is necessary during gameplay
 def session_get_state_small(id):
     s = game_sessions[id]
     return {
+        "ready1": s.ready1,
+        "ready2": s.ready2,
         "last_input": s.last_input,
         "status": s.state.status,
         "ball": {
@@ -132,11 +141,13 @@ def session_get_state_small(id):
             "vy": s.state.ball.velocity.y,
         },
         "player1": {
+            "name": s.name1,
             "score": s.state.score1,
             "x": s.state.player1.position.x,
             "vx": s.state.player1.velocity.x,
         },
         "player2": {
+            "name": s.name2,
             "score": s.state.score2,
             "x": s.state.player2.position.x,
             "vx": s.state.player2.velocity.x,

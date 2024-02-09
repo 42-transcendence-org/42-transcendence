@@ -17,41 +17,20 @@ def game_create_view(request):
 
     # Verify that the client has an alias
     alias = request.session.get("alias")
+    print(alias)
     if alias is None:
         return JsonResponse({"error": "Please pick an alias first"}, status=400)
 
-    # Check for an active game session for this user
-    has_session = session.session_has(alias)
-    if has_session:
-        data = session.session_get_state(has_session)
-        return JsonResponse(
-            {
-                "id": data["id"],
-                "type": data["type"],
-                "name1": data["player1"]["name"],
-                "name2": data["player2"]["name"],
-            },
-            status=200,
-        )
-
-    # Check if we have a game session waiting for a second player
-    waiting_game = session.session_waiting(alias)
-    if waiting_game:
-        data = session.session_get_state(waiting_game)
-        return JsonResponse(
-            {
-                "id": data["id"],
-                "type": data["type"],
-                "name1": data["player1"]["name"],
-                "name2": data["player2"]["name"],
-            },
-            status=200,
-        )
+    # Check for an active game session for this user or a game session waiting for a second player
+    has_session, waiting_game = session.session_has(alias), session.session_waiting(alias)
+    if has_session or waiting_game:
+        data = session.session_get_state(has_session) if has_session else session.session_get_state(waiting_game)
+        return JsonResponse({"id": data["id"]}, status=200)
 
     # Create a new game
     game_id = uuid.uuid4()
     session.session_create(game_id, alias)
-    return JsonResponse({"id": game_id, "name1": alias}, status=201)
+    return JsonResponse({"id": game_id}, status=201)
 
 
 def game_view(request, game_id: uuid.UUID):

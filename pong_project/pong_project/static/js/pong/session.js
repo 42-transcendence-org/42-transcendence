@@ -17,17 +17,25 @@ export class GameSession {
 		this.old_time = 0.0;
 		this.name1 = name1;
 		this.name2 = name2;
+		this.ready1 = false
+		this.ready2 = false
 		this.state = new state.GameState();
 	}
 }
 
-export function session_create(id, type, name1, name2) {
+export function session_create(id, type) {
 	if (window.game_session != null) {
 		/* FIXME: Check if event_source is null and attempt to reconnect */
 		div_handler("game-div");
 		return;
 	}
-	window.game_session = new GameSession(id, type, name1, name2);
+	window.game_session = new GameSession(id, type, "", "");
+	if (type === g.TYPE_REMOTE) {
+		window.game_session.state.status = g.STATUS_WAITING;
+	} else {
+		window.game_session.name1 = "Player 1";
+		window.game_session.name2 = type === g.TYPE_LOCAL ? "Player 2" : "Computer";
+	}
 	window.event_source = id === 0 ? null : new EventSource(`http://localhost:8000/api/games/${id}/`);
 	div_handler("game-div");
 	update_loop_start(window.game_session);
@@ -46,6 +54,11 @@ function session_destroy() {
 }
 
 function reconcile(data, session) {
+
+	session.ready1 = data.ready1;
+	session.ready2 = data.ready2;
+	session.name1 = data.player1.name;
+	session.name2 = data.player2.name;
 	session.state.status = data.status;
 	session.state.ball.position.x = data.ball.x;
 	session.state.ball.position.y = data.ball.y;
@@ -61,7 +74,8 @@ function reconcile(data, session) {
 	let new_inputs = session.inputs.filter(input => input.timestamp > data.last_input);
 	session.inputs = new_inputs;
 
-	input.apply_inputs(session.state, session.inputs);
+	input.apply_inputs(session, session.state);
+
 }
 
 function update_loop_start(session) {
@@ -81,32 +95,37 @@ function update_loop_start(session) {
 }
 
 function update_loop(session) {
-	let new_time = performance.now();
-	let frame_time = new_time - session.old_time;
-	session.old_time = new_time;
-
-	/* Convert the frame time from milliseconds to seconds before adding it */
-	session.accumulator += (frame_time / 1000);
 
 	if (window.server_data != null) {
 		reconcile(window.server_data, session);
 		window.server_data = null;
 	}
 
-	while (session.accumulator >= session.dt) {
-		input.apply_inputs(session.state, session.inputs);
-		if (session.type != g.TYPE_REMOTE)
-			session.inputs = [];
-		state.state_update(session, session.state);
-		session.accumulator -= session.dt;
-		session.t += session.dt;
+	if (session.state.status != g.STATUS_WAITING) {
+
+		let new_time = performance.now();
+		let frame_time = new_time - session.old_time;
+		session.old_time = new_time;
+
+		/* Convert the frame time from milliseconds to seconds before adding it */
+		session.accumulator += (frame_time / 1000);
+
+		while (session.accumulator >= session.dt) {
+			input.apply_inputs(session, session.state);
+			if (session.type != g.TYPE_REMOTE)
+				session.inputs = [];
+			state.state_update(session, session.state);
+			session.accumulator -= session.dt;
+			session.t += session.dt;
+		}
+
+		if (session.state.status === g.STATUS_QUIT) {
+			session_destroy();
+			return;
+		}
+
 	}
 
-	if (session.state.status === g.STATUS_QUIT) {
-		session_destroy();
-		return;
-	}
-
-	graphics.draw_state(g.ctx, session.state);
+	graphics.draw_state(g.ctx, session, session.state);
 	window.request_id = requestAnimationFrame(() => update_loop(session));
 }
