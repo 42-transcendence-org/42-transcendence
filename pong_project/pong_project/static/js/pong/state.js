@@ -11,24 +11,17 @@ export class GameState {
 		this.player2 = new physics.Rectangle((g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, 2 * g.BOARD_MARGIN, g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0);
 		this.score1 = 0;
 		this.score2 = 0;
+		this.who_serves = true;
 	}
 }
 
-/**
- * Reset the ball to its initial state.
- * @param {physics.Rectangle} ball - A Rectangle representing the ball.
- * @param {physics.Vector} direction - A Vector representing the ball's initial velocity.
- */
-function reset_ball(ball, direction) {
+function reset_ball(ball, who_serves) {
 	ball.position.x = (g.BOARD_WIDTH - ball.size.x) / 2;
 	ball.position.y = (g.BOARD_HEIGHT - ball.size.y) / 2;
-	ball.velocity = direction;
+	ball.velocity.x = 0;
+	ball.velocity.y = who_serves ? g.BALL_SPEED_MIN : -g.BALL_SPEED_MIN;
 }
 
-/**
- * Reset the game to its initial state.
- * @param {GameState} state - A game state.
- */
 export function reset_state(state) {
 	state.status = g.STATUS_ACTIVE;
 	state.particles = [];
@@ -114,24 +107,15 @@ function update_ball_position(state, dt) {
 		state.ball.position.y += state.ball.velocity.y * dt;
 	}
 
-	/* FIXME: Merge into two else if */
-	if (state.ball.position.x <= g.BOARD_MARGIN) {
-		/* Left wall */
-		state.ball.position.x = g.BOARD_MARGIN;
+	if (state.ball.position.x <= g.BOARD_MARGIN || state.ball.position.x + state.ball.size.x >= g.BOARD_WIDTH - g.BOARD_MARGIN) {
+		/* Left and right walls */
+		state.ball.position.x = state.ball.position.x <= g.BOARD_MARGIN ? g.BOARD_MARGIN : g.BOARD_WIDTH - state.ball.size.x - g.BOARD_MARGIN;
 		state.ball.velocity.x *= -1;
 		sound.play_hit_sound();
-	} else if (state.ball.position.x + state.ball.size.x >= g.BOARD_WIDTH - g.BOARD_MARGIN) {
-		/* Right wall */
-		state.ball.position.x = g.BOARD_WIDTH - state.ball.size.x - g.BOARD_MARGIN;
-		state.ball.velocity.x *= -1;
-		sound.play_hit_sound();
-	} else if (state.ball.position.y <= g.BOARD_MARGIN) {
-		/* Top wall */
-		state.score1 += 1;
-		state.status = g.STATUS_SCORE;
-	} else if (state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN) {
-		/* Bottom wall */
-		state.score2 += 1;
+	} else if (state.ball.position.y <= g.BOARD_MARGIN || state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN) {
+		/* Top and bottoms walls */
+		if (state.ball.position.y <= g.BOARD_MARGIN) state.score1 += 1;
+		else state.score2 += 1;
 		state.status = g.STATUS_SCORE;
 	}
 }
@@ -157,7 +141,8 @@ export function state_update(session, state) {
 		} else {
 			state.status = g.STATUS_ACTIVE;
 			state.particles = [];
-			reset_ball(state.ball, new physics.Vector(0, -g.BALL_SPEED_MIN));
+			state.who_serves = !state.who_serves; /* Change service */
+			reset_ball(state.ball, state.who_serves);
 		}
 	}
 
