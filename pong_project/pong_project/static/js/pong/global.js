@@ -1,5 +1,7 @@
 window.game_session = null;
+window.request_id = null;
 window.event_source = null;
+window.server_data = null;
 
 export const canvas = document.getElementById("game-canvas");
 export const ctx = canvas.getContext("2d");
