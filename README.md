@@ -1,6 +1,5 @@
-+ TODO Finish refactor
-+ TODO Implement continuous collision detection everywhere
-+ TODO Refactor server-side to be single threaded
++ TODO Make 'Replay or Quit' function work online
++ TODO Implement lerping
 + TODO Design the UI, most importantly game menu and alias menu
 + TODO Add player names to the "game-div"
 + TODO Make the game graphics scale with the size of the canvas
