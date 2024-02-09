@@ -15,51 +15,11 @@ class Rectangle:
         self.position = Vector(px, py)
         self.velocity = Vector(vx, vy)
 
-
-class Particle:
-    def __init__(self, px: float, py: float, sx: float, sy: float, vx: float, vy: float, t: float):
-        self.r = Rectangle(px, py, sx, sy, vx, vy)
-        self.life = t
-
-
 class Collision:
     def __init__(self, t: float, x: float, y: float, nx: float, ny: float):
         self.time = t
         self.point = Vector(x, y)
         self.normal = Vector(nx, ny)
-
-
-def particles_create(source: Vector, n: int, w: int, h: int, t: float, speed: float) -> List[Particle]:
-    array: List[Particle] = []
-    for _ in range(n):
-        array.append(
-            Particle(
-                source.x,
-                source.y,
-                w,
-                h,
-                (random.random() - 0.5) * speed,
-                (random.random() - 0.5) * speed,
-                t,
-            )
-        )
-    return array
-
-
-def particles_update(array: List[Particle], dt: float) -> None:
-    i = 0
-    while i < len(array):
-        p = array[i]
-        p.r.position.x += p.r.velocity.x * dt
-        p.r.position.y += p.r.velocity.y * dt
-        p.life -= dt
-
-        # Remove dead particles
-        if p.life <= 0:
-            array.pop(i)
-        else:
-            i += 1
-
 
 def ray_rectangle_collision(origin: Vector, direction: Vector, target: Rectangle) -> Collision:
     t_near = Vector(
@@ -125,7 +85,6 @@ def ray_rectangle_collision(origin: Vector, direction: Vector, target: Rectangle
     return collision
 
 
-# FIXME Incorrect
 def aabb_continuous_resolve(r1: Rectangle, collision: Collision) -> None:
     return Vector(
         r1.velocity.x + collision.normal.x * abs(r1.velocity.x) * (1 - collision.time),

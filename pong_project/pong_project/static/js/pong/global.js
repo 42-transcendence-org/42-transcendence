@@ -37,7 +37,7 @@ export const INPUT_NEUTRAL = 3;
 export const INPUT_QUIT = 4;
 
 /* STATUSES */
-export const STATUS_WAITING = 0;
+export const STATUS_BEGIN = 0;
 export const STATUS_ACTIVE = 1;
 export const STATUS_ENDED_1 = 2;
 export const STATUS_ENDED_2 = 3;

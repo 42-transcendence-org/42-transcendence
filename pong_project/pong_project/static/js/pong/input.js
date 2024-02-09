@@ -67,7 +67,7 @@ export function apply_inputs(state, inputs) {
 				player.velocity.x = g.PADDLE_SPEED;
 				break;
 			case g.INPUT_SPACE:
-				if (state.status === g.STATUS_WAITING) {
+				if (state.status === g.STATUS_BEGIN) {
 					state.status = g.STATUS_ACTIVE;
 					sound.play_music();
 				} else if (state.status === g.STATUS_ACTIVE || state.status === g.STATUS_PAUSED) {

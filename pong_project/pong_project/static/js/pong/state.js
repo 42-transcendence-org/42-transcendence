@@ -4,7 +4,7 @@ import * as physics from "./physics.js";
 
 export class GameState {
 	constructor() {
-		this.status = g.STATUS_WAITING;
+		this.status = g.STATUS_BEGIN;
 		this.particles = [];
 		this.ball = new physics.Rectangle((g.BOARD_WIDTH - g.BALL_SIDE) / 2, (g.BOARD_HEIGHT - g.BALL_SIDE) / 2, g.BALL_SIDE, g.BALL_SIDE, 0, g.BALL_SPEED_MIN);
 		this.player1 = new physics.Rectangle((g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, g.BOARD_HEIGHT - (3 * g.BOARD_MARGIN), g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0);
@@ -140,7 +140,7 @@ function update_ball_position(state, dt) {
 }
 
 export function state_update(state, dt, t) {
-	if (state.status === g.STATUS_WAITING || state.status === g.STATUS_PAUSED || state.status === g.STATUS_QUIT)
+	if (state.status === g.STATUS_BEGIN || state.status === g.STATUS_PAUSED || state.status === g.STATUS_QUIT)
 		return;
 
 	update_paddle_position(state.ball, state.player1, dt);

@@ -19,7 +19,7 @@ def apply_inputs(state, inputs):
         elif input.input == g.INPUT_RIGHT:
             player.velocity.x = g.PADDLE_SPEED
         elif input.input == g.INPUT_SPACE:
-            if state.status == g.STATUS_WAITING:
+            if state.status == g.STATUS_BEGIN:
                 state.status = g.STATUS_ACTIVE
             elif state.status in [g.STATUS_ACTIVE, g.STATUS_PAUSED]:
                 state.status = g.STATUS_PAUSED if state.status == g.STATUS_ACTIVE else g.STATUS_ACTIVE

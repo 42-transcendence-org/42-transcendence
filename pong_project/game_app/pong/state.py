@@ -6,7 +6,7 @@ import game_app.pong.physics as physics
 
 class GameState:
     def __init__(self):
-        self.status = g.STATUS_WAITING
+        self.status = g.STATUS_BEGIN
         self.particles = []
         self.ball = physics.Rectangle(
             (g.BOARD_WIDTH - g.BALL_SIDE) / 2,
@@ -128,45 +128,27 @@ def update_ball_position(state, dt):
     elif state.ball.position.y <= g.BOARD_MARGIN:
         # Top wall
         state.score1 += 1
-        state.particles = physics.particles_create(
-            physics.Vector(
-                state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2
-            ),
-            16,
-            4,
-            5,
-            1.5,
-            100,
-        )
+        state.status = g.STATUS_WAIT
         reset_ball(state.ball, physics.Vector(0, g.BALL_SPEED_MIN))
     elif state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN:
         # Bottom wall
         state.score2 += 1
-        state.particles = physics.particles_create(
-            physics.Vector(
-                state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2
-            ),
-            16,
-            4,
-            5,
-            1.5,
-            100,
-        )
+        state.status = g.STATUS_WAIT
         reset_ball(state.ball, physics.Vector(0, -g.BALL_SPEED_MIN))
 
 
-def state_update(state, dt, t):
-    if state.status in [g.STATUS_WAITING, g.STATUS_PAUSED, g.STATUS_QUIT]:
+def state_update(state, dt, t, old_t):
+    if state.status in [g.STATUS_BEGIN, g.STATUS_PAUSED, g.STATUS_QUIT]:
         return
 
     update_paddle_position(state.ball, state.player1, dt)
     update_paddle_position(state.ball, state.player2, dt)
 
-    if state.particles:
-        physics.particles_update(state.particles, dt)
-        if state.particles:
+    if state.status == g.STATUS_WAIT:
+        if t - old_t < 1.5:
             return
 
+    old_t = t
     # This allows for the particle effect to finish updating when the game is over
     if state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
         return

@@ -81,9 +81,9 @@ export function draw_state(ctx, state) {
 	draw_rect_fill(ctx, state.player2.position.x, state.player2.position.y, state.player2.size.x, state.player2.size.y, g.PALETTE.C3);
 
 	/* Draw message boxes */
-	if (state.status === g.STATUS_WAITING || state.status === g.STATUS_PAUSED) {
+	if (state.status === g.STATUS_BEGIN || state.status === g.STATUS_PAUSED) {
 
-		const text = state.status === g.STATUS_WAITING ? "Hit 'Space' to start" : "Paused";
+		const text = state.status === g.STATUS_BEGIN ? "Hit 'Space' to start" : "Paused";
 		const padding = 10;
 
 		const text_w = ctx.measureText(text).width;

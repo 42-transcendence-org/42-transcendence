@@ -11,7 +11,7 @@ export class GameSession {
 		this.type = type;
 		this.inputs = [];
 		this.t = 0.0;
-		this.dt = 1.0 / 60.0;
+		this.dt = 1.0 / 120.0;
 		this.accumulator = 0.0;
 		this.old_time = 0.0;
 		this.name1 = name1;
@@ -60,7 +60,7 @@ function reconcile(data, session) {
 	let new_inputs = session.inputs.filter(input => input.timestamp > data.last_input);
 	session.inputs = new_inputs;
 
-	input.apply_inputs(server_state, session.inputs);
+	input.apply_inputs(session.state, session.inputs);
 }
 
 function update_loop_start(session) {
