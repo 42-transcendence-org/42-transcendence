@@ -88,31 +88,33 @@ services:
       - game
     restart: on-failure
 
-  bot:
+  tournament:
     build:
-      context: ./PONG/bot
+      context: ./PONG/tournament
       dockerfile: Dockerfile
     volumes:
-      - ./PONG/bot:/app
+      - ./PONG/tournament:/app
+    environment:
+      - PRIVATE_KEY=${PRIVATE_KEY}
     ports:
       - "8004:8000"
     networks:
-      - bot
+      - tournament
     depends_on:
-      - bot_db
+      - tournament_db
     restart: on-failure
 
 
-  bot_db:
+  tournament_db:
     image: postgres:16-bookworm
     volumes:
-      - bot_db:/var/lib/postgresql/data
+      - tournament_db:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: bot_db
+      POSTGRES_DB: tournament_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: yourpassword
     networks:
-      - bot
+      - tournament
     restart: on-failure
 
   prometheus:
@@ -186,12 +188,12 @@ volumes:
       o: 'bind'
       device: $GAME_DB_VOL
 
-  bot_db:
+  tournament_db:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: $BOT_DB_VOL
+      device: $TOURNAMENT_DB_VOL
 
   grafana-storage:
 
@@ -205,5 +207,5 @@ networks:
     driver: bridge
   game:
     driver: bridge
-  bot:
+  tournament:
     driver: bridge
