@@ -114,8 +114,10 @@ function update_ball_position(state, dt) {
 		sound.play_hit_sound();
 	} else if (state.ball.position.y <= g.BOARD_MARGIN || state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN) {
 		/* Top and bottoms walls */
-		if (state.ball.position.y <= g.BOARD_MARGIN) state.score1 += 1;
-		else state.score2 += 1;
+		if (state.ball.position.y <= g.BOARD_MARGIN)
+			state.score1 += 1;
+		else
+			state.score2 += 1;
 		state.status = g.STATUS_SCORE;
 	}
 }
@@ -131,7 +133,6 @@ export function state_update(session, state) {
 		if (state.particles.length === 0) {
 			sound.play_explosion_sound();
 			state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 100);
-
 		}
 
 		physics.particles_update(state.particles, session.dt);

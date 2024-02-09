@@ -34,7 +34,7 @@ def session_loop(session):
     while session.accumulator >= session.dt:
         session.last_input = input.apply_inputs(session.state, session.inputs)
         session.inputs = []
-        state.state_update(session.state, session.dt, session.t, session.old_t)
+        state.state_update(session, session.state)
         session.accumulator -= session.dt
         session.t += session.dt
 

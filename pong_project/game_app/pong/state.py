@@ -29,12 +29,14 @@ class GameState:
         )
         self.score1 = 0
         self.score2 = 0
+        self.who_serves = True
 
 
-def reset_ball(ball, direction):
+def reset_ball(ball, who_serves):
     ball.position.x = (g.BOARD_WIDTH - ball.size.x) / 2
     ball.position.y = (g.BOARD_HEIGHT - ball.size.y) / 2
-    ball.velocity = direction
+    ball.velocity.x = 0
+    ball.velocity.y = g.BALL_SPEED_MIN if who_serves else -g.BALL_SPEED_MIN
 
 
 def reset_state(state):
@@ -117,46 +119,50 @@ def update_ball_position(state, dt):
         state.ball.position.x += state.ball.velocity.x * dt
         state.ball.position.y += state.ball.velocity.y * dt
 
-    if state.ball.position.x <= g.BOARD_MARGIN:
-        # Left wall
-        state.ball.position.x = g.BOARD_MARGIN
+    if (
+        state.ball.position.x <= g.BOARD_MARGIN
+        or state.ball.position.x + state.ball.size.x >= g.BOARD_WIDTH - g.BOARD_MARGIN
+    ):
+        # Left and right walls
+        state.ball.position.x = (
+            g.BOARD_MARGIN
+            if state.ball.position.x <= g.BOARD_MARGIN
+            else g.BOARD_WIDTH - state.ball.size.x - g.BOARD_MARGIN
+        )
         state.ball.velocity.x *= -1
-    elif state.ball.position.x + state.ball.size.x >= g.BOARD_WIDTH - g.BOARD_MARGIN:
-        # Right wall
-        state.ball.position.x = g.BOARD_WIDTH - state.ball.size.x - g.BOARD_MARGIN
-        state.ball.velocity.x *= -1
-    elif state.ball.position.y <= g.BOARD_MARGIN:
-        # Top wall
-        state.score1 += 1
-        state.status = g.STATUS_DELAY
-        reset_ball(state.ball, physics.Vector(0, g.BALL_SPEED_MIN))
-    elif state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN:
-        # Bottom wall
-        state.score2 += 1
-        state.status = g.STATUS_DELAY
-        reset_ball(state.ball, physics.Vector(0, -g.BALL_SPEED_MIN))
+    elif (
+        state.ball.position.y <= g.BOARD_MARGIN
+        or state.ball.position.y + state.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_MARGIN
+    ):
+        # Top and bottom wall
+        if state.ball.position.y <= g.BOARD_MARGIN:
+            state.score1 += 1
+        else:
+            state.score2 += 1
+        state.status = g.STATUS_SCORE
 
 
-def state_update(state, dt, t, old_t):
+def state_update(session, state):
     if state.status in [g.STATUS_BEGIN, g.STATUS_PAUSED, g.STATUS_QUIT]:
         return
 
-    update_paddle_position(state.ball, state.player1, dt)
-    update_paddle_position(state.ball, state.player2, dt)
+    update_paddle_position(state.ball, state.player1, session.dt)
+    update_paddle_position(state.ball, state.player2, session.dt)
 
-    if state.status == g.STATUS_DELAY:
-        print(t - old_t)
-        if t - old_t < 1.5:
+    if state.status == g.STATUS_SCORE:
+        if session.t - session.old_t < 1.5:
             return
         else:
             state.status = g.STATUS_ACTIVE
+            state.who_serves = not state.who_serves
+            reset_ball(state.ball, state.who_serves)
 
-    old_t = t
+    session.old_t = session.t
     # This allows for the particle effect to finish updating when the game is over
     if state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
         return
 
-    update_ball_position(state, dt)
+    update_ball_position(state, session.dt)
 
     if state.score1 == g.POINTS_TO_WIN or state.score2 == g.POINTS_TO_WIN:
         state.status = g.STATUS_ENDED_1 if state.score1 == g.POINTS_TO_WIN else g.STATUS_ENDED_2
