@@ -10,6 +10,7 @@ RUN apt-get update && \
 WORKDIR /app
 
 COPY requirements.txt /app/
+COPY . /app/
 RUN pip install --upgrade pip 
 RUN pip install --no-cache-dir -r requirements.txt
 RUN npm install --save-dev hardhat
