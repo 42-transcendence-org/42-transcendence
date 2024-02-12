@@ -36,6 +36,8 @@ document.addEventListener('keydown', (event) => {
 
 	if (window.game_session === null || window.game_session.state === null || input_id === -1)
 		return;
+	if (window.game_session.type === g.TYPE_REMOTE && (key_name === 'k' || key_name === 'l'))
+		return;
 
 	let player_id;
 	if (window.game_session.type === g.TYPE_REMOTE) {
@@ -57,6 +59,8 @@ document.addEventListener('keyup', (event) => {
 	const input_id = g.INPUT_NEUTRAL;
 
 	if (window.game_session === null || window.game_session.state === null)
+		return;
+	if (window.game_session.type === g.TYPE_REMOTE && (key_name === 'k' || key_name === 'l'))
 		return;
 
 	let player_id;
