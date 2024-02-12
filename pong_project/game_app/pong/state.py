@@ -149,10 +149,10 @@ def state_update(session, state):
     update_paddle_position(state.ball, state.player1, session.dt)
     update_paddle_position(state.ball, state.player2, session.dt)
 
-    if state.status == g.STATUS_SCORE:
+    if state.status in [g.STATUS_SCORE, g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
         if session.t - session.saved_t < 1.5:
             return
-        else:
+        elif state.status == g.STATUS_SCORE:
             state.status = g.STATUS_ACTIVE
             state.who_serves = not state.who_serves
             reset_ball(state.ball, state.who_serves)

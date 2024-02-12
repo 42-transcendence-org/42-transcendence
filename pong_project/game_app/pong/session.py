@@ -17,7 +17,7 @@ class GameSession:
         self.saved_t = 0.0
         self.dt = 1.0 / 60.0
         self.accumulator = 0.0
-        self.old_time = 0
+        self.previous_time = 0
         self.name1 = name1
         self.name2 = name2
         self.ready1 = False
@@ -31,8 +31,8 @@ def session_loop(session):
         return
 
     new_time = time.perf_counter()
-    frame_time = new_time - session.old_time
-    session.old_time = new_time
+    frame_time = new_time - session.previous_time
+    session.previous_time = new_time
 
     # No need to divide since time.perf_counter() returns a time in seconds
     session.accumulator += frame_time
@@ -126,6 +126,8 @@ def session_get_state(id):
         },
     }
 
+
+# FIXME Send it in compact form
 # FIXME Send only what is necessary during gameplay
 def session_get_state_small(id):
     s = game_sessions[id]

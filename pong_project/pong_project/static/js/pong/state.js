@@ -135,11 +135,11 @@ export function state_update(session, state) {
 			state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 100);
 		}
 
-		physics.particles_update(state.particles, session.dt);
-
+		/* FIXME: Find a way to delete the particles when the game is over */
 		if (session.t - session.saved_t < 1.5) {
+			physics.particles_update(state.particles, session.dt);
 			return;
-		} else {
+		} else if (state.status === g.STATUS_SCORE) {
 			state.status = g.STATUS_ACTIVE;
 			state.particles = [];
 			state.who_serves = !state.who_serves; /* Change service */

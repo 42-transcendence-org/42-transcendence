@@ -1,5 +1,6 @@
 import * as g from './global.js';
-import * as sound from "./sound.js";
+import * as sound from './sound.js';
+import * as request from '../requests.js';
 import { reset_state } from './state.js';
 
 export class Input {
@@ -29,10 +30,6 @@ function get_input(key) {
 	}
 }
 
-function batch_inputs() {
-
-}
-
 document.addEventListener('keydown', (event) => {
 	const time = Date.now();
 	const key_name = event.key;
@@ -48,6 +45,8 @@ document.addEventListener('keydown', (event) => {
 		player_id = g.ID_PLAYER2;
 
 	window.game_session.inputs.push(new Input(player_id, input_id, time));
+	if (player_id === g.ID_PLAYER1)
+		request.send_user_input(input_id, time);
 });
 
 document.addEventListener('keyup', (event) => {
@@ -65,6 +64,8 @@ document.addEventListener('keyup', (event) => {
 		player_id = g.ID_PLAYER2;
 
 	window.game_session.inputs.push(new Input(player_id, input_id, time));
+	if (player_id === g.ID_PLAYER1)
+		request.send_user_input(input_id, time);
 });
 
 export function apply_inputs(session, state) {
@@ -86,7 +87,7 @@ export function apply_inputs(session, state) {
 					sound.play_music();
 				} else if (session.type != g.TYPE_REMOTE && (state.status === g.STATUS_ACTIVE || state.status === g.STATUS_PAUSED)) {
 					state.status = state.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE;
-				} else if (session.type != g.TYPE_REMOTE && state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) {
+				} else if (session.type != g.TYPE_REMOTE && (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2)) {
 					state.status = g.STATUS_ACTIVE;
 					reset_state(state);
 				}

@@ -52,7 +52,8 @@ export async function send_get_alias_request() {
 
 export async function send_user_input(input, time) {
 	try {
-		if (window.game_session === null) return;
+		if (window.game_session === null || window.game_session.id === 0)
+			return;
 
 		const response = await fetch(`/api/games/${window.game_session.id}/`, {
 			method: 'PUT',
@@ -60,7 +61,7 @@ export async function send_user_input(input, time) {
 				'Content-Type': 'application/json',
 				'X-CSRFToken': get_cookie("csrftoken"),
 			},
-			body: JSON.stringify({ "input": input, "time": time }),
+			body: JSON.stringify([input, time]),
 		});
 
 		if (!response.ok) {

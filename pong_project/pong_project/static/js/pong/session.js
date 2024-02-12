@@ -15,11 +15,12 @@ export class GameSession {
 		this.saved_t = 0.0;
 		this.dt = 1.0 / 60.0;
 		this.accumulator = 0.0;
-		this.old_time = 0.0;
+		this.previous_time = 0.0;
 		this.name1 = name1;
 		this.name2 = name2;
 		this.ready1 = false
 		this.ready2 = false
+		this.last_recv_input = 0;
 		this.state = new state.GameState();
 	}
 }
@@ -39,7 +40,7 @@ export function session_create(id, type) {
 	}
 	window.event_source = id === 0 ? null : new EventSource(`http://localhost:8000/api/games/${id}/`);
 	div_handler("game-div");
-	update_loop_start(window.game_session);
+	update_loop_start();
 }
 
 function session_destroy() {
@@ -54,33 +55,33 @@ function session_destroy() {
 	}
 }
 
-function reconcile(data, session) {
+function reconcile() {
 
-	session.ready1 = data.ready1;
-	session.ready2 = data.ready2;
-	session.name1 = data.player1.name;
-	session.name2 = data.player2.name;
-	session.state.status = data.status;
-	session.state.ball.position.x = data.ball.x;
-	session.state.ball.position.y = data.ball.y;
-	session.state.ball.velocity.x = data.ball.vx;
-	session.state.ball.velocity.y = data.ball.vy;
-	session.state.player1.position.x = data.player1.x;
-	session.state.player2.position.x = data.player2.x;
-	session.state.player1.velocity.x = data.player1.vx;
-	console.log("local", session.state.player2.velocity.x, "server", data.player2.vx);
-	session.state.player2.velocity.x = data.player2.vx;
-	session.state.score1 = data.player1.score;
-	session.state.score2 = data.player2.score;
+	window.game_session.ready1 = window.server_data.ready1;
+	window.game_session.ready2 = window.server_data.ready2;
+	window.game_session.name1 = window.server_data.player1.name;
+	window.game_session.name2 = window.server_data.player2.name;
+	window.game_session.state.status = window.server_data.status;
+	window.game_session.state.ball.position.x = window.server_data.ball.x;
+	window.game_session.state.ball.position.y = window.server_data.ball.y;
+	window.game_session.state.ball.velocity.x = window.server_data.ball.vx;
+	window.game_session.state.ball.velocity.y = window.server_data.ball.vy;
+	window.game_session.state.player1.position.x = window.server_data.player1.x;
+	window.game_session.state.player2.position.x = window.server_data.player2.x;
+	window.game_session.state.player1.velocity.x = window.server_data.player1.vx;
+	window.game_session.state.player2.velocity.x = window.server_data.player2.vx;
+	window.game_session.state.score1 = window.server_data.player1.score;
+	window.game_session.state.score2 = window.server_data.player2.score;
+	window.game_session.last_recv_input = window.server_data.last_input;
 
-	let new_inputs = session.inputs.filter(input => input.timestamp > data.last_input);
-	session.inputs = new_inputs;
+	let new_inputs = window.game_session.inputs.filter(input => input.timestamp > window.game_session.last_recv_input);
+	window.game_session.inputs = new_inputs;
 
-	input.apply_inputs(session, session.state);
+	input.apply_inputs(window.game_session, window.game_session.state);
 
 }
 
-function update_loop_start(session) {
+function update_loop_start() {
 	if (window.event_source != null) {
 		window.event_source.onmessage = (event) => {
 			window.server_data = JSON.parse(event.data);
@@ -92,42 +93,42 @@ function update_loop_start(session) {
 		};
 	}
 
-	session.old_time = performance.now();
-	window.request_id = requestAnimationFrame(() => update_loop(session));
+	window.game_session.previous_time = performance.now();
+	window.request_id = requestAnimationFrame(update_loop);
 }
 
-function update_loop(session) {
+function update_loop() {
 
 	if (window.server_data != null) {
-		reconcile(window.server_data, session);
+		reconcile();
 		window.server_data = null;
 	}
 
-	if (session.state.status != g.STATUS_WAITING) {
+	if (window.game_session.state.status != g.STATUS_WAITING) {
 
 		let new_time = performance.now();
-		let frame_time = new_time - session.old_time;
-		session.old_time = new_time;
+		let frame_time = new_time - window.game_session.previous_time;
+		window.game_session.previous_time = new_time;
 
 		/* Convert the frame time from milliseconds to seconds before adding it */
-		session.accumulator += (frame_time / 1000);
+		window.game_session.accumulator += (frame_time / 1000);
 
-		while (session.accumulator >= session.dt) {
-			input.apply_inputs(session, session.state);
-			if (session.type != g.TYPE_REMOTE)
-				session.inputs = [];
-			state.state_update(session, session.state);
-			session.accumulator -= session.dt;
-			session.t += session.dt;
+		while (window.game_session.accumulator >= window.game_session.dt) {
+			input.apply_inputs(window.game_session, window.game_session.state);
+			if (window.game_session.type != g.TYPE_REMOTE)
+				window.game_session.inputs = [];
+			state.state_update(window.game_session, window.game_session.state);
+			window.game_session.accumulator -= window.game_session.dt;
+			window.game_session.t += window.game_session.dt;
 		}
 
-		if (session.state.status === g.STATUS_QUIT) {
+		if (window.game_session.state.status === g.STATUS_QUIT) {
 			session_destroy();
 			return;
 		}
 
 	}
 
-	graphics.draw_state(g.ctx, session, session.state);
-	window.request_id = requestAnimationFrame(() => update_loop(session));
+	graphics.draw_state(g.ctx, window.game_session, window.game_session.state);
+	window.request_id = requestAnimationFrame(update_loop);
 }

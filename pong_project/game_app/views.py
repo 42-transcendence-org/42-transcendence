@@ -17,7 +17,6 @@ def game_create_view(request):
 
     # Verify that the client has an alias
     alias = request.session.get("alias")
-    print(alias)
     if alias is None:
         return JsonResponse({"error": "Please pick an alias first"}, status=400)
 
@@ -40,40 +39,34 @@ def game_view(request, game_id: uuid.UUID):
     if alias is None:
         return JsonResponse({"error": "Please pick an alias first"}, status=400)
 
+    # Check that the game exists
+    if not session.session_exists(game_id):
+        return JsonResponse({"error": "Invalid game ID"}, status=403)
+
+    # Check that the client is part of that game
+    if not session.session_is_in(game_id, alias):
+        return JsonResponse({"error": "You are not part of this game"}, status=403)
+
     # Handle PUT request for updating game state
     if request.method == "PUT":
         try:
             data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON"}, status=400)
+            # Ensure data is a list with two elements
+            if not (isinstance(data, list) and len(data) == 2):
+                raise ValueError("Input must be a pair of [input, timestamp]")
+        except (json.JSONDecodeError, ValueError) as e:
+            return JsonResponse({"error": str(e)}, status=400)
 
-        input, timestamp = data.get("input"), data.get("time")
-        if timestamp is None or input is None:
-            return JsonResponse({"error": "'input' and 'time' are required fields"}, status=400)
+        input, timestamp = data
         if input not in g.INPUTS:
             return JsonResponse({"error": "Invalid value for 'input'"}, status=400)
-
-        # Check that the game exists
-        if not session.session_exists(game_id):
-            return JsonResponse({"error": "Invalid game ID"}, status=403)
-
-        # Check if the player is part of that game
-        if not session.session_is_in(game_id, alias):
-            return JsonResponse({"error": "You are not part of this game"}, status=403)
 
         session.session_add_input(game_id, alias, input, timestamp)
         return JsonResponse({}, status=200)
 
     # Handle GET request for streaming game state
     elif request.method == "GET":
-        # Check that the game exists
-        if not session.session_exists(game_id):
-            return JsonResponse({"error": "Invalid game ID"}, status=403)
-
-        # Check if the player is part of that game
-        if not session.session_is_in(game_id, alias):
-            return JsonResponse({"error": "You are not part of this game"}, status=403)
-
+        # FIXME Should this be async ?
         def event_stream():
             sleep_time = 1 / 10
             while True:

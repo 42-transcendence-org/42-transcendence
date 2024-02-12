@@ -30,7 +30,7 @@ def apply_inputs(session, state):
                 session.ready1 = False
                 session.ready2 = False
             if state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
-                g.reset_state(state)
+                pass
         elif input.input == g.INPUT_QUIT:
             if state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
                 state.status = g.STATUS_QUIT
