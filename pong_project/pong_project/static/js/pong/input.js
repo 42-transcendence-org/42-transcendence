@@ -31,37 +31,31 @@ function get_input(key) {
 }
 
 document.addEventListener('keydown', (event) => {
-	if (window.game_session === null || window.game_session.state === null) return;
-
 	const time = Date.now();
 	const key_name = event.key;
 	const input = get_input(key_name);
 
-	if (input === -1) return;
+	if (window.game_session === null || window.game_session.state === null || input === -1)
+		return;
 
 	if (key_name === 'a' || key_name === 's') {
-		if (window.game_session.id != 0)
-			requests.send_user_input(input, time);
 		if (window.game_session.type == g.TYPE_REMOTE) {
-			window.game_session.inputs.push(new Input(window.alias == window.game_session.name1 ? g.ID_PLAYER1 : g.ID_PLAYER2, input, time));
+			window.game_session.inputs.push(new Input(window.alias === window.game_session.name1 ? g.ID_PLAYER1 : g.ID_PLAYER2, input, time));
 		} else {
 			window.game_session.inputs.push(new Input(g.ID_PLAYER1, input, time));
 		}
 	} else if (key_name === 'k' || key_name === 'l') {
 		window.game_session.inputs.push(new Input(g.ID_PLAYER2, input, time));
 	} else if (key_name === ' ') {
-		if (window.game_session.id != 0)
-			requests.send_user_input(input, time);
 		window.game_session.inputs.push(new Input(g.ID_PLAYER1, input, time));
 	} else if (key_name === 'Escape') {
-		if (window.game_session.id != 0)
-			requests.send_user_input(input, time);
 		window.game_session.inputs.push(new Input(g.ID_PLAYER1, input, time));
 	}
 });
 
 document.addEventListener('keyup', (event) => {
-	if (window.game_session === null || window.game_session.state === null) return;
+	if (window.game_session === null || window.game_session.state === null)
+		return;
 
 	const time = Date.now();
 	const key_name = event.key;
