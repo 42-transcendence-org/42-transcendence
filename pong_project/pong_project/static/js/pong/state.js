@@ -129,7 +129,7 @@ export function state_update(session, state) {
 	update_paddle_position(state.ball, state.player1, session.dt);
 	update_paddle_position(state.ball, state.player2, session.dt);
 
-	if (state.status === g.STATUS_SCORE) {
+	if (state.status === g.STATUS_SCORE || state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) {
 		if (state.particles.length === 0) {
 			sound.play_explosion_sound();
 			state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 100);
@@ -137,7 +137,7 @@ export function state_update(session, state) {
 
 		physics.particles_update(state.particles, session.dt);
 
-		if (session.t - session.old_t < 1.5) {
+		if (session.t - session.saved_t < 1.5) {
 			return;
 		} else {
 			state.status = g.STATUS_ACTIVE;
@@ -147,7 +147,7 @@ export function state_update(session, state) {
 		}
 	}
 
-	session.old_t = session.t;
+	session.saved_t = session.t;
 	/* This allows for the particle effect to finish updating when the game is over */
 	if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) return;
 

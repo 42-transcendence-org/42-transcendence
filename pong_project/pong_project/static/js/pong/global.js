@@ -46,7 +46,7 @@ export const STATUS_ENDED_2 = 3;
 export const STATUS_PAUSED = 4;
 export const STATUS_QUIT = 5;
 export const STATUS_SCORE = 6;
-export const STATUS_WAITING =7;
+export const STATUS_WAITING = 7;
 
 /* GAME TYPES */
 export const TYPE_REMOTE = 0;

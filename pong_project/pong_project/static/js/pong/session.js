@@ -1,6 +1,7 @@
 import * as g from './global.js';
 import * as state from './state.js';
 import * as input from './input.js';
+import * as sound from './sound.js';
 import * as graphics from './graphics.js';
 
 import { div_handler } from "../utils.js";
@@ -11,7 +12,7 @@ export class GameSession {
 		this.type = type;
 		this.inputs = [];
 		this.t = 0.0;
-		this.old_t = 0.0;
+		this.saved_t = 0.0;
 		this.dt = 1.0 / 60.0;
 		this.accumulator = 0.0;
 		this.old_time = 0.0;
@@ -67,6 +68,7 @@ function reconcile(data, session) {
 	session.state.player1.position.x = data.player1.x;
 	session.state.player2.position.x = data.player2.x;
 	session.state.player1.velocity.x = data.player1.vx;
+	console.log("local", session.state.player2.velocity.x, "server", data.player2.vx);
 	session.state.player2.velocity.x = data.player2.vx;
 	session.state.score1 = data.player1.score;
 	session.state.score2 = data.player2.score;

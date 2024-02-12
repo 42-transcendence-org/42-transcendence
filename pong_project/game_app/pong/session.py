@@ -14,7 +14,7 @@ class GameSession:
         self.inputs = []
         self.last_input = 0
         self.t = 0.0
-        self.old_t = 0.0
+        self.saved_t = 0.0
         self.dt = 1.0 / 60.0
         self.accumulator = 0.0
         self.old_time = 0

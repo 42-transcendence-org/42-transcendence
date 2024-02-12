@@ -150,14 +150,14 @@ def state_update(session, state):
     update_paddle_position(state.ball, state.player2, session.dt)
 
     if state.status == g.STATUS_SCORE:
-        if session.t - session.old_t < 1.5:
+        if session.t - session.saved_t < 1.5:
             return
         else:
             state.status = g.STATUS_ACTIVE
             state.who_serves = not state.who_serves
             reset_ball(state.ball, state.who_serves)
 
-    session.old_t = session.t
+    session.saved_t = session.t
     # This allows for the particle effect to finish updating when the game is over
     if state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
         return
