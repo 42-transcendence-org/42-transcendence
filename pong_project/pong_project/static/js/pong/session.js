@@ -93,6 +93,7 @@ function update_loop_start() {
 		};
 	}
 
+	sound.play_music();
 	window.game_session.previous_time = performance.now();
 	window.request_id = requestAnimationFrame(update_loop);
 }

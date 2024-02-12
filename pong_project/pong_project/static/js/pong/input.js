@@ -1,5 +1,4 @@
 import * as g from './global.js';
-import * as sound from './sound.js';
 import * as request from '../requests.js';
 import { reset_state } from './state.js';
 
@@ -39,13 +38,17 @@ document.addEventListener('keydown', (event) => {
 		return;
 
 	let player_id;
-	if (key_name === 'a' || key_name === 's' || key_name === ' ' || key_name === 'Escape' || window.alias === window.game_session.name1)
+	if (window.game_session.type === g.TYPE_REMOTE) {
+		player_id = window.alias === window.game_session.name1 ? g.ID_PLAYER1 : g.ID_PLAYER2;
+	} else if (key_name === 'a' || key_name === 's' || key_name === ' ' || key_name === 'Escape') {
 		player_id = g.ID_PLAYER1;
-	else if (key_name === 'k' || key_name === 'l' || window.alias === window.game_session.name2)
+	} else if (key_name === 'k' || key_name === 'l') {
 		player_id = g.ID_PLAYER2;
+	}
 
+	console.log(player_id, input_id, time);
 	window.game_session.inputs.push(new Input(player_id, input_id, time));
-	if (player_id === g.ID_PLAYER1)
+	if (window.game_session.type === g.TYPE_REMOTE)
 		request.send_user_input(input_id, time);
 });
 
@@ -58,13 +61,16 @@ document.addEventListener('keyup', (event) => {
 		return;
 
 	let player_id;
-	if (key_name === 'a' || key_name === 's' || window.alias === window.game_session.name1)
+	if (window.game_session.type === g.TYPE_REMOTE) {
+		player_id = window.alias === window.game_session.name1 ? g.ID_PLAYER1 : g.ID_PLAYER2;
+	} else if (key_name === 'a' || key_name === 's') {
 		player_id = g.ID_PLAYER1;
-	else if (key_name === 'k' || key_name === 'l' || window.alias === window.game_session.name2)
+	} else if (key_name === 'k' || key_name === 'l') {
 		player_id = g.ID_PLAYER2;
+	}
 
 	window.game_session.inputs.push(new Input(player_id, input_id, time));
-	if (player_id === g.ID_PLAYER1)
+	if (window.game_session.type === g.TYPE_REMOTE)
 		request.send_user_input(input_id, time);
 });
 
@@ -84,7 +90,6 @@ export function apply_inputs(session, state) {
 			case g.INPUT_SPACE:
 				if (session.type != g.TYPE_REMOTE && state.status === g.STATUS_BEGIN) {
 					state.status = g.STATUS_ACTIVE;
-					sound.play_music();
 				} else if (session.type != g.TYPE_REMOTE && (state.status === g.STATUS_ACTIVE || state.status === g.STATUS_PAUSED)) {
 					state.status = state.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE;
 				} else if (session.type != g.TYPE_REMOTE && (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2)) {
