@@ -50,29 +50,37 @@ export function draw_state(ctx, session, state) {
 	/* Draw the vertical line in the middle of the table */
 	draw_rect_fill(ctx, ((g.BOARD_WIDTH - (g.BOARD_MARGIN / 2)) / 2), 0, g.BOARD_MARGIN / 2, g.BOARD_HEIGHT, g.PALETTE.C4);
 
-	/* Draw the net */
+	/* Draw the shadows */
 	draw_rect_fill(ctx, net.position.x + g.SHADOW_OFFSET_X, net.position.y + g.SHADOW_OFFSET_Y - net.size.y - 1, net.size.x - g.SHADOW_OFFSET_X, net.size.y + 2, g.SHADOW_COLOR);
-	draw_rect_fill(ctx, net.position.x, net.position.y, net.size.x, net.size.y, g.PALETTE.C4);
-
-	/* Draw scores */
 	draw_text(ctx, state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) + g.FSIZE) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
 	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) - (g.FSIZE / 3)) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
-	draw_text(ctx, state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) + g.FSIZE, g.PALETTE.C4);
-	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) - (g.FSIZE / 3), g.PALETTE.C4);
-
-	/* Draw ball, paddles and particles */
 	if (state.particles.length != 0) {
 		state.particles.forEach(p => {
 			draw_rect_fill(ctx, p.r.position.x + g.SHADOW_OFFSET_X, p.r.position.y + g.SHADOW_OFFSET_Y, p.r.size.x, p.r.size.y, g.SHADOW_COLOR);
-			draw_rect_fill(ctx, p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, g.PALETTE.C3);
 		});
 	} else {
 		draw_rect_fill(ctx, state.ball.position.x + g.SHADOW_OFFSET_X, state.ball.position.y + g.SHADOW_OFFSET_Y, state.ball.size.x, state.ball.size.y, g.SHADOW_COLOR);
+	}
+	draw_rect_fill(ctx, state.player1.position.x + g.SHADOW_OFFSET_X, state.player1.position.y + g.SHADOW_OFFSET_Y, state.player1.size.x, state.player1.size.y, g.SHADOW_COLOR);
+	draw_rect_fill(ctx, state.player2.position.x + g.SHADOW_OFFSET_X, state.player2.position.y + g.SHADOW_OFFSET_Y, state.player2.size.x, state.player2.size.y, g.SHADOW_COLOR);
+
+	/* Draw the net */
+	draw_rect_fill(ctx, net.position.x, net.position.y, net.size.x, net.size.y, g.PALETTE.C4);
+
+	/* Draw scores */
+	draw_text(ctx, state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) + g.FSIZE, g.PALETTE.C4);
+	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) - (g.FSIZE / 3), g.PALETTE.C4);
+
+	/* Draw ball or particles */
+	if (state.particles.length != 0) {
+		state.particles.forEach(p => {
+			draw_rect_fill(ctx, p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, g.PALETTE.C3);
+		});
+	} else {
 		draw_rect_fill(ctx, state.ball.position.x, state.ball.position.y, state.ball.size.x, state.ball.size.y, g.PALETTE.C3);
 	}
 
-	draw_rect_fill(ctx, state.player1.position.x + g.SHADOW_OFFSET_X, state.player1.position.y + g.SHADOW_OFFSET_Y, state.player1.size.x, state.player1.size.y, g.SHADOW_COLOR);
-	draw_rect_fill(ctx, state.player2.position.x + g.SHADOW_OFFSET_X, state.player2.position.y + g.SHADOW_OFFSET_Y, state.player2.size.x, state.player2.size.y, g.SHADOW_COLOR);
+	/* Draw paddles */
 	draw_rect_fill(ctx, state.player1.position.x, state.player1.position.y, state.player1.size.x, state.player1.size.y, g.PALETTE.C3);
 	draw_rect_fill(ctx, state.player2.position.x, state.player2.position.y, state.player2.size.x, state.player2.size.y, g.PALETTE.C3);
 
