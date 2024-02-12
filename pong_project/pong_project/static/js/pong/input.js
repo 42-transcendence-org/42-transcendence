@@ -46,7 +46,6 @@ document.addEventListener('keydown', (event) => {
 		player_id = g.ID_PLAYER2;
 	}
 
-	console.log(player_id, input_id, time);
 	window.game_session.inputs.push(new Input(player_id, input_id, time));
 	if (window.game_session.type === g.TYPE_REMOTE)
 		request.send_user_input(input_id, time);
