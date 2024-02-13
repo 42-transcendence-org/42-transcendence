@@ -124,6 +124,8 @@ function update_ball_position(state, dt) {
 	}
 }
 
+/* FIXME: Explosion replays when reloading the page when the game is ended */
+/* FIXME: Explosion does */
 export function state_update(session, state) {
 
 	update_paddle_position(state.ball, state.player1, session.dt);
