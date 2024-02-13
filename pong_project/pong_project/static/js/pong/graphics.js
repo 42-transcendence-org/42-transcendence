@@ -54,11 +54,11 @@ export function draw_state(ctx, session, state) {
 	draw_rect_fill(ctx, net.position.x + g.SHADOW_OFFSET_X, net.position.y + g.SHADOW_OFFSET_Y - net.size.y - 1, net.size.x - g.SHADOW_OFFSET_X, net.size.y + 2, g.SHADOW_COLOR);
 	draw_text(ctx, state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) + g.FSIZE) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
 	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) - (g.FSIZE / 3)) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
-	if (state.particles.length != 0) {
+	if (state.particles.length > 0) {
 		state.particles.forEach(p => {
 			draw_rect_fill(ctx, p.r.position.x + g.SHADOW_OFFSET_X, p.r.position.y + g.SHADOW_OFFSET_Y, p.r.size.x, p.r.size.y, g.SHADOW_COLOR);
 		});
-	} else {
+	} else if (state.particles.length === 0 && state.status != g.STATUS_ENDED) {
 		draw_rect_fill(ctx, state.ball.position.x + g.SHADOW_OFFSET_X, state.ball.position.y + g.SHADOW_OFFSET_Y, state.ball.size.x, state.ball.size.y, g.SHADOW_COLOR);
 	}
 	draw_rect_fill(ctx, state.player1.position.x + g.SHADOW_OFFSET_X, state.player1.position.y + g.SHADOW_OFFSET_Y, state.player1.size.x, state.player1.size.y, g.SHADOW_COLOR);
@@ -72,11 +72,11 @@ export function draw_state(ctx, session, state) {
 	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) - (g.FSIZE / 3), g.PALETTE.C4);
 
 	/* Draw ball or particles */
-	if (state.particles.length != 0) {
+	if (state.particles.length > 0) {
 		state.particles.forEach(p => {
 			draw_rect_fill(ctx, p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, g.PALETTE.C3);
 		});
-	} else {
+	} else if (state.particles.length === 0 && state.status != g.STATUS_ENDED) {
 		draw_rect_fill(ctx, state.ball.position.x, state.ball.position.y, state.ball.size.x, state.ball.size.y, g.PALETTE.C3);
 	}
 

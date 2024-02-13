@@ -12,6 +12,7 @@ export class GameState {
 		this.score1 = 0;
 		this.score2 = 0;
 		this.who_serves = true;
+		this.create_particles = true;
 	}
 }
 
@@ -129,20 +130,26 @@ export function state_update(session, state) {
 	update_paddle_position(state.ball, state.player2, session.dt);
 
 	if (state.status === g.STATUS_SCORE || state.status === g.STATUS_ENDED) {
-		if (state.particles.length === 0) {
+		if (state.create_particles) {
 			sound.play_explosion_sound();
 			state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 100);
+			state.create_particles = false;
 		}
 
-		/* FIXME: Find a way to delete the particles when the game is over */
-		if (session.t - session.saved_t < 1.5) {
+
+		let elapsed = session.t - session.saved_t;
+		if (elapsed <= 1.5) {
 			physics.particles_update(state.particles, session.dt);
 			return;
-		} else if (state.status === g.STATUS_SCORE) {
-			state.status = g.STATUS_ACTIVE;
+		} else if (elapsed > 1.5) {
 			state.particles = [];
+		}
+
+		if (state.status === g.STATUS_SCORE) {
+			state.status = g.STATUS_ACTIVE;
 			state.who_serves = !state.who_serves; /* Change service */
 			reset_ball(state.ball, state.who_serves);
+			state.create_particles = true;
 		}
 	}
 
