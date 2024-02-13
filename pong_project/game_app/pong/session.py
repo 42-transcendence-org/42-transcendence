@@ -46,11 +46,15 @@ def session_loop(session):
 
     # FIXME: Cleanup the game session when it is over
     if session.state.status == g.STATUS_QUIT:
-        pass
+        session_destroy(session.id)
 
 
 def session_create(id, alias):
     game_sessions[id] = GameSession(id, g.TYPE_REMOTE, alias, "")
+
+
+def session_destroy(id):
+    del game_sessions[id]
 
 
 def session_exists(id):
