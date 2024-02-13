@@ -138,10 +138,10 @@ export function state_update(session, state) {
 
 
 		let elapsed = session.t - session.saved_t;
-		if (elapsed <= 1.5) {
+		if (elapsed < 1.5) {
 			physics.particles_update(state.particles, session.dt);
 			return;
-		} else if (elapsed > 1.5) {
+		} else if (elapsed >= 1.5) {
 			state.particles = [];
 		}
 
@@ -155,7 +155,8 @@ export function state_update(session, state) {
 
 	session.saved_t = session.t;
 	/* This allows for the particle effect to finish updating when the game is over */
-	if (state.status === g.STATUS_ENDED) return;
+	if (state.status === g.STATUS_ENDED)
+		return;
 
 	update_ball_position(state, session.dt);
 

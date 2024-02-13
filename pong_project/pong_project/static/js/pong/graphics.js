@@ -91,8 +91,8 @@ export function draw_state(ctx, session, state) {
 		if (state.status === g.STATUS_READY) {
 			text = "Hit 'Space' to start";
 			if (session.type === g.TYPE_REMOTE) {
-				let rdy = session.ready1 + session.ready2;
-				text += ": " + rdy + "/2"
+				const nready = session.ready1 + session.ready2;
+				text += ": " + nready + "/2"
 			}
 		} else if (state.status === g.STATUS_PAUSED) {
 			text = "Paused";
@@ -125,6 +125,8 @@ export function draw_state(ctx, session, state) {
 		const text_victory = who_won ? "Player 1 won !" : "Player 2 won !";
 		const text_again = "Hit 'Space' to play again";
 		const text_quit = "or 'Escape' to quit";
+		const nreplay = session.ready1 + session.ready2;
+		const text_replay = "Replay: " + nreplay + "/2";
 		const fourth = g.BOARD_HEIGHT / 4;
 		const padding = 10;
 
@@ -148,18 +150,21 @@ export function draw_state(ctx, session, state) {
 
 		let text_again_w = ctx.measureText(text_again).width;
 		let text_quit_w = ctx.measureText(text_quit).width;
-		let max_text_w = Math.max(text_again_w, text_quit_w);
+		let text_replay_w = ctx.measureText(text_replay).width;
+		let max_text_w = ctx.measureText(text_again).width;
 
 		box_w = max_text_w + padding * 2;
-		box_h = 2 * g.DOUBLE_FSIZE;
+		box_h = 2.5 * g.DOUBLE_FSIZE;
 		box_x = (g.BOARD_WIDTH - box_w) / 2;
 		box_y = (g.BOARD_HEIGHT - box_h) / 2;
 
 		let text_again_x = (g.BOARD_WIDTH - text_again_w) / 2;
 		let text_quit_x = (g.BOARD_WIDTH - text_quit_w) / 2;
+		let text_replay_x = (g.BOARD_WIDTH - text_replay_w) / 2;
 
-		let text_again_y = box_y + g.FSIZE + padding;
-		let text_quit_y = box_y + box_h - g.FSIZE;
+		let text_again_y = box_y + padding + g.FSIZE;
+		let text_quit_y = text_again_y + padding + g.FSIZE;
+		let text_replay_y = text_quit_y + padding + g.FSIZE;
 
 		/* Draw info box */
 		draw_rect(ctx, box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
@@ -171,5 +176,9 @@ export function draw_state(ctx, session, state) {
 		draw_text(ctx, text_quit, text_quit_x + g.SHADOW_OFFSET_X, text_quit_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
 		draw_text(ctx, text_again, text_again_x, text_again_y, g.PALETTE.C4);
 		draw_text(ctx, text_quit, text_quit_x, text_quit_y, g.PALETTE.C4);
+		if (session.type === g.TYPE_REMOTE) {
+			draw_text(ctx, text_replay, text_replay_x + g.SHADOW_OFFSET_X, text_replay_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
+			draw_text(ctx, text_replay, text_replay_x, text_replay_y, g.PALETTE.C4);
+		}
 	}
 }

@@ -153,7 +153,8 @@ def state_update(session, state):
     if state.status in [g.STATUS_SCORE, g.STATUS_ENDED]:
         if session.t - session.saved_t < 1.5:
             return
-        elif state.status == g.STATUS_SCORE:
+
+        if state.status == g.STATUS_SCORE:
             state.status = g.STATUS_ACTIVE
             state.who_serves = not state.who_serves
             reset_ball(state.ball, state.who_serves)
