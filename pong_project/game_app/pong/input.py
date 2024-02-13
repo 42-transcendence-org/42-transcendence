@@ -18,21 +18,21 @@ def apply_inputs(session, state):
             player.velocity.x = -g.PADDLE_SPEED
         elif input.input == g.INPUT_RIGHT:
             player.velocity.x = g.PADDLE_SPEED
-        elif input.input == g.INPUT_SPACE and state.status in [g.STATUS_BEGIN, g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
+        elif input.input == g.INPUT_SPACE and state.status in [g.STATUS_READY, g.STATUS_ENDED]:
 
             if input.id == g.ID_PLAYER1:
-                session.ready1 = True
+                session.ready1 = 1
             else:
-                session.ready2 = True
+                session.ready2 = 1
 
-            if session.ready1 and session.ready2:
+            if session.ready1 == 1 and session.ready2 == 1:
                 state.status = g.STATUS_ACTIVE
-                session.ready1 = False
-                session.ready2 = False
-            if state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
+                session.ready1 = 0
+                session.ready2 = 0
+            if state.status == g.STATUS_ENDED:
                 pass
         elif input.input == g.INPUT_QUIT:
-            if state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
+            if state.status == g.STATUS_ENDED:
                 state.status = g.STATUS_QUIT
         last_time = input.timestamp
     return last_time

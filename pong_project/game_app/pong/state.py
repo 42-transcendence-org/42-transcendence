@@ -143,13 +143,13 @@ def update_ball_position(state, dt):
 
 
 def state_update(session, state):
-    if state.status in [g.STATUS_BEGIN, g.STATUS_PAUSED, g.STATUS_QUIT]:
+    if state.status in [g.STATUS_WAITING, g.STATUS_PAUSED, g.STATUS_QUIT]:
         return
 
     update_paddle_position(state.ball, state.player1, session.dt)
     update_paddle_position(state.ball, state.player2, session.dt)
 
-    if state.status in [g.STATUS_SCORE, g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
+    if state.status in [g.STATUS_SCORE, g.STATUS_ENDED]:
         if session.t - session.saved_t < 1.5:
             return
         elif state.status == g.STATUS_SCORE:
@@ -159,10 +159,10 @@ def state_update(session, state):
 
     session.saved_t = session.t
     # This allows for the particle effect to finish updating when the game is over
-    if state.status in [g.STATUS_ENDED_1, g.STATUS_ENDED_2]:
+    if state.status == g.STATUS_ENDED:
         return
 
     update_ball_position(state, session.dt)
 
     if state.score1 == g.POINTS_TO_WIN or state.score2 == g.POINTS_TO_WIN:
-        state.status = g.STATUS_ENDED_1 if state.score1 == g.POINTS_TO_WIN else g.STATUS_ENDED_2
+        state.status = g.STATUS_ENDED

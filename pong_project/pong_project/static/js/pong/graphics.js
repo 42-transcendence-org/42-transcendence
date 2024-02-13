@@ -85,21 +85,20 @@ export function draw_state(ctx, session, state) {
 	draw_rect_fill(ctx, state.player2.position.x, state.player2.position.y, state.player2.size.x, state.player2.size.y, g.PALETTE.C3);
 
 	/* Draw message boxes */
-	if (state.status === g.STATUS_BEGIN || state.status === g.STATUS_PAUSED || state.status === g.STATUS_WAITING) {
+	if (state.status === g.STATUS_WAITING || state.status === g.STATUS_PAUSED || state.status === g.STATUS_READY) {
 
 		let text;
-		if (state.status === g.STATUS_BEGIN) {
+		if (state.status === g.STATUS_READY) {
 			text = "Hit 'Space' to start";
 			if (session.type === g.TYPE_REMOTE) {
-				let rdy = (session.ready1 === true ? 1 : 0) + (session.ready2 === true ? 1 : 0);
+				let rdy = session.ready1 + session.ready2;
 				text += ": " + rdy + "/2"
 			}
-		}
-
-		else if (state.status === g.STATUS_PAUSED)
+		} else if (state.status === g.STATUS_PAUSED) {
 			text = "Paused";
-		else
+		} else if (state.status === g.STATUS_WAITING) {
 			text = "Waiting for player...";
+		}
 
 		const padding = 10;
 
@@ -121,9 +120,9 @@ export function draw_state(ctx, session, state) {
 		draw_text(ctx, text, text_x + g.SHADOW_OFFSET_X, text_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
 		draw_text(ctx, text, text_x, text_y, g.PALETTE.C4);
 
-	} else if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) {
-
-		const text_victory = state.status === g.STATUS_ENDED_1 ? "Player 1 won !" : "Player 2 won !";
+	} else if (state.status === g.STATUS_ENDED) {
+		const who_won = state.score1 > state.score2 ? 1 : 0;
+		const text_victory = who_won ? "Player 1 won !" : "Player 2 won !";
 		const text_again = "Hit 'Space' to play again";
 		const text_quit = "or 'Escape' to quit";
 		const fourth = g.BOARD_HEIGHT / 4;
@@ -133,10 +132,10 @@ export function draw_state(ctx, session, state) {
 		let box_w = text_w + padding * 2;
 		let box_h = g.DOUBLE_FSIZE;
 		let box_x = (g.BOARD_WIDTH - box_w) / 2;
-		let box_y = state.status === g.STATUS_ENDED_1 ? ((g.BOARD_HEIGHT - box_h) / 2) + fourth : ((g.BOARD_HEIGHT - box_h) / 2) - fourth;
+		let box_y = who_won ? ((g.BOARD_HEIGHT - box_h) / 2) + fourth : ((g.BOARD_HEIGHT - box_h) / 2) - fourth;
 
 		let text_x = (g.BOARD_WIDTH - text_w) / 2;
-		let text_y = state.status === g.STATUS_ENDED_1 ? ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) + fourth : ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) - fourth;
+		let text_y = who_won ? ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) + fourth : ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) - fourth;
 
 		/* Draw victory box */
 		draw_rect(ctx, box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);

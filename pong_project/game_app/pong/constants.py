@@ -6,6 +6,7 @@ BOARD_HEIGHT = 650
 BOARD_MARGIN = 16
 BOARD_CORRIDOR = 2 * BOARD_MARGIN + 10
 
+
 # INPUTS
 INPUT_LEFT = 0
 INPUT_RIGHT = 1
@@ -16,14 +17,17 @@ INPUT_QUIT = 4
 INPUTS = [INPUT_LEFT, INPUT_RIGHT, INPUT_SPACE, INPUT_NEUTRAL, INPUT_QUIT]
 
 # STATUSES
-STATUS_BEGIN = 0
-STATUS_ACTIVE = 1
-STATUS_ENDED_1 = 2
-STATUS_ENDED_2 = 3
-STATUS_PAUSED = 4
-STATUS_QUIT = 5
-STATUS_SCORE = 6
-STATUS_WAITING = 7
+STATUS_READY = 0  # game is about to begin, press a key to start
+STATUS_ACTIVE = 1  # game in progress
+STATUS_ENDED = 2  # game over, ask for retry
+STATUS_PAUSED = 3  # game is paused
+STATUS_QUIT = 4  # game is over, retry did not happen
+STATUS_SCORE = 5  # a point has been scored
+STATUS_WAITING = 6  # waiting for a second player
+
+# UPDATE TYPES
+UPD_SESSION = 0
+UPD_STATE = 1
 
 # GAME TYPES
 TYPE_REMOTE = 0

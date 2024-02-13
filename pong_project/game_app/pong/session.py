@@ -20,8 +20,8 @@ class GameSession:
         self.previous_time = 0
         self.name1 = name1
         self.name2 = name2
-        self.ready1 = False
-        self.ready2 = False
+        self.ready1 = 0
+        self.ready2 = 0
         self.state = state.GameState()
 
 
@@ -77,7 +77,7 @@ def session_waiting(alias):
     for id, session in game_sessions.items():
         if session.name2 == "":
             session.name2 = alias
-            session.state.status = g.STATUS_BEGIN
+            session.state.status = g.STATUS_READY
             return id
     return None
 
@@ -94,68 +94,28 @@ def session_update(id):
     session_loop(game_sessions[id])
 
 
+def session_get_status(id):
+    return game_sessions[id].state.status
+
+
+# FIXME Find a way to not include the names each time
 def session_get_state(id):
     s = game_sessions[id]
-    return {
-        "id": str(s.id),
-        "type": s.type,
-        "status": s.state.status,
-        "ball": {
-            "x": s.state.ball.position.x,
-            "y": s.state.ball.position.y,
-            "w": s.state.ball.size.x,
-            "h": s.state.ball.size.y,
-            "vx": s.state.ball.velocity.x,
-            "vy": s.state.ball.velocity.y,
-        },
-        "player1": {
-            "name": s.name1,
-            "score": s.state.score1,
-            "x": s.state.player1.position.x,
-            "y": s.state.player1.position.y,
-            "w": s.state.player1.size.x,
-            "h": s.state.player1.size.y,
-            "vx": s.state.player1.velocity.x,
-            "vy": s.state.player1.velocity.y,
-        },
-        "player2": {
-            "name": s.name2,
-            "score": s.state.score2,
-            "x": s.state.player2.position.x,
-            "y": s.state.player2.position.y,
-            "w": s.state.player2.size.x,
-            "h": s.state.player2.size.y,
-            "vx": s.state.player2.velocity.x,
-            "vy": s.state.player2.velocity.y,
-        },
-    }
-
-
-# FIXME Send it in compact form
-# FIXME Send only what is necessary during gameplay
-def session_get_state_small(id):
-    s = game_sessions[id]
-    return {
-        "ready1": s.ready1,
-        "ready2": s.ready2,
-        "last_input": s.last_input,
-        "status": s.state.status,
-        "ball": {
-            "x": s.state.ball.position.x,
-            "y": s.state.ball.position.y,
-            "vx": s.state.ball.velocity.x,
-            "vy": s.state.ball.velocity.y,
-        },
-        "player1": {
-            "name": s.name1,
-            "score": s.state.score1,
-            "x": s.state.player1.position.x,
-            "vx": s.state.player1.velocity.x,
-        },
-        "player2": {
-            "name": s.name2,
-            "score": s.state.score2,
-            "x": s.state.player2.position.x,
-            "vx": s.state.player2.velocity.x,
-        },
-    }
+    return [
+        s.ready1,  # 0
+        s.ready2,  # 1
+        s.state.status,  # 2
+        s.name1,  # 3
+        s.name2,  # 4
+        s.last_input,  # 5
+        s.state.ball.position.x,  # 6
+        s.state.ball.position.y,  # 7
+        s.state.ball.velocity.x,  # 8
+        s.state.ball.velocity.y,  # 9
+        s.state.score1,  # 10
+        s.state.player1.position.x,  # 11
+        s.state.player1.velocity.x,  # 12
+        s.state.score2,  # 13
+        s.state.player2.position.x,  # 14
+        s.state.player2.velocity.x,  # 15
+    ]
