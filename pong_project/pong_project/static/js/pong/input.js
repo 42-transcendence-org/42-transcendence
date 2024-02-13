@@ -95,7 +95,7 @@ export function apply_inputs(session, state) {
 					state.status = g.STATUS_ACTIVE;
 				} else if (session.type != g.TYPE_REMOTE && (state.status === g.STATUS_ACTIVE || state.status === g.STATUS_PAUSED)) {
 					state.status = state.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE;
-				} else if (session.type != g.TYPE_REMOTE && state.status === g.STATUS_ENDED) {
+				} else if (state.status === g.STATUS_ENDED) {
 					state.status = g.STATUS_ACTIVE;
 					reset_state(state);
 				}

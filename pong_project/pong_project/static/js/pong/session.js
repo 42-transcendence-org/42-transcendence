@@ -57,7 +57,7 @@ function session_destroy() {
 }
 
 function reconcile() {
-	// console.log(window.server_data);
+
 	window.game_session.ready1 = window.server_data[0];
 	window.game_session.ready2 = window.server_data[1];
 	window.game_session.state.status = window.server_data[2];
