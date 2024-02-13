@@ -27,9 +27,6 @@ class GameSession:
 
 def session_loop(session):
 
-    if session.state.status == g.STATUS_WAITING:
-        return
-
     new_time = time.perf_counter()
     frame_time = new_time - session.previous_time
     session.previous_time = new_time
@@ -37,14 +34,17 @@ def session_loop(session):
     # No need to divide since time.perf_counter() returns a time in seconds
     session.accumulator += frame_time
 
+    session.last_input = input.apply_inputs(session)
+    session.inputs = []
+
     while session.accumulator >= session.dt:
-        session.last_input = input.apply_inputs(session, session.state)
-        session.inputs = []
-        state.state_update(session, session.state)
+        if session.state.status in [g.STATUS_ACTIVE, g.STATUS_ENDED, g.STATUS_SCORE]:
+            state.state_update(session, session.state)
         session.accumulator -= session.dt
         session.t += session.dt
 
-    # FIXME: Cleanup the game session when it is over
+    # TODO: Save the game result to the database
+
     if session.state.status == g.STATUS_QUIT:
         session_destroy(session.id)
 

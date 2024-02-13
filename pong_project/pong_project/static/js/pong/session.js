@@ -57,6 +57,7 @@ function session_destroy() {
 }
 
 function reconcile() {
+	// console.log(window.server_data);
 	window.game_session.ready1 = window.server_data[0];
 	window.game_session.ready2 = window.server_data[1];
 	window.game_session.state.status = window.server_data[2];
@@ -105,29 +106,28 @@ function update_loop() {
 		window.server_data = null;
 	}
 
-	if (window.game_session.type === g.TYPE_LOCAL || window.game_session.type === g.TYPE_AI || (window.game_session.type === g.TYPE_REMOTE && window.game_session.state.status != g.STATUS_WAITING)) {
+	let new_time = performance.now();
+	let frame_time = new_time - window.game_session.previous_time;
+	window.game_session.previous_time = new_time;
 
-		let new_time = performance.now();
-		let frame_time = new_time - window.game_session.previous_time;
-		window.game_session.previous_time = new_time;
+	/* Convert the frame time from milliseconds to seconds before adding it */
+	window.game_session.accumulator += (frame_time / 1000);
 
-		/* Convert the frame time from milliseconds to seconds before adding it */
-		window.game_session.accumulator += (frame_time / 1000);
+	input.apply_inputs(window.game_session, window.game_session.state);
+	if (window.game_session.type != g.TYPE_REMOTE)
+		window.game_session.inputs = [];
 
-		while (window.game_session.accumulator >= window.game_session.dt) {
-			input.apply_inputs(window.game_session, window.game_session.state);
-			if (window.game_session.type != g.TYPE_REMOTE)
-				window.game_session.inputs = [];
+	while (window.game_session.accumulator >= window.game_session.dt) {
+		if (window.game_session.state.status === g.STATUS_ACTIVE || window.game_session.state.status === g.STATUS_ENDED || window.game_session.state.status === g.STATUS_SCORE) {
 			state.state_update(window.game_session, window.game_session.state);
-			window.game_session.accumulator -= window.game_session.dt;
-			window.game_session.t += window.game_session.dt;
 		}
+		window.game_session.accumulator -= window.game_session.dt;
+		window.game_session.t += window.game_session.dt;
+	}
 
-		if (window.game_session.state.status === g.STATUS_QUIT) {
-			session_destroy();
-			return;
-		}
-
+	if (window.game_session.state.status === g.STATUS_QUIT) {
+		session_destroy();
+		return;
 	}
 
 	graphics.draw_state(g.ctx, window.game_session, window.game_session.state);

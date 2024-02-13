@@ -124,8 +124,6 @@ function update_ball_position(state, dt) {
 }
 
 export function state_update(session, state) {
-	if (state.status === g.STATUS_WAITING || state.status === g.STATUS_PAUSED || state.status === g.STATUS_QUIT || state.status === g.STATUS_READY)
-		return;
 
 	update_paddle_position(state.ball, state.player1, session.dt);
 	update_paddle_position(state.ball, state.player2, session.dt);
@@ -154,7 +152,7 @@ export function state_update(session, state) {
 
 	update_ball_position(state, session.dt);
 
-	if (state.score1 === g.POINTS_TO_WIN || state.score2 === g.POINTS_TO_WIN) {
+	if (state.score1 >= g.POINTS_TO_WIN || state.score2 >= g.POINTS_TO_WIN) {
 		state.status = g.STATUS_ENDED;
 		sound.play_victory_sound();
 	}

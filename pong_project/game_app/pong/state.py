@@ -40,7 +40,7 @@ def reset_ball(ball, who_serves):
 
 
 def reset_state(state):
-    state.status = g.STATUS_ACTIVE
+    state.status = g.STATUS_READY
     state.particles = []
     state.ball = physics.Rectangle(
         (g.BOARD_WIDTH - g.BALL_SIDE) / 2,
@@ -58,6 +58,7 @@ def reset_state(state):
     )
     state.score1 = 0
     state.score2 = 0
+    state.who_serves = True
 
 
 def update_ball_velocity(ball, paddle, normal):
@@ -164,5 +165,5 @@ def state_update(session, state):
 
     update_ball_position(state, session.dt)
 
-    if state.score1 == g.POINTS_TO_WIN or state.score2 == g.POINTS_TO_WIN:
+    if state.score1 >= g.POINTS_TO_WIN or state.score2 >= g.POINTS_TO_WIN:
         state.status = g.STATUS_ENDED
