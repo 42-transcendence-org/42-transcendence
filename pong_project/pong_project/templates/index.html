@@ -1,0 +1,56 @@
+{% load static %}
+{% csrf_token %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ft_transcendence</title>
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+	<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+	<link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+	<link rel="manifest" href="{% static 'site.webmanifest' %}">
+</head>
+
+<body>
+	<main>
+		<header>
+			<h1>ft_transcendence</h1>
+		</header>
+
+		<div id="alias-div">
+			<input type="text" id="alias" placeholder="Alias">
+			<button id="ok-button">OK</button>
+		</div>
+		<div id="game-menu-div">
+			<button id="local-button">Play Local Game</button>
+			<button id="remote-button">Play Remote Game</button>
+			<button id="ai-button">Play Against AI</button>
+			<button id="tournament-button"> Tournament</button>
+		</div>
+		<div id="game-div">
+			<canvas id="game-canvas" width="480" height="650"></canvas>
+		</div>
+		<script> window.ASSETS_URL = "{% static '' %}" + "assets/"; </script>
+		<script type="module" src="{% static 'js/pong/global.js' %}"></script>
+		<script type="module" src="{% static 'js/pong/session.js' %}"></script>
+		<script type="module" src="{% static 'js/pong/graphics.js' %}"></script>
+		<script type="module" src="{% static 'js/pong/ai.js' %}"></script>
+		<script type="module" src="{% static 'js/pong/physics.js' %}"></script>
+		<script type="module" src='{% static "js/pong/sound.js" %}'></script>
+		<script type="module" src='{% static "js/pong/input.js" %}'></script>
+		<script type="module" src="{% static 'js/listeners.js' %}"></script>
+		<script type="module" src='{% static "js/requests.js" %}'></script>
+		<script type="module" src='{% static "js/utils.js" %}'></script>
+
+		<footer>
+
+		</footer>
+	</main>
+</body>
+
+</html>

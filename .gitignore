@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Blacklist everything
 *
 # Whitelist all directories
@@ -12,3 +13,7 @@
 !*.pdf
 !*.md
 !.gitignore
+=======
+.env
+__pycache__/
+>>>>>>> 7eb48596b3326c6b39cbdfdc1a96e42e56480025
