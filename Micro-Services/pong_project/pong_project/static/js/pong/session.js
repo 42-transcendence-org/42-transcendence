@@ -24,6 +24,7 @@ export class GameSession {
 		this.state = new state.GameState();
 	}
 }
+
 export function session_create(id, type) {
 	if (window.game_session != null) {
 		/* FIXME: Check if event_source is null and attempt to reconnect */
