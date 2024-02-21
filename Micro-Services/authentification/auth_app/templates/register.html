@@ -1,0 +1,47 @@
+<h3 class="titre">Créer un compte</h3>
+
+<div class="register-form">
+    <form id="registerForm" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-field">
+                {{ field.label_tag }}  <!-- Field Label -->
+                {{ field }}  <!-- Field Input -->
+
+                <!-- Tooltip Icon for Help Text -->
+                {% if field.help_text %}
+                    <span class="tooltip-icon" data-tooltip="{{ field.help_text }}">?</span>
+                {% endif %}
+
+                <!-- Error Messages -->
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <input class="input" type="submit" value="Je m'inscris !">
+    </form>
+</div>
+
+<style>
+	.input{
+		flex-grow: 1;
+    	display: flex;
+    	flex-direction: column;
+    	align-items: center;
+    	justify-content: center;
+    	text-align: center;
+	}
+	.titre{
+		flex-grow: 1;
+    	display: flex;
+    	flex-direction: column;
+    	align-items: center;
+    	justify-content: center;
+    	text-align: center;
+	}
+</style>

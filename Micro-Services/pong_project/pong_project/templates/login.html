@@ -1,0 +1,34 @@
+{% load static %}
+<h3 class="titre">Je me connect</h3>
+
+
+<div class="login-form">
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+
+    <form id="loginForm" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input class="input" type = "submit" value = "Se connecter">
+    </form>
+</div>
+
+<style>
+	.input{
+		flex-grow: 1;
+    	display: flex;
+    	flex-direction: column;
+    	align-items: center;
+    	justify-content: center;
+    	text-align: center;
+	}
+	.titre{
+		flex-grow: 1;
+    	display: flex;
+    	flex-direction: column;
+    	align-items: center;
+    	justify-content: center;
+    	text-align: center;
+	}
+</style>

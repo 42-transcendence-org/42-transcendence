@@ -1,0 +1,11 @@
+
+<div class="announce" id="announce">
+    
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}!</p>
+        <button type="button" id="logout">Logout</button>
+    {% else %}
+        <p>Your account has been succesfully created. You can now login.</p>
+    
+    {% endif %}
+</div>

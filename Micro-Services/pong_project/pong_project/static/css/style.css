@@ -1,0 +1,110 @@
+@font-face {
+	font-family: 'Code Page 437';
+	src: url('../assets/code-page-437.ttf') format('truetype');
+}
+
+body {
+	font-family: 'Code Page 437', sans-serif;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background-color: #2B2A4C;
+	min-height: 100vh;
+	/* Ensure the body takes up at least the viewport height */
+}
+
+main {
+	width: auto;
+	/* Adjusted to auto to not restrict main's width, allowing centering */
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	height: auto;
+	/* Changed to auto for dynamic content height */
+	padding: 20px;
+	/* Added padding for some spacing inside main */
+	box-sizing: border-box;
+	/* Ensure padding doesn't add to the width */
+}
+
+header {
+	text-align: center;
+	/* Ensure everything in the header is centered */
+	width: 100%;
+	/* Ensure header takes full width of its container */
+	margin-bottom: 20px;
+	/* Adds space between the header and the div below */
+}
+
+h1 {
+	color: #EEE2DE;
+	margin: 0 auto;
+	/* Center the title and reset other margins */
+	text-shadow: 5px 5px 0px #252442;
+}
+
+#alias-div,
+#game-menu-div,
+#game-div {
+	width: 25vw;
+	height: 50vh;
+	display: none;
+}
+
+#game-menu-div {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	/* This will center the buttons in the available space */
+	flex-grow: 1;
+	/* Allows the div to expand and take up available space, helping center its content */
+}
+
+#game-menu-div button {
+	display: block;
+	width: 100%;
+	/* Adjust based on the size of your largest button */
+	height: 50px;
+	/* Or any height that fits well */
+	margin: 10px 0;
+	/* Keeps the original vertical spacing */
+	background-color: #0A0A0A;
+	/* Dark background for a retro look */
+	color: #EEE2DE;
+	/* Light color for text */
+	border: 2px solid #FFFFFF;
+	/* Adds a retro-style border */
+	border-radius: 5px;
+	/* Optional: adds slightly rounded corners */
+	font-family: 'Code Page 437', monospace;
+	/* Ensures retro font is used */
+	text-transform: uppercase;
+	/* Optional: makes text uppercase for more retro feel */
+	text-align: center;
+	/* Centers the text */
+	line-height: 48px;
+	/* Adjusts the line height to vertically center the text, based on button height */
+	cursor: pointer;
+	/* Changes cursor to pointer on hover */
+	transition: background-color 0.3s, color 0.3s;
+	/* Smooth transition for hover effects */
+}
+
+#game-menu-div button:hover {
+	background-color: #252442;
+	/* Changes background on hover for interactive feel */
+	color: #FFD700;
+	/* Changes text color on hover */
+}
+
+#game-menu-div button:active {
+	background-color: #1C1B33;
+	/* Darker background for pressed effect */
+	color: #DAA520;
+	/* Changes text color to indicate active state */
+}
