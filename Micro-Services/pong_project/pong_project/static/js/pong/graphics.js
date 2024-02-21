@@ -54,11 +54,11 @@ export function draw_state(ctx, session, state) {
 	draw_rect_fill(ctx, net.position.x + g.SHADOW_OFFSET_X, net.position.y + g.SHADOW_OFFSET_Y - net.size.y - 1, net.size.x - g.SHADOW_OFFSET_X, net.size.y + 2, g.SHADOW_COLOR);
 	draw_text(ctx, state.score1, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) + g.FSIZE) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
 	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE + g.SHADOW_OFFSET_X, ((g.BOARD_HEIGHT / 2) - (g.FSIZE / 3)) + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
-	if (state.particles.length != 0) {
+	if (state.particles.length > 0) {
 		state.particles.forEach(p => {
 			draw_rect_fill(ctx, p.r.position.x + g.SHADOW_OFFSET_X, p.r.position.y + g.SHADOW_OFFSET_Y, p.r.size.x, p.r.size.y, g.SHADOW_COLOR);
 		});
-	} else {
+	} else if (state.particles.length === 0 && state.status != g.STATUS_ENDED) {
 		draw_rect_fill(ctx, state.ball.position.x + g.SHADOW_OFFSET_X, state.ball.position.y + g.SHADOW_OFFSET_Y, state.ball.size.x, state.ball.size.y, g.SHADOW_COLOR);
 	}
 	draw_rect_fill(ctx, state.player1.position.x + g.SHADOW_OFFSET_X, state.player1.position.y + g.SHADOW_OFFSET_Y, state.player1.size.x, state.player1.size.y, g.SHADOW_COLOR);
@@ -72,11 +72,11 @@ export function draw_state(ctx, session, state) {
 	draw_text(ctx, state.score2, g.BOARD_WIDTH - g.DOUBLE_FSIZE, (g.BOARD_HEIGHT / 2) - (g.FSIZE / 3), g.PALETTE.C4);
 
 	/* Draw ball or particles */
-	if (state.particles.length != 0) {
+	if (state.particles.length > 0) {
 		state.particles.forEach(p => {
 			draw_rect_fill(ctx, p.r.position.x, p.r.position.y, p.r.size.x, p.r.size.y, g.PALETTE.C3);
 		});
-	} else {
+	} else if (state.particles.length === 0 && state.status != g.STATUS_ENDED) {
 		draw_rect_fill(ctx, state.ball.position.x, state.ball.position.y, state.ball.size.x, state.ball.size.y, g.PALETTE.C3);
 	}
 
@@ -85,21 +85,20 @@ export function draw_state(ctx, session, state) {
 	draw_rect_fill(ctx, state.player2.position.x, state.player2.position.y, state.player2.size.x, state.player2.size.y, g.PALETTE.C3);
 
 	/* Draw message boxes */
-	if (state.status === g.STATUS_BEGIN || state.status === g.STATUS_PAUSED || state.status === g.STATUS_WAITING) {
+	if (state.status === g.STATUS_WAITING || state.status === g.STATUS_PAUSED || state.status === g.STATUS_READY) {
 
 		let text;
-		if (state.status === g.STATUS_BEGIN) {
+		if (state.status === g.STATUS_READY) {
 			text = "Hit 'Space' to start";
 			if (session.type === g.TYPE_REMOTE) {
-				let rdy = (session.ready1 === true ? 1 : 0) + (session.ready2 === true ? 1 : 0);
-				text += ": " + rdy + "/2"
+				const nready = session.ready1 + session.ready2;
+				text += ": " + nready + "/2"
 			}
-		}
-
-		else if (state.status === g.STATUS_PAUSED)
+		} else if (state.status === g.STATUS_PAUSED) {
 			text = "Paused";
-		else
+		} else if (state.status === g.STATUS_WAITING) {
 			text = "Waiting for player...";
+		}
 
 		const padding = 10;
 
@@ -121,11 +120,13 @@ export function draw_state(ctx, session, state) {
 		draw_text(ctx, text, text_x + g.SHADOW_OFFSET_X, text_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
 		draw_text(ctx, text, text_x, text_y, g.PALETTE.C4);
 
-	} else if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) {
-
-		const text_victory = state.status === g.STATUS_ENDED_1 ? "Player 1 won !" : "Player 2 won !";
+	} else if (state.status === g.STATUS_ENDED) {
+		const who_won = state.score1 > state.score2 ? 1 : 0;
+		const text_victory = who_won ? "Player 1 won !" : "Player 2 won !";
 		const text_again = "Hit 'Space' to play again";
 		const text_quit = "or 'Escape' to quit";
+		const nreplay = session.ready1 + session.ready2;
+		const text_replay = "Replay: " + nreplay + "/2";
 		const fourth = g.BOARD_HEIGHT / 4;
 		const padding = 10;
 
@@ -133,10 +134,10 @@ export function draw_state(ctx, session, state) {
 		let box_w = text_w + padding * 2;
 		let box_h = g.DOUBLE_FSIZE;
 		let box_x = (g.BOARD_WIDTH - box_w) / 2;
-		let box_y = state.status === g.STATUS_ENDED_1 ? ((g.BOARD_HEIGHT - box_h) / 2) + fourth : ((g.BOARD_HEIGHT - box_h) / 2) - fourth;
+		let box_y = who_won ? ((g.BOARD_HEIGHT - box_h) / 2) + fourth : ((g.BOARD_HEIGHT - box_h) / 2) - fourth;
 
 		let text_x = (g.BOARD_WIDTH - text_w) / 2;
-		let text_y = state.status === g.STATUS_ENDED_1 ? ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) + fourth : ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) - fourth;
+		let text_y = who_won ? ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) + fourth : ((g.BOARD_HEIGHT + g.FSIZE / 2) / 2) - fourth;
 
 		/* Draw victory box */
 		draw_rect(ctx, box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
@@ -149,18 +150,21 @@ export function draw_state(ctx, session, state) {
 
 		let text_again_w = ctx.measureText(text_again).width;
 		let text_quit_w = ctx.measureText(text_quit).width;
-		let max_text_w = Math.max(text_again_w, text_quit_w);
+		let text_replay_w = ctx.measureText(text_replay).width;
+		let max_text_w = ctx.measureText(text_again).width;
 
 		box_w = max_text_w + padding * 2;
-		box_h = 2 * g.DOUBLE_FSIZE;
+		box_h = 2.5 * g.DOUBLE_FSIZE;
 		box_x = (g.BOARD_WIDTH - box_w) / 2;
 		box_y = (g.BOARD_HEIGHT - box_h) / 2;
 
 		let text_again_x = (g.BOARD_WIDTH - text_again_w) / 2;
 		let text_quit_x = (g.BOARD_WIDTH - text_quit_w) / 2;
+		let text_replay_x = (g.BOARD_WIDTH - text_replay_w) / 2;
 
-		let text_again_y = box_y + g.FSIZE + padding;
-		let text_quit_y = box_y + box_h - g.FSIZE;
+		let text_again_y = box_y + padding + g.FSIZE;
+		let text_quit_y = text_again_y + padding + g.FSIZE;
+		let text_replay_y = text_quit_y + padding + g.FSIZE;
 
 		/* Draw info box */
 		draw_rect(ctx, box_x + g.SHADOW_OFFSET_X - 1, box_y + g.SHADOW_OFFSET_Y - 1, box_w, box_h, 4, g.SHADOW_COLOR);
@@ -172,5 +176,9 @@ export function draw_state(ctx, session, state) {
 		draw_text(ctx, text_quit, text_quit_x + g.SHADOW_OFFSET_X, text_quit_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
 		draw_text(ctx, text_again, text_again_x, text_again_y, g.PALETTE.C4);
 		draw_text(ctx, text_quit, text_quit_x, text_quit_y, g.PALETTE.C4);
+		if (session.type === g.TYPE_REMOTE) {
+			draw_text(ctx, text_replay, text_replay_x + g.SHADOW_OFFSET_X, text_replay_y + g.SHADOW_OFFSET_Y, g.SHADOW_COLOR);
+			draw_text(ctx, text_replay, text_replay_x, text_replay_y, g.PALETTE.C4);
+		}
 	}
 }
