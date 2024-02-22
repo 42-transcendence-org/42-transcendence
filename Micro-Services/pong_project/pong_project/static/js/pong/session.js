@@ -34,14 +34,13 @@ export function session_create(id, type) {
 	window.game_session = new GameSession(id, type, "", "");
 	if (type === g.TYPE_REMOTE) {
 		window.game_session.state.status = g.STATUS_WAITING;
+		const token = localStorage.getItem("jwt");
+		const url = `http://localhost:8003/${id}/?token=${encodeURIComponent(token)}`;
+		window.event_source = new EventSource(url);
 	} else {
 		window.game_session.name1 = "Player 1";
 		window.game_session.name2 = type === g.TYPE_LOCAL ? "Player 2" : "Computer";
 	}
-	const token = localStorage.getItem("jwt");
-	const url = `http://localhost:8003/${id}/?token=${encodeURIComponent(token)}`;
-	const eventSource = new EventSource(url);
-	window.event_source = id === 0 ? null : new EventSource(url);
 	div_handler("game-div");
 	update_loop_start();
 }
