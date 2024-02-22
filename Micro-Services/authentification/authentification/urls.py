@@ -16,8 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from auth_app.views import register
-from auth_app import views
 from .settings import STATIC_URL
 from django.conf.urls.static import static
 

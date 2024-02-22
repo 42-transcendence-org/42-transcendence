@@ -18,7 +18,5 @@ class GameModel(models.Model):
         null=True,
         related_name="games_as_player2",
     )
-    # type = models.CharField(max_length=32, choices=GAME_TYPES)
-    # status = models.CharField(max_length=32, choices=GAME_STATUSES)
     score1 = models.IntegerField(default=0)
     score2 = models.IntegerField(default=0)

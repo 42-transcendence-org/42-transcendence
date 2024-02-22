@@ -72,7 +72,7 @@ function displayLogout(){
 }
 
 function displayLogin(){
-	fetch('https://localhost:8443/auth/login/')  // Update this URL to your actual authentication service URL
+	fetch('https://localhost:8443/auth/login/')
 	.then(response => response.text())
 	.then(html => {
 		authFormContainer.innerHTML = html;
@@ -85,7 +85,7 @@ function displayLogin(){
 }
 
 function displayRegister(){
-	fetch('https://localhost:8443/auth/register/')  // Update this URL to your actual authentication service URL
+	fetch('https://localhost:8443/auth/register/')
 	.then(response => response.text())
 	.then(html => {
 		authFormContainer.innerHTML = html;

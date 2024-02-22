@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.19.1
 
 # Mettre à jour et installer les dépendances nécessaires
 RUN apk add --no-cache curl gettext

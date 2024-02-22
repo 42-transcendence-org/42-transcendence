@@ -28,7 +28,6 @@ function sendLoginForm(){
 	const formData = new FormData(event.target); // Use the event target which is the form
 	const username = formData.get('username');
 	const password = formData.get('password');
-	console.log(localStorage.getItem('csrftoken'));
 	fetch('https://localhost:8443/auth/login/', {
 		method: 'POST',
 		headers: {
@@ -41,9 +40,7 @@ function sendLoginForm(){
 	.then(response => response.json())
 	.then(data => {
 		if (data.token) {
-			console.log(data.token);
 			localStorage.setItem('jwt', data.token);
-			console.log('login successful');
 			// fetch("../../../templates/home.html")
 			// 	.then(response => response.text())
             //     .then(html => {

@@ -1,9 +1,6 @@
 import jwt
-from django.http import JsonResponse
 from game_app import settings
-import logging
 
-logger = logging.getLogger(__name__)
 
 class JWTAuthenticationMiddleware:
     def __init__(self, get_response):
@@ -15,8 +12,10 @@ class JWTAuthenticationMiddleware:
             try:
                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
                 request.user_id = payload.get('user_id')
+                request.username = payload.get('username')
             except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, ValueError) as e:
                 # Decide how you want to handle errors: log, set request.user_id to None, or return an error response
+                #FIXME
                 pass
         return self.get_response(request)
     
@@ -31,5 +30,4 @@ class JWTAuthenticationMiddleware:
                 
             except ValueError:
                 pass
-        # logger("Hello there")
         return request.GET.get('token')

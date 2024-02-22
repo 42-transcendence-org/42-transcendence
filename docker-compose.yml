@@ -17,7 +17,6 @@ services:
     environment:
       - HOST_IP=${HOST_IP}
     networks:
-      - pong_project
       - auth
       - game_app
     command: /docker-entrypoint.d/init-nginx.sh
@@ -33,22 +32,6 @@ services:
       - ./Micro-Services/pong_project/:/app
     ports:
       - "8001:8000"
-    networks:
-      - pong_project
-    depends_on:
-      - pong_project_db
-    restart: on-failure
-
-  pong_project_db:
-    image: postgres:16-bookworm
-    volumes:
-      - pong_project_db:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: pong_project_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: yourpassword
-    networks:
-      - pong_project
     restart: on-failure
 
   authentification:
@@ -120,7 +103,6 @@ services:
     ports:
      - "9090:9090"
     networks:
-    - pong_project
     - auth
     - game_app
     restart: on-failure
@@ -141,7 +123,6 @@ services:
     ports:
       - "3000:3000"
     networks:
-    - pong_project
     - auth
     - game_app
     restart: on-failure
@@ -175,21 +156,12 @@ volumes:
       o: 'bind'
       device: $GAME_APP_DB_VOL
 
-  pong_project_db:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: $PONG_PROJECT_DB_VOL
-
   grafana-storage:
 
   prometheus-storage:
 
 
 networks:
-  pong_project:
-    driver: bridge
   auth:
     driver: bridge
   game_app:

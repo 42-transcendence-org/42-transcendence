@@ -1,46 +1,30 @@
 # auth_app/views.py
 from django.contrib.auth.models import User  # or your custom user model
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import JsonResponse
-from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
-from .forms import CustomUserCreationForm
 import json
-import logging
 import jwt
 import datetime
 from authentification import settings
 
-
-logger = logging.getLogger(__name__)
-
 def register_form(request):
-    logger.info("register_form view is called")
     try:
         return render(request, 'register_form.html')
     except Exception as e:
-        logger.error(f"Error in register_form view: {e}")
         raise
 
 def login_form(request):
-    logger.info("login_form view is called")
     try:
         return render(request, 'login_form.html')
     except Exception as e:
-        logger.error(f"Error in login_form view: {e}")
         raise
 
 def login_buttons(request):
-    logger.info("login_form view is called")
     try:
         return render(request, 'loginButtons.html')
     except Exception as e:
-        logger.error(f"Error in login_buttons view: {e}")
         raise
 
 
@@ -104,8 +88,9 @@ def check_authentication(request):
 def generate_jwt_token(user):
     dt = datetime.datetime.now() + datetime.timedelta(hours=1)
     token = jwt.encode({
-        'user_id': user.id,  # Use user ID or any other user identifier
-        'exp': int(dt.strftime('%s'))  # Expiry date
+        'user_id': user.id,
+        'username': user.username,
+        'exp': int(dt.strftime('%s'))
     }, settings.SECRET_KEY, algorithm="HS256")
 
     return token.decode('utf-8') if isinstance(token, bytes) else token
