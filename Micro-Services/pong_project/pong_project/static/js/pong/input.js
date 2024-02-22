@@ -91,17 +91,17 @@ export function apply_inputs(session, state) {
 				player.velocity.x = g.PADDLE_SPEED;
 				break;
 			case g.INPUT_SPACE:
-				if (session.type != g.TYPE_REMOTE && state.status === g.STATUS_READY) {
+				if (session.type != g.TYPE_REMOTE && state.status === g.STATUS_BEGIN) {
 					state.status = g.STATUS_ACTIVE;
 				} else if (session.type != g.TYPE_REMOTE && (state.status === g.STATUS_ACTIVE || state.status === g.STATUS_PAUSED)) {
 					state.status = state.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE;
-				} else if (session.type != g.TYPE_REMOTE && state.status === g.STATUS_ENDED) {
+				} else if (session.type != g.TYPE_REMOTE && (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2)) {
 					state.status = g.STATUS_ACTIVE;
 					reset_state(state);
 				}
 				break;
 			case g.INPUT_QUIT:
-				if (state.status === g.STATUS_ENDED) {
+				if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) {
 					state.status = g.STATUS_QUIT;
 				}
 				break;

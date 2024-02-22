@@ -4,7 +4,7 @@ import * as physics from "./physics.js";
 
 export class GameState {
 	constructor() {
-		this.status = g.STATUS_READY;
+		this.status = g.STATUS_BEGIN;
 		this.particles = [];
 		this.ball = new physics.Rectangle((g.BOARD_WIDTH - g.BALL_SIDE) / 2, (g.BOARD_HEIGHT - g.BALL_SIDE) / 2, g.BALL_SIDE, g.BALL_SIDE, 0, g.BALL_SPEED_MIN);
 		this.player1 = new physics.Rectangle((g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, g.BOARD_HEIGHT - (3 * g.BOARD_MARGIN), g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0);
@@ -12,7 +12,6 @@ export class GameState {
 		this.score1 = 0;
 		this.score2 = 0;
 		this.who_serves = true;
-		this.create_particles = true;
 	}
 }
 
@@ -24,14 +23,13 @@ function reset_ball(ball, who_serves) {
 }
 
 export function reset_state(state) {
-	state.status = g.STATUS_READY;
+	state.status = g.STATUS_ACTIVE;
 	state.particles = [];
 	state.ball = new physics.Rectangle((g.BOARD_WIDTH - g.BALL_SIDE) / 2, (g.BOARD_HEIGHT - g.BALL_SIDE) / 2, g.BALL_SIDE, g.BALL_SIDE, 0, g.BALL_SPEED_MIN);
 	state.player1 = new physics.Rectangle((g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, g.BOARD_HEIGHT - (3 * g.BOARD_MARGIN), g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0);
 	state.player2 = new physics.Rectangle((g.BOARD_WIDTH - g.PADDLE_WIDTH) / 2, 2 * g.BOARD_MARGIN, g.PADDLE_WIDTH, g.BALL_SIDE, 0, 0);
 	state.score1 = 0;
 	state.score2 = 0;
-	state.who_serves = true;
 }
 
 /**
@@ -124,46 +122,40 @@ function update_ball_position(state, dt) {
 	}
 }
 
-/* FIXME: Explosion replays when reloading the page when the game is ended */
-/* FIXME: Explosion does */
 export function state_update(session, state) {
+	if (state.status === g.STATUS_BEGIN || state.status === g.STATUS_PAUSED || state.status === g.STATUS_QUIT)
+		return;
 
 	update_paddle_position(state.ball, state.player1, session.dt);
 	update_paddle_position(state.ball, state.player2, session.dt);
 
-	if (state.status === g.STATUS_SCORE || state.status === g.STATUS_ENDED) {
-		if (state.create_particles) {
+	if (state.status === g.STATUS_SCORE || state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) {
+		if (state.particles.length === 0) {
 			sound.play_explosion_sound();
 			state.particles = physics.particles_create(new physics.Vector(state.ball.position.x + state.ball.size.x / 2, state.ball.position.y + state.ball.size.y / 2,), 16, 4, 5, 100);
-			state.create_particles = false;
 		}
 
-
-		let elapsed = session.t - session.saved_t;
-		if (elapsed < 1.5) {
+		/* FIXME: Find a way to delete the particles when the game is over */
+		if (session.t - session.saved_t < 1.5) {
 			physics.particles_update(state.particles, session.dt);
 			return;
-		} else if (elapsed >= 1.5) {
-			state.particles = [];
-		}
-
-		if (state.status === g.STATUS_SCORE) {
+		} else if (state.status === g.STATUS_SCORE) {
 			state.status = g.STATUS_ACTIVE;
+			state.particles = [];
 			state.who_serves = !state.who_serves; /* Change service */
 			reset_ball(state.ball, state.who_serves);
-			state.create_particles = true;
 		}
 	}
 
 	session.saved_t = session.t;
 	/* This allows for the particle effect to finish updating when the game is over */
-	if (state.status === g.STATUS_ENDED)
-		return;
+	if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) return;
 
 	update_ball_position(state, session.dt);
 
-	if (state.score1 >= g.POINTS_TO_WIN || state.score2 >= g.POINTS_TO_WIN) {
-		state.status = g.STATUS_ENDED;
+	if (state.score1 === g.POINTS_TO_WIN || state.score2 === g.POINTS_TO_WIN) {
+		state.status = state.score1 === g.POINTS_TO_WIN ? g.STATUS_ENDED_1 : g.STATUS_ENDED_2;
 		sound.play_victory_sound();
 	}
 }
+

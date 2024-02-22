@@ -1,0 +1,89 @@
+# Define an upstream for each service
+upstream front_service {
+    server ${HOST_IP}:8001;
+}
+
+upstream auth_service {
+    server ${HOST_IP}:8002;
+}
+
+upstream game_service {
+    server ${HOST_IP}:8003;
+}
+
+
+# First server block for handling HTTPS connections
+server {
+    # Listen on port 443 (default port for HTTPS) and enable SSL
+    listen 8443 ssl;
+
+    # Define server names (domain names)
+    # Here, it listens to localhost and an IP address
+    server_name localhost ${HOST_IP};
+
+    # SSL certificate and key files location
+    ssl_certificate /etc/nginx/certs/cert.pem;
+    ssl_certificate_key /etc/nginx/certs/key.pem;
+
+    # Define allowed SSL protocols
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+
+    # Define SSL ciphers to determine the encryption methods
+    # HIGH: This represents a group of high-strength ciphers.
+    # !aNULL: This excludes anonymous ciphers, which do not authenticate the server and are thus insecure.
+    # !MD5: This specifically excludes any ciphers that use MD5, due to its known vulnerabilities.
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # Location block for the root URL
+    location / {
+        # Proxy pass to forward requests to the Django application server
+        proxy_pass http://front_service/;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
+        proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Pour le forwarding d'IP
+        proxy_set_header X-Forwarded-Proto $scheme; # Transmet le schéma utilisé (http ou https)
+        # Assurez-vous de transmettre le Cookie header pour conserver les cookies de session, y compris csrftoken
+        proxy_set_header Cookie $http_cookie;
+    }
+
+        # Redirect requests to the auth service
+    location /auth/ {
+        proxy_pass http://auth_service/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
+        proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Pour le forwarding d'IP
+        proxy_set_header X-Forwarded-Proto $scheme; # Transmet le schéma utilisé (http ou https)
+        # Assurez-vous de transmettre le Cookie header pour conserver les cookies de session, y compris csrftoken
+        proxy_set_header Cookie $http_cookie;
+    }
+
+        # Redirect requests to the game service
+    location /game/ {
+        proxy_pass http://game_service/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
+        proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Pour le forwarding d'IP
+        proxy_set_header X-Forwarded-Proto $scheme; # Transmet le schéma utilisé (http ou https)
+        # Assurez-vous de transmettre le Cookie header pour conserver les cookies de session, y compris csrftoken
+        proxy_set_header Cookie $http_cookie;    
+    }
+
+}
+
+# Second server block for redirecting HTTP to HTTPS
+server {
+    # Listen on port 80 (default port for HTTP) and set this as the default server
+    # for requests coming to port 80
+    listen 80 default_server;
+
+    # Default server name (catch-all)
+    server_name _;
+
+    # Redirect all HTTP requests to HTTPS
+    # $host and $request_uri are variables for the host and URI part of the request
+    return 301 https://$host$request_uri;
+}

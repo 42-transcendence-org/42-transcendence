@@ -38,17 +38,15 @@ export const INPUT_NEUTRAL = 3;
 export const INPUT_QUIT = 4;
 
 /* STATUSES */
-export const STATUS_READY = 0; /* game is about to begin, press a key to start */
-export const STATUS_ACTIVE = 1; /* game in progress */
-export const STATUS_ENDED = 2; /* game over, ask for retry */
-export const STATUS_PAUSED = 3; /* game is paused */
-export const STATUS_QUIT = 4; /* game is over, retry did not happen */
-export const STATUS_SCORE = 5; /* a point has been scored */
-export const STATUS_WAITING = 6; /* waiting for a second player */
-
-/* UPDATE TYPES */
-export const UPD_SESSION = 0;
-export const UPD_STATE = 1;
+/* FIXME Add comments */
+export const STATUS_BEGIN = 0;
+export const STATUS_ACTIVE = 1;
+export const STATUS_ENDED_1 = 2;
+export const STATUS_ENDED_2 = 3;
+export const STATUS_PAUSED = 4;
+export const STATUS_QUIT = 5;
+export const STATUS_SCORE = 6;
+export const STATUS_WAITING = 7;
 
 /* GAME TYPES */
 export const TYPE_REMOTE = 0;
@@ -69,4 +67,4 @@ export const BALL_MAX_ANGLE = Math.PI / 6;
 export const PADDLE_WIDTH = 64;
 export const PADDLE_SPEED = BOARD_WIDTH - (2 * BOARD_CORRIDOR);
 
-export const POINTS_TO_WIN = 3;
+export const POINTS_TO_WIN = 1;
