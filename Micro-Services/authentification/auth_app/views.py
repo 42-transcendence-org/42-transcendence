@@ -1,89 +1,124 @@
 # auth_app/views.py
-from django.contrib.auth.models import User  # or your custom user model
-from django.shortcuts import render
+# from django.contrib.auth.models import User  # or your custom user model
+# from django.shortcuts import render
 from django.http import JsonResponse
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth import authenticate, login, logout
-import json
+# from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+# from django.contrib.auth import authenticate, login, logout
+# import json
 import jwt
 import datetime
 from authentification import settings
 
-def register_form(request):
-    try:
-        return render(request, 'register_form.html')
-    except Exception as e:
-        raise
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login, authenticate
+from django.contrib.auth import logout
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
-def login_form(request):
-    try:
-        return render(request, 'login_form.html')
-    except Exception as e:
-        raise
+class LoginAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        form = AuthenticationForm(data=request.data)
+        print(form)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            print(form.cleaned_data['username'])
+            if user:
+                login(request, user)
+                token = generate_jwt_token(user),
+                return JsonResponse({'token': token, 'message': 'Login successful'}, status=status.HTTP_200_OK)
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def login_buttons(request):
-    try:
-        return render(request, 'loginButtons.html')
-    except Exception as e:
-        raise
-
-
-def home(request):
-    return render(request, 'home.html', {'user': request.user})
-
-def login_user(request):
-    if request.method == 'POST':
-        if not request.body:
-            return JsonResponse({'error': 'Empty request body'}, status=400)
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-        username = data.get('username')
-        password = data.get('password')
-
-        if not username or not password:
-            return JsonResponse({'error': 'Veuillez remplir tous les champs'}, status=400)
-
-        user = authenticate(request, username = username, password = password)
-
-        if user is not None:
-            login(request, user)
-            token = generate_jwt_token(user),
-            return JsonResponse({'token': token, 'message': 'Login successful'})
-        else:
-            return JsonResponse({'error': 'Invalid username or password'}, status=401)
-    form = AuthenticationForm()
-    return render(request, "login.html", {"form": form})
-
-def logout_user(request):
-    logout(request)
-    return JsonResponse({'status': 'logged out'})
-
-def register(request):
-    print(request.body)
-    if request.method == 'POST':
-        if not request.body:
-            return JsonResponse({'error': 'Empty request body'}, status=400)
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-        form = UserCreationForm(data)
+class RegisterAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        form = UserCreationForm(data=request.data)
+        print(request.data)
         if form.is_valid():
             form.save()
-            return JsonResponse({'register': True, 'message': 'Register successful'})
-        else:
-            print(form.errors)
-    else:
-        form = UserCreationForm()
-    return render(request, "register.html", {"form": form})
+            return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def check_authentication(request):
-    if request.user.is_authenticated:
-        return JsonResponse({'isAuthenticated': True})
-    else:
-        return JsonResponse({'isAuthenticated': False})
+class LogoutAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return Response({"message": "User logged out successfully"})
+
+
+# def register_form(request):
+#     try:
+#         return render(request, 'register_form.html')
+#     except Exception as e:
+#         raise
+
+# def login_form(request):
+#     try:
+#         return render(request, 'login_form.html')
+#     except Exception as e:
+#         raise
+
+# def login_buttons(request):
+#     try:
+#         return render(request, 'loginButtons.html')
+#     except Exception as e:
+#         raise
+
+
+# def home(request):
+#     return render(request, 'home.html', {'user': request.user})
+
+# def login_user(request):
+#     if request.method == 'POST':
+#         if not request.body:
+#             return JsonResponse({'error': 'Empty request body'}, status=400)
+#         try:
+#             data = json.loads(request.body)
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+#         username = data.get('username')
+#         password = data.get('password')
+
+#         if not username or not password:
+#             return JsonResponse({'error': 'Veuillez remplir tous les champs'}, status=400)
+
+#         user = authenticate(request, username = username, password = password)
+
+#         if user is not None:
+#             login(request, user)
+            # token = generate_jwt_token(user),
+            # return JsonResponse({'token': token, 'message': 'Login successful'})
+#         else:
+#             return JsonResponse({'error': 'Invalid username or password'}, status=401)
+#     form = AuthenticationForm()
+#     return render(request, "login.html", {"form": form})
+
+# def logout_user(request):
+#     logout(request)
+#     return JsonResponse({'status': 'logged out'})
+
+# def register(request):
+#     print(request.body)
+#     if request.method == 'POST':
+#         if not request.body:
+#             return JsonResponse({'error': 'Empty request body'}, status=400)
+#         try:
+#             data = json.loads(request.body)
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+#         form = UserCreationForm(data)
+#         if form.is_valid():
+#             form.save()
+#             return JsonResponse({'register': True, 'message': 'Register successful'})
+#         else:
+#             print(form.errors)
+#     else:
+#         form = UserCreationForm()
+#     return render(request, "register.html", {"form": form})
+
+# def check_authentication(request):
+#     if request.user.is_authenticated:
+#         return JsonResponse({'isAuthenticated': True})
+#     else:
+#         return JsonResponse({'isAuthenticated': False})
 
 def generate_jwt_token(user):
     dt = datetime.datetime.now() + datetime.timedelta(hours=1)

@@ -60,3 +60,69 @@ export async function send_game_creation_request() {
 		console.error('Error:', error);
 	}
 }
+
+export function login_user_request() {
+	const formData = {
+        username: document.getElementById('username_login').value,
+        password: document.getElementById('password_login').value,
+    };
+    return fetch('https://localhost:8443/auth/login/', {
+        method: 'POST',
+        headers: {
+		'Content-Type': 'application/json',
+		'X-CSRFToken': localStorage.getItem('csrftoken'),
+		},
+        body: JSON.stringify(formData)
+    })
+    .then(data => data.json())
+	.then(data => {
+		if (data.token){
+			localStorage.setItem('jwt', data.token);
+			console.log('Login successful');
+			div_handler("game-div");
+		} else {
+			console.error('Login failed');
+		}
+	})
+	.catch(error => {
+		console.error('Error:', error);
+	});
+}
+
+
+export function register_user_request() {
+	const formData = {
+        username: document.getElementById('username_register').value,
+        password1: document.getElementById('password1_register').value,
+		password2: document.getElementById('password2_register').value,
+    };
+    return fetch('https://localhost:8443/auth/register/', {
+        method: 'POST',
+        headers: {
+			'Content-Type': 'application/json',
+			'X-CSRFToken': localStorage.getItem('csrftoken'),
+		},
+        body: JSON.stringify(formData)
+    })
+    .then(data => data.json())
+	.then(data => {
+		console.log("register successful");
+	})
+}
+
+
+export function logout_user_request() {
+	console.log("heyeeee");
+    fetch('https://localhost:8443/auth/logout/', {
+        method: 'GET', // Ou POST selon votre implémentation
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Si vous utilisez JWT
+			'X-CSRFToken': localStorage.getItem('csrftoken'),
+		},
+    })
+    .then(() => {
+        localStorage.removeItem('jwt'); // Supprimer le token JWT stocké localement
+		console.log("logout");
+        // Mettre à jour l'UI pour refléter la déconnexion
+    });
+}

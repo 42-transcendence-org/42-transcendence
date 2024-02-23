@@ -19,18 +19,31 @@
 <body>
 	<main>
 		<header>
-			<div class=".auth-buttons" id="statusUser">
-				<script type="module" src="{% static 'js/authentification/authScript.js' %}"></script>
-				<script type="module" src="{% static 'js/authentification/diplayAuth.js' %}"></script>
-			</div>
 			<h1>ft_transcendence</h1>
+			<button id="login-button" type="submit">Login</button>
+			<button id="register-button" type="submit">Register</button>
+			<button id="logout-button" type="submit">Logout</button>
 		</header>
-
-		<div id="alias-div">
-			<input type="text" id="alias" placeholder="Alias">
-			<button id="ok-button">OK</button>
+		<div id="Login">
+			<form id="loginForm">
+				<label for="username">Username:</label>
+				<input type="text" id="username_login" name="username" required>
+				<label for="password">Password:</label>
+				<input type="password" id="password_login" name="password" required>
+				<button id="submit-login-button" type="submit">Login</button>
+			</form>
 		</div>
-		<div class= "log" id="authFormContainer"></div>
+		<div id="Register">
+			<form id="registerForm">
+				<label for="username">Username:</label>
+				<input type="text" id="username_register" name="username" required>
+				<label for="password1">Password:</label>
+				<input type="password" id="password1_register" name="password1" required>
+				<label for="password2">Confirm Password:</label>
+				<input type="password" id="password2_register" name="password2" required>
+				<button id="submit-register-button" type="submit">Register</button>
+			</div>
+		</form>
 		<div id="game-menu-div">
 			<button id="local-button">Play Local Game</button>
 			<button id="remote-button">Play Remote Game</button>
@@ -41,6 +54,7 @@
 			<canvas id="game-canvas" width="480" height="650"></canvas>
 		</div>
 		<script> window.ASSETS_URL = "{% static '' %}" + "assets/"; </script>
+		<script type="module" src="{% static 'js/authentification/authScript.js' %}"></script>
 		<script type="module" src="{% static 'js/pong/global.js' %}"></script>
 		<script type="module" src="{% static 'js/pong/session.js' %}"></script>
 		<script type="module" src="{% static 'js/pong/graphics.js' %}"></script>
