@@ -21,6 +21,6 @@ urlpatterns = [
     path('logout/', LogoutAPIView.as_view(), name='api_register'),
 
 	#Check
-    # path('check-authentication/', views.check_authentication, name='check_authentication'),
+    path('check-authentication/', views.check_authentication, name='check_authentication'),
 
 ]

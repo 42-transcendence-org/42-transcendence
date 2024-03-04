@@ -20,9 +20,14 @@
 	<main>
 		<header>
 			<h1>ft_transcendence</h1>
-			<button id="login-button" type="submit">Login</button>
-			<button id="register-button" type="submit">Register</button>
-			<button id="logout-button" type="submit">Logout</button>
+			<div id="notLoggedIn">
+				<button id="login-button" type="submit">Login</button>
+				<button id="register-button" type="submit">Register</button>
+			</div>
+			<div id="loggedIn">
+				<p>Welcome, <span id="username"></span>!</p>
+				<button id="logout-button" type="submit">Logout</button>
+			</div>
 		</header>
 		<div id="Login">
 			<form id="loginForm">
@@ -54,7 +59,6 @@
 			<canvas id="game-canvas" width="480" height="650"></canvas>
 		</div>
 		<script> window.ASSETS_URL = "{% static '' %}" + "assets/"; </script>
-		<script type="module" src="{% static 'js/authentification/authScript.js' %}"></script>
 		<script type="module" src="{% static 'js/pong/global.js' %}"></script>
 		<script type="module" src="{% static 'js/pong/session.js' %}"></script>
 		<script type="module" src="{% static 'js/pong/graphics.js' %}"></script>

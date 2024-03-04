@@ -66,6 +66,8 @@ export function login_user_request() {
         username: document.getElementById('username_login').value,
         password: document.getElementById('password_login').value,
     };
+	localStorage.setItem('username', document.getElementById('username_login').value);
+	console.log("verif: ", localStorage.getItem('username'))
     return fetch('https://localhost:8443/auth/login/', {
         method: 'POST',
         headers: {
@@ -77,9 +79,10 @@ export function login_user_request() {
     .then(data => data.json())
 	.then(data => {
 		if (data.token){
+			localStorage.setItem('isLogged', true);
 			localStorage.setItem('jwt', data.token);
 			console.log('Login successful');
-			div_handler("game-div");
+			div_handler("game-menu-div");
 		} else {
 			console.error('Login failed');
 		}
@@ -114,15 +117,17 @@ export function register_user_request() {
 export function logout_user_request() {
 	console.log("heyeeee");
     fetch('https://localhost:8443/auth/logout/', {
-        method: 'GET', // Ou POST selon votre implémentation
+        method: 'GET',
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Si vous utilisez JWT
+            'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 			'X-CSRFToken': localStorage.getItem('csrftoken'),
 		},
     })
     .then(() => {
-        localStorage.removeItem('jwt'); // Supprimer le token JWT stocké localement
+        localStorage.removeItem('jwt'); 
+		localStorage.setItem('isLogged', false);
+		localStorage.removeItem('username');
 		console.log("logout");
-        // Mettre à jour l'UI pour refléter la déconnexion
+		div_handler("");
     });
 }
