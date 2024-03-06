@@ -19,23 +19,16 @@ export function div_handler(div_to_show) {
 	all_divs.forEach(div => {
 		if (div.id === div_to_show) {
 			div.style.display = 'block';
-		} else if (div.id === 'loggedIn') {
+		} else if (div.id === 'loggedIn' && div_to_show != 'game-div') {
 			console.log("Check: ", localStorage.getItem('isLogged'));
 			if (localStorage.getItem('isLogged') === 'true'){
 				div.style.display = 'block';
 			} else {
 				div.style.display = 'none';
 			}
-		} else if (div.id === 'notLoggedIn') {
+		} else if (div.id === 'notLoggedIn' && div_to_show != 'game-div') {
 			console.log("Check2: ", localStorage.getItem('isLogged'));
 			if (localStorage.getItem('isLogged') === 'false'){
-				div.style.display = 'block';
-			} else {
-				div.style.display = 'none';
-			}
-		} else if (div.id === 'statusUser') {
-			console.log("Check2: ", localStorage.getItem('isLogged'));
-			if (localStorage.getItem('isLogged') === 'true'){
 				div.style.display = 'block';
 			} else {
 				div.style.display = 'none';
