@@ -18,16 +18,14 @@ export function div_handler(div_to_show) {
 
 	all_divs.forEach(div => {
 		if (div.id === div_to_show) {
-			div.style.display = 'block';
+				div.style.display = 'block';
 		} else if (div.id === 'loggedIn' && div_to_show != 'game-div') {
-			console.log("Check: ", localStorage.getItem('isLogged'));
 			if (localStorage.getItem('isLogged') === 'true'){
 				div.style.display = 'block';
 			} else {
 				div.style.display = 'none';
 			}
 		} else if (div.id === 'notLoggedIn' && div_to_show != 'game-div') {
-			console.log("Check2: ", localStorage.getItem('isLogged'));
 			if (localStorage.getItem('isLogged') === 'false'){
 				div.style.display = 'block';
 			} else {
@@ -40,10 +38,8 @@ export function div_handler(div_to_show) {
 }
 
 export function firstView(){
-	console.log('State User:', localStorage.getItem('isLogged'));
 	isLoggedIn().then(isAuthenticated => {
 		if (localStorage.getItem('isLogged') === 'true') {
-			console.log('User is logged in');
 			var username = localStorage.getItem('username'); 
 			if (username) {
 				var usernameElement = document.getElementById('username');
@@ -51,7 +47,6 @@ export function firstView(){
 			}
 			div_handler("game-menu-div");
 		} else {
-			console.log('User is not logged in');
 			div_handler("");
 		}
 	});
@@ -64,7 +59,6 @@ function isLoggedIn() {
         .then(response => response.json())
         .then(data => {
 			if (data.isAuthenticated){
-                console.log('Authentication check', data.isAuthenticated);
 				return true;
 			}
 			return false;

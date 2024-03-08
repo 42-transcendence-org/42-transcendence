@@ -20,16 +20,19 @@
 	<main>
 		<header>
 			<h1>ft_transcendence</h1>
-			<div id="notLoggedIn">
+			<div id="notLoggedIn" style="display: none;">
 				<button id="login-button" type="submit">Login</button>
 				<button id="register-button" type="submit">Register</button>
 			</div>
-			<div id="loggedIn">
+			<div id="loggedIn" style="display: none;">
 				<p>Welcome, <span id="username"></span>!</p>
 				<button id="logout-button" type="submit">Logout</button>
 			</div>
+			<div id="Registered" style="display: none;">
+				<p>You've been registered, you can now loggin</p>
+			</div>
 		</header>
-		<div id="Login">
+		<div id="Login" style="display: none;">
 			<form id="loginForm">
 				<label for="username">Username:</label>
 				<input type="text" id="username_login" name="username" required>
@@ -38,7 +41,7 @@
 				<button id="submit-login-button" type="submit">Login</button>
 			</form>
 		</div>
-		<div id="Register">
+		<div id="Register" style="display: none;">
 			<form id="registerForm">
 				<label for="username">Username:</label>
 				<input type="text" id="username_register" name="username" required>
@@ -49,13 +52,13 @@
 				<button id="submit-register-button" type="submit">Register</button>
 			</div>
 		</form>
-		<div id="game-menu-div">
+		<div id="game-menu-div" style="display: none;">
 			<button id="local-button">Play Local Game</button>
 			<button id="remote-button">Play Remote Game</button>
 			<button id="ai-button">Play Against AI</button>
 			<button id="tournament-button"> Tournament</button>
 		</div>
-		<div id="game-div">
+		<div id="game-div" style="display: none;">
 			<canvas id="game-canvas" width="480" height="650"></canvas>
 		</div>
 		<script> window.ASSETS_URL = "{% static '' %}" + "assets/"; </script>

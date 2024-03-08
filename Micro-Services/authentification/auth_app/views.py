@@ -15,6 +15,8 @@ from django.contrib.auth import logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth.models import User
+
 
 class LoginAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -26,7 +28,10 @@ class LoginAPIView(APIView):
             if user:
                 login(request, user)
                 token = generate_jwt_token(user),
-                return JsonResponse({'token': token, 'message': 'Login successful'}, status=status.HTTP_200_OK)
+                return JsonResponse({'token': token, 'username': user.username, 'message': 'Login successful'}, status=status.HTTP_200_OK)
+            else:
+                errors = {}
+                errors['Authentication'] = 'Username or password are incorrect'
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class RegisterAPIView(APIView):
@@ -36,6 +41,12 @@ class RegisterAPIView(APIView):
         if form.is_valid():
             form.save()
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        else:
+            errors = {}
+            if 'username' in form.errors and User.objects.filter(username=request.data['username']).exists():
+                errors['username'] = 'Username already exists'
+            if 'password2' in form.errors:
+                errors['password2'] = 'Passwords do not match'
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutAPIView(APIView):

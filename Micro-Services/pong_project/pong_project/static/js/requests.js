@@ -1,11 +1,10 @@
 import * as g from './pong/global.js';
 import { session_create } from './pong/session.js';
-import { get_cookie, div_handler } from './utils.js';
+import { get_cookie, div_handler, firstView } from './utils.js';
 
 export async function send_user_input(input, time) {
 
 	const token = localStorage.getItem("jwt");
-	console.log(token);
 	try {
 		if (window.game_session === null || window.game_session.id === 0)
 			return;
@@ -32,7 +31,6 @@ export async function send_user_input(input, time) {
 export async function send_game_creation_request() {
 
 	const token = localStorage.getItem("jwt");
-	console.log(token);
 	try {
 		const response = await fetch('https://localhost:8443/game/', {
 			method: 'POST',
@@ -51,7 +49,6 @@ export async function send_game_creation_request() {
 		}
 
 		if (data) {
-			console.log("data_id = ", data.id);
 			session_create(data.id, g.TYPE_REMOTE);
 		} else {
 			console.error('Game creation failed');
@@ -66,8 +63,6 @@ export function login_user_request() {
         username: document.getElementById('username_login').value,
         password: document.getElementById('password_login').value,
     };
-	localStorage.setItem('username', document.getElementById('username_login').value);
-	console.log("verif: ", localStorage.getItem('username'))
     return fetch('https://localhost:8443/auth/login/', {
         method: 'POST',
         headers: {
@@ -81,10 +76,12 @@ export function login_user_request() {
 		if (data.token){
 			localStorage.setItem('isLogged', true);
 			localStorage.setItem('jwt', data.token);
-			console.log('Login successful');
-			div_handler("game-menu-div");
+			localStorage.setItem('username', data.username);
+			firstView();
+			document.getElementById('username_login').value = '';
+			document.getElementById('password_login').value = '';
 		} else {
-			console.error('Login failed');
+			alert(data.Authentication);
 		}
 	})
 	.catch(error => {
@@ -109,13 +106,26 @@ export function register_user_request() {
     })
     .then(data => data.json())
 	.then(data => {
-		console.log("register successful");
+		if (data.message){
+			document.getElementById('username_register').value = '',
+			document.getElementById('password1_register').value = '',
+			document.getElementById('password2_register').value = '',
+			div_handler("Registered");
+		} else {
+			if (data.username)
+				alert(data.username);
+			if (data.password2) {
+				alert(data.password2);
+			}
+		}
+	})
+	.catch(error => {
+		console.error('Error:', error);
 	})
 }
 
 
 export function logout_user_request() {
-	console.log("heyeeee");
     fetch('https://localhost:8443/auth/logout/', {
         method: 'GET',
         headers: {
@@ -127,7 +137,6 @@ export function logout_user_request() {
         localStorage.removeItem('jwt'); 
 		localStorage.setItem('isLogged', false);
 		localStorage.removeItem('username');
-		console.log("logout");
-		div_handler("");
+		firstView();
     });
 }
