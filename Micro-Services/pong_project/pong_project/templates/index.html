@@ -18,48 +18,58 @@
 
 <body>
 	<main>
-		<header>
-			<h1>ft_transcendence</h1>
-			<div id="notLoggedIn" style="display: none;">
-				<button id="login-button" type="submit">Login</button>
-				<button id="register-button" type="submit">Register</button>
-			</div>
-			<div id="loggedIn" style="display: none;">
+		<header class="banner" id = "a">
+			<h1 id ="home-banner">ft_transcendence</h1>
+			<div id="login-banner" style="display: none;">
+				<button id="sound-button">Sound</button>
 				<p>Welcome, <span id="username"></span>!</p>
 				<button id="logout-button" type="submit">Logout</button>
+			</div>
+		</header>
+		<div id="isLogged" style="display: none;">
+			<div id="logged-in-home" style="display: none;">
+				<button id="local-button">Play Local Game</button>
+				<button id="remote-button">Play Remote Game</button>
+				<button id="ai-button">Play Against AI</button>
+				<button id="tournament-button"> Tournament</button>
+			</div>
+			<div id="game-div" style="display: none;">
+				<button id="test-button">Test Page</button>
+				<canvas id="game-canvas" width="480" height="650"></canvas>
+			</div>
+			<div id="test" style="display: none;">
+				<p>Test</p>
+				<button id="home-button">Home</button>
+			</div>
+		</div>
+		<div id="isNotLogged" style="display: none;">
+			<div id="Login" style="display: none;">
+				<form id="loginForm">
+					<label for="username">Username:</label>
+					<input type="text" id="username_login" name="username" required>
+					<label for="password">Password:</label>
+					<input type="password" id="password_login" name="password" required>
+					<button id="submit-login-button" type="submit">Login</button>
+				</form>
+			</div>
+			<div id="Register" style="display: none;">
+				<form id="registerForm">
+					<label for="username">Username:</label>
+					<input type="text" id="username_register" name="username" required>
+					<label for="password1">Password:</label>
+					<input type="password" id="password1_register" name="password1" required>
+					<label for="password2">Confirm Password:</label>
+					<input type="password" id="password2_register" name="password2" required>
+					<button id="submit-register-button" type="submit">Register</button>
+				</form>
+			</div>
+			<div id="not-logged-home" style="display: none;">
+				<button id="login-button" type="submit">Login</button>
+				<button id="register-button" type="submit">Register</button>
 			</div>
 			<div id="Registered" style="display: none;">
 				<p>You've been registered, you can now loggin</p>
 			</div>
-		</header>
-		<div id="Login" style="display: none;">
-			<form id="loginForm">
-				<label for="username">Username:</label>
-				<input type="text" id="username_login" name="username" required>
-				<label for="password">Password:</label>
-				<input type="password" id="password_login" name="password" required>
-				<button id="submit-login-button" type="submit">Login</button>
-			</form>
-		</div>
-		<div id="Register" style="display: none;">
-			<form id="registerForm">
-				<label for="username">Username:</label>
-				<input type="text" id="username_register" name="username" required>
-				<label for="password1">Password:</label>
-				<input type="password" id="password1_register" name="password1" required>
-				<label for="password2">Confirm Password:</label>
-				<input type="password" id="password2_register" name="password2" required>
-				<button id="submit-register-button" type="submit">Register</button>
-			</div>
-		</form>
-		<div id="game-menu-div" style="display: none;">
-			<button id="local-button">Play Local Game</button>
-			<button id="remote-button">Play Remote Game</button>
-			<button id="ai-button">Play Against AI</button>
-			<button id="tournament-button"> Tournament</button>
-		</div>
-		<div id="game-div" style="display: none;">
-			<canvas id="game-canvas" width="480" height="650"></canvas>
 		</div>
 		<script> window.ASSETS_URL = "{% static '' %}" + "assets/"; </script>
 		<script type="module" src="{% static 'js/pong/global.js' %}"></script>

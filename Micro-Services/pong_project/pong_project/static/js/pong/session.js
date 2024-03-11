@@ -47,7 +47,7 @@ export function session_create(id, type) {
 
 function session_destroy() {
 	sound.stop_music();
-	div_handler("game-menu-div");
+	div_handler("logged-in-home");
 	cancelAnimationFrame(window.request_id);
 	window.game_session = null;
 	window.request_id = null;
