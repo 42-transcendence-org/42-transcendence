@@ -7,27 +7,27 @@ export class Client {
 		this.formRegisterDisplay = false;
 		this.game_manager = new game_manager.GameManager();
 	}
-
+	
 	init() {
 		this.firstView();
 		document.getElementById('login-button').addEventListener('click', () =>  this.displayFormLogin());
 		document.getElementById('register-button').addEventListener('click', () =>  this.displayFormRegister());
 		document.addEventListener('keydown', (event) => this.game_manager.input.key_handler(event));
 		document.addEventListener('keyup', (event) => this.game_manager.input.key_handler(event));
-
-
-
+		
+		
+		
 		document.getElementById('local-button').addEventListener('click', () => this.game_manager.game_create(g.TYPE_LOCAL));
 		document.getElementById('remote-button').addEventListener('click', () => this.game_manager.game_create(g.TYPE_REMOTE));
 		document.getElementById('ai-button').addEventListener('click', () => this.game_manager.game_create(g.TYPE_AI));
 
-
+		
 		document.getElementById('loginForm').addEventListener('submit', () => this.login_user_request());
 		document.getElementById('registerForm').addEventListener('submit', () => this.register_user_request());
 		document.getElementById('logout-button').addEventListener('click', () => this.logout_user_request());
 	}
-
-
+	
+	
 	/* FIXME: Could be probably be replaced by var csrf = document.querySelector('meta[name="csrf-token"]').content; */
 	get_cookie(name) {
 		let cookie_value = null;
@@ -43,7 +43,7 @@ export class Client {
 		}
 		return cookie_value;
 	}
-
+	
 	displayFormLogin(){
 		if (!this.formLoginDisplay) {
 			this.show_div("Login"); 
@@ -54,7 +54,7 @@ export class Client {
 			this.formLoginDisplay = false; 
 		}
 	}
-
+	
 	displayFormRegister(){
 		if (!this.formRegisterDisplay) { 
 			this.show_div("Register"); 
@@ -69,7 +69,7 @@ export class Client {
 
 	show_div(div_to_show) {
 		const all_divs = document.querySelectorAll('div');
-
+		
 		all_divs.forEach(div => {
 			if (div.id === div_to_show) {
 				div.style.display = 'block';
@@ -90,7 +90,7 @@ export class Client {
 			}
 		});
 	}
-
+	
 	firstView() {
 		this.isLoggedIn().then(isAuthenticated => {
 			if (localStorage.getItem('isLogged') === 'true') {
@@ -105,22 +105,24 @@ export class Client {
 			}
 		});
 	}
-
+	
 	isLoggedIn() {
 		return fetch('https://localhost:8443/auth/check-authentication/', {
 			credentials: 'include'
 		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.isAuthenticated) {
-					return true;
-				}
-				return false;
-			})
-			.catch(error => {
-				console.error('Error checking authentication:', error);
-				return false;
-			});
+		.then(response => response.json())
+		.then(data => {
+			if (data.isAuthenticated) {
+				localStorage.setItem('isLogged', true);
+				return true;
+			}
+			localStorage.setItem('isLogged', false);
+			return false;
+		})
+		.catch(error => {
+			console.error('Error checking authentication:', error);
+			return false;
+		});
 	}
 
 
@@ -130,7 +132,6 @@ export class Client {
 			username: document.getElementById('username_login').value,
 			password: document.getElementById('password_login').value,
 		};
-		console.log("Creat game: ", window.client.get_cookie('csrftoken'));
 		return fetch('https://localhost:8443/auth/login/', {
 			method: 'POST',
 			headers: {

@@ -159,7 +159,6 @@ export class GameManager {
 				this.event_source = new EventSource(url);
 
 				this.event_source.onmessage = (event) => {
-					console.log("data: ", event);
 					const data = JSON.parse(event.data);
 
 					this.latest_server_tick = data[0];
@@ -196,7 +195,6 @@ export class GameManager {
 
 	async send_game_creation_request() {
 		const token = localStorage.getItem("jwt");
-		console.log("Creat game: ", window.client.get_cookie('csrftoken'));
 		const response = await fetch('https://localhost:8443/game/', {
 			method: 'POST',
 			headers: {

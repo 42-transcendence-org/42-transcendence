@@ -49,8 +49,6 @@ export class GraphicsManager {
 
 	interpolate(older_snap, newer_snap, alpha) {
 
-		console.log(alpha, older_snap.tick, newer_snap.tick);
-
 		SnapshotManager.load_state(this.display, newer_snap);
 
 		const newer_state = newer_snap.state;
