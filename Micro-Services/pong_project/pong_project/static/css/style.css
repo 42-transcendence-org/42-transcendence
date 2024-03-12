@@ -24,11 +24,19 @@
 	width: 100%;
 }
 
+#login-banner {
+	/* display: inline-block; */
+}
+
 #logout-button:hover {
     background-color: #4169E1; /* Bleu foncé au survol */
 }
 
-
+#unauthorized {
+	color:red;
+	font-size: 30px;
+	width: 50%;
+}
 
 body {
 	font-family: 'Code Page 437', sans-serif;

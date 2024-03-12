@@ -19,11 +19,11 @@
 <body>
 	<main>
 		<header class="banner" id = "a">
-			<h1 id ="home-banner">ft_transcendence</h1>
+			<h1 id ="home-banner" s>ft_transcendence</h1>
 			<div id="login-banner" style="display: none;">
-				<button id="sound-button">Sound</button>
-				<p>Welcome, <span id="username"></span>!</p>
-				<button id="logout-button" type="submit">Logout</button>
+				<button id="sound-button" style="display: inline-block;">Sound</button>
+				<p style="display: inline-block;">Welcome, <span id="username"></span>!</p>
+				<button id="logout-button" type="submit" style="display: inline-block;">Logout</button>
 			</div>
 		</header>
 		<div id="isLogged" style="display: none;">
@@ -70,6 +70,9 @@
 			<div id="Registered" style="display: none;">
 				<p>You've been registered, you can now loggin</p>
 			</div>
+		</div>
+		<div id="unauthorized" style="display: none;">
+			<p>Unauthorized</p>
 		</div>
 		<script> window.ASSETS_URL = "{% static '' %}" + "assets/"; </script>
 		<script type="module" src="{% static 'js/pong/global.js' %}"></script>

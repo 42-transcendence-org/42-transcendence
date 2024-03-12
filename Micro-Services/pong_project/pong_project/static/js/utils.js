@@ -1,5 +1,3 @@
-import { debug_mute_music } from './pong/sound.js';
-
 export function get_cookie(name) {
 	let cookie_value = null;
 	if (document.cookie && document.cookie !== '') {
@@ -67,14 +65,11 @@ function addToHistory() {
 		return ;
 	}
 
-	// if (history.length > 1) {
 	if (history.state !== null) {
 		history.pushState({id: div.id, count: count}, '', '');
-		console.log('pushed');
 	}
 	else { //for first load, console warning if not replacing bc only 1 state or smth
 		history.replaceState({id: div.id, count: count}, '', '');
-		console.log('replaced');
 	}
 
 
@@ -82,10 +77,10 @@ function addToHistory() {
 
 export function div_handler(div_to_show) {
 	
-	if (history.state && history.state.id === div_to_show) {
-		alert('You already are on this page !');
-		return ;
-	}
+	// if (history.state && history.state.id === div_to_show) {
+	// 	alert('You already are on this page !');
+	// 	return ;
+	// }
 	
 	count++;
 
@@ -96,67 +91,64 @@ export function div_handler(div_to_show) {
 let previous_div = null;
 let loggedDiv = document.getElementById('isLogged');
 let notLoggedDiv = document.getElementById('isNotLogged');
-let errBanner = document.getElementById('error-banner');
+let logginBanner = document.getElementById('login-banner');
 
-export function divDisplay(div_to_show) {
-	console.log(history);
-
-
-
+export function display_loggedDivs_or_notLoggedDivs() {
 
 	let isLogged = localStorage.getItem('isLogged');
 	
-	// console.log('isLogged:', isLogged);
+	if (isLogged === 'true') {
+		loggedDiv.style.display = 'block';
+		logginBanner.style.display = 'block';
+		notLoggedDiv.style.display = 'none';
+	} else {
+		loggedDiv.style.display = 'none';
+		logginBanner.style.display = 'none';
+		notLoggedDiv.style.display = 'block';
+	}
+}
 
-	let homeDiv = (isLogged === 'true') ? 'logged-in-home' : 'not-logged-home';
+export function thisDivCanBeShown(div_to_show) {
 
 	let childDivs = null;
 	
-	if (isLogged === 'true') {
-		loggedDiv.style.display = 'block';
-		document.getElementById('login-banner').style.display = 'block';
-		notLoggedDiv.style.display = 'none';
-		console.log('logged');
+	if (localStorage.getItem('isLogged') === 'true') {
 		childDivs = loggedDiv.querySelectorAll('div');
 	} else {
-		loggedDiv.style.display = 'none';
-		document.getElementById('login-banner').style.display = 'none';
-		notLoggedDiv.style.display = 'block';
 		childDivs = notLoggedDiv.querySelectorAll('div');
-		console.log('not logged');
 	}
-	// console.log(childDivs)
-	
-	let isAllowed = false;
 
+	let canBeShown = false;
+	
 	childDivs.forEach(childDiv => {
 		if (childDiv.id === div_to_show) {
-			isAllowed = true;
+			canBeShown = true;
 		}
-		// console.log('got:', div.id, 'and', div_to_show);
 	});
 
-	if (isAllowed === false) {
-		div_to_show = homeDiv;
+	return canBeShown;
 
-		alert('You are not allowed to access this page, you need to ' + (isLogged === 'true' ? 'delog first' : 'log in first'));
-		// errBanner.backgroundColor = 'red';
-		// return ;
+}
+
+export function divDisplay(div_to_show) {
+
+	display_loggedDivs_or_notLoggedDivs();
+
+	if (thisDivCanBeShown(div_to_show) === false) {
+		div_to_show = 'unauthorized';
+		document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (localStorage.getItem('isLogged') === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
+		// alert('You are not allowed to access this page');
 	}
 	
-	let div = document.getElementById(div_to_show);
-	div.style.display = 'block';
-	// console.log(div_to_show, 'div_to_show, and div gotten:', div.id);
-
-
-	if (previous_div && previous_div != div)
+	if (previous_div)
 		previous_div.style.display = 'none';
-	// all_divs.forEach(div => {
-	// 	console.log(div.id, div.style.display);
-	// })
+
+	let div = document.getElementById(div_to_show);
+
+	div.style.display = 'block';
+
+
 	previous_div = div;
-	console.log('previous div:', previous_div.id);
-	// showShownDivs();
 
 }
 

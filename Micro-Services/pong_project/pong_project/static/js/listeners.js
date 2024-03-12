@@ -12,11 +12,11 @@ import { divDisplay, getDivId, home } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', function () {
 	
-	if (history.length > 1 && history.state != null) {
+	if (history.length > 1 && history.state != null) { //to handle: use of back button until previous page is reached, then use of forward
 		divDisplay(getDivId(history.state.id));
 	}
 	else {
-	firstView();
+		firstView();
 	}
 	debug_mute_music();
 	document.getElementById('login-button').addEventListener('click', function(event) {div_handler("Login");});
