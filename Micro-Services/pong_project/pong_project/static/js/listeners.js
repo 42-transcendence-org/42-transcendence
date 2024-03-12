@@ -5,7 +5,7 @@ import { div_handler } from './utils.js';
 import { firstView } from './utils.js';
 import { gestionnairePopState } from './utils.js';
 import { debug_mute_music, mute_sounds } from './pong/sound.js';
-import { divDisplay, getDivId, home } from './utils.js';
+import { divDisplay, getDivId, home} from './utils.js';
 // import { refreshFunction } from './utils.js';
 
 /* FIXME Move load font somewhere else */
@@ -13,6 +13,7 @@ import { divDisplay, getDivId, home } from './utils.js';
 document.addEventListener('DOMContentLoaded', function () {
 	
 	if (history.length > 1 && history.state != null) { //to handle: use of back button until previous page is reached, then use of forward
+		(history.state.username !== null ) ? document.getElementById('username').textContent = history.state.username : null;
 		divDisplay(getDivId(history.state.id));
 	}
 	else {

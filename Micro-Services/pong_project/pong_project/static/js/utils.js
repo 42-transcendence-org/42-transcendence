@@ -65,11 +65,13 @@ function addToHistory() {
 		return ;
 	}
 
+	var username = localStorage.getItem('username');
+
 	if (history.state !== null) {
-		history.pushState({id: div.id, count: count}, '', '');
+		history.pushState({id: div.id, count: count, username: username}, '', '');
 	}
 	else { //for first load, console warning if not replacing bc only 1 state or smth
-		history.replaceState({id: div.id, count: count}, '', '');
+		history.replaceState({id: div.id, count: count, username:username}, '', '');
 	}
 
 
