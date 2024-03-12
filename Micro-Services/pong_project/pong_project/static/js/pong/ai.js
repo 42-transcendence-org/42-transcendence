@@ -1,4 +1,4 @@
-export class AI {
+export class AIManager {
 	constructor() {
 	}
 }

@@ -1,8 +1,5 @@
 import random
 
-from typing import List
-
-
 class Vector:
     def __init__(self, x: float, y: float):
         self.x = x
@@ -20,6 +17,47 @@ class Collision:
         self.time = t
         self.point = Vector(x, y)
         self.normal = Vector(nx, ny)
+
+
+class Particle:
+    def __init__(self, px, py, sx, sy, speed, lifetime):
+        self.life = lifetime
+        self.speed = speed
+        self.active = False
+        self.rectangle = Rectangle(px, py, sx, sy, (random.random() - 0.5) * speed, (random.random() - 0.5) * speed)
+
+
+class ParticlePool:
+    def __init__(self, size):
+        self.size = size
+        self.particle_lifetime = 1.5
+        self.pool = [Particle(0, 0, 4, 4, 100, self.particle_lifetime) for _ in range(size)]
+
+    def get(self):
+        active_particles = [particle for particle in self.pool if particle.active]
+        return active_particles
+
+    def get_n_actives(self):
+        return sum(1 for particle in self.pool if particle.active)
+
+    def reset(self, x, y):
+        for particle in self.pool:
+            particle.active = True
+            particle.life = self.particle_lifetime
+            particle.rectangle.position.x = x
+            particle.rectangle.position.y = y
+            particle.rectangle.velocity.x = (random.random() - 0.5) * particle.speed
+            particle.rectangle.velocity.y = (random.random() - 0.5) * particle.speed
+
+    def update(self, dt):
+        for particle in self.pool:
+            if particle.active:
+                particle.rectangle.position.x += particle.rectangle.velocity.x * dt
+                particle.rectangle.position.y += particle.rectangle.velocity.y * dt
+                particle.life -= dt
+                if particle.life <= 0:
+                    particle.active = False
+
 
 def ray_rectangle_collision(origin: Vector, direction: Vector, target: Rectangle) -> Collision:
     t_near = Vector(

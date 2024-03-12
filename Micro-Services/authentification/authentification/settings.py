@@ -70,7 +70,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8001',  # URL of your SPA
 ]
 
-CSRF_COOKIE_DOMAIN = '.localhost::8001'
+CSRF_COOKIE_DOMAIN = '.localhost:8001'
 
 LOGGIN_REDIRECT_URL = 'home'
 

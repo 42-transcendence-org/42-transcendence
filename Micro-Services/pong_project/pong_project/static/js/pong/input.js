@@ -1,110 +1,153 @@
 import * as g from './global.js';
-import * as request from '../requests.js';
-import { reset_state } from './state.js';
 
-export class Input {
-	constructor(id, input, time) {
-		this.id = id;
-		this.input = input;
-		this.timestamp = time;
+class Input {
+	constructor(player_id, input_id) {
+		this.sent = false;
+		this.timestamp = 0;
+		this.input_id = input_id;
+		this.player_id = player_id;
 	}
 }
 
-function get_input(key) {
-	switch (key) {
-		case 'a':
-			return g.INPUT_LEFT
-		case 'k':
-			return g.INPUT_LEFT
-		case 's':
-			return g.INPUT_RIGHT
-		case 'l':
-			return g.INPUT_RIGHT
-		case ' ':
-			return g.INPUT_SPACE
-		case 'Escape':
-			return g.INPUT_QUIT
-		default:
-			return -1;
-	}
-}
-
-document.addEventListener('keydown', (event) => {
-	const time = Date.now();
-	const key_name = event.key;
-	const input_id = get_input(key_name);
-
-	if (window.game_session === null || window.game_session.state === null || input_id === -1)
-		return;
-	if (window.game_session.type === g.TYPE_REMOTE && (key_name === 'k' || key_name === 'l'))
-		return;
-
-	let player_id;
-	if (window.game_session.type === g.TYPE_REMOTE) {
-		player_id = window.alias === window.game_session.name1 ? g.ID_PLAYER1 : g.ID_PLAYER2;
-	} else if (key_name === 'a' || key_name === 's' || key_name === ' ' || key_name === 'Escape') {
-		player_id = g.ID_PLAYER1;
-	} else if (key_name === 'k' || key_name === 'l') {
-		player_id = g.ID_PLAYER2;
+export class InputManager {
+	constructor() {
+		/* The timestamp of the last input processed by the server */
+		this.last_ack_timestamp = 0;
+		/* The timestamp of the last input sent to the server */
+		this.last_sent_timestamp = 0;
+		this.keyboard_state = {};
+		this.input_queue = [];
+		this.init();
 	}
 
-	window.game_session.inputs.push(new Input(player_id, input_id, time));
-	if (window.game_session.type === g.TYPE_REMOTE)
-		request.send_user_input(input_id, time);
-});
-
-document.addEventListener('keyup', (event) => {
-	const time = Date.now();
-	const key_name = event.key;
-	const input_id = g.INPUT_NEUTRAL;
-
-	if (window.game_session === null || window.game_session.state === null)
-		return;
-	if (window.game_session.type === g.TYPE_REMOTE && (key_name === 'k' || key_name === 'l'))
-		return;
-
-	let player_id;
-	if (window.game_session.type === g.TYPE_REMOTE) {
-		player_id = window.alias === window.game_session.name1 ? g.ID_PLAYER1 : g.ID_PLAYER2;
-	} else if (key_name === 'a' || key_name === 's') {
-		player_id = g.ID_PLAYER1;
-	} else if (key_name === 'k' || key_name === 'l') {
-		player_id = g.ID_PLAYER2;
+	init() {
+		this.keyboard_state['a'] = false;
+		this.keyboard_state['s'] = false;
+		this.keyboard_state['k'] = false;
+		this.keyboard_state['l'] = false;
+		this.keyboard_state['Escape'] = false;
+		this.keyboard_state[' '] = false;
 	}
 
-	window.game_session.inputs.push(new Input(player_id, input_id, time));
-	if (window.game_session.type === g.TYPE_REMOTE)
-		request.send_user_input(input_id, time);
-});
+	create_input(player_id, input_id) {
+		this.input_queue.push(new Input(player_id, input_id));
+	}
 
-export function apply_inputs(session, state) {
-	session.inputs.forEach((input) => {
-		let player = (input.id === g.ID_PLAYER1 ? state.player1 : state.player2);
-		switch (input.input) {
-			case g.INPUT_NEUTRAL:
-				player.velocity.x = 0;
-				break;
-			case g.INPUT_LEFT:
-				player.velocity.x = -g.PADDLE_SPEED;
-				break;
-			case g.INPUT_RIGHT:
-				player.velocity.x = g.PADDLE_SPEED;
-				break;
-			case g.INPUT_SPACE:
-				if (session.type != g.TYPE_REMOTE && state.status === g.STATUS_BEGIN) {
-					state.status = g.STATUS_ACTIVE;
-				} else if (session.type != g.TYPE_REMOTE && (state.status === g.STATUS_ACTIVE || state.status === g.STATUS_PAUSED)) {
-					state.status = state.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE;
-				} else if (session.type != g.TYPE_REMOTE && (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2)) {
-					state.status = g.STATUS_ACTIVE;
-					reset_state(state);
-				}
-				break;
-			case g.INPUT_QUIT:
-				if (state.status === g.STATUS_ENDED_1 || state.status === g.STATUS_ENDED_2) {
-					state.status = g.STATUS_QUIT;
-				}
-				break;
+	send_inputs_to_server(game_id) {
+		for (let i = 0; i < this.input_queue.length; i++) {
+			const input = this.input_queue[i];
+			if (input.sent)
+				continue;
+			input.sent = true;
+			this.send_user_input(game_id, input.input_id, input.timestamp);
 		}
-	});
+	}
+
+	apply_inputs_to_game(game) {
+		this.input_queue.forEach((input) => {
+			let player = (input.player_id === g.ID_PLAYER1 ? game.player1 : game.player2);
+			switch (input.input_id) {
+				case g.INPUT_NEUTRAL:
+					player.velocity.x = 0;
+					break;
+				case g.INPUT_LEFT:
+					player.velocity.x = -g.PADDLE_SPEED;
+					break;
+				case g.INPUT_RIGHT:
+					player.velocity.x = g.PADDLE_SPEED;
+					break;
+				case g.INPUT_SPACE:
+					if (game.status === g.STATUS_ACTIVE || game.status === g.STATUS_PAUSED) {
+						game.status = (game.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE);
+					} else if (game.status === g.STATUS_ENDED) {
+						game.reset();
+					}
+					break;
+				case g.INPUT_QUIT:
+					if (game.status === g.STATUS_ENDED) {
+						game.status = g.STATUS_QUIT;
+					}
+					break;
+			}
+		});
+	}
+
+	process_inputs(game_id, game, timestamp) {
+
+		for (let i = 0; i < this.input_queue.length; i++) {
+			this.input_queue[i].timestamp = timestamp;
+		}
+
+		if (game_id) {
+			this.send_inputs_to_server(game_id);
+		} else {
+			this.apply_inputs_to_game(game);
+		}
+		this.input_queue = [];
+	}
+
+	get_input_id(key_name) {
+		switch (key_name) {
+			case 'a':
+				return g.INPUT_LEFT
+			case 'k':
+				return g.INPUT_LEFT
+			case 's':
+				return g.INPUT_RIGHT
+			case 'l':
+				return g.INPUT_RIGHT
+			case ' ':
+				return g.INPUT_SPACE
+			case 'Escape':
+				return g.INPUT_QUIT
+			default:
+				return -1;
+		}
+	}
+
+	key_handler(event) {
+		if (event.key != 'a' && event.key != 's' && event.key != 'k' && event.key != 'l' && event.key != ' ' && event.key != 'Escape') {
+			return;
+		}
+
+		let player_id = 0;
+		if (event.key === 'a' || event.key === 's' || event.key === ' ' || event.key === 'Escape') {
+			player_id = g.ID_PLAYER1;
+		} else if (event.key === 'k' || event.key === 'l') {
+			player_id = g.ID_PLAYER2;
+		}
+
+		let input_id = (event.type === 'keydown' ? this.get_input_id(event.key) : g.INPUT_NEUTRAL);
+
+		if (event.type === 'keydown' && this.keyboard_state[event.key] === false) {
+			this.keyboard_state[event.key] = true;
+			this.create_input(player_id, input_id);
+		} else if (event.type === 'keyup' && this.keyboard_state[event.key] === true) {
+			this.keyboard_state[event.key] = false;
+			this.create_input(player_id, input_id);
+		}
+	}
+
+	async send_user_input(game_id, input, timestamp) {
+		const token = localStorage.getItem("jwt");
+
+		try {
+			const response = await fetch(`https://localhost:8443/game/${game_id}/`, {
+				method: 'PUT',
+				headers: {
+					'Authorization': `Bearer ${token}`,
+					'Content-Type': 'application/json',
+					'X-CSRFToken': window.client.get_cookie("csrftoken"),
+				},
+				credentials: 'include',
+				body: JSON.stringify([input, timestamp]),
+			});
+
+			if (!response.ok) {
+				throw new Error(response.statusText);
+			}
+		} catch (error) {
+			console.error('Error sending input:', error);
+		}
+	}
 }

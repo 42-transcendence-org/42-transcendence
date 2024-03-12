@@ -1,39 +1,38 @@
-const music = new Audio(window.ASSETS_URL + "glitchstairs.ogg");
-const victory = new Audio(window.ASSETS_URL + "victory.wav");
-const hit_sound = new Audio(window.ASSETS_URL + "hit.wav");
-const score_sound = new Audio(window.ASSETS_URL + "explosion.wav");
+export class SoundManager {
+	constructor() {
+		this.music = new Audio(window.ASSETS_URL + "glitchstairs.ogg");
+		this.victory = new Audio(window.ASSETS_URL + "victory.wav");
+		this.hit_sound = new Audio(window.ASSETS_URL + "hit.wav");
+		this.score_sound = new Audio(window.ASSETS_URL + "explosion.wav");
+	}
 
-music.loop = true;
-
-export function play_hit_sound() {
-	hit_sound.play().catch(error => {
-		console.warn("Audio play failed:", error);
-	});
-}
-
-export function play_explosion_sound() {
-	score_sound.play().catch(error => {
-		console.warn("Audio play failed:", error);
-	});
-}
-
-export function play_victory_sound() {
-	victory.play().catch(error => {
-		console.warn("Audio play failed:", error);
-	});
-}
-
-export function play_music() {
-	if (music) {
-		music.play().catch(error => {
+	play_hit_sound() {
+		this.hit_sound.play().catch(error => {
 			console.warn("Audio play failed:", error);
 		});
 	}
-}
 
-export function stop_music() {
-	if (music) {
-		music.pause();
-		music.currentTime = 0;
+	play_score_sound() {
+		this.score_sound.play().catch(error => {
+			console.warn("Audio play failed:", error);
+		});
+	}
+
+	play_victory_sound() {
+		this.victory.play().catch(error => {
+			console.warn("Audio play failed:", error);
+		});
+	}
+
+	play_music() {
+		this.music.loop = true;
+		this.music.play().catch(error => {
+			console.warn("Audio play failed:", error);
+		});
+	}
+
+	stop_music() {
+		this.music.pause();
+		this.music.currentTime = 0;
 	}
 }

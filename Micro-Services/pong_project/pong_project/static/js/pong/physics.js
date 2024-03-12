@@ -13,12 +13,6 @@ export class Rectangle {
 	}
 }
 
-export class Particle {
-	constructor(px, py, sx, sy, vx, vy, t) {
-		this.r = new Rectangle(px, py, sx, sy, vx, vy);
-	}
-}
-
 export class Collision {
 	constructor(t, x, y, nx, ny) {
 		this.time = t;
@@ -27,41 +21,56 @@ export class Collision {
 	}
 }
 
-/**
- *
- * @param {Vector} source - The point of origin for the particles.
- * @param {int} n - The number of particles to create.
- * @param {int} w - The width of a particle.
- * @param {int} h - The height of a particle.
- * @param {float} t - The lifetime of a particle.
- * @param {float} speed - The speed of a particle.
- * @returns {Array<Particle>} - An array filled with n Particle objects.
- */
-export function particles_create(source, n, w, h, speed) {
-	let array = [];
-	for (let i = 0; i < n; i++) {
-		array.push(new Particle(
-			source.x,
-			source.y,
-			w,
-			h,
-			(Math.random() - 0.5) * speed,
-			(Math.random() - 0.5) * speed,
-		));
+export class Particle {
+	constructor(px, py, sx, sy, speed, lifetime) {
+		this.life = lifetime;
+		this.speed = speed;
+		this.active = false;
+		this.rectangle = new Rectangle(px, py, sx, sy, (Math.random() - 0.5) * speed, (Math.random() - 0.5) * speed);
 	}
-	return array;
 }
 
-/**
- *
- * @param {Array<Particle>} array - The array containing the paricles
- * @param {float} dt
- */
-export function particles_update(array, dt) {
-	for (let i = 0; i < array.length; i++) {
-		let p = array[i];
-		p.r.position.x += p.r.velocity.x * dt;
-		p.r.position.y += p.r.velocity.y * dt;
+export class ParticlePool {
+	constructor(size) {
+		this.size = size;
+		this.particle_lifetime = 1.5;
+		this.pool = Array.from({ length: size }, () => new Particle(0, 0, 4, 4, 100, this.particle_lifetime));
+	}
+
+	get() {
+		return this.pool.filter(particle => particle.active)
+	}
+
+	get_n_actives() {
+		let actives = 0;
+		for (let particle of this.pool) {
+			if (particle.active)
+				actives++;
+		}
+		return actives;
+	}
+
+	reset(x, y) {
+		for (let particle of this.pool) {
+			particle.active = true;
+			particle.life = this.particle_lifetime;
+			particle.rectangle.position.x = x;
+			particle.rectangle.position.y = y;
+			particle.rectangle.velocity.x = (Math.random() - 0.5) * particle.speed;
+			particle.rectangle.velocity.y = (Math.random() - 0.5) * particle.speed;
+		}
+	}
+
+	update(dt) {
+		for (let particle of this.pool) {
+			if (particle.active) {
+				particle.rectangle.position.x += particle.rectangle.velocity.x * dt;
+				particle.rectangle.position.y += particle.rectangle.velocity.y * dt;
+				particle.life -= dt;
+				if (particle.life <= 0)
+					particle.active = false;
+			}
+		}
 	}
 }
 

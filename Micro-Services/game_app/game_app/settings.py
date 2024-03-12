@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', MY_IP]
 # Application definition
 
 INSTALLED_APPS = [
+    'game_app.apps.PongGameConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
