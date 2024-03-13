@@ -53,6 +53,7 @@ class LogoutAPIView(APIView):
 
 def check_authentication(request):
     if request.user.is_authenticated:
+        print("check", request.user.is_authenticated)
         return JsonResponse({'isAuthenticated': True})
     else:
         return JsonResponse({'isAuthenticated': False})
