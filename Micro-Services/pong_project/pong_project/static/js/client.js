@@ -95,7 +95,12 @@ export class Client {
 	}
 	
 	async firstView() {
+		console.log(window.location);
 		const response = await fetch('https://localhost:8443/auth/check-authentication/', {
+			method: 'GET',
+			headers: {
+				'X-CSRFToken': window.client.get_cookie('csrftoken'),
+			},
 			credentials: 'include'
 		});
 		const data = await response.json();
@@ -126,7 +131,7 @@ export class Client {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'X-CSRFToken': window.client.get_cookie('csrftoken'),
+				// 'X-CSRFToken': window.client.get_cookie('csrftoken'),
 			},
 			body: JSON.stringify(formData)
 		});
