@@ -92,18 +92,18 @@ export class Client {
 	}
 
 	firstView() {
-		this.isLoggedIn().then(isAuthenticated => {
-			if (localStorage.getItem('isLogged') === 'true') {
-				var username = localStorage.getItem('username');
-				if (username) {
-					var usernameElement = document.getElementById('username');
-					usernameElement.textContent = username;
-				}
-				this.show_div("game-menu-div");
-			} else {
-				this.show_div("");
+		this.isLoggedIn();
+		if (localStorage.getItem('isLogged') === 'true') {
+			var username = localStorage.getItem('username');
+			if (username) {
+				var usernameElement = document.getElementById('username');
+				usernameElement.textContent = username;
 			}
-		});
+			this.show_div("game-menu-div");
+		} else {
+			this.show_div("");
+		}
+
 	}
 
 	async isLoggedIn() {
