@@ -14,7 +14,6 @@ class GameServer:
         server.server_stop()
 
     def server_run(self):
-        print("PASS HERE")
         self.is_running = True
 
         # FIXME DEBUG

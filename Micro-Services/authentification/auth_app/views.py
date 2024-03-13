@@ -21,10 +21,8 @@ from django.contrib.auth.models import User
 class LoginAPIView(APIView):
     def post(self, request, *args, **kwargs):
         form = AuthenticationForm(data=request.data)
-        print(form)
         if form.is_valid():
             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
-            print(form.cleaned_data['username'])
             if user:
                 login(request, user)
                 token = generate_jwt_token(user),
@@ -37,7 +35,6 @@ class LoginAPIView(APIView):
 class RegisterAPIView(APIView):
     def post(self, request, *args, **kwargs):
         form = UserCreationForm(data=request.data)
-        print(request.data)
         if form.is_valid():
             form.save()
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
