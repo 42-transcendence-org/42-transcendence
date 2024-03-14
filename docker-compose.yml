@@ -92,6 +92,30 @@ services:
       - game_app
     restart: on-failure
 
+  user:
+    build:
+      context: ./Micro-Services/user/
+      dockerfile: Dockerfile
+    environment:
+      - HOST_IP=${HOST_IP}
+    volumes:
+      - ./Micro-Services/user/:/app
+    ports:
+      - "8004:8000"
+    restart: on-failure
+
+  tournament:
+    build:
+      context: ./Micro-Services/tournament/
+      dockerfile: Dockerfile
+    environment:
+      - HOST_IP=${HOST_IP}
+    volumes:
+      - ./Micro-Services/tournament/:/app
+    ports:
+      - "8005:8000"
+    restart: on-failure
+
   prometheus:
     build:
       context: ./Micro-Services/DevOps/Prometheus
@@ -165,4 +189,8 @@ networks:
   auth:
     driver: bridge
   game_app:
+    driver: bridge
+  user:
+    driver: bridge
+  tournament:
     driver: bridge
