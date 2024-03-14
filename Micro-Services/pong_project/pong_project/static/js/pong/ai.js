@@ -62,12 +62,10 @@ export class AIManager {
 			this.load_state(game);
 
 			if (this.game.ball.velocity.y >= 0) {
-				console.log("reset");
 				this.tick_movement = 0;
 				this.tick_collision = 0;
 				this.handle_reset(dt);
 			} else {
-				console.log("catch");
 				this.handle_collision(dt);
 				this.handle_movement(dt);
 				this.handle_reset(dt);
