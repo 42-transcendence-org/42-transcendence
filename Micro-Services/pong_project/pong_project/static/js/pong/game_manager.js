@@ -96,6 +96,12 @@ export class GameManager {
 			this.local_tick += 1;
 			this.remote_tick += 1;
 
+			/* TODO Find a way to prevent the AI from preshoting the ball during the explosion animation */
+			if (this.game_type == g.TYPE_AI && this.game.status == g.STATUS_ACTIVE) {
+				let input = this.ai.refresh(this.game, this.timestep);
+				this.input.create_input(g.ID_PLAYER2, input);
+			}
+
 			this.input.process_inputs(this.game_id, this.game, this.local_tick);
 
 			if (this.game_type != g.TYPE_REMOTE) {

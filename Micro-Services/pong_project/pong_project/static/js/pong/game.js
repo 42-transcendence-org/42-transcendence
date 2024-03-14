@@ -133,7 +133,7 @@ export class Game {
 				this.scores[g.ID_PLAYER2] += 1;
 
 			this.particle_pool.reset(this.ball.position.x + this.ball.size.x / 2, this.ball.position.y + this.ball.size.y / 2);
-			this.who_serves = !this.who_serves;
+			this.who_serves = this.who_serves === g.ID_PLAYER1 ? g.ID_PLAYER2 : g.ID_PLAYER1;
 			this.score_happened = true;
 			this.reset_ball();
 
