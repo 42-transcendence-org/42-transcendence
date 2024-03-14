@@ -106,25 +106,33 @@ export class InputManager {
 	}
 
 	key_handler(event) {
-		if (event.key != 'a' && event.key != 's' && event.key != 'k' && event.key != 'l' && event.key != ' ' && event.key != 'Escape') {
+		const relevant_keys = ['a', 's', 'k', 'l', ' ', 'Escape'];
+		if (!relevant_keys.includes(event.key)) {
 			return;
 		}
 
-		let player_id = 0;
-		if (event.key === 'a' || event.key === 's' || event.key === ' ' || event.key === 'Escape') {
-			player_id = g.ID_PLAYER1;
-		} else if (event.key === 'k' || event.key === 'l') {
-			player_id = g.ID_PLAYER2;
-		}
+		let player_id = event.key === 'a' || event.key === 's' || event.key === ' ' || event.key === 'Escape' ? g.ID_PLAYER1 : g.ID_PLAYER2;
 
-		let input_id = (event.type === 'keydown' ? this.get_input_id(event.key) : g.INPUT_NEUTRAL);
-
-		if (event.type === 'keydown' && this.keyboard_state[event.key] === false) {
-			this.keyboard_state[event.key] = true;
-			this.create_input(player_id, input_id);
-		} else if (event.type === 'keyup' && this.keyboard_state[event.key] === true) {
+		if (event.type === 'keydown') {
+			if (!this.keyboard_state[event.key]) {
+				this.keyboard_state[event.key] = true;
+				let input_id = this.get_input_id(event.key);
+				this.create_input(player_id, input_id);
+			}
+		} else if (event.type === 'keyup') {
 			this.keyboard_state[event.key] = false;
-			this.create_input(player_id, input_id);
+			let opposite_key = 0;
+			if (player_id == g.ID_PLAYER1) {
+				opposite_key = event.key === 'a' ? 's' : 'a';
+			} else {
+				opposite_key = event.key === 'k' ? 'l' : 'k';
+			}
+			if (this.keyboard_state[opposite_key]) {
+				let input_id = this.get_input_id(opposite_key);
+				this.create_input(player_id, input_id);
+			} else {
+				this.create_input(player_id, g.INPUT_NEUTRAL);
+			}
 		}
 	}
 
