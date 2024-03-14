@@ -3,33 +3,29 @@ import * as game_manager from './pong/game_manager.js';
 
 export class Client {
 	constructor() {
-		console.log("constructor");
 		this.loggedIn = false;
 		this.formLoginDisplay = false;
 		this.formRegisterDisplay = false;
 		this.game_manager = new game_manager.GameManager();
 	}
-	
+
 	init() {
 		this.firstView();
 		document.getElementById('login-button').addEventListener('click', () => this.displayFormLogin());
 		document.getElementById('register-button').addEventListener('click', () => this.displayFormRegister());
 		document.addEventListener('keydown', (event) => this.game_manager.input.key_handler(event));
 		document.addEventListener('keyup', (event) => this.game_manager.input.key_handler(event));
-		
 
-		
 		document.getElementById('local-button').addEventListener('click', () => this.game_manager.game_create(g.TYPE_LOCAL));
 		document.getElementById('remote-button').addEventListener('click', () => this.game_manager.game_create(g.TYPE_REMOTE));
 		document.getElementById('ai-button').addEventListener('click', () => this.game_manager.game_create(g.TYPE_AI));
 
-		
-		document.getElementById('loginForm').addEventListener('submit', () => this.login_user_request());
-		document.getElementById('registerForm').addEventListener('submit', () => this.register_user_request());
-		document.getElementById('logout-button').addEventListener('click', () => this.logout_user_request());
+		document.getElementById('loginForm').addEventListener('submit', (event) => this.login_user_request(event));
+		document.getElementById('registerForm').addEventListener('submit', (event) => this.register_user_request(event));
+		document.getElementById('logout-button').addEventListener('click', (event) => this.logout_user_request(event));
 	}
 
-	
+
 	/* FIXME: Could be probably be replaced by var csrf = document.querySelector('meta[name="csrf-token"]').content; */
 	get_cookie(name) {
 		let cookie_value = null;
@@ -67,13 +63,12 @@ export class Client {
 			this.formRegisterDisplay = false;
 		}
 	}
-	
+
 
 	show_div(div_to_show) {
 		const all_divs = document.querySelectorAll('div');
-		
+
 		all_divs.forEach(div => {
-			console.log(this.loggedIn);
 			if (div.id === div_to_show) {
 				div.style.display = 'block';
 			} else if (div.id === 'loggedIn' && div_to_show != 'game-div') {
@@ -93,9 +88,8 @@ export class Client {
 			}
 		});
 	}
-	
+
 	async firstView() {
-		console.log(window.location);
 		const response = await fetch('https://localhost:8443/auth/check-authentication/', {
 			method: 'GET',
 			headers: {
@@ -105,7 +99,6 @@ export class Client {
 		});
 		const data = await response.json();
 		this.loggedIn = data.isAuthenticated;
-		console.log("isogged?", this.loggedIn);
 		if (this.loggedIn == true) {
 			var username = localStorage.getItem('username');
 			if (username) {
@@ -114,13 +107,12 @@ export class Client {
 			}
 			this.show_div("game-menu-div");
 		} else {
-			console.log('coucou')
 			this.show_div("");
 		}
 
 	}
 
-	async login_user_request() {
+	async login_user_request(event) {
 		event.preventDefault()
 		const formData = {
 			username: document.getElementById('username_login').value,
@@ -148,7 +140,7 @@ export class Client {
 	}
 
 
-	async register_user_request() {
+	async register_user_request(event) {
 		event.preventDefault()
 		const formData = {
 			username: document.getElementById('username_register').value,
@@ -179,19 +171,18 @@ export class Client {
 
 	}
 
-	async logout_user_request() {
+	async logout_user_request(event) {
 		const response = await fetch('https://localhost:8443/auth/logout/', {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
 				'X-CSRFToken': window.client.get_cookie('csrftoken'),
 			},
-		})
-		console.log('check1');
+		});
+		/* FIXME: Check return code */
 		localStorage.removeItem('jwt');
 		this.loggedIn = false;
 		localStorage.removeItem('username');
 		this.firstView();
-		console.log('check2');
 	}
 }
