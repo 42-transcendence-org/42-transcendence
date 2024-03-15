@@ -76,21 +76,13 @@ export class Game {
 		}
 	}
 
-	/* Move the paddle while checking for collisions with the ball */
 	update_paddle_position(paddle, dt) {
-		/* FIXME: Find a better solution, this prevents the paddle from getting stuck in the corridor */
-		if (paddle.position.x < g.BOARD_CORRIDOR || paddle.position.x + paddle.size.x > g.BOARD_WIDTH - g.BOARD_CORRIDOR) {
-			paddle.position.x = paddle.position.x < g.BOARD_CORRIDOR ? g.BOARD_CORRIDOR : g.BOARD_WIDTH - g.BOARD_CORRIDOR;
-		}
-		let c_ball = physics.aabb_continuous_detection(paddle, this.ball, dt);
-		if (c_ball.time > 0 && c_ball.time <= 1.0) {
-			this.collision_happened = true;
-			let v = physics.aabb_continuous_resolve(paddle, c_ball);
-			paddle.position.x += v.x * dt;
-			c_ball.normal.x *= -1;
-			this.update_ball_velocity(paddle, c_ball.normal);
-		} else if (paddle.position.x + paddle.velocity.x * dt > g.BOARD_CORRIDOR && paddle.position.x + paddle.size.x + paddle.velocity.x * dt < g.BOARD_WIDTH - g.BOARD_CORRIDOR) {
-			paddle.position.x += paddle.velocity.x * dt;
+		paddle.position.x += paddle.velocity.x * dt;
+
+		if (paddle.position.x < g.BOARD_CORRIDOR) {
+			paddle.position.x = g.BOARD_CORRIDOR;
+		} else if (paddle.position.x + paddle.size.x > g.BOARD_WIDTH - g.BOARD_CORRIDOR) {
+			paddle.position.x = g.BOARD_WIDTH - g.BOARD_CORRIDOR - paddle.size.x;
 		}
 	}
 

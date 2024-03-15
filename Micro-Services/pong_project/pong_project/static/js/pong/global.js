@@ -43,11 +43,11 @@ export const ID_PLAYER2 = 1;
 /* BALL */
 export const BALL_SIDE = 16;
 export const BALL_SPEED_MIN = ((BOARD_HEIGHT / 2) - BOARD_WALL) * 1.25;
-export const BALL_SPEED_MAX = ((BOARD_HEIGHT / 2) - BOARD_WALL) * 2.50;
+export const BALL_SPEED_MAX = ((BOARD_HEIGHT / 2) - BOARD_WALL) * 2.75;
 export const BALL_MAX_ANGLE = Math.PI / 6;
 
 /* PADDLE */
 export const PADDLE_WIDTH = 64;
-export const PADDLE_SPEED = (BOARD_WIDTH - (2 * BOARD_CORRIDOR)) * 1.25;
+export const PADDLE_SPEED = (BOARD_WIDTH - (2 * BOARD_CORRIDOR)) * 1.50;
 
 export const POINTS_TO_WIN = 99;
