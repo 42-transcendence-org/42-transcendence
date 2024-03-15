@@ -123,6 +123,30 @@ def ray_rectangle_collision(origin: Vector, direction: Vector, target: Rectangle
     return collision
 
 
+def aabb_collision_test(r1, r2):
+    return (r1.position.x + r1.size.x >= r2.position.x and
+            r1.position.x <= r2.position.x + r2.size.x and
+            r1.position.y + r1.size.y >= r2.position.y and
+            r1.position.y <= r2.position.y + r2.size.y)
+
+def aabb_collision_resolve(r1, r2):
+    buffer = 1
+    overlap_x = min(r1.position.x + r1.size.x - r2.position.x,
+                    r2.position.x + r2.size.x - r1.position.x)
+    overlap_y = min(r1.position.y + r1.size.y - r2.position.y,
+                    r2.position.y + r2.size.y - r1.position.y)
+
+    if overlap_x < overlap_y:
+        if r1.position.x < r2.position.x:
+            r1.position.x -= overlap_x + buffer
+        else:
+            r1.position.x += overlap_x + buffer
+    else:
+        if r1.position.y < r2.position.y:
+            r1.position.y -= overlap_y + buffer
+        else:
+            r1.position.y += overlap_y + buffer
+
 def aabb_continuous_resolve(r1: Rectangle, collision: Collision) -> None:
     return Vector(
         r1.velocity.x + collision.normal.x * abs(r1.velocity.x) * (1 - collision.time),
@@ -131,6 +155,10 @@ def aabb_continuous_resolve(r1: Rectangle, collision: Collision) -> None:
 
 
 def aabb_continuous_detection(r1: Rectangle, r2: Rectangle, dt: float) -> Collision:
+
+    if aabb_collision_test(r1, r2):
+        aabb_collision_resolve(r1, r2)
+
     if r1.velocity.x == 0 and r1.velocity.y == 0:
         return Collision(-1, 0, 0, 0, 0)
 

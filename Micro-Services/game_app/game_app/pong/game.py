@@ -66,15 +66,13 @@ class Game:
             self.ball.velocity.y = normal.y * math.cos(c) * g.BALL_SPEED_MAX
 
     def update_paddle_position(self, paddle, dt):
-        c_ball = physics.aabb_continuous_detection(paddle, self.ball, dt)
-        if c_ball.time > 0 and c_ball.time <= 1.0:
-            self.collision_happened = True
-            v = physics.aabb_continuous_resolve(paddle, c_ball)
-            paddle.position.x += v.x * dt
-            c_ball.normal.x *= -1
-            self.update_ball_velocity(paddle, c_ball.normal)
-        elif (paddle.position.x + paddle.velocity.x * dt > g.BOARD_CORRIDOR and paddle.position.x + paddle.size.x + paddle.velocity.x * dt < g.BOARD_WIDTH - g.BOARD_CORRIDOR):
-            paddle.position.x += paddle.velocity.x * dt
+        paddle.position.x += paddle.velocity.x * dt
+
+        if paddle.position.x < g.BOARD_CORRIDOR:
+            paddle.position.x = g.BOARD_CORRIDOR
+        elif paddle.position.x + paddle.size.x > g.BOARD_WIDTH - g.BOARD_CORRIDOR:
+            paddle.position.x = g.BOARD_WIDTH - g.BOARD_CORRIDOR - paddle.size.x
+
 
     def update_ball_position(self, dt):
         player = None
