@@ -5,3 +5,6 @@ psycopg2-binary
 django-cors-headers
 django-prometheus
 PyJWT
+Pillow
+requests
+openai

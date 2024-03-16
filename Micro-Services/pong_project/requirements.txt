@@ -5,3 +5,5 @@ psycopg2-binary
 django-cors-headers
 django-prometheus
 djangorestframework_simplejwt
+requests
+openai

@@ -1,7 +1,10 @@
 from django.urls import path
-from .views import LoginAPIView, RegisterAPIView, LogoutAPIView
+from .views import LoginAPIView, RegisterAPIView, LogoutAPIView, EmailAPIView, UsernameAPIView, NicknameAPIView, PasswordAPIView, OAuthGetAppTokenAPIView, Login42APIView, OAuthVerifyStateAPIView, OAuthRedirectUrlAPIView, chatgpt
 # from .views import MyLoginView
 from . import views  # Adjust the import based on your view function or class
+# from .views import get_user_profile
+# from django.conf.urls.static import static
+# from django.conf import settings
 
 urlpatterns = [
 
@@ -22,5 +25,23 @@ urlpatterns = [
 
 	#Check
     path('check-authentication/', views.check_authentication, name='check_authentication'),
+    path("email/", EmailAPIView.as_view(), name="email"),
+    path("nickname/", NicknameAPIView.as_view(), name="first_name"),
+    path("username/", UsernameAPIView.as_view(), name="username"), 
+    path('get_username/', views.get_username, name='get_username'),
+    # path('get_nickname/', views.get_nickname, name='get_nickname'),
+    path("password/", PasswordAPIView.as_view(), name="password"),
+    # path('user/<int:id>', views.user),
 
+
+
+    #42OAuth
+	path('login42/', Login42APIView.as_view(), name='Login42'),
+	path('OAuthGetAppToken/', OAuthGetAppTokenAPIView.as_view(), name='OAuthGetAppToken'),
+	path('OAuthVerifyState/', OAuthVerifyStateAPIView.as_view(), name='OAuthVerifyState'),
+	path('OAuthRedirectUrl/', OAuthRedirectUrlAPIView.as_view(), name='OAuthRedirectUrl'),
+	path('get42info/', views.get42info, name='get42info'),
+	path('chatgpt/', chatgpt.as_view(), name='chatgpt'),
 ]
+
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

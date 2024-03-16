@@ -4,7 +4,7 @@ import * as input from './input.js';
 import * as sound from './sound.js';
 import * as graphics from './graphics.js';
 
-import { div_handler } from "../utils.js";
+import { nextPage } from "../utils.js";
 
 export class GameSession {
 	constructor(id, type, name1, name2) {
@@ -28,7 +28,7 @@ export class GameSession {
 export function session_create(id, type) {
 	if (window.game_session != null) {
 		/* FIXME: Check if event_source is null and attempt to reconnect */
-		div_handler("game-div");
+		nextPage("game-div");
 		return;
 	}
 	window.game_session = new GameSession(id, type, "", "");
@@ -41,13 +41,13 @@ export function session_create(id, type) {
 		window.game_session.name1 = "Player 1";
 		window.game_session.name2 = type === g.TYPE_LOCAL ? "Player 2" : "Computer";
 	}
-	div_handler("game-div");
+	nextPage("game-div");
 	update_loop_start();
 }
 
 function session_destroy() {
 	sound.stop_music();
-	div_handler("logged-in-home");
+	nextPage("logged-in-home");
 	cancelAnimationFrame(window.request_id);
 	window.game_session = null;
 	window.request_id = null;

@@ -1,3 +1,6 @@
+import { isLoggedIn } from './requests.js';
+import { get42UserData} from './Oauth.js';
+
 export function get_cookie(name) {
 	let cookie_value = null;
 	if (document.cookie && document.cookie !== '') {
@@ -13,13 +16,6 @@ export function get_cookie(name) {
 	return cookie_value;
 }
 
-// doc: https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
-// https://html.spec.whatwg.org/multipage/nav-history-apis.html
-// https://github.com/mdn/dom-examples/blob/main/history-api/script.js
-// https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
-// whenever f5 or back/forward pressed for the first time after a click, history length +1, it is normal? idk. Not problematic yet
-//count c de la d
-
 export function getDivId(id) {
 
 	const all_divs = document.querySelectorAll('div');
@@ -34,16 +30,6 @@ export function getDivId(id) {
 	return div.id;
 }
 
-export function refreshFunction() {
-
-// NEED TO RELOAD GAMESTATE
-	// if (history.length > 1) {
-	// 	window = history.state.window;
-	// }
-
-}
-
-
 export function gestionnairePopState() {
 
 	if (history.state === null) {
@@ -54,8 +40,6 @@ export function gestionnairePopState() {
 	divDisplay(getDivId(history.state.id));
 }
 
-let count = 0;
-
 function addToHistory() {
 
 	let div = previous_div;
@@ -65,38 +49,37 @@ function addToHistory() {
 		return ;
 	}
 
-	var username = localStorage.getItem('username');
-
 	if (history.state !== null) {
-		history.pushState({id: div.id, count: count, username: username}, '', '');
+		history.pushState({id: div.id}, '', '');
 	}
 	else { //for first load, console warning if not replacing bc only 1 state or smth
-		history.replaceState({id: div.id, count: count, username:username}, '', '');
+		history.replaceState({id: div.id}, '', '');
 	}
 
 
 }
 
-export function div_handler(div_to_show) {
-	
-	// if (history.state && history.state.id === div_to_show) {
-	// 	alert('You already are on this page !');
-	// 	return ;
-	// }
-	
-	count++;
+export async function nextPage(div_to_show) {
 
-	divDisplay(div_to_show); //ne pas inverser d'ordre avec addToHistory, sinon la première addition à l'historique ne se fait pas
-	addToHistory();
+	await divDisplay(div_to_show); // affiche la div à afficher
+	
+	//ne pas modifier l'ordre de ces deux fct, sinon la première addition à l'historique ne se fait pas
+
+	addToHistory(); //ajoute à l'historique
 }
 
 let previous_div = null;
+
+export function newPreviousDiv(div) {
+	previous_div = div;
+}
+
 let loggedDiv = document.getElementById('isLogged');
 let notLoggedDiv = document.getElementById('isNotLogged');
 let logginBanner = document.getElementById('login-banner');
 
 export function display_loggedDivs_or_notLoggedDivs() {
-
+	
 	let isLogged = localStorage.getItem('isLogged');
 	
 	if (isLogged === 'true') {
@@ -110,7 +93,7 @@ export function display_loggedDivs_or_notLoggedDivs() {
 	}
 }
 
-export function thisDivCanBeShown(div_to_show) {
+export async function thisDivCanBeShown(div_to_show) {
 
 	let childDivs = null;
 	
@@ -132,81 +115,51 @@ export function thisDivCanBeShown(div_to_show) {
 
 }
 
-export function divDisplay(div_to_show) {
+export async function divDisplay(div_to_show) {
 
+	localStorage.setItem('isLogged', await isLoggedIn());
+	
+	if (localStorage.getItem('isLogged') === 'true' ) {
+		const data = await get42UserData();
+		if (data && !data.error) {
+			document.getElementById('username_display_profile').innerText = data.username;
+			document.getElementById('email_display_profile').innerText = data.email;
+			console.log(data.email);
+			document.getElementById('nickname_display_profile').innerText = data.nickname;
+		}
+	}
 	display_loggedDivs_or_notLoggedDivs();
 
-	if (thisDivCanBeShown(div_to_show) === false) {
+	if (await thisDivCanBeShown(div_to_show) === false) {
 		div_to_show = 'unauthorized';
 		document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (localStorage.getItem('isLogged') === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
 		// alert('You are not allowed to access this page');
+		// alert("WE WERE CALLED");
+	}
+	else {
+		// alert(await thisDivCanBeShown(div_to_show));
+		// alert(div_to_show);
 	}
 	
-	if (previous_div)
+	if (previous_div) //hides previous div
 		previous_div.style.display = 'none';
 
 	let div = document.getElementById(div_to_show);
 
-	div.style.display = 'block';
+	document.getElementById('loading').style.display = 'none';
+	div.style.display = 'block'; //show new div
 
-
-	previous_div = div;
+	previous_div = div; //enregistre la div actuelle pour pouvoir la cacher plus tard in english is better mais comment on dit enregistre jsplu trou de mémoire
 
 }
 
-function showShownDivs() {
+export async function home() {
 
-	const all_divs = document.querySelectorAll('div');
+	let logged = await isLoggedIn();
 
-	console.log('shown divs are:');
-
-	all_divs.forEach(div => {
-		if (div.style.display == 'block')
-			console.log(div.id, div.style.display);
-	})
-
-	console.log('end of shown divs');
-}
-
-export function home() {
-	let logged = localStorage.getItem('isLogged');
-	
 	if (logged === 'true') {
-		div_handler("logged-in-home");
+		nextPage("logged-in-home");
 	} else {
-		div_handler("not-logged-home");
+		nextPage("not-logged-home");
 	}
-}
-
-export function firstView(){
-
-	isLoggedIn().then(isAuthenticated => {
-		if (localStorage.getItem('isLogged') === 'true') {
-			var username = localStorage.getItem('username'); 
-			if (username) {
-				var usernameElement = document.getElementById('username');
-				usernameElement.textContent = username;
-			}
-			div_handler("logged-in-home");
-		} else {
-			div_handler("not-logged-home");
-		}
-	});
-}
-
-function isLoggedIn() {
-    return fetch('https://localhost:8443/auth/check-authentication/', {
-        credentials: 'include',
-    })
-        .then(response => response.json())
-        .then(data => {
-			if (data.isAuthenticated){
-				return true;
-			}
-			return false;
-		})
-		.catch(error => {
-			console.error('Error checking authentication:', error);
-			return false;
-		});
 }

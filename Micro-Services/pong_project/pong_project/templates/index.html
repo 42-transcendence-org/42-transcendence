@@ -1,7 +1,7 @@
+<!DOCTYPE html>
 {% load static %}
 {% csrf_token %}
 
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -12,19 +12,23 @@
 	<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
 	<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
 	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
-	<link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+	<!-- <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}"> -->
 	<link rel="manifest" href="{% static 'site.webmanifest' %}">
 </head>
 
 <body>
 	<main>
-		<header class="banner" id = "a">
+		<header class="banner" id = "a">	
 			<h1 id ="home-banner" s>ft_transcendence</h1>
 			<div id="login-banner" style="display: none;">
-				<button id="sound-button" style="display: inline-block;">Sound</button>
-				<p id="username-welcome-p">Welcome, <span id="username"></span>!</p>
+				<p id="welcomeMessage" style="display: inline-block;">Welcome, <span id="username">username</span> ! </p>
+				<p id="correction-points-message" style="display: inline-block;">You have <span id="correction-points">UNDEFINED</span> correction points.</p>
+				<button id="sound-button" style="display: inline-block;">Mute</button>
 				<button id="logout-button" type="submit" style="display: inline-block;">Logout</button>
+				
+				<img id="profile-image" width="75" height="87" src="" alt="User Image" style="display: inline-block;">
 			</div>
+			
 		</header>
 		<div id="isLogged" style="display: none;">
 			<div id="logged-in-home" style="display: none;">
@@ -32,6 +36,13 @@
 				<button id="remote-button">Play Remote Game</button>
 				<button id="ai-button">Play Against AI</button>
 				<button id="tournament-button"> Tournament</button>
+				<button id="myprofile-button"> My profile</button>
+
+				<!-- <form id="OPENai">
+					<label for="question">Enter question:</label>
+					<input type="text" id="OpenAIquestion" name="question" autocomplete="question" required>
+				</form>
+				<p id="OpenAIresponse">Response de chatgpt: <span id="chatgpt-response"> AAAAAAAAAAAAAAAAA ZIUEH AZIUE ZAEUI ZAEZAIEI EUAZE AZIUE ZAIE AZEI UAZIUE ZAEUI ZAEZAIEI EUAZE AZIUE ZAIE AZEI UAZIUE ZAEUI ZAEZAIEI EUAZE AZIUE ZAIE AZEI UAZIUE ZAEUI ZAEZAIEI EUAZE AZIUE ZAIE AZEI UAZIUE ZAEUI ZAEZAIEI EUAZE AZIUE ZAIE AZEI UAAAAAAAAAAAAAAAAAAAAA </span></p> -->
 			</div>
 			<div id="game-div" style="display: none;">
 				<button id="test-button">Test Page</button>
@@ -41,31 +52,62 @@
 				<p>Test</p>
 				<button id="home-button">Home</button>
 			</div>
+			<div id="profile" style="display: none;">
+				<p id="username-welcome-p" style="display: inline-block;">Welcome, <span id="username_display_profile"></span>!</p>
+				<p id="email-welcome-p" style="display: inline-block;">Welcome, <span id="email_display_profile"></span>!</p>
+				<p id="nickname-welcome-p" style="display: inline-block;">Welcome, <span id="nickname_display_profile"></span>!</p>
+				<form id="modify_email">
+					<label for="email_new">email:</label>
+					<input type="email" id="email_new" name="email" autocomplete="email" required>
+					<button id="submit-email-button" type="submit">modify</button>
+				</form>
+				<form id="modify_username">
+					<label for="username_new">username:</label>
+					<input type="username" id="username_new" name="username" autocomplete="username" required>
+					<button id="submit-username-button" type="submit">modify</button>
+				</form>
+				<form id="modify_nickname">
+					<label for="nickname_new">nickname:</label>
+					<input type="first_name" id="nickname_new" name="first_name" autocomplete="first_name" required>
+					<button id="submit-nickname-button" type="submit">modify</button>
+				</form>
+				<form id="modify_password">
+					<label for="password_new">password:</label>
+					<input type="password" id="password_new" name="password" autocomplete="password" required>
+					<button id="submit-password-button" type="submit">modify</button>
+				</form>	
+				<img src={{u}} id="profile_picture" alt="profile picture">
+			</div>
 		</div>
 		<div id="isNotLogged" style="display: none;">
 			<div id="Login" style="display: none;">
 				<form id="loginForm">
-					<label for="username">Username:</label>
-					<input type="text" id="username_login" name="username" required>
-					<label for="password">Password:</label>
-					<input type="password" id="password_login" name="password" required>
+					<label for="username_login">Username:</label>
+					<input type="text" id="username_login" name="username" autocomplete="username" required>
+					<label for="password_login">Password:</label>
+					<input type="password" id="password_login" name="password" autocomplete="current-password" required>
 					<button id="submit-login-button" type="submit">Login</button>
 				</form>
-			</div>
+			</div>			
 			<div id="Register" style="display: none;">
 				<form id="registerForm">
-					<label for="username">Username:</label>
-					<input type="text" id="username_register" name="username" required>
-					<label for="password1">Password:</label>
-					<input type="password" id="password1_register" name="password1" required>
-					<label for="password2">Confirm Password:</label>
-					<input type="password" id="password2_register" name="password2" required>
+					<label for="username_register">Username:</label>
+					<input type="text" id="username_register" name="username" autocomplete="username" required>
+					<label for="password1_register">Password:</label>
+					<input type="password" id="password1_register" name="password1" autocomplete="new-password" required>
+					<label for="password2_register">Confirm Password:</label>
+					<input type="password" id="password2_register" name="password2" autocomplete="new-password" required>
+					<label for="email_address_register">Input email:</label>
+					<input type="email" id="email_address_register" name="email_address" autocomplete="email" required>
+					<label for="first_name_register">Input first_name:</label>
+					<input type="text" id="first_name_register" name="first_name" autocomplete="given-name" required>
 					<button id="submit-register-button" type="submit">Register</button>
 				</form>
 			</div>
 			<div id="not-logged-home" style="display: none;">
 				<button id="login-button" type="submit">Login</button>
 				<button id="register-button" type="submit">Register</button>
+				<button id="42-login-button">42 login</button>
 			</div>
 			<div id="Registered" style="display: none;">
 				<p>You've been registered, you can now loggin</p>
@@ -73,6 +115,9 @@
 		</div>
 		<div id="unauthorized" style="display: none;">
 			<p>Unauthorized</p>
+		</div>
+		<div id="loading" style="display: block;">
+			<p>Loading...</p>
 		</div>
 		<script> window.ASSETS_URL = "{% static '' %}" + "assets/"; </script>
 		<script type="module" src="{% static 'js/pong/global.js' %}"></script>
@@ -92,3 +137,4 @@
 </body>
 
 </html>
+
