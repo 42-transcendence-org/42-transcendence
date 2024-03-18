@@ -53,15 +53,15 @@ class Game:
             0,
             0,
         )
-        b_center = physics.Vector(self.ball.position.x + self.ball.size.x / 2, self.ball.position.y + self.ball.size.y / 2)
-        p_center = physics.Vector(expanded.position.x + expanded.size.x / 2, expanded.position.y + expanded.size.y / 2)
+        ball_center = physics.Vector(self.ball.position.x + self.ball.size.x / 2, self.ball.position.y + self.ball.size.y / 2)
+        paddle_center = physics.Vector(expanded.position.x + expanded.size.x / 2, expanded.position.y + expanded.size.y / 2)
 
         if normal.x != 0:
-            c = ((b_center.y - p_center.y) / (expanded.size.y / 2)) * g.BALL_MAX_ANGLE
+            c = ((ball_center.y - paddle_center.y) / (expanded.size.y / 2)) * g.BALL_MAX_ANGLE
             self.ball.velocity.x = normal.x * math.cos(c) * g.BALL_SPEED_MAX
             self.ball.velocity.y = math.sin(c) * g.BALL_SPEED_MAX
         elif normal.y != 0:
-            c = ((b_center.x - p_center.x) / (expanded.size.x / 2)) * g.BALL_MAX_ANGLE
+            c = ((ball_center.x - paddle_center.x) / (expanded.size.x / 2)) * g.BALL_MAX_ANGLE
             self.ball.velocity.x = math.sin(c) * g.BALL_SPEED_MAX
             self.ball.velocity.y = normal.y * math.cos(c) * g.BALL_SPEED_MAX
 

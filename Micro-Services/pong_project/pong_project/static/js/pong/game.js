@@ -54,23 +54,23 @@ export class Game {
 				0,
 				0
 			);
-		const b_center =
+		const ball_center =
 			new physics.Vector(
 				this.ball.position.x + this.ball.size.x / 2,
 				this.ball.position.y + this.ball.size.y / 2
 			);
-		const p_center =
+		const paddle_center =
 			new physics.Vector(
 				expanded.position.x + expanded.size.x / 2,
 				expanded.position.y + expanded.size.y / 2
 			);
 
 		if (normal.x != 0) {
-			let c = ((b_center.y - p_center.y) / (expanded.size.y / 2)) * g.BALL_MAX_ANGLE;
+			let c = ((ball_center.y - paddle_center.y) / (expanded.size.y / 2)) * g.BALL_MAX_ANGLE;
 			this.ball.velocity.x = normal.x * Math.cos(c) * g.BALL_SPEED_MAX;
 			this.ball.velocity.y = Math.sin(c) * g.BALL_SPEED_MAX;
 		} else if (normal.y != 0) {
-			let c = ((b_center.x - p_center.x) / (expanded.size.x / 2)) * g.BALL_MAX_ANGLE;
+			let c = ((ball_center.x - paddle_center.x) / (expanded.size.x / 2)) * g.BALL_MAX_ANGLE;
 			this.ball.velocity.x = Math.sin(c) * g.BALL_SPEED_MAX;
 			this.ball.velocity.y = normal.y * Math.cos(c) * g.BALL_SPEED_MAX;
 		}
