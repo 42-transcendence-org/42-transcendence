@@ -48,9 +48,8 @@ class GameManager:
         ready_arr = [self.game.players_ready[g.ID_PLAYER1], self.game.players_ready[g.ID_PLAYER2]]
         position_arr = [self.game.ball.position.x, self.game.ball.position.y, self.game.player1.position.x, self.game.player2.position.x]
         particle_arr = [(particle.rectangle.position.x, particle.rectangle.position.y) for particle in active_particles]
-        sound_arr = [] # [(event.sound, event.timestamp) for event in self.sound_events]
-
-        len_sound_arr = 0 # len(self.sound_events)
+        event_arr = [self.game.collision_happened, self.game.score_happened, self.game.victory_happened]
+        self.game.collision_happened = self.game.score_happened = self.game.victory_happened = False
         len_particle_arr = len(active_particles)
 
         self.snapshot = [
@@ -59,8 +58,7 @@ class GameManager:
             score_arr, # 2
             ready_arr, # 3
             position_arr, # 4
-            sound_arr, # 5
+            event_arr, # 5
             particle_arr, # 6
-            len_sound_arr, # 7
-            len_particle_arr, # 8
+            len_particle_arr, # 7
         ]

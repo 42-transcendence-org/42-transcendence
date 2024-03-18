@@ -32,13 +32,11 @@ def game_create_view(request):
 
     return JsonResponse({"id": server.matchmaker(username)}, status=201)
 
-# @never_cache
+@never_cache
 # @require_http_methods(["GET", "PUT"])
 @csrf_exempt
 async def game_view(request, game_id):
-    # username = await sync_to_async(request.session.get)("username")
     username = getattr(request, 'username', None)
-    # FIXME Do we need sync_to_async for game_exists and player_is_in_session
     if username is None or not server.game_exists(game_id) or not server.player_is_in_session(game_id, username):
         return JsonResponse({"error": "Unauthorized access"}, status=403)
 

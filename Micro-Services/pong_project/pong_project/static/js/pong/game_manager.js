@@ -57,7 +57,7 @@ export class GameManager {
 
 	update_remote_tick() {
 
-		if (this.remote_tick === -1) {
+		if (this.remote_tick < 0) {
 			this.remote_tick = this.latest_server_tick - (this.remote_send_rate * 2);
 			return;
 		}
@@ -94,7 +94,9 @@ export class GameManager {
 		while (this.accumulator >= this.timestep) {
 
 			this.local_tick += 1;
-			this.remote_tick += 1;
+			if (this.remote_tick >= 0) {
+				this.remote_tick += 1;
+			}
 
 			/* TODO Find a way to prevent the AI from preshoting the ball during the explosion animation */
 			if (this.game_type == g.TYPE_AI && this.game.status == g.STATUS_ACTIVE) {
@@ -106,7 +108,6 @@ export class GameManager {
 
 			if (this.game_type != g.TYPE_REMOTE) {
 				this.game.update(this.timestep);
-				this.handle_events();
 				this.snapshot.save_state(this.game, this.local_tick);
 			}
 
@@ -128,22 +129,28 @@ export class GameManager {
 			alpha = this.accumulator / this.timestep;
 		}
 
+		if (this.game_type === g.TYPE_REMOTE) {
+			this.handle_events(interpolated_snapshots[0].state);
+			this.handle_events(interpolated_snapshots[1].state);
+		} else {
+			this.handle_events(this.game);
+		}
 		this.graphics.interpolate(interpolated_snapshots[0], interpolated_snapshots[1], alpha);
 		this.graphics.render(this.game_type);
 	}
 
-	handle_events() {
-		if (this.game.collision_happened) {
-			this.game.collision_happened = false;
+	handle_events(game) {
+		if (game.collision_happened) {
+			game.collision_happened = false;
 			this.sound.play_hit_sound();
 		}
-		if (this.game.victory_happened) {
-			this.game.status = g.STATUS_ENDED;
-			this.game.victory_happened = false;
+		if (game.victory_happened) {
+			game.status = g.STATUS_ENDED;
+			game.victory_happened = false;
 			this.sound.play_victory_sound();
 		}
-		if (this.game.score_happened) {
-			this.game.score_happened = false;
+		if (game.score_happened) {
+			game.score_happened = false;
 			this.sound.play_score_sound();
 		}
 	}
@@ -186,7 +193,7 @@ export class GameManager {
 			return;
 		}
 
-		this.sound.play_music();
+		// this.sound.play_music();
 		this.game = new game.Game();
 		window.client.show_div("game-div");
 		this.request_id = requestAnimationFrame(this.update_loop.bind(this));
