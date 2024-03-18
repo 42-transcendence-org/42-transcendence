@@ -1,7 +1,7 @@
 import math
 
 TICKRATE = 1.0 / 60.0
-SENDRATE = 1.0 / 20.0
+SENDRATE = 1.0 / 30.0
 
 # BOARD
 BOARD_WIDTH = 480

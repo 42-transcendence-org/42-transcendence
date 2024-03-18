@@ -2,8 +2,8 @@ export const canvas = document.getElementById("game-canvas");
 export const ctx = canvas.getContext("2d");
 
 export const TIMESTEP = 1.0 / 60.0;
-export const SERVER_SENDRATE = 1.0 / 20.0;
-export const REMOTE_SEND_RATE = 3;
+export const SERVER_SENDRATE = 1.0 / 30.0;
+export const REMOTE_SEND_RATE = 2;
 
 /* BOARD */
 export const BOARD_WIDTH = canvas.width;

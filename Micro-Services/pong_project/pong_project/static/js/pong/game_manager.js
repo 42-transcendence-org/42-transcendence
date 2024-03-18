@@ -2,7 +2,6 @@ import * as g from './global.js';
 import * as ai from './ai.js';
 import * as game from './game.js';
 import * as sound from './sound.js';
-import * as time from './time.js';
 import * as input from './input.js';
 import * as snapshot from './snapshot.js';
 import * as graphics from './graphics.js';
@@ -34,7 +33,6 @@ export class GameManager {
 
 	reset() {
 		this.game = null;
-		this.local_tick = 0;
 		this.game_id = undefined;
 		this.game_type = undefined;
 		this.aliases = ["Player 1", "Player 2"];
@@ -42,10 +40,12 @@ export class GameManager {
 		this.event_source = null;
 
 		this.timestep = g.TIMESTEP;
+		this.local_tick = 0;
 		this.remote_tick = -1;
+		this.latest_server_tick = 0;
 		this.accumulator = 0.0;
 		this.frame_duration = 0.0;
-		this.remote_send_rate = 2;
+		this.remote_send_rate = g.REMOTE_SEND_RATE;
 		this.last_time = performance.now();
 
 		this.ai = new ai.AIManager()

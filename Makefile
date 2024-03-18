@@ -68,6 +68,6 @@ prune: fclean
 	@echo "$(_GREEN)Removes all unused images, containers, networks and volumes$(_END)"
 	sudo docker system prune -af
 
-re: stop debug
+re: stop up
 
 .PHONY: all build up start restart stop ls clean fclean prune re debug
