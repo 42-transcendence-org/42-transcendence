@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 	document.getElementById('modify_nickname').addEventListener('submit', function(event) {event.preventDefault();profile.changeNickname();});
 	document.getElementById('modify_password').addEventListener('submit', function(event) {event.preventDefault();profile.changePassword();});
 	document.getElementById('myprofile-button').addEventListener('click', function(event) {event.preventDefault();nextPage("profile");});
+	document.getElementById('modify_profile_picture').addEventListener('submit', function(event) {event.preventDefault();profile.changeProfilePicture();});
 
 
 });

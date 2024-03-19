@@ -3,8 +3,8 @@ from .views import LoginAPIView, RegisterAPIView, LogoutAPIView, EmailAPIView, U
 # from .views import MyLoginView
 from . import views  # Adjust the import based on your view function or class
 # from .views import get_user_profile
-# from django.conf.urls.static import static
-# from django.conf import settings
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
 
@@ -31,7 +31,6 @@ urlpatterns = [
     path('get_username/', views.get_username, name='get_username'),
     # path('get_nickname/', views.get_nickname, name='get_nickname'),
     path("password/", PasswordAPIView.as_view(), name="password"),
-    # path('user/<int:id>', views.user),
 
 
 
@@ -42,6 +41,9 @@ urlpatterns = [
 	path('OAuthRedirectUrl/', OAuthRedirectUrlAPIView.as_view(), name='OAuthRedirectUrl'),
 	path('get42info/', views.get42info, name='get42info'),
 	path('chatgpt/', chatgpt.as_view(), name='chatgpt'),
+    path('update_profile_picture/', views.update_profile_picture, name='update_profile_picture'),
+    path('send_friend_request/<int:userID>', views.send_friend_request, name='send_friend_request'),
+    path('accept_friend_request/<int:requestID>', views.accept_friend_request, name='accept_friend_request'),
 ]
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

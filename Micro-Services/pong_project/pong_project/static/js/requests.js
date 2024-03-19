@@ -126,7 +126,6 @@ export function register_user_request() {
 	})
 }
 
-
 export function logout_user_request() {
     fetch('https://localhost:8443/auth/logout/', {
         method: 'GET',
@@ -138,10 +137,6 @@ export function logout_user_request() {
     .then(() => {
         localStorage.removeItem('jwt'); 
 		localStorage.setItem('isLogged', 'false');
-		localStorage.removeItem('username');
-		document.getElementById('username').innerText = 'username';
-		document.getElementById('profile-image').src = '';
-		document.getElementById('correction-points').innerText = 'UNDEFINED';
 		home();
     });
 }

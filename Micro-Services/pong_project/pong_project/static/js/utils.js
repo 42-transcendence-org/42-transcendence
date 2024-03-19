@@ -1,5 +1,5 @@
 import { isLoggedIn } from './requests.js';
-import { get42UserData} from './Oauth.js';
+import { getUserData} from './Oauth.js';
 
 export function get_cookie(name) {
 	let cookie_value = null;
@@ -118,37 +118,31 @@ export async function thisDivCanBeShown(div_to_show) {
 export async function divDisplay(div_to_show) {
 
 	localStorage.setItem('isLogged', await isLoggedIn());
-	
 	if (localStorage.getItem('isLogged') === 'true' ) {
-		const data = await get42UserData();
+		const data = await getUserData();
 		if (data && !data.error) {
 			document.getElementById('username_display_profile').innerText = data.username;
 			document.getElementById('email_display_profile').innerText = data.email;
-			console.log(data.email);
 			document.getElementById('nickname_display_profile').innerText = data.nickname;
+			document.getElementById('nickname_display_banner').innerText = data.nickname;
+			document.getElementById('profile-image').src = "auth/static/" + data.img;
+			console.log(data.img);
+			document.getElementById('profile_picture_display').src = "auth/static/" + data.img;
 		}
 	}
+
 	display_loggedDivs_or_notLoggedDivs();
 
-	if (await thisDivCanBeShown(div_to_show) === false) {
+	if (thisDivCanBeShown(div_to_show) === false) {
 		div_to_show = 'unauthorized';
 		document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (localStorage.getItem('isLogged') === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
-		// alert('You are not allowed to access this page');
-		// alert("WE WERE CALLED");
 	}
-	else {
-		// alert(await thisDivCanBeShown(div_to_show));
-		// alert(div_to_show);
-	}
-	
+
 	if (previous_div) //hides previous div
 		previous_div.style.display = 'none';
-
 	let div = document.getElementById(div_to_show);
-
 	document.getElementById('loading').style.display = 'none';
 	div.style.display = 'block'; //show new div
-
 	previous_div = div; //enregistre la div actuelle pour pouvoir la cacher plus tard in english is better mais comment on dit enregistre jsplu trou de mémoire
 
 }

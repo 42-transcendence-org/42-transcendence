@@ -164,7 +164,7 @@ export async function LogTheUserIn(authForm) {
 
 //UTILS
 
-export async function get42UserData() {
+export async function getUserData() {
 	const url = 'https://localhost:8443/auth/get42info/';
 	try {
 		const response = await fetch(url, {

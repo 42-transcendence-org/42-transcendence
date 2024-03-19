@@ -6,7 +6,7 @@ class Profile(models.Model):
     
     is42account = models.BooleanField(default=False)
     email = models.EmailField(max_length=100, blank=True)
-    profile_picture = models.ImageField(upload_to='./', blank=True)
+    profile_picture = models.CharField(max_length=100, blank=True, default="avatar.jpg")
     nickname = models.CharField(max_length=100, blank=True)
     correction_points = models.IntegerField(default=0)
 
@@ -16,3 +16,4 @@ class Profile(models.Model):
     class Meta:
         verbose_name = "Profile"
         verbose_name_plural = "Profiles"
+    

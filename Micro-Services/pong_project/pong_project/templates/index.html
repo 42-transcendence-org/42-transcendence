@@ -21,8 +21,8 @@
 		<header class="banner" id = "a">	
 			<h1 id ="home-banner" s>ft_transcendence</h1>
 			<div id="login-banner" style="display: none;">
-				<p id="welcomeMessage" style="display: inline-block;">Welcome, <span id="username">username</span> ! </p>
-				<p id="correction-points-message" style="display: inline-block;">You have <span id="correction-points">UNDEFINED</span> correction points.</p>
+				<p id="welcomeMessage" style="display: inline-block;">Welcome, <span id="nickname_display_banner">username</span> ! </p>
+				<!-- <p id="correction-points-message" style="display: inline-block;">You have <span id="correction-points">UNDEFINED</span> correction points.</p> -->
 				<button id="sound-button" style="display: inline-block;">Mute</button>
 				<button id="logout-button" type="submit" style="display: inline-block;">Logout</button>
 				
@@ -32,11 +32,11 @@
 		</header>
 		<div id="isLogged" style="display: none;">
 			<div id="logged-in-home" style="display: none;">
+				<button id="myprofile-button"> My profile</button>
 				<button id="local-button">Play Local Game</button>
 				<button id="remote-button">Play Remote Game</button>
 				<button id="ai-button">Play Against AI</button>
 				<button id="tournament-button"> Tournament</button>
-				<button id="myprofile-button"> My profile</button>
 
 				<!-- <form id="OPENai">
 					<label for="question">Enter question:</label>
@@ -75,8 +75,17 @@
 					<label for="password_new">password:</label>
 					<input type="password" id="password_new" name="password" autocomplete="password" required>
 					<button id="submit-password-button" type="submit">modify</button>
-				</form>	
-				<img src={{u}} id="profile_picture" alt="profile picture">
+				</form>
+					<h1>User Profile</h1>
+					<!-- <img src="{% static 'files/moon.jpg' %}" alt="Moon Image" width="60" height="60"> -->
+					<img src="" id="profile_picture_display" width="75" height="87" id="profile_picture" alt="profile picture">
+					<form id="modify_profile_picture">
+						<label for="profile_picture_new">profile picture:</label>
+						<input type="file" id="profile_picture_new" name="profile_picture" accept="image/*" required>
+						<button id="submit-profile-picture-button" type="submit">modify</button>
+					</form>
+						
+					</form>
 			</div>
 		</div>
 		<div id="isNotLogged" style="display: none;">

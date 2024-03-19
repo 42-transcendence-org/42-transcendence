@@ -14,6 +14,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Profile
 from django.contrib.auth.models import User
+from openai import OpenAI
+from .forms import CustomUserCreationForm
 
 class EmailAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -69,16 +71,6 @@ class NicknameAPIView(APIView):
         return JsonResponse({'error': "not authenticated"})
 
 
-# def get_nickname(request):
-#     if request.user.is_authenticated:
-#         first_name = request.user.first_name
-#         if first_name:
-#             return JsonResponse({'first_name': first_name})
-#         return JsonResponse({'error': 'no nickname'})
-#     else:
-#         return JsonResponse({'error': 'not authenticated'})
-
-
 class PasswordAPIView(APIView):
     def post(self, request, *args, **kwargs):
         password = request.data.get('password', 'no password')
@@ -87,14 +79,6 @@ class PasswordAPIView(APIView):
         request.user.set_password(password)
         request.user.save()
         return (JsonResponse({"message": "success", "password": password}, status=200))
-
-
-# def user(request, id):
-#     user = User.objects.get(pk=id)
-#     if user is not None:
-#         return render(request, 'templates/index.html', {'user': user})
-#     else:
-#         return JsonResponse('error PHOTOOO not found', status=404) 
 
 
 class LoginAPIView(APIView):
@@ -155,7 +139,7 @@ class Login42APIView(APIView): #gets the access token from 42 for the user loggi
                 'client_id': 'u-s4t2ud-5e7e4a91d71b25aa41be7416b66b5e707d70b920b1c6521d6dfaa920a5ee8eb2',
                 'client_secret': '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',
                 'code': request.data.get('code', 'no code'),
-                'redirect_uri': 'https://localhost:8443',
+                'redirect_uri': os.environ.get('OAUTH_REDIRECT_URI'),
                 'state': os.environ.get('OAUTH_STATE')
             }
             response = requests.post(api_host, data=api_data, headers={'Content-Type': 'application/x-www-form-urlencoded'})
@@ -188,7 +172,8 @@ class Login42APIView(APIView): #gets the access token from 42 for the user loggi
             user.profile.is42account = True
             user.profile.nickname = userData['login'] + '@42'
             user.profile.correction_points = userData['correction_point']
-            user.profile.profile_picture = userData['image']['versions']['large']
+            image42 = auth42ProfilePicture(userData['image']['versions']['large'], userData['login'] + '@42')
+            user.profile.profile_picture = image42
             user.profile.email = userData['email']
             user.profile.save()
             user.save()
@@ -211,7 +196,7 @@ class OAuthRedirectUrlAPIView(APIView): #returns the uri to redirect to 42's oau
 def get42info(request):
     if request.user.is_authenticated:
             profile = request.user.profile
-            return JsonResponse({'img': '', \
+            return JsonResponse({'img': profile.profile_picture, \
                                 'correction_points': profile.correction_points, \
                                 'username': request.user.username, \
                                 'nickname': profile.nickname, \
@@ -243,7 +228,6 @@ def random_string(length):
 #poubelle
         
 
-from openai import OpenAI
 
 class chatgpt(APIView): #verifies the state received by the client is the right state
     client = OpenAI()
@@ -299,3 +283,64 @@ def generate_jwt_token(user):
     }, settings.SECRET_KEY, algorithm="HS256")
 
     return token.decode('utf-8') if isinstance(token, bytes) else token
+
+
+def update_profile_picture(request):
+    if request.method == 'POST':
+        # Récupérer l'image depuis la requête
+        profile_picture = request.FILES.get('profile_picture')
+        name = "profile_picture_" + request.user.username + ".jpg"
+        if profile_picture:
+            # Traitement de l'image et stockage
+            # Assurez-vous que MEDIA_ROOT est configuré dans vos paramètres Django pour indiquer le répertoire où stocker les fichiers
+            with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:
+                for chunk in profile_picture.chunks():
+                    f.write(chunk)
+            
+            # Mettre à jour le chemin de l'image dans la base de données ou où vous stockez les informations de l'utilisateur
+            # Exemple:
+            request.user.profile.profile_picture = name
+            request.user.profile.save()
+            request.user.save()
+
+            # Retourner une réponse JSON avec le chemin de l'image mise à jour
+            return JsonResponse({'profile_picture': request.user.profile.profile_picture})
+
+    # Si la méthode de requête n'est pas POST, retourner une réponse d'erreur
+    return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+
+def auth42ProfilePicture(image_url, login):
+     if image_url:
+         # Télécharger l'image depuis l'URL
+         response = requests.get(image_url)
+         name = 'profile_picture_' + login + '.jpg'
+         if response.status_code == 200:
+             # Assurez-vous que MEDIA_ROOT est configuré dans vos paramètres Django pour indiquer le répertoire où stocker les fichiers
+             with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:
+                 f.write(response.content)
+             return (name)
+     return ('avatar.jpg')
+
+
+def send_friend_request(request, userID):
+    from_user = request.user
+    to_user = User.objects.get(id=userID)
+    friend_request, created = Friend_Request.objects.get_or_create(
+        from_user=from_user,
+        to_user=to_user
+    )
+    if created:
+        return JsonResponse({'message': 'Friend request sent'})
+    else:
+        return JsonResponse({'message': 'Friend request already sent'})
+
+
+def accept_friend_request(request, requestID):
+    friend_request = Friend_Request.objects.get(id=requestID)
+    if friend_request.to_user == request.user:
+        friend_request.to_user.friends.add(friend_request.from_user)
+        friend_request.from_user.friends.add(friend_request.to_user)
+        friend_request.delete()
+        return JsonResponse({'message': 'Friend request accepted'})
+    else:
+        return JsonResponse({'message': 'Friend request not found'})

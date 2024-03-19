@@ -179,3 +179,35 @@ export async function changePassword() {
 	}
 
 }
+
+export async function changeProfilePicture() {
+	console.log("changeProfilePicture");
+	const url = 'https://localhost:8443/auth/update_profile_picture/';
+	const formData = new FormData(document.getElementById('modify_profile_picture'));
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
+				'X-CSRFToken': get_cookie("csrftoken"),
+			},
+			credentials: 'include',
+			body: formData,
+		});
+
+		const responseData = await response.json();
+
+		if (responseData.error) {
+			throw new Error(responseData.error);
+		}
+
+		document.getElementById('profile_picture_display').src = "auth/static/" + responseData.profile_picture;
+		document.getElementById('profile-image').src = "auth/static/" + responseData.profile_picture;
+		// window.location.reload();
+		console.log("done");
+	}
+	catch (error) {
+		console.error(error);
+	}
+
+}
