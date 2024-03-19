@@ -6,3 +6,6 @@ django-cors-headers
 django-prometheus
 PyJWT
 uvicorn
+requests
+openai
+Pillow

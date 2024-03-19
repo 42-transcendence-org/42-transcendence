@@ -40,6 +40,12 @@ services:
       dockerfile: Dockerfile
     environment:
       - HOST_IP=${HOST_IP}
+      - OAUTH_APP_TOKEN_REQUEST=${OAUTH_APP_TOKEN_REQUEST}
+      - OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID}
+      - OAUTH_STATE=${OAUTH_STATE}
+      - OAUTH_REDIRECT_URI=${OAUTH_REDIRECT_URI}
+      - OAUTH_USERS_PASSWORD=${OAUTH_USERS_PASSWORD}
+      - OPENAI_API_KEY=${OPEN_KEY}
     volumes:
       - ./Micro-Services/authentification:/app
     ports:

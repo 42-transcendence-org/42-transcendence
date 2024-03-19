@@ -157,7 +157,7 @@ export class GameManager {
 
 	async game_create(type) {
 		if (this.game) {
-			window.client.show_div("game-div");
+			window.client.nextPage("game-div");
 			return;
 		}
 
@@ -195,14 +195,14 @@ export class GameManager {
 
 		// this.sound.play_music();
 		this.game = new game.Game();
-		window.client.show_div("game-div");
+		window.client.nextPage("game-div");
 		this.request_id = requestAnimationFrame(this.update_loop.bind(this));
 	}
 
 	game_destroy() {
 		this.sound.stop_music();
 		cancelAnimationFrame(this.request_id);
-		window.client.show_div("game-menu-div");
+		window.client.nextPage("game-menu-div");
 		this.reset();
 	}
 

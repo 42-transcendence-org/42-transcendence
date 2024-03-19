@@ -12,4 +12,3 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8000
 
 CMD ["uvicorn", "--reload", "authentification.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
-# CMD ["python3", "-m", "uvicorn", "--reload", "authentification.serve:application"]
