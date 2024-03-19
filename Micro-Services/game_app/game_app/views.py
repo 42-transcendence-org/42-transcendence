@@ -22,7 +22,6 @@ async def stream_generator(game_id):
             break
 
 # @require_http_methods(["POST"])
-@csrf_exempt
 def game_create_view(request):
     username = getattr(request, 'username', None)
 
@@ -34,7 +33,6 @@ def game_create_view(request):
 
 @never_cache
 # @require_http_methods(["GET", "PUT"])
-@csrf_exempt
 async def game_view(request, game_id):
     username = getattr(request, 'username', None)
     if username is None or not server.game_exists(game_id) or not server.player_is_in_session(game_id, username):

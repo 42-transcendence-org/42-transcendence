@@ -70,11 +70,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = [
-     'http://localhost:8001',  # URL of your SPA
-]
-
-CSRF_COOKIE_DOMAIN = '.localhost::8001'
+CSRF_TRUSTED_ORIGINS = ['https://localhost:8443']
 
 ROOT_URLCONF = 'game_app.urls'
 
