@@ -81,7 +81,7 @@ server {
     }
 
             # Redirect requests to the user service
-    location /game/ {
+    location /tournament/ {
         proxy_pass http://user_service/;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
@@ -93,7 +93,7 @@ server {
     }
 
             # Redirect requests to the tournament service
-    location /game/ {
+    location /user/ {
         proxy_pass http://tournament_service/;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
