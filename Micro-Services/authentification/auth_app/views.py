@@ -152,7 +152,6 @@ class Login42APIView(APIView): #gets the access token from 42 for the user loggi
             if not form.is_valid(): #if 42 user account was already registered
                 return Response({'message': 'User already registered', 'username':userData['username'], 'password':password}, status=status.HTTP_200_OK)
             user = form.save()
-            # user.profile = Profile()
             user.profile.is42account = True
             user.profile.nickname = userData['login'] + '@42' #will always be unique because of the @42 at the end + forbidden to create a user with @42 
             user.profile.correction_points = userData['correction_point']
@@ -208,10 +207,14 @@ def joinErrForm(dico):
 
 def isNicknameUnique(nickname):
     users = User.objects.all() #checks if the nickname is already taken
-    for user in users:
-        if hasattr(user, 'profile') and user.profile is not None and user.profile.nickname is not None:
-            if user.profile.nickname == nickname:
-                return False
+    try:
+        for user in users:
+            if hasattr(user, 'profile') and user.profile is not None and user.profile.nickname is not None:
+                if user.profile.nickname == nickname:
+                    return False
+    except Exception as e:
+        print(e)
+        return False
     return True
 
 
@@ -255,15 +258,17 @@ class UsernameAPIView(APIView):
 
 class NicknameAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        first_name = request.data.get('first_name', 'no first_name')
-        if first_name == 'no first_name':
-            return (JsonResponse({"error": "nickname is required"}, status=400))
-        # if (isNicknameUnique(first_name) == False):
-        #     return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
-        request.user.profile.nickname = first_name
-        request.user.profile.save()
-        request.user.save()
-        return (JsonResponse({"message": "success", "first_name": first_name}, status=200))
+        if request.user.is_authenticated:
+            first_name = request.data.get('first_name', 'no first_name')
+            if first_name == 'no first_name':
+                return (JsonResponse({"error": "nickname is required"}, status=400))
+            if (isNicknameUnique(first_name) == False):
+                return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
+            request.user.profile.nickname = first_name
+            request.user.profile.save()
+            request.user.save()
+            return (JsonResponse({"message": "success", "first_name": first_name}, status=200))
+        return JsonResponse({'error': "not authenticated"})
     
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:

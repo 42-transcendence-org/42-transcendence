@@ -16,11 +16,13 @@ export async function changeEmail(event) {
 			body: JSON.stringify(formData),
 		});
 
-		if (!response.ok) {
-			throw new Error('La requête a échoué');
+		const responseData = await response.json();
+		
+		if (responseData.error) {
+			alert(responseData.error);
+			throw new Error(responseData.error);
 		}
 
-		const responseData = await response.json();
 		document.getElementById('email_display_profile').textContent = responseData.email;
 		document.getElementById('email_new').value = '';
 	}
@@ -66,11 +68,13 @@ export async function changeUsername(event) {
 			body: JSON.stringify(formData),
 		});
 
-		if (!response.ok) {
-			throw new Error('La requête a échoué');
+		const responseData = await response.json();
+		
+		if (responseData.error) {
+			alert(responseData.error);
+			throw new Error(responseData.error);
 		}
 
-		const responseData = await response.json();
 		document.getElementById('username_display_profile').textContent = responseData.username;
 		document.getElementById('username_new').value = '';
 	}
@@ -117,11 +121,13 @@ export async function changeNickname(event) {
 			body: JSON.stringify(formData),
 		});
 
-		if (!response.ok) {
-			throw new Error('La requête a échoué');
+		const responseData = await response.json();
+
+		if (responseData.error) {
+			alert(responseData.error);
+			throw new Error(responseData.error);
 		}
 
-		const responseData = await response.json();
 		document.getElementById('nickname_display_profile').textContent = responseData.first_name;
 		document.getElementById('nickname_display_banner').textContent = responseData.first_name;
 		document.getElementById('nickname_new').value = '';
@@ -150,11 +156,13 @@ export async function changePassword(event) { //FIXME: avoir deux champs passwor
 			body: JSON.stringify(formData),
 		});
 
-		if (!response.ok) {
-			throw new Error('La requête a échoué');
+		const responseData = await response.json();
+
+		if (responseData.error) {
+			alert(responseData.error);
+			throw new Error(responseData.error);
 		}
 
-		const responseData = await response.json();
 		document.getElementById('password_new').value = '';
 	}
 	catch (error) {
@@ -179,11 +187,12 @@ export async function changeProfilePicture(event) {
 			body: formData,
 		});
 
-		if (!response.ok) {
-			throw new Error('La requête a échoué');
-		}
-
 		const responseData = await response.json();
+
+		if (responseData.error) {
+			alert(responseData.error);
+			throw new Error(responseData.error);
+		}
 
 		document.getElementById('profile_picture_display').src = "auth/static/" + responseData.profile_picture;
 		document.getElementById('profile-image').src = "auth/static/" + responseData.profile_picture;
