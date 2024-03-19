@@ -53,28 +53,26 @@ class Game:
             0,
             0,
         )
-        b_center = physics.Vector(self.ball.position.x + self.ball.size.x / 2, self.ball.position.y + self.ball.size.y / 2)
-        p_center = physics.Vector(expanded.position.x + expanded.size.x / 2, expanded.position.y + expanded.size.y / 2)
+        ball_center = physics.Vector(self.ball.position.x + self.ball.size.x / 2, self.ball.position.y + self.ball.size.y / 2)
+        paddle_center = physics.Vector(expanded.position.x + expanded.size.x / 2, expanded.position.y + expanded.size.y / 2)
 
         if normal.x != 0:
-            c = ((b_center.y - p_center.y) / (expanded.size.y / 2)) * g.BALL_MAX_ANGLE
+            c = ((ball_center.y - paddle_center.y) / (expanded.size.y / 2)) * g.BALL_MAX_ANGLE
             self.ball.velocity.x = normal.x * math.cos(c) * g.BALL_SPEED_MAX
             self.ball.velocity.y = math.sin(c) * g.BALL_SPEED_MAX
         elif normal.y != 0:
-            c = ((b_center.x - p_center.x) / (expanded.size.x / 2)) * g.BALL_MAX_ANGLE
+            c = ((ball_center.x - paddle_center.x) / (expanded.size.x / 2)) * g.BALL_MAX_ANGLE
             self.ball.velocity.x = math.sin(c) * g.BALL_SPEED_MAX
             self.ball.velocity.y = normal.y * math.cos(c) * g.BALL_SPEED_MAX
 
     def update_paddle_position(self, paddle, dt):
-        c_ball = physics.aabb_continuous_detection(paddle, self.ball, dt)
-        if c_ball.time > 0 and c_ball.time <= 1.0:
-            self.collision_happened = True
-            v = physics.aabb_continuous_resolve(paddle, c_ball)
-            paddle.position.x += v.x * dt
-            c_ball.normal.x *= -1
-            self.update_ball_velocity(paddle, c_ball.normal)
-        elif (paddle.position.x + paddle.velocity.x * dt > g.BOARD_CORRIDOR and paddle.position.x + paddle.size.x + paddle.velocity.x * dt < g.BOARD_WIDTH - g.BOARD_CORRIDOR):
-            paddle.position.x += paddle.velocity.x * dt
+        paddle.position.x += paddle.velocity.x * dt
+
+        if paddle.position.x < g.BOARD_CORRIDOR:
+            paddle.position.x = g.BOARD_CORRIDOR
+        elif paddle.position.x + paddle.size.x > g.BOARD_WIDTH - g.BOARD_CORRIDOR:
+            paddle.position.x = g.BOARD_WIDTH - g.BOARD_CORRIDOR - paddle.size.x
+
 
     def update_ball_position(self, dt):
         player = None

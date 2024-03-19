@@ -74,6 +74,34 @@ export class ParticlePool {
 	}
 }
 
+function aabb_collision_test(r1, r2) {
+	return r1.position.x + r1.size.x >= r2.position.x &&
+		r1.position.x <= r2.position.x + r2.size.x &&
+		r1.position.y + r1.size.y >= r2.position.y &&
+		r1.position.y <= r2.position.y + r2.size.y;
+}
+
+function aabb_collision_resolve(r1, r2) {
+	const buffer = 1;
+	const overlap_x = Math.min(r1.position.x + r1.size.x - r2.position.x, r2.position.x + r2.size.x - r1.position.x);
+	const overlap_y = Math.min(r1.position.y + r1.size.y - r2.position.y, r2.position.y + r2.size.y - r1.position.y);
+
+	if (overlap_x < overlap_y) {
+		if (r1.position.x < r2.position.x) {
+			r1.position.x -= overlap_x + buffer;
+		} else {
+			r1.position.x += overlap_x + buffer;
+		}
+	} else {
+		if (r1.position.y < r2.position.y) {
+			r1.position.y -= overlap_y + buffer;
+		} else {
+			r1.position.y += overlap_y + buffer;
+		}
+	}
+}
+
+
 /**
  * Checks if a ray intersects with a rectangle.
  *
@@ -145,6 +173,10 @@ export function aabb_continuous_resolve(r1, collision) {
  * parameter of the object is set to -1.
  */
 export function aabb_continuous_detection(r1, r2, dt) {
+
+	if (aabb_collision_test(r1, r2)) {
+		aabb_collision_resolve(r1, r2);
+	}
 
 	/* If r1 is not moving, a collision cannot occur */
 	if (r1.velocity.x == 0 && r1.velocity.y == 0)

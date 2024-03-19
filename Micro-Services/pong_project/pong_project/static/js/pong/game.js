@@ -54,43 +54,35 @@ export class Game {
 				0,
 				0
 			);
-		const b_center =
+		const ball_center =
 			new physics.Vector(
 				this.ball.position.x + this.ball.size.x / 2,
 				this.ball.position.y + this.ball.size.y / 2
 			);
-		const p_center =
+		const paddle_center =
 			new physics.Vector(
 				expanded.position.x + expanded.size.x / 2,
 				expanded.position.y + expanded.size.y / 2
 			);
 
 		if (normal.x != 0) {
-			let c = ((b_center.y - p_center.y) / (expanded.size.y / 2)) * g.BALL_MAX_ANGLE;
+			let c = ((ball_center.y - paddle_center.y) / (expanded.size.y / 2)) * g.BALL_MAX_ANGLE;
 			this.ball.velocity.x = normal.x * Math.cos(c) * g.BALL_SPEED_MAX;
 			this.ball.velocity.y = Math.sin(c) * g.BALL_SPEED_MAX;
 		} else if (normal.y != 0) {
-			let c = ((b_center.x - p_center.x) / (expanded.size.x / 2)) * g.BALL_MAX_ANGLE;
+			let c = ((ball_center.x - paddle_center.x) / (expanded.size.x / 2)) * g.BALL_MAX_ANGLE;
 			this.ball.velocity.x = Math.sin(c) * g.BALL_SPEED_MAX;
 			this.ball.velocity.y = normal.y * Math.cos(c) * g.BALL_SPEED_MAX;
 		}
 	}
 
-	/* Move the paddle while checking for collisions with the ball */
 	update_paddle_position(paddle, dt) {
-		/* FIXME: Find a better solution, this prevents the paddle from getting stuck in the corridor */
-		if (paddle.position.x < g.BOARD_CORRIDOR || paddle.position.x + paddle.size.x > g.BOARD_WIDTH - g.BOARD_CORRIDOR) {
-			paddle.position.x = paddle.position.x < g.BOARD_CORRIDOR ? g.BOARD_CORRIDOR : g.BOARD_WIDTH - g.BOARD_CORRIDOR;
-		}
-		let c_ball = physics.aabb_continuous_detection(paddle, this.ball, dt);
-		if (c_ball.time > 0 && c_ball.time <= 1.0) {
-			this.collision_happened = true;
-			let v = physics.aabb_continuous_resolve(paddle, c_ball);
-			paddle.position.x += v.x * dt;
-			c_ball.normal.x *= -1;
-			this.update_ball_velocity(paddle, c_ball.normal);
-		} else if (paddle.position.x + paddle.velocity.x * dt > g.BOARD_CORRIDOR && paddle.position.x + paddle.size.x + paddle.velocity.x * dt < g.BOARD_WIDTH - g.BOARD_CORRIDOR) {
-			paddle.position.x += paddle.velocity.x * dt;
+		paddle.position.x += paddle.velocity.x * dt;
+
+		if (paddle.position.x < g.BOARD_CORRIDOR) {
+			paddle.position.x = g.BOARD_CORRIDOR;
+		} else if (paddle.position.x + paddle.size.x > g.BOARD_WIDTH - g.BOARD_CORRIDOR) {
+			paddle.position.x = g.BOARD_WIDTH - g.BOARD_CORRIDOR - paddle.size.x;
 		}
 	}
 
@@ -133,7 +125,7 @@ export class Game {
 				this.scores[g.ID_PLAYER2] += 1;
 
 			this.particle_pool.reset(this.ball.position.x + this.ball.size.x / 2, this.ball.position.y + this.ball.size.y / 2);
-			this.who_serves = !this.who_serves;
+			this.who_serves = this.who_serves === g.ID_PLAYER1 ? g.ID_PLAYER2 : g.ID_PLAYER1;
 			this.score_happened = true;
 			this.reset_ball();
 

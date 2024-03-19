@@ -2,8 +2,8 @@ export const canvas = document.getElementById("game-canvas");
 export const ctx = canvas.getContext("2d");
 
 export const TIMESTEP = 1.0 / 60.0;
-export const SERVER_SENDRATE = 1.0 / 20.0;
-export const REMOTE_SEND_RATE = 3;
+export const SERVER_SENDRATE = 1.0 / 60.0;
+export const REMOTE_SEND_RATE = 2;
 
 /* BOARD */
 export const BOARD_WIDTH = canvas.width;
@@ -48,6 +48,6 @@ export const BALL_MAX_ANGLE = Math.PI / 6;
 
 /* PADDLE */
 export const PADDLE_WIDTH = 64;
-export const PADDLE_SPEED = (BOARD_WIDTH - (2 * BOARD_CORRIDOR)) * 1.25;
+export const PADDLE_SPEED = (BOARD_WIDTH - (2 * BOARD_CORRIDOR)) * 1.90;
 
 export const POINTS_TO_WIN = 99;

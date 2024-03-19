@@ -2,7 +2,6 @@ import * as g from './global.js';
 import * as ai from './ai.js';
 import * as game from './game.js';
 import * as sound from './sound.js';
-import * as time from './time.js';
 import * as input from './input.js';
 import * as snapshot from './snapshot.js';
 import * as graphics from './graphics.js';
@@ -34,7 +33,6 @@ export class GameManager {
 
 	reset() {
 		this.game = null;
-		this.local_tick = 0;
 		this.game_id = undefined;
 		this.game_type = undefined;
 		this.aliases = ["Player 1", "Player 2"];
@@ -42,10 +40,12 @@ export class GameManager {
 		this.event_source = null;
 
 		this.timestep = g.TIMESTEP;
+		this.local_tick = 0;
 		this.remote_tick = -1;
+		this.latest_server_tick = 0;
 		this.accumulator = 0.0;
 		this.frame_duration = 0.0;
-		this.remote_send_rate = 2;
+		this.remote_send_rate = g.REMOTE_SEND_RATE;
 		this.last_time = performance.now();
 
 		this.ai = new ai.AIManager()
@@ -57,7 +57,7 @@ export class GameManager {
 
 	update_remote_tick() {
 
-		if (this.remote_tick === -1) {
+		if (this.remote_tick < 0) {
 			this.remote_tick = this.latest_server_tick - (this.remote_send_rate * 2);
 			return;
 		}
@@ -94,13 +94,20 @@ export class GameManager {
 		while (this.accumulator >= this.timestep) {
 
 			this.local_tick += 1;
-			this.remote_tick += 1;
+			if (this.remote_tick >= 0) {
+				this.remote_tick += 1;
+			}
+
+			/* TODO Find a way to prevent the AI from preshoting the ball during the explosion animation */
+			if (this.game_type == g.TYPE_AI && this.game.status == g.STATUS_ACTIVE) {
+				let input = this.ai.refresh(this.game, this.timestep);
+				this.input.create_input(g.ID_PLAYER2, input);
+			}
 
 			this.input.process_inputs(this.game_id, this.game, this.local_tick);
 
 			if (this.game_type != g.TYPE_REMOTE) {
 				this.game.update(this.timestep);
-				this.handle_events();
 				this.snapshot.save_state(this.game, this.local_tick);
 			}
 
@@ -122,22 +129,28 @@ export class GameManager {
 			alpha = this.accumulator / this.timestep;
 		}
 
+		if (this.game_type === g.TYPE_REMOTE) {
+			this.handle_events(interpolated_snapshots[0].state);
+			this.handle_events(interpolated_snapshots[1].state);
+		} else {
+			this.handle_events(this.game);
+		}
 		this.graphics.interpolate(interpolated_snapshots[0], interpolated_snapshots[1], alpha);
 		this.graphics.render(this.game_type);
 	}
 
-	handle_events() {
-		if (this.game.collision_happened) {
-			this.game.collision_happened = false;
+	handle_events(game) {
+		if (game.collision_happened) {
+			game.collision_happened = false;
 			this.sound.play_hit_sound();
 		}
-		if (this.game.victory_happened) {
-			this.game.status = g.STATUS_ENDED;
-			this.game.victory_happened = false;
+		if (game.victory_happened) {
+			game.status = g.STATUS_ENDED;
+			game.victory_happened = false;
 			this.sound.play_victory_sound();
 		}
-		if (this.game.score_happened) {
-			this.game.score_happened = false;
+		if (game.score_happened) {
+			game.score_happened = false;
 			this.sound.play_score_sound();
 		}
 	}
@@ -180,7 +193,7 @@ export class GameManager {
 			return;
 		}
 
-		this.sound.play_music();
+		// this.sound.play_music();
 		this.game = new game.Game();
 		window.client.show_div("game-div");
 		this.request_id = requestAnimationFrame(this.update_loop.bind(this));

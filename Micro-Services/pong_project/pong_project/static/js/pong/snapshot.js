@@ -35,9 +35,12 @@ export class SnapshotManager {
 		snap_state.ball.position.y = data[4][1];
 		snap_state.player1.position.x = data[4][2];
 		snap_state.player2.position.x = data[4][3];
+		snap_state.collision_happened = data[5][0];
+		snap_state.score_happened = data[5][1];
+		snap_state.victory_happened = data[5][2];
 
 		const particle_arr = data[6];
-		const len_particle_arr = data[8];
+		const len_particle_arr = data[7];
 
 		snap_state.particle_pool.pool.forEach(particle => particle.active = false);
 
@@ -53,6 +56,7 @@ export class SnapshotManager {
 		this.index = (this.index + 1) % this.size;
 	}
 
+	/* FIXME Cleanup */
 	get_interpolated_snapshots(remote_tick) {
 		if (remote_tick < 0) {
 
