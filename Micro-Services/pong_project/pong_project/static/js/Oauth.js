@@ -229,7 +229,8 @@ export async function getApp42Token(){
 
 
 
-export async function chatgpt() { //checks the state gotten from the redirection post login on 42 website
+export async function chatgpt(event) { //checks the state gotten from the redirection post login on 42 website
+	event.preventDefault()
 	const url = 'https://localhost:8443/auth/chatgpt/';
 	const data = {
 		'question': document.getElementById('OpenAIquestion').value,

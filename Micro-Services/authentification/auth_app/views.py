@@ -258,6 +258,8 @@ class NicknameAPIView(APIView):
         first_name = request.data.get('first_name', 'no first_name')
         if first_name == 'no first_name':
             return (JsonResponse({"error": "nickname is required"}, status=400))
+        # if (isNicknameUnique(first_name) == False):
+        #     return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
         request.user.profile.nickname = first_name
         request.user.profile.save()
         request.user.save()

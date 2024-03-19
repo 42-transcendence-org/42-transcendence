@@ -44,9 +44,9 @@ export class Client {
 		document.getElementById('modify_password').addEventListener('submit', (event) => profile.changePassword(event));
 		document.getElementById('modify_profile_picture').addEventListener('submit', (event) => profile.changeProfilePicture(event));
 		
-		if (localStorage.getItem("OAuth42Token") !== true) { //At the beginning of a session, requests the 42 OAuth token of our app. Necessary ? Idk, maybe just put it in env?
-			localStorage.setItem("OAuth42Token", Oauth.getApp42Token());
-		}
+		// if (localStorage.getItem("OAuth42Token") !== true) { //At the beginning of a session, requests the 42 OAuth token of our app. Necessary ? Idk, maybe just put it in env?
+		// 	localStorage.setItem("OAuth42Token", Oauth.getApp42Token());
+		// }
 		if (await Oauth.isRedirectedFrom42API() === true) { // redirection from 42 API when trying to connect via 42: OAUTH PART
 			document.getElementById('loading').textContent = "Redirecting through 42";
 			Oauth.login42(localStorage.getItem("code"));
@@ -109,7 +109,6 @@ export class Client {
 	}
 	
 	async nextPage(div_to_show) {
-		
 		await this.divDisplay(div_to_show); // affiche la div à afficher
 		this.addToHistory(); //ajoute à l'historique
 	}
@@ -117,7 +116,7 @@ export class Client {
 	async divDisplay(div_to_show) {
 	
 		localStorage.setItem('isLogged', await this.isLoggedIn());
-		if (localStorage.getItem('isLogged') === 'true' ) {
+		if (localStorage.getItem('isLogged') === 'true' ) { //to show every time the user is logged in
 			const data = await Oauth.getUserData();
 			if (data && !data.error) {
 				document.getElementById('username_display_profile').innerText = data.username;
