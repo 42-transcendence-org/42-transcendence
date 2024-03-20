@@ -76,7 +76,7 @@ export async function changeNickname(event) {
 			throw new Error(responseData.error);
 		}
 
-		document.getElementById('nickname_display_profile').textContent = responseData.first_name;
+		document.getElementById('profile-nickname-display').textContent = responseData.first_name;
 		document.getElementById('banner-nickname-display').textContent = responseData.first_name;
 		document.getElementById('nickname_new').value = '';
 	}
@@ -153,7 +153,7 @@ export async function changeProfilePicture(event) {
 
 }
 
-import { poster } from './Oauth.js';
+import { poster, getter } from './Oauth.js';
 
 
 export async function addFriend(event) {
@@ -162,10 +162,83 @@ export async function addFriend(event) {
 	const data = {
 		friend: document.getElementById('add-friend-input').value,
 	};
-	console.log(data);
-	const response = await poster(url, data);
-	if (response === null) {
-		return;
+	await poster(url, data);
+	document.getElementById('add-friend-input').value = "";
+}
+
+export async function show_friendlist() {
+	
+	var list = document.getElementById('friends-list');
+	list.innerHTML = '';
+
+	const url = 'https://localhost:8443/auth/getMyFriends/';
+	const response = await getter(url);
+	if (response.error) {
+		list.textContent = "You have no friends yet !";
+		return ;
 	}
-	alert(response.message +  " and " + response.friend);
+
+	var length = response.friends.length;
+	for (var i = 0; i < length; i++) {
+		var new_friend = document.createElement('button');
+		new_friend.textContent = 'Friend name: ' + response.friends[i] + ' online= ' + response.online_status[i]; ;
+		list.appendChild(new_friend);
+	}
+}
+
+export async function showFriendRequests(event) {
+	var list = document.getElementById('friends-requests');
+	list.innerHTML = '';
+
+	const url = 'https://localhost:8443/auth/FriendRequests/';
+	const response = await getter(url);
+	if (response.error) {
+		list.textContent = "You have no pending friend requests !";
+		return ;
+	}
+
+	var length = response.friend_requests.length;
+	for (var i = 0; i < length; i++) {
+		var new_friend = document.createElement('div');
+		new_friend.textContent = 'Friend request from: ' + response.friend_requests[i];
+		new_friend.id = "friend_request_from_" + response.friend_requests[i];
+
+		var accept_button = document.createElement('button');
+		accept_button.textContent = 'Accept';
+		accept_button.name = response.friend_requests[i];
+		accept_button.addEventListener('click', (event) => acceptFriendRequest(event));
+		new_friend.appendChild(accept_button);
+
+		var refuse_button = document.createElement('button');
+		refuse_button.textContent = 'Refuse';
+		accept_button.addEventListener('click', () => refuseFriendRequest(response.friend_requests[i]));
+		new_friend.appendChild(refuse_button);
+
+		// new_friend.addEventListener('click', (event) => acceptFriendRequest(event));
+		list.appendChild(new_friend);
+	}
+}
+
+export async function acceptFriendRequest(event) {
+	const url = 'https://localhost:8443/auth/FriendRequests/';
+	const friend_name = event.target.name;
+
+	const data = {
+		'friend': friend_name,
+	};
+	const response = await poster(url, data);
+	if (response.error) {
+		alert(response.error);
+		return ;
+	}
+	document.getElementById('friend_request_from_' + friend_name).remove();
+	show_friendlist();
+}
+
+export async function refuseFriendRequest(friend_name) {
+	const url = 'https://localhost:8443/auth/acceptFriendRequest/';
+	const data = {
+		friend: friend_name
+	};
+	await poster(url, data);
 }

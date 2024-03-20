@@ -144,3 +144,49 @@ main {
 	color: #DAA520;
 	/* Changes text color to indicate active state */
 }
+
+#friends {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+#friends p {
+    font-size: 18px;
+    color: #333;
+}
+
+#add-friend-form {
+    margin-top: 20px;
+}
+
+#add-friend-input {
+    width: 200px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+#submit-add-friend-button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+#submit-add-friend-button:hover {
+    background-color: #0056b3;
+}
+
+#friends-list {
+    margin-top: 20px;
+}
+
+#friends-requests {
+    margin-top: 20px;
+}

@@ -40,7 +40,7 @@ export class Client {
 
 		document.getElementById('myprofile-button').addEventListener('click', () => this.nextPage("profile"));
 		document.getElementById('modify_email').addEventListener('submit', (event) => profile.changeEmail(event));
-				document.getElementById('modify_nickname').addEventListener('submit', (event) => profile.changeNickname(event));
+		document.getElementById('modify_nickname').addEventListener('submit', (event) => profile.changeNickname(event));
 		document.getElementById('modify_password').addEventListener('submit', (event) => profile.changePassword(event));
 		document.getElementById('modify_profile_picture').addEventListener('submit', (event) => profile.changeProfilePicture(event));
 		
@@ -61,13 +61,16 @@ export class Client {
 		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();});
 		document.getElementById('42-login-button').addEventListener('click', (event) => Oauth.RedirectTo42Login());
 		document.getElementById('home-banner').addEventListener('click', (event) =>  this.home());
-		window.addEventListener('popstate', await this.HistoryButtonsClicked()); //for back and forward keys
-		
+
+		window.addEventListener('popstate', async () => {
+			await window.client.HistoryButtonsClicked();
+		});
+
 		document.getElementById('chatbot-button').addEventListener('click', (event) => this.nextPage("chatbot"));
-document.getElementById('friends-button').addEventListener('click', (event) => this.nextPage("friends"));
 		document.getElementById('OPENai').addEventListener('submit', (event) =>  Oauth.chatgpt());
-		document.getElementById('add-friend-form').addEventListener('submit', (event) => profile.addFriend(event));
 		
+		document.getElementById('friends-button').addEventListener('click', (event) => this.nextPage("friends"));
+		document.getElementById('add-friend-form').addEventListener('submit', (event) => profile.addFriend(event));
 		//tournament
 		// document.getElementById('tournament-button').addEventListener('click', function(event) {event.preventDefault();nextPage("tournament");});
 		// document.getElementById('new-tournament').addEventListener('submit', function(event) {event.preventDefault();requests.tournament();});
@@ -129,6 +132,12 @@ document.getElementById('friends-button').addEventListener('click', (event) => t
 			}
 		}
 	
+		if (div_to_show === 'friends')
+		{
+			profile.show_friendlist();
+			profile.showFriendRequests();
+		}
+
 		this.display_loggedDivs_or_notLoggedDivs();
 	
 		if (this.thisDivCanBeShown(div_to_show) === false) {
@@ -142,7 +151,6 @@ document.getElementById('friends-button').addEventListener('click', (event) => t
 		document.getElementById('loading').style.display = 'none';
 		div.style.display = 'block'; //show new div
 		this.previous_div = div; //enregistre la div actuelle pour pouvoir la cacher plus tard in english is better mais comment on dit enregistre jsplu trou de mémoire
-	
 	}
 	
 	addToHistory() {
@@ -281,9 +289,11 @@ document.getElementById('friends-button').addEventListener('click', (event) => t
 		const response = await fetch('https://localhost:8443/auth/logout/', {
 			method: 'GET',
 			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-				'X-CSRFToken': window.client.get_cookie('csrftoken'),
+				'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
+				'Content-Type': 'application/json',
+				'X-CSRFToken': window.client.get_cookie("csrftoken"),
 			},
+			credentials: 'include',
 		});
 		/* FIXME: Check return code */
 		localStorage.removeItem('jwt');

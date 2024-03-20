@@ -265,7 +265,7 @@ export async function getter(url) {
 	}
 	catch (error) {
 		console.error(error);
-		return error;
+		return {'error': error};
 	}
 }
 
@@ -290,7 +290,7 @@ export async function poster(url, data) {
 	}
 	catch (error) {
 		console.error(error);
-		return null;
+		return {'error': error};
 	}
 }
 

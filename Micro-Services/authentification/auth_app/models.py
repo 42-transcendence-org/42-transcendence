@@ -12,6 +12,7 @@ class Profile(models.Model):
     profile_picture = models.CharField(max_length=100, blank=True, default="avatar.jpg")
     nickname = models.CharField(max_length=100, blank=True)
     correction_points = models.IntegerField(default=0)
+    online = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nickname
@@ -38,29 +39,46 @@ class Friendship(models.Model):
     def __str__(self):
         return self.friend1.nickname + " and " + self.friend2.nickname
     
-    def getAcceptedFriendshipWithAnother(friend1, friend2):
-        if Friendship.objects.filter(friend1=friend1, friend2=friend2).exists() and Friendship.objects.filter(friend1=friend1, friend2=friend2).accepted == True:
+    def getFriends(profile):
+        return Friendship.objects.filter(friend1=profile, accepted=True) | Friendship.objects.filter(friend2=profile, accepted=True)
+    
+    def getFriendRequests(profile):
+        return Friendship.objects.filter(friend1=profile, accepted=False) | Friendship.objects.filter(friend2=profile, accepted=False)
+    
+    def friendshipExists(friend1, friend2):
+        return Friendship.objects.filter(friend1=friend1, friend2=friend2).exists() or Friendship.objects.filter(friend1=friend2, friend2=friend1).exists()
+    
+    def getFriendship(friend1, friend2):
+        if Friendship.objects.filter(friend1=friend1, friend2=friend2).exists():
             return Friendship.objects.get(friend1=friend1, friend2=friend2)
-        elif Friendship.objects.filter(friend1=friend2, friend2=friend1).exists() and Friendship.objects.filter(friend1=friend2, friend2=friend1).accepted == True:
+        elif Friendship.objects.filter(friend1=friend2, friend2=friend1).exists():
             return Friendship.objects.get(friend1=friend2, friend2=friend1)
         else:
             return None
+    # def getAcceptedFriendshipWithAnother(friend1, friend2):
+    #     if Friendship.objects.filter(friend1=friend1, friend2=friend2).exists() and Friendship.objects.filter(friend1=friend1, friend2=friend2).accepted == True:
+    #         return Friendship.objects.get(friend1=friend1, friend2=friend2)
+    #     elif Friendship.objects.filter(friend1=friend2, friend2=friend1).exists() and Friendship.objects.filter(friend1=friend2, friend2=friend1).accepted == True:
+    #         return Friendship.objects.get(friend1=friend2, friend2=friend1)
+    #     else:
+    #         return None
         
-    def getAllMyFriendships(profile):
-        return Friendship.objects.filter(friend1=profile, accepted=True) | Friendship.objects.filter(friend2=profile, accepted=True)
+    # def getAllMyFriendships(profile):
+    #     return Friendship.objects.filter(friend1=profile, accepted=True) | Friendship.objects.filter(friend2=profile, accepted=True)
     
-    def getAllMyFriendRequests(profile):
-        return Friendship.objects.filter(friend1=profile, accepted=False) | Friendship.objects.filter(friend2=profile, accepted=False)
+    # def getAllMyFriendRequests(profile):
+    #     return Friendship.objects.filter(friend1=profile, accepted=False) | Friendship.objects.filter(friend2=profile, accepted=False)
     
-    def acceptFriendRequest(self):
-        self.accepted = True
-        self.save()
+    # def acceptFriendRequest(self):
+    #     self.accepted = True
+    #     self.save()
 
-    def denyFriendRequest(self):
-        self.delete()
+    # def denyFriendRequest(self):
+    #     self.delete()
 
-    def isFriendshipAccepted(self):
-        return self.accepted
+    # def isFriendshipAccepted(self):
+    #     return self.accepted
+
     
     class Meta:
         verbose_name = "Friendship"

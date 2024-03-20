@@ -2,7 +2,7 @@ from django.urls import path
 from .views import LoginAPIView, RegisterAPIView, LogoutAPIView #basic auth
 from .views import OAuthGetAppTokenAPIView, Login42APIView, OAuthVerifyStateAPIView, OAuthRedirectUrlAPIView, chatgpt #42 auth
 from . import views  # Adjust the import based on your view function or class
-from .views import EmailAPIView, NicknameAPIView, UsernameAPIView, PasswordAPIView, addFriendAPIView
+from .views import EmailAPIView, NicknameAPIView, UsernameAPIView, PasswordAPIView, addFriendAPIView, getMyFriendsAPIView, FriendRequestsAPIView
 
 urlpatterns = [
     
@@ -31,5 +31,7 @@ urlpatterns = [
 	
     path('update_profile_picture/', views.update_profile_picture, name='update_profile_picture'),
 	path('addFriend/', addFriendAPIView.as_view(), name='addFriend'),
+	path('getMyFriends/', getMyFriendsAPIView.as_view(), name='getmyFriends'),
+	path('FriendRequests/', FriendRequestsAPIView.as_view(), name='FriendRequests'),
 
 ]

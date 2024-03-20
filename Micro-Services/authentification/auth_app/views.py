@@ -14,7 +14,7 @@ from rest_framework import status
 from .models import Profile, Friendship
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-
+from django.core.serializers import serialize
 
 from django.http import JsonResponse
 
@@ -28,31 +28,82 @@ class addFriendAPIView(APIView):
                     raise Exception("friend is required")
                 if (friend_name == myself.nickname):
                     raise Exception("You can't add yourself as a friend")
-                print('A')
-                print('B')
-                print('B2')
-                print(request.user.profile.friend1.all())
-                print(request.user.profile.friend2.all())
-                print('C')
-                new_friend = Profile.objects.get(nickname=friend_name)
-                print('D')
-                if new_friend is None:
-                    raise Exception("User not found")
-                print('E')
+                try:
+                    new_friend = Profile.objects.get(nickname=friend_name)
+                except Profile.DoesNotExist:
+                    raise Exception("No user has this nickname.")
                 if (Friendship.friendshipExists(request.user.profile, new_friend) == True):
+                    if Friendship.getFriendship(request.user.profile, new_friend).accepted == False:
+                        raise Exception("Friend request already sent/pending")
                     raise Exception("Friendship already exists")
-                print('E2')
                 Friendship.objects.create(friend1=request.user.profile, friend2=new_friend)
-                print('F')
-                request.user.profile.save()
-                print('G')
-                request.user.save()
-                print('H')
                 return JsonResponse({'message': 'success', 'friend': friend_name})
         except Exception as e:
             print(e)
-            return Response({'error': "Connection refused: " + e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
-            
+            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+
+class getMyFriendsAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                friendships = Friendship.getFriends(request.user.profile) #returns only those with accepted == true
+                if friendships:
+                    friends = []
+                    online_status = []
+                    for friendship in friendships:
+                        if friendship.friend1 == request.user.profile:
+                            friends.append(friendship.friend2.nickname)
+                            online_status.append(friendship.friend2.online)
+                        elif friendship.friend2 == request.user.profile:
+                            friends.append(friendship.friend1.nickname)
+                            online_status.append(friendship.friend1.online)
+                    print(friends)
+                    return JsonResponse({'friends': friends, 'online_status': online_status})
+                return JsonResponse({'error': 'no friends'})
+            return JsonResponse({'error': 'not authenticated'})
+        except Exception as e:
+            print(e)
+            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FriendRequestsAPIView(APIView):
+    def get(self, request, *args, **kwargs): #show all friend requests
+        try:
+            if request.user.is_authenticated:
+                friendships = Friendship.getFriendRequests(request.user.profile) #returns only those with accepted == False
+                if friendships:
+                    friend_requests = []
+                    for friendship in friendships:
+                        if friendship.friend2 == request.user.profile:
+                            friend_requests.append(friendship.friend1.nickname)
+                        if friend_requests == []:
+                            return JsonResponse({'error': 'There is no pending friend request'}) 
+                    return JsonResponse({'friend_requests': friend_requests})
+                return JsonResponse({'error': 'There is no pending friend request'})
+            return JsonResponse({'error': 'not authenticated'})
+        except Exception as e:
+            print(e)
+            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def post(self, request, *args, **kwargs): #accept a friend request
+        try:
+            if request.user.is_authenticated:
+                friend_name = request.data.get('friend', 'no friend')
+                if friend_name == 'no friend':
+                    raise Exception("friend is required")
+                try:
+                    new_friend = Profile.objects.get(nickname=friend_name)
+                except Profile.DoesNotExist:
+                    raise Exception("No user has this nickname.")
+                if (Friendship.friendshipExists(request.user.profile, new_friend) == True and Friendship.getFriendship(request.user.profile, new_friend).accepted == True):
+                    raise Exception("Friendship already exists")
+                friendship = Friendship.getFriendship(request.user.profile, new_friend)
+                friendship.accepted = True
+                friendship.save()
+                return JsonResponse({'message': 'success', 'friend': friend_name})
+        except Exception as e:
+            print(e)
+            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -99,7 +150,9 @@ class LoginAPIView(APIView):
             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user:
                 login(request, user)
-                token = generate_jwt_token(user),
+                token = generate_jwt_token(user)
+                user.profile.online = True
+                user.profile.save()
                 return JsonResponse({'token': token, 'username': user.username, 'message': 'Login successful'}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
@@ -132,6 +185,8 @@ class RegisterAPIView(APIView):
 
 class LogoutAPIView(APIView):
     def get(self, request, *args, **kwargs):
+        request.user.profile.online = False
+        request.user.profile.save()
         logout(request)
         return Response({"message": "User logged out successfully"})
 
