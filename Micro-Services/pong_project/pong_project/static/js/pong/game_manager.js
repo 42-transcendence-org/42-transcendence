@@ -31,6 +31,14 @@ export class GameManager {
 		this.snapshot = new snapshot.SnapshotManager();
 	}
 
+	eventlisteners() {
+		document.addEventListener('keydown', (event) => this.input.key_handler(event));
+		document.addEventListener('keyup', (event) => this.input.key_handler(event));
+		document.getElementById('local-button').addEventListener('click', () => this.game_create(g.TYPE_LOCAL));
+		document.getElementById('remote-button').addEventListener('click', () => this.game_create(g.TYPE_REMOTE));
+		document.getElementById('ai-button').addEventListener('click', () => this.game_create(g.TYPE_AI));
+	}
+
 	reset() {
 		this.game = null;
 		this.game_id = undefined;
@@ -193,7 +201,7 @@ export class GameManager {
 			return;
 		}
 
-		// this.sound.play_music();
+		this.sound.play_music();
 		this.game = new game.Game();
 		window.client.nextPage("game-div");
 		this.request_id = requestAnimationFrame(this.update_loop.bind(this));

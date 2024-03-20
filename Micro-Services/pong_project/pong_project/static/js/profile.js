@@ -1,3 +1,44 @@
+export async function eventlisteners() {
+		//Profile
+	document.getElementById('myprofile-button').addEventListener('click', () => window.client.nextPage("profile"));
+	document.getElementById('modify_email').addEventListener('submit', (event) => changeEmail(event));
+	document.getElementById('modify_nickname').addEventListener('submit', (event) => changeNickname(event));
+	document.getElementById('modify_password').addEventListener('submit', (event) => changePassword(event));
+	document.getElementById('modify_profile_picture').addEventListener('submit', (event) => changeProfilePicture(event));
+	//friends
+	document.getElementById('friends-button').addEventListener('click', (event) => window.client.nextPage("friends"));
+	document.getElementById('add-friend-form').addEventListener('submit', (event) => addFriend(event));
+		
+}
+
+export async function fetchProfileData(isLogged, div_to_show) {
+
+	if (isLogged === 'true' ) { //to show every time the user is logged in
+
+		const data = await getUserData();
+
+		if (data.error) {
+			return ;
+		}
+
+		document.getElementById('banner-nickname-display').innerText = data.nickname;
+		document.getElementById('banner-profile-image-display').src = "auth/static/" + data.img;
+		
+		if (div_to_show === 'profile') {
+			document.getElementById('profile-username-display').innerText = data.username;
+			document.getElementById('profile-email-display').innerText = data.email;
+			document.getElementById('profile-nickname-display').innerText = data.nickname;
+			document.getElementById('profile-profile_picture_display').src = "auth/static/" + data.img;
+		}
+		else if (div_to_show === 'friends')
+		{
+			this.show_friendlist();
+			this.showFriendRequests();
+		}
+	}
+
+}
+
 export async function getUserData() {
 	const url = 'https://localhost:8443/auth/getInfo/';
 	try {
@@ -12,7 +53,7 @@ export async function getUserData() {
 	}
 	catch (error) {
 		console.error(error);
-		return null;
+		return {'error': error};
 	}
 }
 

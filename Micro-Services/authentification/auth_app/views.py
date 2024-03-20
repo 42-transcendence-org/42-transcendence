@@ -76,8 +76,8 @@ class FriendRequestsAPIView(APIView):
                     for friendship in friendships:
                         if friendship.friend2 == request.user.profile:
                             friend_requests.append(friendship.friend1.nickname)
-                        if friend_requests == []:
-                            return JsonResponse({'error': 'There is no pending friend request'}) 
+                    if friend_requests == []:
+                        return JsonResponse({'error': 'There is no pending friend request'}) 
                     return JsonResponse({'friend_requests': friend_requests})
                 return JsonResponse({'error': 'There is no pending friend request'})
             return JsonResponse({'error': 'not authenticated'})
@@ -195,7 +195,7 @@ def check_authentication(request):
     if request.user.is_authenticated:
         return JsonResponse({'isAuthenticated': True})
     else:
-        return JsonResponse({'isAuthenticated': False})
+        return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False})
 
 
 def generate_jwt_token(user):
@@ -286,7 +286,7 @@ class OAuthVerifyStateAPIView(APIView): #verifies the state received by the clie
     def post(self, request, *args, **kwargs):
         if (os.environ.get('OAUTH_STATE') == request.data.get('state', 'no state')):
             return JsonResponse({'isValidState': True})
-        return JsonResponse({'isValidState': False})
+        return JsonResponse({'error': 'The state doesn\'t match 42API'})
 
 
 # utils functions
