@@ -9,10 +9,12 @@ import * as chatbot from './chatbot.js';
 export class Client {
 
 	constructor() {
+		//client interface
 		this.previous_div = null;
 		this.loggedDiv = document.getElementById('isLogged');
 		this.notLoggedDiv = document.getElementById('isNotLogged');
 		this.logginBanner = document.getElementById('login-banner');
+
 		this.game_manager = new game_manager.GameManager();
 		this.connection = new connection.Connection();
 		this.chatbot = new chatbot.Chatbot();
@@ -28,10 +30,7 @@ export class Client {
 		this.chatbot.eventlisteners(); //chabot
 		this.Oauth.eventlisterners(); //42login
 		
-		//client event listeners
-		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
-		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
-		//spa and 42login
+		//spa and 42login, has to be altogether for f5/redirection/firstload
 		if (await this.Oauth.isRedirectedFrom42API() === true) { // redirection from 42 API when trying to connect via 42
 			this.Oauth.login42();
 		} else if (history.length > 1 && history.state != null) { //reload of the page: SPA PART
@@ -39,14 +38,21 @@ export class Client {
 		} else { //first load of the page, joigning via URL https://localhost:8443 for the first time
 			this.home();		
 		}
+
+		//history event listener (back/forward buttons)
 		window.addEventListener('popstate', async () => {await this.HistoryButtonsClicked();});
+		//client event listeners
+		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
+		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
 	}
 
+	//SHOWS THE DIV + ADDS IT TO HISTORY
 	async nextPage(div_to_show) {
 		await this.divDisplay(div_to_show); // affiche la div à afficher
 		this.addToHistory(); //ajoute à l'historique
 	}
 
+	//ONLY SHOWS THE DIV, NO HISTORY ADDING
 	async divDisplay(div_to_show) {
 	
 		const isLogged = await this.connection.isLoggedIn();
@@ -69,24 +75,9 @@ export class Client {
 
 		this.previous_div = div; //enregistre la div actuelle pour pouvoir la cacher plus tard in english is better mais comment on dit enregistre jsplu trou de mémoire
 	}
-	
 
-	// If user is Logged, displays the logged divs and the banner elements, otherwise displays the not logged divs
-	sectionDisplay(isLogged) {
-
-		if (isLogged === 'true') {
-			this.loggedDiv.style.display = 'block';
-			this.logginBanner.style.display = 'block';
-			this.notLoggedDiv.style.display = 'none';
-		} else {
-			this.loggedDiv.style.display = 'none';
-			this.logginBanner.style.display = 'none';
-			this.notLoggedDiv.style.display = 'block';
-		}
-	}
-	
+	//to check if this div is allowed to be shown (example: you log out and try to access a logged in div)
 	thisDivCanBeShown(isLogged, div_to_show) {
-	
 		let childDivs = null;
 		if (isLogged === 'true') {
 			childDivs = this.loggedDiv.querySelectorAll('div');
@@ -102,8 +93,20 @@ export class Client {
 		return canBeShown;
 	}
 
-	// HOME BUTTON FUNCTION
+	// If user is Logged, displays the logged divs and the banner elements, otherwise displays the not logged divs
+	sectionDisplay(isLogged) {
+		if (isLogged === 'true') {
+			this.loggedDiv.style.display = 'block';
+			this.logginBanner.style.display = 'block';
+			this.notLoggedDiv.style.display = 'none';
+		} else {
+			this.loggedDiv.style.display = 'none';
+			this.logginBanner.style.display = 'none';
+			this.notLoggedDiv.style.display = 'block';
+		}
+	}
 
+	// HOME BUTTON FUNCTION
 	async home() {
 
 		if (await this.connection.isLoggedIn() === 'true') {
@@ -114,8 +117,8 @@ export class Client {
 	}
 
 	// HISTORY FUNCTIONS
-
-	addToHistory() { // TO PUT THE DIV IN THE HISTORY FOR BACK AND FORWARD BUTTON EVENTS
+	// TO PUT THE DIV IN THE HISTORY FOR BACK AND FORWARD BUTTON EVENTS
+	addToHistory() {
 	
 		let div = this.previous_div;
 		if (div === null) {
@@ -124,12 +127,13 @@ export class Client {
 		if (history.state !== null) {
 			history.pushState({id: div.id}, '', '');
 		}
-		else { //for first load, console warning if not replacing bc only 1 state or smth
+		else {
 			history.replaceState({id: div.id}, '', '');
 		}
 	}
 	
-	async HistoryButtonsClicked() { //for BACK and FORWARD
+	//for BACK and FORWARD buttons
+	async HistoryButtonsClicked() {
 
 		if (history.state === null) {
 			return ;
