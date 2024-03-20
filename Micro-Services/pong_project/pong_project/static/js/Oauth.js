@@ -58,7 +58,7 @@ export async function login42(code) { // if step2 == true -> procs this: step3 t
 
 }
 
-export async function obtainUserAccessToken(code) {
+export async function obtainUserAccessToken(code) { //first step that get a specific user token, stored temporarily in the backend
 	const url = 'https://localhost:8443/auth/login42/';
 	const dict = {
         'code': code,
@@ -143,25 +143,6 @@ export async function LogTheUserIn(authForm) {
 
 //UTILS
 
-export async function getUserData() {
-	const url = 'https://localhost:8443/auth/getInfo/';
-	try {
-		const response = await fetch(url, {
-			credentials: 'include',
-		});
-		const data = await response.json();
-		if (data.error) {
-			throw new Error(data.error);
-		}
-		return data;
-	}
-	catch (error) {
-		console.error(error);
-		return null;
-	}
-}
-
-
 function redirHandlerUnload() {
 	window.removeEventListener('unload', redirHandlerUnload);
 	window.client.divDisplay("loading");
@@ -203,23 +184,23 @@ async function isValidState(state) { //checks the state gotten from the redirect
 	}
 }
 
-export async function getApp42Token(){
-	return fetch('https://localhost:8443/auth/OAuthGetAppToken/', {
-		credentials: 'include',
-	})
-	.then(response => response.json())
-	.then(data => {
-		if (data.token){
-			return true;
-		}
-		else
-			throw new Error(data.error);
-	})
-	.catch(error => {
-		console.error(error);
-		return false;
-	});
-}
+// export async function getApp42Token(){
+	// 	return fetch('https://localhost:8443/auth/OAuthGetAppToken/', {
+		// 		credentials: 'include',
+	// 	})
+	// 	.then(response => response.json())
+	// 	.then(data => {
+		// 		if (data.token){
+			// 			return true;
+		// 		}
+// 		else
+			// 			throw new Error(data.error);
+	// 	})
+	// 	.catch(error => {
+		// 		console.error(error);
+		// 		return false;
+	// 	});
+// }
 
 
 
@@ -302,6 +283,7 @@ export async function poster(url, data) {
 		});
 		const rep = await response.json();	
 		if (rep.error) {
+			alert(rep.error);
 			throw new Error(rep.error);
 		}		
 		return rep;

@@ -12,24 +12,20 @@
 	<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
 	<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
 	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
-	<!-- <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}"> -->
-	<link rel="manifest" href="{% static 'site.webmanifest' %}">
+		<link rel="manifest" href="{% static 'site.webmanifest' %}">
 </head>
 
 <body>
 	<main>
-		<header class="banner" id = "a">	
+		<header class="banner">	
 			<h1 id ="home-banner" s>ft_transcendence</h1>
 			<div id="login-banner" style="display: none;">
-				<p id="welcomeMessage" style="display: inline-block;">Welcome, <span id="nickname_display_banner">NO NICKNAME</span> ! </p>
-				<!-- <p id="correction-points-message" style="display: inline-block;">You have <span id="correction-points">UNDEFINED</span> correction points.</p> -->
-				<button id="sound-button" style="display: inline-block;">Mute</button>
+				<p id="welcomeMessage" style="display: inline-block;">Welcome, <span id="banner-nickname-display">NO NICKNAME</span> ! </p>
+								<button id="sound-button" style="display: inline-block;">Mute</button>
 				<button id="logout-button" type="submit" style="display: inline-block;">Logout</button>
-				
-				<img id="profile-image" width="75" height="87" src="" alt="User Image" style="display: inline-block;">
+				<img id="banner-profile-image-display" width="75" height="87" src="" alt="User Image" style="display: inline-block;">
 			</div>
-			
-		</header>
+					</header>
 		<div id="isLogged" style="display: none;">
 			<div id="logged-in-home" style="display: none;">
 				<button id="local-button">Play Local Game</button>
@@ -38,12 +34,12 @@
 				<button id="tournament-button"> Tournament</button>
 				<button id="myprofile-button"> My profile</button>
 				<button id="chatbot-button"> Pong Chatbot</button>
-				<!-- <button id="friends-button"> Friends</button> -->
+				<button id="friends-button"> Friends</button>
 			</div>
-			<!-- <div id="friends" style="display:none">
+			<div id="friends" style="display:none">
 				<p>Coucou</p>
-				<form id="add-friend">
-					<label for="add_friend">Add a friend:</label>
+				<form id="add-friend-form">
+					<label for="add_friend">Input the nickname of who you want to add as friend:</label>
 					<input type="add-friend" id="add-friend-input" name="add-friend" required>
 					<button id="submit-add-friend-button" type="submit">Add</button>
 				</form>
@@ -52,7 +48,7 @@
 				<div id="friends-list">
 					<p>Friends list</p>
 				</div>
-			</div> -->
+			</div>
 			<div id="game-div" style="display: none;">
 				<button id="test-button">Test Page</button>
 				<canvas id="game-canvas" width="480" height="650"></canvas>
@@ -75,20 +71,15 @@
 				</form>
 			</div>
 			<div id="profile" style="display: none;">
-				<p id="username-welcome-p" style="display: inline-block;">Welcome, <span id="username_display_profile"></span>!</p>
-				<p id="email-welcome-p" style="display: inline-block;">Welcome, <span id="email_display_profile"></span>!</p>
-				<p id="nickname-welcome-p" style="display: inline-block;">Welcome, <span id="nickname_display_profile"></span>!</p>
+				<p id="username-welcome-p" style="display: inline-block;">Welcome, <span id="profile-username-display"></span>!</p>
+				<p id="email-welcome-p" style="display: inline-block;">Welcome, <span id="profile-email-display"></span>!</p>
+				<p id="nickname-welcome-p" style="display: inline-block;">Welcome, <span id="profile-nickname-display"></span>!</p>
 				<form id="modify_email">
 					<label for="email_new">email:</label>
 					<input type="email" id="email_new" name="email" autocomplete="email" required>
 					<button id="submit-email-button" type="submit">modify</button>
 				</form>
-				<!-- <form id="modify_username">
-					<label for="username_new">username:</label>
-					<input type="username" id="username_new" name="username" autocomplete="username" required>
-					<button id="submit-username-button" type="submit">modify</button>
-				</form> -->
-				<form id="modify_nickname">
+								<form id="modify_nickname">
 					<label for="nickname_new">nickname:</label>
 					<input type="first_name" id="nickname_new" name="first_name" autocomplete="first_name" required>
 					<button id="submit-nickname-button" type="submit">modify</button>
@@ -98,7 +89,7 @@
 					<input type="password" id="password_new" name="password" autocomplete="password" required>
 					<button id="submit-password-button" type="submit">modify</button>
 				</form>	
-				<img src="" id="profile_picture_display" width="75" height="87" alt="profile picture">
+				<img src="" id="profile-profile_picture_display" width="75" height="87" alt="profile picture">
 				<form id="modify_profile_picture">
 					<label for="profile_picture_new">profile picture:</label>
 					<input type="file" id="profile_picture_new" name="profile_picture" accept="image/*" required>

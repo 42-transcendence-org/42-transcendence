@@ -1,9 +1,16 @@
+const music = new Audio(window.ASSETS_URL + "glitchstairs.ogg");
+const victory = new Audio(window.ASSETS_URL + "victory.wav");
+const hit_sound = new Audio(window.ASSETS_URL + "hit.wav");
+const score_sound = new Audio(window.ASSETS_URL + "explosion.wav");
+
+export let sound_off = false;
+
 export class SoundManager {
 	constructor() {
-		this.music = new Audio(window.ASSETS_URL + "glitchstairs.ogg");
-		this.victory = new Audio(window.ASSETS_URL + "victory.wav");
-		this.hit_sound = new Audio(window.ASSETS_URL + "hit.wav");
-		this.score_sound = new Audio(window.ASSETS_URL + "explosion.wav");
+		this.music = music;
+		this.victory = victory;
+		this.hit_sound = hit_sound;
+		this.score_sound = score_sound;
 	}
 
 	play_hit_sound() {
@@ -35,4 +42,22 @@ export class SoundManager {
 		this.music.pause();
 		this.music.currentTime = 0;
 	}
+}
+
+export function mute_music() {
+	sound_off = true;
+	music.muted = sound_off;
+	victory.muted = sound_off;
+	hit_sound.muted = sound_off;
+	score_sound.muted = sound_off;
+	document.getElementById('sound-button').textContent = "Unmute";
+}
+
+export function mute_sounds () {
+	sound_off = (sound_off) ? false : true;
+	music.muted = sound_off;
+	victory.muted = sound_off;
+	hit_sound.muted = sound_off;
+	score_sound.muted = sound_off;
+	document.getElementById('sound-button').textContent = sound_off ? "Unmute" : "Mute";
 }

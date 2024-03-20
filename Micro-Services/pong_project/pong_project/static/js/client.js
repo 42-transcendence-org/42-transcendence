@@ -2,6 +2,7 @@ import * as g from './pong/global.js';
 import * as profile from './profile.js';
 import * as Oauth from './Oauth.js';
 import * as game_manager from './pong/game_manager.js';
+import * as sound from './pong/sound.js';
 
 export class Client {
 
@@ -39,8 +40,7 @@ export class Client {
 
 		document.getElementById('myprofile-button').addEventListener('click', () => this.nextPage("profile"));
 		document.getElementById('modify_email').addEventListener('submit', (event) => profile.changeEmail(event));
-		// document.getElementById('modify_username').addEventListener('submit', function(event) {event.preventDefault();profile.changeUsername();});
-		document.getElementById('modify_nickname').addEventListener('submit', (event) => profile.changeNickname(event));
+				document.getElementById('modify_nickname').addEventListener('submit', (event) => profile.changeNickname(event));
 		document.getElementById('modify_password').addEventListener('submit', (event) => profile.changePassword(event));
 		document.getElementById('modify_profile_picture').addEventListener('submit', (event) => profile.changeProfilePicture(event));
 		
@@ -55,17 +55,18 @@ export class Client {
 		} else { //first load of the page
 			this.home();		
 		}
-		// debug_mute_music();
+		sound.mute_music();
 		document.getElementById('home-button').addEventListener('click', (event) => this.nextPage("logged-in-home"));
 		document.getElementById('test-button').addEventListener('click', (event) => this.nextPage("test"));
-		// document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); mute_sounds();});
+		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();});
 		document.getElementById('42-login-button').addEventListener('click', (event) => Oauth.RedirectTo42Login());
 		document.getElementById('home-banner').addEventListener('click', (event) =>  this.home());
 		window.addEventListener('popstate', await this.HistoryButtonsClicked()); //for back and forward keys
 		
 		document.getElementById('chatbot-button').addEventListener('click', (event) => this.nextPage("chatbot"));
+document.getElementById('friends-button').addEventListener('click', (event) => this.nextPage("friends"));
 		document.getElementById('OPENai').addEventListener('submit', (event) =>  Oauth.chatgpt());
-		
+		document.getElementById('add-friend-form').addEventListener('submit', (event) => profile.addFriend(event));
 		
 		//tournament
 		// document.getElementById('tournament-button').addEventListener('click', function(event) {event.preventDefault();nextPage("tournament");});
@@ -117,14 +118,14 @@ export class Client {
 	
 		localStorage.setItem('isLogged', await this.isLoggedIn());
 		if (localStorage.getItem('isLogged') === 'true' ) { //to show every time the user is logged in
-			const data = await Oauth.getUserData();
+			const data = await profile.getUserData();
 			if (data && !data.error) {
-				document.getElementById('username_display_profile').innerText = data.username;
-				document.getElementById('email_display_profile').innerText = data.email;
-				document.getElementById('nickname_display_profile').innerText = data.nickname;
-				document.getElementById('nickname_display_banner').innerText = data.nickname;
-				document.getElementById('profile-image').src = "auth/static/" + data.img;
-				document.getElementById('profile_picture_display').src = "auth/static/" + data.img;
+				document.getElementById('profile-username-display').innerText = data.username;
+				document.getElementById('profile-email-display').innerText = data.email;
+				document.getElementById('profile-nickname-display').innerText = data.nickname;
+				document.getElementById('banner-nickname-display').innerText = data.nickname;
+				document.getElementById('banner-profile-image-display').src = "auth/static/" + data.img;
+				document.getElementById('profile-profile_picture_display').src = "auth/static/" + data.img;
 			}
 		}
 	

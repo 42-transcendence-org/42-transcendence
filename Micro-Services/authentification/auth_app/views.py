@@ -11,12 +11,50 @@ from django.contrib.auth import logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Profile
+from .models import Profile, Friendship
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 
 from django.http import JsonResponse
+
+class addFriendAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                myself = request.user.profile
+                friend_name = request.data.get('friend', 'no friend')
+                if friend_name == 'no friend':
+                    raise Exception("friend is required")
+                if (friend_name == myself.nickname):
+                    raise Exception("You can't add yourself as a friend")
+                print('A')
+                print('B')
+                print('B2')
+                print(request.user.profile.friend1.all())
+                print(request.user.profile.friend2.all())
+                print('C')
+                new_friend = Profile.objects.get(nickname=friend_name)
+                print('D')
+                if new_friend is None:
+                    raise Exception("User not found")
+                print('E')
+                if (Friendship.friendshipExists(request.user.profile, new_friend) == True):
+                    raise Exception("Friendship already exists")
+                print('E2')
+                Friendship.objects.create(friend1=request.user.profile, friend2=new_friend)
+                print('F')
+                request.user.profile.save()
+                print('G')
+                request.user.save()
+                print('H')
+                return JsonResponse({'message': 'success', 'friend': friend_name})
+        except Exception as e:
+            print(e)
+            return Response({'error': "Connection refused: " + e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+
 
 
 def update_profile_picture(request):
