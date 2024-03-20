@@ -124,7 +124,7 @@ export async function getter(url) {
 		return rep;
 	}
 	catch (error) {
-		console.error(error);
+		// console.error(error);
 		return {'error': error};
 	}
 }
@@ -149,7 +149,7 @@ export async function poster(url, data) {
 		return rep;
 	}
 	catch (error) {
-		console.error(error);
+		// console.error(error);
 		return {'error': error};
 	}
 }
