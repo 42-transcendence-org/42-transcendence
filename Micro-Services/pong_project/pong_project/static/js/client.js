@@ -106,16 +106,6 @@ export class Client {
 		}
 	}
 
-	// HOME BUTTON FUNCTION
-	async home() {
-
-		if (await this.connection.isLoggedIn() === 'true') {
-			this.nextPage("logged-in-home");
-		} else {
-			this.nextPage("not-logged-home");
-		}
-	}
-
 	// HISTORY FUNCTIONS
 	// TO PUT THE DIV IN THE HISTORY FOR BACK AND FORWARD BUTTON EVENTS
 	addToHistory() {
@@ -139,6 +129,17 @@ export class Client {
 			return ;
 		}
 		await this.divDisplay(history.state.id);
+	}
+	
+
+	// HOME BUTTON FUNCTION
+	async home() {
+
+		if (await this.connection.isLoggedIn() === 'true') {
+			this.nextPage("logged-in-home");
+		} else {
+			this.nextPage("not-logged-home");
+		}
 	}
 	
 	//COOKIE FUNCTION
