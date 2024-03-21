@@ -39,6 +39,9 @@ export async function fetchProfileData(div_to_show) {
 	}
 	else if (div_to_show === 'friend-profile') {
 		const friend_profile = history.state.friend_profile;
+		if (friend_profile === undefined) {
+			return ;
+		}
 		document.getElementById('friend-profile-nickname-display').textContent = friend_profile.nickname;
 		document.getElementById('friend-profile-profile-picture-display').src = "auth/static/" + friend_profile.img;
 	}

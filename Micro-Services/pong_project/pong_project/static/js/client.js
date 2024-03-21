@@ -56,7 +56,7 @@ export class Client {
 	async divDisplay(div_to_show) {
 	
 		const isLogged = await this.connection.isLoggedIn();
-		console.log(history.state);
+
 		if (this.thisDivCanBeShown(isLogged, div_to_show) === false) {
 			div_to_show = 'unauthorized';
 			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (isLogged === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
