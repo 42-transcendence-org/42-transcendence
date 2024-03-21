@@ -62,6 +62,7 @@ export class Oauth {
 		const url = 'https://localhost:8443/auth/login42/'
 		const response = await getter(url);
 		if (response.error) {
+			alert(response.error);
 			return null;
 		}
 		return response;
@@ -72,6 +73,7 @@ export class Oauth {
 		const url = 'https://localhost:8443/auth/login/';
 		const response = await poster(url, data);
 		if (response.error) {
+			window.client.nextPage('not-logged-home');
 			return ;
 		}
 		localStorage.setItem('jwt', data.token);

@@ -59,7 +59,7 @@ export class Client {
 	
 		if (this.thisDivCanBeShown(isLogged, div_to_show) === false) {
 			div_to_show = 'unauthorized';
-			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (localStorage.getItem('isLogged') === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
+			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (isLogged === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
 		}
 
 		if (isLogged === 'true') {
@@ -97,6 +97,7 @@ export class Client {
 
 	// If user is Logged, displays the logged divs and the banner elements, otherwise displays the not logged divs
 	sectionDisplay(isLogged) {
+		
 		if (isLogged === 'true') {
 			this.loggedDiv.style.display = 'block';
 			this.logginBanner.style.display = 'block';
