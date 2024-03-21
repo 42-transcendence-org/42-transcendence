@@ -221,11 +221,36 @@ export async function show_friendlist() {
 
 	var length = response.friends.length;
 	for (var i = 0; i < length; i++) {
-		var new_friend = document.createElement('button');
-		new_friend.textContent = 'Friend name: ' + response.friends[i] + ' online= ' + response.online_status[i]; ;
-		list.appendChild(new_friend);
+
+		var new_friendd = document.createElement('button');
+		new_friendd.textContent = 'Friend name: ' + response.friends[i] + ' online= ' + response.online_status[i]; ;
+		list.appendChild(new_friendd);
+
+		var delete_button = document.createElement('button');
+		// delete_button.name = response.friend_requests[i];
+		delete_button.name = response.friends[i];
+		delete_button.addEventListener('click', (event) => deleteFriend(event));
+		delete_button.textContent = 'Delete';
+		list.appendChild(delete_button);
+
 	}
 }
+
+export async function deleteFriend(event) {
+	const friend_name = event.target.name;
+	const url = 'https://localhost:8443/auth/DeleteFriend/';
+
+	const data = {
+		'friend': friend_name,
+	};
+	const response = await poster(url, data);
+	if (response.error) {
+		alert(response.error);
+		return ;
+	}
+	show_friendlist();
+}
+
 
 export async function showFriendRequests(event) {
 	var list = document.getElementById('friends-requests');
@@ -252,11 +277,16 @@ export async function showFriendRequests(event) {
 
 		var refuse_button = document.createElement('button');
 		refuse_button.textContent = 'Refuse';
-		accept_button.addEventListener('click', () => refuseFriendRequest(response.friend_requests[i]));
+		refuse_button.name = response.friend_requests[i];
+		refuse_button.addEventListener('click', (event) => refuseFriendRequest(event));
 		new_friend.appendChild(refuse_button);
 
+
 		// new_friend.addEventListener('click', (event) => acceptFriendRequest(event));
+
 		list.appendChild(new_friend);
+
+		
 	}
 }
 
@@ -276,10 +306,18 @@ export async function acceptFriendRequest(event) {
 	show_friendlist();
 }
 
-export async function refuseFriendRequest(friend_name) {
-	const url = 'https://localhost:8443/auth/acceptFriendRequest/';
-	const data = {
-		friend: friend_name
-	};
-	await poster(url, data);
+
+
+export async function refuseFriendRequest(event) {
+    const friend_name = event.target.name;
+    const url = 'https://localhost:8443/auth/RefuseFriendRequest/';
+    const data = {
+        friend: friend_name,
+    };
+    const response = await poster(url, data);
+    if (response.error) {
+        alert(response.error);
+        return ;
+    }
+    document.getElementById('friend_request_from_' + friend_name).remove();
 }

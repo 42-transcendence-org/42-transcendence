@@ -17,6 +17,8 @@ from openai import OpenAI
 from django.http import JsonResponse
 
 
+#views
+
 
 
 
@@ -91,6 +93,7 @@ def joinErrForm(dico):
         for elem in id:
             string += f"{field}: {elem}\n" 
     return string
+
 
 def generate_jwt_token(user):
     dt = datetime.datetime.now() + datetime.timedelta(hours=1)
@@ -246,6 +249,45 @@ class FriendRequestsAPIView(APIView):
             print(e)
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class RefuseFriendRequestAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                friend_name = request.data.get('friend', 'no friend')
+                print("ALLOOOOO")
+                if friend_name == 'no friend':
+                    raise Exception("Friend is required")
+                friendship = Friendship.objects.filter(friend2=request.user.profile, friend1__nickname=friend_name).first()
+                print("JSUIS LAAAAA")
+                if friendship:
+                    friendship.delete()
+                    print("tas suppr ?????????")
+                    return JsonResponse({'success': True})
+                else:
+                    return JsonResponse({'error': 'Error: friend request not found'})
+        except Exception as e:
+            print(e)
+            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+
+class DeleteFriendAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                friend_name = request.data.get('friend', 'no friend')
+                if friend_name == 'no friend':
+                    raise Exception("Friend is required")
+                friend_profile = Profile.objects.get(nickname=friend_name)
+                if Friendship.friendshipExists(request.user.profile, friend_profile):
+                    friendship = Friendship.getFriendship(request.user.profile, friend_profile)
+                    friendship.delete()
+                    return JsonResponse({'success': True})
+                else:
+                    return JsonResponse({'error': 'Friendship already ended'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+
 def update_profile_picture(request):
     if request.method == 'POST':
         profile_picture = request.FILES.get('profile_picture')
@@ -359,7 +401,6 @@ class Login42APIView(APIView): #gets the access token from 42 for the user loggi
         except Exception as e:
             print(e)
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class OAuthRedirectUrlAPIView(APIView): #returns the uri to redirect to 42's oauth page
     def get(self, request, *args, **kwargs):
