@@ -16,81 +16,62 @@ export class Connection {
 
 	async login_user_request(event) {
 		event.preventDefault()
-		const formData = {
+		const url = 'https://localhost:8443/auth/login/';
+		const data = {
 			username: document.getElementById('username_login').value,
 			password: document.getElementById('password_login').value,
 		};
-		try {
-			const response = await fetch('https://localhost:8443/auth/login/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					// 'X-CSRFToken': window.client.get_cookie('csrftoken'),
-				},
-				body: JSON.stringify(formData)
-			});
-			const data = await response.json();
-			if (data.token) {
-				localStorage.setItem('jwt', data.token);
-				document.getElementById('username_login').value = '';
-				document.getElementById('password_login').value = '';
-				window.client.home();
-				document.getElementById('username_login').value = '';
-				document.getElementById('password_login').value = '';
-			} else {
-				alert(data.error);
-				throw new Error(data.error);
-			}
-		} catch (error) {
-			console.error(error);
+		const response = await Oauth.poster(url, data);
+		
+		document.getElementById('username_login').value = '';
+		document.getElementById('password_login').value = '';
+
+		if (response.error) {
+			alert(response.error);
+			return ;
 		}
+		localStorage.setItem('jwt', data.token);
+		window.client.home();
 	}
 
 	
 	async register_user_request(event) {
 		event.preventDefault()
-		const formData = {
+		const url = 'https://localhost:8443/auth/register/';
+		const data = {
 			username: document.getElementById('username_register').value,
 			password1: document.getElementById('password1_register').value,
 			password2: document.getElementById('password2_register').value,
-			password: document.getElementById('password1_register').value,
 			email: document.getElementById('email_address_register').value,
 			first_name: document.getElementById('first_name_register').value,
 		};
-		try {
-			const response = await fetch('https://localhost:8443/auth/register/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': window.client.get_cookie('csrftoken'),
-				},
-				body: JSON.stringify(formData)
-			});
-			const data = await response.json();
-			if (data.message) {
-				document.getElementById('username_register').value = '',
-				document.getElementById('password1_register').value = '',
-				document.getElementById('password2_register').value = '',
-				document.getElementById('email_address_register').value = '',
-				document.getElementById('first_name_register').value = '',
-				window.client.nextPage("Registered");
-			} else {
-				alert(data.error);
-				throw new Error(data.error);
-			}
-		} catch (error) {
-			console.error(error);		
-		}
+		const response = await Oauth.poster(url, data);
+		
+		document.getElementById('username_register').value = '';
+		document.getElementById('password1_register').value = '';
+		document.getElementById('password2_register').value = '';
+		document.getElementById('email_address_register').value = '';
+		document.getElementById('first_name_register').value = '';
 
+		if (response.error) {
+			alert(response.error);
+			return ;
+		}
+		alert('Registration was successful');
+		window.client.nextPage("not-logged-in-home");
 	}
 
 	async logout_user_request(event) {
 		event.preventDefault()
 		const url = 'https://localhost:8443/auth/logout/'
 		const response = await Oauth.getter(url);
-		/* FIXME: Check return code */
+
+		if (response.error) {
+			alert(response.error);
+			return ;
+		}
+		
 		localStorage.removeItem('jwt');
-		localStorage.removeItem('username');
 		window.client.home();
 	}
 

@@ -23,15 +23,12 @@ urlpatterns = [
 	path('addFriend/', addFriendAPIView.as_view(), name='addFriend'),
 	path('getMyFriends/', getMyFriendsAPIView.as_view(), name='getmyFriends'),
 	path('FriendRequests/', FriendRequestsAPIView.as_view(), name='FriendRequests'),
+    path('RefuseFriendRequest/', RefuseFriendRequestAPIView.as_view(), name='RefuseFriendRequest'),
+    path('DeleteFriend/', DeleteFriendAPIView.as_view(), name='DeleteFriend'),
     path('update_profile_picture/', update_profile_picture, name='update_profile_picture'),
     path("email/", EmailAPIView.as_view(), name="email_change"),
     path("nickname/", NicknameAPIView.as_view(), name="nickname_change"),
     path("password/", PasswordAPIView.as_view(), name="password"),
-		# path('addFriend/', addFriendAPIView.as_view(), name='addFriend'),
-	# path('getMyFriends/', getMyFriendsAPIView.as_view(), name='getmyFriends'),
-	# path('FriendRequests/', FriendRequestsAPIView.as_view(), name='FriendRequests'),
-    path('RefuseFriendRequest/', RefuseFriendRequestAPIView.as_view(), name='RefuseFriendRequest'),
-    path('DeleteFriend/', DeleteFriendAPIView.as_view(), name='DeleteFriend'),
 
     #42OAuth
 	path('login42/', Login42APIView.as_view(), name='Login42'),

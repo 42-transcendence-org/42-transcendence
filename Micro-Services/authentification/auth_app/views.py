@@ -74,10 +74,14 @@ class RegisterAPIView(APIView):
 
 class LogoutAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        request.user.profile.online = False
-        request.user.profile.save()
-        logout(request)
-        return Response({"message": "User logged out successfully"})
+        try:
+            request.user.profile.online = False
+            request.user.profile.save()
+            logout(request)
+            return Response({"message": "User logged out successfully"})
+        except Exception as e:
+            print(e)
+            return Response({'error': "Logout refused: " + e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def check_authentication(request):
