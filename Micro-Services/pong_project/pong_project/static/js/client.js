@@ -56,14 +56,14 @@ export class Client {
 	async divDisplay(div_to_show) {
 	
 		const isLogged = await this.connection.isLoggedIn();
-	
+		console.log(history.state);
 		if (this.thisDivCanBeShown(isLogged, div_to_show) === false) {
 			div_to_show = 'unauthorized';
 			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (isLogged === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
 		}
 
 		if (isLogged === 'true') {
-			profile.fetchProfileData(div_to_show);
+			await profile.fetchProfileData(div_to_show);
 		}
 		this.sectionDisplay(isLogged);
 	
@@ -97,7 +97,7 @@ export class Client {
 
 	// If user is Logged, displays the logged divs and the banner elements, otherwise displays the not logged divs
 	sectionDisplay(isLogged) {
-		
+
 		if (isLogged === 'true') {
 			this.loggedDiv.style.display = 'block';
 			this.logginBanner.style.display = 'block';
@@ -117,10 +117,16 @@ export class Client {
 		if (div === null) {
 			return ;
 		}
+
 		if (history.state !== null) {
-			history.pushState({id: div.id}, '', '');
-		}
-		else {
+			if (div.id === 'friend-profile') {
+				const friendInfo = JSON.parse(localStorage.getItem('friend_profile'));
+				localStorage.removeItem('friend_profile');
+				history.pushState({id: div.id, friend_profile: friendInfo}, '', '');
+			} else {
+				history.pushState({id: div.id}, '', '');
+			}
+		} else {
 			history.replaceState({id: div.id}, '', '');
 		}
 	}

@@ -38,6 +38,8 @@ export class Oauth {
 			return false;
 		}
 	}
+	
+	//mini main
 	async login42() { // if step2 == true -> procs this: step3 that calls the 3 next functions to effectively log in
 		await this.obtainUserAccessToken();
 		const authForm = await this.CreateUserAndGetHisIDs();

@@ -3,7 +3,7 @@ from django.urls import path
 #connection.js
 from .views import LoginAPIView, RegisterAPIView, LogoutAPIView, check_authentication
 #profile
-from .views import getInfo, addFriendAPIView, getMyFriendsAPIView, FriendRequestsAPIView, update_profile_picture, EmailAPIView, NicknameAPIView, PasswordAPIView, RefuseFriendRequestAPIView, DeleteFriendAPIView
+from .views import getInfo, getFriendInfoAPIView, addFriendAPIView, getMyFriendsAPIView, FriendRequestsAPIView, update_profile_picture, EmailAPIView, NicknameAPIView, PasswordAPIView, RefuseFriendRequestAPIView, DeleteFriendAPIView
 #42Oauth
 from .views import Login42APIView, OAuthRedirectUrlAPIView, OAuthVerifyStateAPIView
 #chatbot
@@ -20,6 +20,7 @@ urlpatterns = [
 
     #profile
 	path('getInfo/', getInfo, name='get42info'),
+	path('getFriendInfo/', getFriendInfoAPIView.as_view(), name='getFriendInfo'),
 	path('addFriend/', addFriendAPIView.as_view(), name='addFriend'),
 	path('getMyFriends/', getMyFriendsAPIView.as_view(), name='getmyFriends'),
 	path('FriendRequests/', FriendRequestsAPIView.as_view(), name='FriendRequests'),

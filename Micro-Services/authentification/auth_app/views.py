@@ -185,6 +185,26 @@ def getInfo(request):
             return JsonResponse({'error': 'No profile for this user'})
     return JsonResponse({'error': 'You are not authenticated'})
 
+class getFriendInfoAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                friend_name = request.data.get('friend', 'no friend')
+                if friend_name == 'no friend':
+                    raise Exception("friend is required")
+                try:
+                    friend = Profile.objects.get(nickname=friend_name)
+                except Profile.DoesNotExist:
+                    raise Exception("No user has this nickname.")
+                return JsonResponse({'img': friend.profile_picture, \
+                                    'correction_points': friend.correction_points, \
+                                    'nickname': friend.nickname, \
+                                    'online': friend.online,
+                                    })
+        except Exception as e:
+            print(e)
+            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+
 class addFriendAPIView(APIView):
     def post(self, request, *args, **kwargs):
         try:

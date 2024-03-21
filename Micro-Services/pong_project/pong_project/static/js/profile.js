@@ -30,12 +30,17 @@ export async function fetchProfileData(div_to_show) {
 		document.getElementById('profile-username-display').innerText = data.username;
 		document.getElementById('profile-email-display').innerText = data.email;
 		document.getElementById('profile-nickname-display').innerText = data.nickname;
-		document.getElementById('profile-profile_picture_display').src = "auth/static/" + data.img;
+		document.getElementById('profile-profile-picture-display').src = "auth/static/" + data.img;
 	}
 	else if (div_to_show === 'friends')
 	{
 		this.show_friendlist();
 		this.showFriendRequests();
+	}
+	else if (div_to_show === 'friend-profile') {
+		const friend_profile = history.state.friend_profile;
+		document.getElementById('friend-profile-nickname-display').textContent = friend_profile.nickname;
+		document.getElementById('friend-profile-profile-picture-display').src = "auth/static/" + friend_profile.img;
 	}
 }
 
@@ -116,7 +121,7 @@ export async function changeProfilePicture(event) {
 			throw new Error(responseData.error);
 		}
 
-		document.getElementById('profile-profile_picture_display').src = "auth/static/" + responseData.profile_picture;
+		document.getElementById('profile-profile-picture-display').src = "auth/static/" + responseData.profile_picture;
 		document.getElementById('banner-profile-image-display').src = "auth/static/" + responseData.profile_picture;
 
 		window.location.reload();
@@ -157,20 +162,37 @@ export async function show_friendlist() {
 	var length = response.friends.length;
 	for (var i = 0; i < length; i++) {
 
-		var new_friendd = document.createElement('button');
-		new_friendd.textContent = 'Friend name: ' + response.friends[i] + ' online= ' + response.online_status[i]; ;
-		list.appendChild(new_friendd);
+		var new_friend = document.createElement('button');
+		new_friend.textContent = 'Friend name: ' + response.friends[i] + ' online= ' + response.online_status[i];
+		new_friend.name = response.friends[i];
+		new_friend.addEventListener('click', (event) => showFriendProfile(event));
+		list.appendChild(new_friend);
 
 		var delete_button = document.createElement('button');
-		// delete_button.name = response.friend_requests[i];
 		delete_button.name = response.friends[i];
 		delete_button.addEventListener('click', (event) => deleteFriend(event));
 		delete_button.textContent = 'Delete';
 		list.appendChild(delete_button);
-
 	}
 }
 
+export async function showFriendProfile(event) {
+	const friend_name = event.target.name;
+	const url = 'https://localhost:8443/auth/getFriendInfo/';
+	const data = {
+		'friend': friend_name,
+	};
+	const response = await poster(url, data);
+	if (response.error) {
+		alert(response.error);
+		return ;
+	}
+
+	document.getElementById('friend-profile-nickname-display').textContent = response.nickname;
+	document.getElementById('friend-profile-profile-picture-display').src = "auth/static/" + response.img;
+	localStorage.setItem('friend_profile', JSON.stringify(response));
+	window.client.nextPage('friend-profile');
+}
 export async function deleteFriend(event) {
 	const friend_name = event.target.name;
 	const url = 'https://localhost:8443/auth/DeleteFriend/';
