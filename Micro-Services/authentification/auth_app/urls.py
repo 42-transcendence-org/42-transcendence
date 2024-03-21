@@ -2,8 +2,6 @@
 from django.urls import path
 #connection.js
 from .views import LoginAPIView, RegisterAPIView, LogoutAPIView, check_authentication
-#profile
-from .views import getInfo, addFriendAPIView, getMyFriendsAPIView, FriendRequestsAPIView, update_profile_picture, EmailAPIView, NicknameAPIView, PasswordAPIView, RefuseFriendRequestAPIView, DeleteFriendAPIView
 #42Oauth
 from .views import Login42APIView, OAuthRedirectUrlAPIView, OAuthVerifyStateAPIView
 #chatbot
@@ -17,18 +15,6 @@ urlpatterns = [
     path('register/', RegisterAPIView.as_view(), name='api_register'),
     path('logout/', LogoutAPIView.as_view(), name='api_register'),
     path('check-authentication/', check_authentication, name='check_authentication'),
-
-    #profile
-	path('getInfo/', getInfo, name='get42info'),
-	path('addFriend/', addFriendAPIView.as_view(), name='addFriend'),
-	path('getMyFriends/', getMyFriendsAPIView.as_view(), name='getmyFriends'),
-	path('FriendRequests/', FriendRequestsAPIView.as_view(), name='FriendRequests'),
-    path('RefuseFriendRequest/', RefuseFriendRequestAPIView.as_view(), name='RefuseFriendRequest'),
-    path('DeleteFriend/', DeleteFriendAPIView.as_view(), name='DeleteFriend'),
-    path('update_profile_picture/', update_profile_picture, name='update_profile_picture'),
-    path("email/", EmailAPIView.as_view(), name="email_change"),
-    path("nickname/", NicknameAPIView.as_view(), name="nickname_change"),
-    path("password/", PasswordAPIView.as_view(), name="password"),
 
     #42OAuth
 	path('login42/', Login42APIView.as_view(), name='Login42'),

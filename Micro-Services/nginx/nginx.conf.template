@@ -82,7 +82,7 @@ server {
 
             # Redirect requests to the user service
     location /tournament/ {
-        proxy_pass http://user_service/;
+        proxy_pass http://tournament_service/;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
         proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client
@@ -94,7 +94,7 @@ server {
 
             # Redirect requests to the tournament service
     location /user/ {
-        proxy_pass http://tournament_service/;
+        proxy_pass http://user_service/;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
         proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client

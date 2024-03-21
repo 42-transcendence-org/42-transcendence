@@ -15,19 +15,18 @@ from .models import Profile, Friendship
 from django.contrib.auth.models import User
 from openai import OpenAI
 from django.http import JsonResponse
-
+import requests
 
 #views
-
-
-
-
-
 
 #CONNECTION.JS LOGIN/LOGOUT/REGISTER VIEWS
 
 class LoginAPIView(APIView):
     def post(self, request, *args, **kwargs):
+        print("test")
+        url = "http://localhost:8004/test/"
+        response = requests.post(url)
+        print(response)
         try:
             form = AuthenticationForm(data=request.data)
             if not form.is_valid():
@@ -44,7 +43,7 @@ class LoginAPIView(APIView):
                 user.profile.save()
                 return JsonResponse({'token': token, 'username': user.username, 'message': 'Login successful'}, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
+            print("check ", e)
             return Response({'error': "Connection refused: " + e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
 class RegisterAPIView(APIView):
@@ -67,6 +66,17 @@ class RegisterAPIView(APIView):
             user.profile.email = request.data.get('email')
             user.profile.save() #saves the profile
             user.save() #saves the user
+            print("coucou2")
+            user_data = {
+                "user": user.id,  # Supposons que `user` est l'instance de l'utilisateur créé
+                "is42account": False,
+                "email": request.data.get('email'),
+                "profile_picture": "./avatar.jpg",
+                "nickname": request.data.get('first_name'),
+                "correction_points": -1,
+                "online": True
+            }
+            send_profile_to_user_service(user_data)
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
@@ -113,24 +123,6 @@ def generate_jwt_token(user):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #NOT A VIEW, UTILS FOR NICKNAME IN REGISTRATION/PROFILE
 def isNicknameUnique(nickname):
     users = User.objects.all() #checks if the nickname is already taken
@@ -146,215 +138,14 @@ def isNicknameUnique(nickname):
 
 
 
-
-
-
-
-
-
-
-
-#PROFILE.JS VIEWS GETINFO/CHANGEINFO/FRIENDLISTS
-
-def getInfo(request):
-    if request.user.is_authenticated:
-        profile = request.user.profile
-        return JsonResponse({'img': profile.profile_picture, \
-                            'correction_points': profile.correction_points, \
-                            'username': request.user.username, \
-                            'nickname': profile.nickname, \
-                            'email': profile.email,
-                            })
-    return JsonResponse({'error': 'You are not authenticated'})
-
-class addFriendAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            if request.user.is_authenticated:
-                myself = request.user.profile
-                friend_name = request.data.get('friend', 'no friend')
-                if friend_name == 'no friend':
-                    raise Exception("friend is required")
-                if (friend_name == myself.nickname):
-                    raise Exception("You can't add yourself as a friend")
-                try:
-                    new_friend = Profile.objects.get(nickname=friend_name)
-                except Profile.DoesNotExist:
-                    raise Exception("No user has this nickname.")
-                if (Friendship.friendshipExists(request.user.profile, new_friend) == True):
-                    if Friendship.getFriendship(request.user.profile, new_friend).accepted == False:
-                        raise Exception("Friend request already sent/pending")
-                    raise Exception("Friendship already exists")
-                Friendship.objects.create(friend1=request.user.profile, friend2=new_friend)
-                return JsonResponse({'message': 'success', 'friend': friend_name})
-        except Exception as e:
-            print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
-
-class getMyFriendsAPIView(APIView):
-    def get(self, request, *args, **kwargs):
-        try:
-            if request.user.is_authenticated:
-                friendships = Friendship.getFriends(request.user.profile) #returns only those with accepted == true
-                if friendships:
-                    friends = []
-                    online_status = []
-                    for friendship in friendships:
-                        if friendship.friend1 == request.user.profile:
-                            friends.append(friendship.friend2.nickname)
-                            online_status.append(friendship.friend2.online)
-                        elif friendship.friend2 == request.user.profile:
-                            friends.append(friendship.friend1.nickname)
-                            online_status.append(friendship.friend1.online)
-                    print(friends)
-                    return JsonResponse({'friends': friends, 'online_status': online_status})
-                return JsonResponse({'error': 'no friends'})
-            return JsonResponse({'error': 'not authenticated'})
-        except Exception as e:
-            print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
-
-class FriendRequestsAPIView(APIView):
-    def get(self, request, *args, **kwargs): #show all friend requests
-        try:
-            if request.user.is_authenticated:
-                friendships = Friendship.getFriendRequests(request.user.profile) #returns only those with accepted == False
-                if friendships:
-                    friend_requests = []
-                    for friendship in friendships:
-                        if friendship.friend2 == request.user.profile:
-                            friend_requests.append(friendship.friend1.nickname)
-                    if friend_requests == []:
-                        return JsonResponse({'error': 'There is no pending friend request'}) 
-                    return JsonResponse({'friend_requests': friend_requests})
-                return JsonResponse({'error': 'There is no pending friend request'})
-            return JsonResponse({'error': 'not authenticated'})
-        except Exception as e:
-            print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
-        
-    def post(self, request, *args, **kwargs): #accept a friend request
-        try:
-            if request.user.is_authenticated:
-                friend_name = request.data.get('friend', 'no friend')
-                if friend_name == 'no friend':
-                    raise Exception("friend is required")
-                try:
-                    new_friend = Profile.objects.get(nickname=friend_name)
-                except Profile.DoesNotExist:
-                    raise Exception("No user has this nickname.")
-                if (Friendship.friendshipExists(request.user.profile, new_friend) == True and Friendship.getFriendship(request.user.profile, new_friend).accepted == True):
-                    raise Exception("Friendship already exists")
-                friendship = Friendship.getFriendship(request.user.profile, new_friend)
-                friendship.accepted = True
-                friendship.save()
-                return JsonResponse({'message': 'success', 'friend': friend_name})
-        except Exception as e:
-            print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class RefuseFriendRequestAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            if request.user.is_authenticated:
-                friend_name = request.data.get('friend', 'no friend')
-                print("ALLOOOOO")
-                if friend_name == 'no friend':
-                    raise Exception("Friend is required")
-                friendship = Friendship.objects.filter(friend2=request.user.profile, friend1__nickname=friend_name).first()
-                print("JSUIS LAAAAA")
-                if friendship:
-                    friendship.delete()
-                    print("tas suppr ?????????")
-                    return JsonResponse({'success': True})
-                else:
-                    return JsonResponse({'error': 'Error: friend request not found'})
-        except Exception as e:
-            print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
-
-class DeleteFriendAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            if request.user.is_authenticated:
-                friend_name = request.data.get('friend', 'no friend')
-                if friend_name == 'no friend':
-                    raise Exception("Friend is required")
-                friend_profile = Profile.objects.get(nickname=friend_name)
-                if Friendship.friendshipExists(request.user.profile, friend_profile):
-                    friendship = Friendship.getFriendship(request.user.profile, friend_profile)
-                    friendship.delete()
-                    return JsonResponse({'success': True})
-                else:
-                    return JsonResponse({'error': 'Friendship already ended'})
-        except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
-
-def update_profile_picture(request):
-    if request.method == 'POST':
-        profile_picture = request.FILES.get('profile_picture')
-        name = "profile_picture_" + request.user.username + ".jpg"
-        if profile_picture:
-            with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:
-                for chunk in profile_picture.chunks():
-                    f.write(chunk)
-            request.user.profile.profile_picture = name
-            request.user.profile.save()
-            request.user.save()
-            return JsonResponse({'profile_picture': request.user.profile.profile_picture})
-    return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
-
-class EmailAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        email = request.data.get('email', 'no email')
-        if email == 'no email':
-            return (JsonResponse({"error": "email is required"}, status=400))
-        request.user.profile.email = email
-        request.user.profile.save()
-        request.user.save()
-        return (JsonResponse({"message": "success", "email": email}, status=200))
-
-class NicknameAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            first_name = request.data.get('first_name', 'no first_name')
-            if first_name == 'no first_name':
-                return (JsonResponse({"error": "nickname is required"}, status=400))
-            if (isNicknameUnique(first_name) == False):
-                return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
-            request.user.profile.nickname = first_name
-            request.user.profile.save()
-            request.user.save()
-            return (JsonResponse({"message": "success", "first_name": first_name}, status=200))
-        return JsonResponse({'error': "not authenticated"})
-
-class PasswordAPIView(APIView): #FIXME: check les password, et les hash, faire plein de trucs liés aux password à demander aux copains du groupe
-    def post(self, request, *args, **kwargs):
-        password = request.data.get('password', 'no password')
-        if password == 'no password':
-            return (JsonResponse({"error": "password is required"}, status=400))
-        request.user.set_password(password)
-        request.user.save()
-        return (JsonResponse({"message": "success", "password": password}, status=200))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def send_profile_to_user_service(user_data):
+    print("coucou1")
+    url = "https://localhost:8443/user/api/profile/"
+    response = requests.post(url, data=user_data)
+    if response.status_code == 201:
+        print("Profile created successfully in User Service")
+    else:
+        print("Failed to create profile in User Service")
 
 #OAUTH.JS VIEWS
 class Login42APIView(APIView): #gets the access token from 42 for the user loggin with 42
@@ -401,6 +192,16 @@ class Login42APIView(APIView): #gets the access token from 42 for the user loggi
             user.profile.email = userData['email']
             user.profile.save()
             user.save()
+            user_data = {
+                "user": user.id,  # Supposons que `user` est l'instance de l'utilisateur créé
+                "is42account": True,
+                "email": user.email,
+                "profile_picture": test,
+                "nickname": userData['login'] + '@42',
+                "correction_points": userData['correction_point'],
+                "online": True
+            }
+            send_profile_to_user_service(user_data)
             return Response({"message": "User registered successfully", 'username':userData['username'], 'password':password,}, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
@@ -439,20 +240,6 @@ def auth42ProfilePicture(image_url, login):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #CHATBOT.JS VIEWS
 class chatbotAPIView(APIView): #verifies the state received by the client is the right state
     client = None
@@ -480,19 +267,6 @@ class chatbotAPIView(APIView): #verifies the state received by the client is the
             print(e)
             return JsonResponse({'error': e.args[0]})
         
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
