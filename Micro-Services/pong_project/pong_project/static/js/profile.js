@@ -34,16 +34,8 @@ export async function fetchProfileData(div_to_show) {
 	}
 	else if (div_to_show === 'friends')
 	{
-		this.show_friendlist();
-		this.showFriendRequests();
-	}
-	else if (div_to_show === 'friend-profile') {
-		const friend_profile = history.state.friend_profile;
-		if (friend_profile === undefined) {
-			return ;
-		}
-		document.getElementById('friend-profile-nickname-display').textContent = friend_profile.nickname;
-		document.getElementById('friend-profile-profile-picture-display').src = "auth/static/" + friend_profile.img;
+		await this.show_friendlist();
+		await this.showFriendRequests();
 	}
 }
 
@@ -180,22 +172,40 @@ export async function show_friendlist() {
 }
 
 export async function showFriendProfile(event) {
-	const friend_name = event.target.name;
+
+	localStorage.setItem('friend_nickname', event.target.name);
+	window.client.nextPage('friend-profile');
+}
+
+export async function showFriendInfo() {
+
+	var friend_name;
+
+	if (history.state.friend_nickname) {
+		friend_name = history.state.friend_nickname;
+	}
+	else {
+		friend_name = localStorage.getItem('friend_nickname');
+	}
+
 	const url = 'https://localhost:8443/auth/getFriendInfo/';
 	const data = {
 		'friend': friend_name,
 	};
 	const response = await poster(url, data);
+
+
 	if (response.error) {
-		alert(response.error);
-		return ;
+		document.getElementById('friend-not-found').querySelector('p').textContent = 'When trying to access ' + friend_name + '\'s profile, ' + response.error;
+		return 'friend-not-found';
 	}
 
 	document.getElementById('friend-profile-nickname-display').textContent = response.nickname;
 	document.getElementById('friend-profile-profile-picture-display').src = "auth/static/" + response.img;
-	localStorage.setItem('friend_profile', JSON.stringify(response));
-	window.client.nextPage('friend-profile');
+	return 'friend-profile';
 }
+
+
 export async function deleteFriend(event) {
 	const friend_name = event.target.name;
 	const url = 'https://localhost:8443/auth/DeleteFriend/';
@@ -212,7 +222,7 @@ export async function deleteFriend(event) {
 }
 
 
-export async function showFriendRequests(event) {
+export async function showFriendRequests() {
 	var list = document.getElementById('friends-requests');
 	list.innerHTML = '';
 

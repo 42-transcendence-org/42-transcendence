@@ -57,13 +57,17 @@ export class Client {
 	
 		const isLogged = await this.connection.isLoggedIn();
 
+		if (isLogged === 'true') {
+			await profile.fetchProfileData(div_to_show);
+		}
+		
+		if (div_to_show === 'friend-profile') {
+			div_to_show = await profile.showFriendInfo();
+		}
+
 		if (this.thisDivCanBeShown(isLogged, div_to_show) === false) {
 			div_to_show = 'unauthorized';
 			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (isLogged === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
-		}
-
-		if (isLogged === 'true') {
-			await profile.fetchProfileData(div_to_show);
 		}
 		this.sectionDisplay(isLogged);
 	
@@ -120,9 +124,8 @@ export class Client {
 
 		if (history.state !== null) {
 			if (div.id === 'friend-profile') {
-				const friendInfo = JSON.parse(localStorage.getItem('friend_profile'));
-				localStorage.removeItem('friend_profile');
-				history.pushState({id: div.id, friend_profile: friendInfo}, '', '');
+				history.pushState({id: div.id, friend_nickname: localStorage.getItem('friend_nickname')}, '', '');
+				localStorage.removeItem('friend_nickname');
 			} else {
 				history.pushState({id: div.id}, '', '');
 			}

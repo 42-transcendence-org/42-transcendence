@@ -196,11 +196,15 @@ class getFriendInfoAPIView(APIView):
                     friend = Profile.objects.get(nickname=friend_name)
                 except Profile.DoesNotExist:
                     raise Exception("No user has this nickname.")
-                return JsonResponse({'img': friend.profile_picture, \
-                                    'correction_points': friend.correction_points, \
-                                    'nickname': friend.nickname, \
-                                    'online': friend.online,
-                                    })
+                if (Friendship.friendshipExists(request.user.profile, friend) == True):
+                    if Friendship.getFriendship(request.user.profile, friend).accepted == False:
+                        raise Exception("Not friends yet, friend request is pending")
+                    return JsonResponse({'img': friend.profile_picture, \
+                                        'correction_points': friend.correction_points, \
+                                        'nickname': friend.nickname, \
+                                        'online': friend.online,
+                                        })
+                raise Exception("You are not friends with this user")
         except Exception as e:
             print(e)
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)

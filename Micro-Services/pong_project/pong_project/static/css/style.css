@@ -34,6 +34,12 @@
 	width: 50%;
 }
 
+#friend-not-found {
+	color:red;
+	font-size: 30px;
+	width: 50%;
+}
+
 #username-welcome-p {
 	display: inline-block;
 	background-color: #2B2A4C;
