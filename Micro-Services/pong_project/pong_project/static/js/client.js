@@ -62,7 +62,9 @@ export class Client {
 			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (localStorage.getItem('isLogged') === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
 		}
 
-		profile.fetchProfileData(isLogged, div_to_show);
+		if (isLogged === 'true') {
+			profile.fetchProfileData(div_to_show);
+		}
 		this.sectionDisplay(isLogged);
 	
 		if (this.previous_div) //hides previous div

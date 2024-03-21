@@ -13,32 +13,30 @@ export async function eventlisteners() {
 		
 }
 
-export async function fetchProfileData(isLogged, div_to_show) {
+export async function fetchProfileData(div_to_show) {
 
-	if (isLogged === 'true' ) { //to show every time the user is logged in
+	const data = await getUserData();
 
-		const data = await getUserData();
-
-		if (data.error) {
-			return ;
-		}
-
-		document.getElementById('banner-nickname-display').innerText = data.nickname;
-		document.getElementById('banner-profile-image-display').src = "auth/static/" + data.img;
-		
-		if (div_to_show === 'profile') {
-			document.getElementById('profile-username-display').innerText = data.username;
-			document.getElementById('profile-email-display').innerText = data.email;
-			document.getElementById('profile-nickname-display').innerText = data.nickname;
-			document.getElementById('profile-profile_picture_display').src = "auth/static/" + data.img;
-		}
-		else if (div_to_show === 'friends')
-		{
-			this.show_friendlist();
-			this.showFriendRequests();
-		}
+	if (data.error) {
+		window.client.connection.logout_user_request();
+		alert("You don't have a user profile associated to your account, you have been disconnected");
+		return ;
 	}
 
+	document.getElementById('banner-nickname-display').innerText = data.nickname;
+	document.getElementById('banner-profile-image-display').src = "auth/static/" + data.img;
+	
+	if (div_to_show === 'profile') {
+		document.getElementById('profile-username-display').innerText = data.username;
+		document.getElementById('profile-email-display').innerText = data.email;
+		document.getElementById('profile-nickname-display').innerText = data.nickname;
+		document.getElementById('profile-profile_picture_display').src = "auth/static/" + data.img;
+	}
+	else if (div_to_show === 'friends')
+	{
+		this.show_friendlist();
+		this.showFriendRequests();
+	}
 }
 
 export async function getUserData() {
@@ -60,7 +58,7 @@ export async function changeEmail(event) {
 		alert(response.error);
 		return ;
 	}
-	document.getElementById('profile-email-display').textContent = responseData.email;
+	document.getElementById('profile-email-display').textContent = response.email;
 }
 
 export async function changeNickname(event) {
@@ -76,8 +74,8 @@ export async function changeNickname(event) {
 		alert(response.error);
 		return ;
 	}
-	document.getElementById('profile-nickname-display').textContent = responseData.first_name;
-	document.getElementById('banner-nickname-display').textContent = responseData.first_name;
+	document.getElementById('profile-nickname-display').textContent = response.first_name;
+	document.getElementById('banner-nickname-display').textContent = response.first_name;
 }
 
 export async function changePassword(event) { //FIXME: avoir deux champs password pour vérifier que le password est bien celui que l'user croit avoir tapé fin bref qu'il change pas son mdp a l'arrache on vérifie 2 champs
@@ -135,8 +133,13 @@ export async function addFriend(event) {
 	const data = {
 		friend: document.getElementById('add-friend-input').value,
 	};
-	await poster(url, data);
+	const response = await poster(url, data);
 	document.getElementById('add-friend-input').value = "";
+	if (response.error) {
+		alert(response.error);
+		return ;
+	}
+	alert(response.message);
 }
 
 export async function show_friendlist() {

@@ -58,11 +58,12 @@ export class Connection {
 			return ;
 		}
 		alert('Registration was successful');
-		window.client.nextPage("not-logged-in-home");
+		window.client.nextPage("not-logged-home");
 	}
 
 	async logout_user_request(event) {
-		event.preventDefault()
+		if (event)
+			event.preventDefault()
 		const url = 'https://localhost:8443/auth/logout/'
 		const response = await Oauth.getter(url);
 
@@ -70,7 +71,7 @@ export class Connection {
 			alert(response.error);
 			return ;
 		}
-		
+
 		localStorage.removeItem('jwt');
 		window.client.home();
 	}

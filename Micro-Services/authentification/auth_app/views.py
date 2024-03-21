@@ -75,8 +75,12 @@ class RegisterAPIView(APIView):
 class LogoutAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
-            request.user.profile.online = False
-            request.user.profile.save()
+            try:
+                request.user.profile.online = False
+                request.user.profile.save()
+            except Exception as e:
+                print(e)
+                pass
             logout(request)
             return Response({"message": "User logged out successfully"})
         except Exception as e:
@@ -85,9 +89,19 @@ class LogoutAPIView(APIView):
 
 
 def check_authentication(request):
-    if request.user.is_authenticated:
-        return JsonResponse({'isAuthenticated': True})
-    else:
+    try:
+        if request.user.is_authenticated:
+            try:
+                request.user.profile.online = True
+                request.user.profile.save()
+            except Exception as e:
+                print(e)
+                pass
+            return JsonResponse({'isAuthenticated': True})
+        else:
+            return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False})
+    except Exception as e:
+        print(e)
         return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False})
 
 # CONNECTION.JS UTILS, NOT VIEWS BUT FUNCTIONS
@@ -158,13 +172,17 @@ def isNicknameUnique(nickname):
 
 def getInfo(request):
     if request.user.is_authenticated:
-        profile = request.user.profile
-        return JsonResponse({'img': profile.profile_picture, \
-                            'correction_points': profile.correction_points, \
-                            'username': request.user.username, \
-                            'nickname': profile.nickname, \
-                            'email': profile.email,
-                            })
+        try :
+            profile = request.user.profile
+            return JsonResponse({'img': profile.profile_picture, \
+                                'correction_points': profile.correction_points, \
+                                'username': request.user.username, \
+                                'nickname': profile.nickname, \
+                                'email': profile.email,
+                                })
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': 'No profile for this user'})
     return JsonResponse({'error': 'You are not authenticated'})
 
 class addFriendAPIView(APIView):
@@ -186,7 +204,7 @@ class addFriendAPIView(APIView):
                         raise Exception("Friend request already sent/pending")
                     raise Exception("Friendship already exists")
                 Friendship.objects.create(friend1=request.user.profile, friend2=new_friend)
-                return JsonResponse({'message': 'success', 'friend': friend_name})
+                return JsonResponse({'message': 'Friend request sent to ' + friend_name + " !"})
         except Exception as e:
             print(e)
             return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
