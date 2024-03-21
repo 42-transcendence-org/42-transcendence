@@ -1,3 +1,5 @@
+import { poster, getter } from './Oauth.js';
+
 export async function eventlisteners() {
 		//Profile
 	document.getElementById('myprofile-button').addEventListener('click', () => window.client.nextPage("profile"));
@@ -41,123 +43,56 @@ export async function fetchProfileData(isLogged, div_to_show) {
 
 export async function getUserData() {
 	const url = 'https://localhost:8443/auth/getInfo/';
-	try {
-		const response = await fetch(url, {
-			credentials: 'include',
-		});
-		const data = await response.json();
-		if (data.error) {
-			throw new Error(data.error);
-		}
-		return data;
-	}
-	catch (error) {
-		console.error(error);
-		return {'error': error};
-	}
+	return (await getter(url));
 }
 
 
 export async function changeEmail(event) {
 	event.preventDefault()
 	const url = 'https://localhost:8443/auth/email/';
-	const formData = {
+	const data = {
         email: document.getElementById('email_new').value,
     };
-	try {
-		const response = await fetch(url, {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
-				'Content-Type': 'application/json',
-				'X-CSRFToken': window.client.get_cookie("csrftoken"),
-			},
-			credentials: 'include',
-			body: JSON.stringify(formData),
-		});
 
-		const responseData = await response.json();
-		
-		if (responseData.error) {
-			alert(responseData.error);
-			throw new Error(responseData.error);
-		}
-
-		document.getElementById('profile-email-display').textContent = responseData.email;
-		document.getElementById('email_new').value = '';
+	const response = await poster(url, data);
+	document.getElementById('email_new').value = '';
+	if (response.error) {
+		alert(response.error);
+		return ;
 	}
-	catch (error) {
-		console.error('Erreur lors de la récupération des données :', error);
-	}
-
+	document.getElementById('profile-email-display').textContent = responseData.email;
 }
 
 export async function changeNickname(event) {
 	event.preventDefault()
 	const url = 'https://localhost:8443/auth/nickname/';
-	const formData = {
+	const data = {
         first_name: document.getElementById('nickname_new').value,
     };
-	try {
-		const response = await fetch(url, {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
-				'Content-Type': 'application/json',
-				'X-CSRFToken': window.client.get_cookie("csrftoken"),
-			},
-			credentials: 'include',
-			body: JSON.stringify(formData),
-		});
+	const response = await poster(url, data);
 
-		const responseData = await response.json();
-
-		if (responseData.error) {
-			alert(responseData.error);
-			throw new Error(responseData.error);
-		}
-
-		document.getElementById('profile-nickname-display').textContent = responseData.first_name;
-		document.getElementById('banner-nickname-display').textContent = responseData.first_name;
-		document.getElementById('nickname_new').value = '';
+	document.getElementById('nickname_new').value = '';
+	if (response.error) {
+		alert(response.error);
+		return ;
 	}
-	catch (error) {
-		console.error('Erreur lors de la récupération des données :', error);
-	}
-
+	document.getElementById('profile-nickname-display').textContent = responseData.first_name;
+	document.getElementById('banner-nickname-display').textContent = responseData.first_name;
 }
 
 export async function changePassword(event) { //FIXME: avoir deux champs password pour vérifier que le password est bien celui que l'user croit avoir tapé fin bref qu'il change pas son mdp a l'arrache on vérifie 2 champs
 	event.preventDefault()
 	const url = 'https://localhost:8443/auth/password/';
-	const formData = {
+	const data = {
         password: document.getElementById('password_new').value,
     };
-	try {
-		const response = await fetch(url, {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
-				'Content-Type': 'application/json',
-				'X-CSRFToken': window.client.get_cookie("csrftoken"),
-			},
-			credentials: 'include',
-			body: JSON.stringify(formData),
-		});
+	const response = await poster(url, data);
 
-		const responseData = await response.json();
-
-		if (responseData.error) {
-			alert(responseData.error);
-			throw new Error(responseData.error);
-		}
-
-		document.getElementById('password_new').value = '';
+	document.getElementById('password_new').value = '';
+	if (response.error) {
+		alert(response.error);
+		return ;
 	}
-	catch (error) {
-		console.error('Erreur lors de la récupération des données :', error);
-	}
-
 }
 
 
@@ -193,9 +128,6 @@ export async function changeProfilePicture(event) {
 	}
 
 }
-
-import { poster, getter } from './Oauth.js';
-
 
 export async function addFriend(event) {
 	event.preventDefault()
