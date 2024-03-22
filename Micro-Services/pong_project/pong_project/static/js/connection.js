@@ -30,7 +30,7 @@ export class Connection {
 			alert(response.error);
 			return ;
 		}
-		localStorage.setItem('jwt', data.token);
+		localStorage.setItem('jwt', response.token);
 		window.client.home();
 	}
 

@@ -5,6 +5,7 @@ import * as game_manager from './pong/game_manager.js';
 import * as sound from './pong/sound.js';
 import * as connection from './connection.js';
 import * as chatbot from './chatbot.js';
+import * as janken from './janken.js';
 
 export class Client {
 
@@ -19,6 +20,7 @@ export class Client {
 		this.connection = new connection.Connection();
 		this.chatbot = new chatbot.Chatbot();
 		this.Oauth = new Oauth.Oauth();
+		this.janken = new janken.Janken();
 		sound.mute_music(); //no music for now
 	}
 
@@ -29,6 +31,7 @@ export class Client {
 		profile.eventlisteners(); //profile
 		this.chatbot.eventlisteners(); //chabot
 		this.Oauth.eventlisterners(); //42login
+		this.janken.eventlisteners(); //janken
 		
 		//spa and 42login, has to be altogether for f5/redirection/firstload
 		if (await this.Oauth.isRedirectedFrom42API() === true) { // redirection from 42 API when trying to connect via 42
@@ -44,25 +47,36 @@ export class Client {
 		//client event listeners
 		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
 		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
+
 	}
 
 	//SHOWS THE DIV + ADDS IT TO HISTORY
 	async nextPage(div_to_show) {
-		await this.divDisplay(div_to_show); // affiche la div à afficher
-		this.addToHistory(); //ajoute à l'historique
+
+		const no_history = await this.divDisplay(div_to_show); // affiche la div à afficher
+		if (no_history === 0)
+			this.addToHistory(); //ajoute à l'historique
 	}
 
 	//ONLY SHOWS THE DIV, NO HISTORY ADDING
 	async divDisplay(div_to_show) {
 	
+		var no_history = 0;
+		console.log('div to show: ' + div_to_show);
 		const isLogged = await this.connection.isLoggedIn();
-
-		if (isLogged === 'true') {
-			await profile.fetchProfileData(div_to_show);
-		}
-		
 		if (div_to_show === 'friend-profile') {
 			div_to_show = await profile.showFriendInfo();
+		}	
+		
+		if (div_to_show === 'janken-game' || div_to_show === 'janken-already-played' || div_to_show === 'janken-result') {
+			div_to_show = await this.janken.game_in_progress();
+			if (div_to_show === 'janken') {
+				no_history = 1;
+			}
+		}
+		
+		if (isLogged === 'true') {
+			await profile.fetchProfileData(div_to_show);
 		}
 
 		if (this.thisDivCanBeShown(isLogged, div_to_show) === false) {
@@ -80,6 +94,7 @@ export class Client {
 		div.style.display = 'block'; //show new div
 
 		this.previous_div = div; //enregistre la div actuelle pour pouvoir la cacher plus tard in english is better mais comment on dit enregistre jsplu trou de mémoire
+		return (no_history);
 	}
 
 	//to check if this div is allowed to be shown (example: you log out and try to access a logged in div)

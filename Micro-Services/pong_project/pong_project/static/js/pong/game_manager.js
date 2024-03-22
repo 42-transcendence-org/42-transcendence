@@ -11,6 +11,7 @@ export class GameManager {
 		this.game = null;
 		this.game_id = undefined;
 		this.game_type = undefined;
+		this.game_result = [];
 		this.aliases = ["Player 1", "Player 2"];
 		this.request_id = undefined;
 		this.event_source = null;
@@ -30,7 +31,7 @@ export class GameManager {
 		this.graphics = new graphics.GraphicsManager();
 		this.snapshot = new snapshot.SnapshotManager();
 	}
-
+	
 	eventlisteners() {
 		document.addEventListener('keydown', (event) => this.input.key_handler(event));
 		document.addEventListener('keyup', (event) => this.input.key_handler(event));
@@ -43,6 +44,7 @@ export class GameManager {
 		this.game = null;
 		this.game_id = undefined;
 		this.game_type = undefined;
+		this.game_result = [];
 		this.aliases = ["Player 1", "Player 2"];
 		this.request_id = undefined;
 		this.event_source = null;
@@ -106,8 +108,7 @@ export class GameManager {
 				this.remote_tick += 1;
 			}
 
-			/* TODO Find a way to prevent the AI from preshoting the ball during the explosion animation */
-			if (this.game_type == g.TYPE_AI && this.game.status == g.STATUS_ACTIVE) {
+			if (this.game_type == g.TYPE_AI && this.game.status == g.STATUS_ACTIVE && this.game.particle_pool.get_n_actives() === 0) {
 				let input = this.ai.refresh(this.game, this.timestep);
 				this.input.create_input(g.ID_PLAYER2, input);
 			}
@@ -116,6 +117,11 @@ export class GameManager {
 
 			if (this.game_type != g.TYPE_REMOTE) {
 				this.game.update(this.timestep);
+
+				if (this.game.status === g.STATUS_ENDED) {
+					this.save_game_result();
+				}
+
 				this.snapshot.save_state(this.game, this.local_tick);
 			}
 
@@ -138,8 +144,7 @@ export class GameManager {
 		}
 
 		if (this.game_type === g.TYPE_REMOTE) {
-			this.handle_events(interpolated_snapshots[0].state);
-			this.handle_events(interpolated_snapshots[1].state);
+			this.sound.process_sound_events(this.remote_tick);
 		} else {
 			this.handle_events(this.game);
 		}
@@ -163,7 +168,25 @@ export class GameManager {
 		}
 	}
 
+	save_game_result() {
+		if (this.game_result.length === 0) {
+			this.game_result[0] = this.game_type;
+			this.game_result[1] = this.aliases[0]; /* Player 1 name */
+			this.game_result[2] = this.aliases[1]; /* Player 2 name */
+			this.game_result[3] = this.game.scores[0]; /* Player 1 score */
+			this.game_result[4] = this.game.scores[1]; /* Player 2 score */
+			this.game_result[5] = new Date().toLocaleString();
+		}
+	}
+
+	get_game_result() {
+		const r = [...this.game_result];
+		this.game_result = [];
+		return r;
+	}
+
 	async game_create(type) {
+
 		if (this.game) {
 			window.client.nextPage("game-div");
 			return;
@@ -180,28 +203,49 @@ export class GameManager {
 				this.event_source = new EventSource(url);
 
 				this.event_source.onmessage = (event) => {
-					const data = JSON.parse(event.data);
+					try {
 
-					this.latest_server_tick = data[0];
-					this.update_remote_tick()
-					this.snapshot.save_server_data(data);
+						const data = JSON.parse(event.data);
+						if (!data) {
+							throw new Error('Data is `null`.');
+						} else if (data === "Game has ended.") {
+							throw new Error('Player has disconnected.');
+						} else {
+							this.latest_server_tick = data[0];
+							this.update_remote_tick()
+							this.snapshot.save_server_data(data);
+							this.sound.create_sound_events(data[5]);
+						}
 
-				};
+					} catch (error) {
+						/* FIXME: Display a special page / div */
+						if (error.message === 'Player has disconnected.')
+							alert("Player has disconnected, the game has been ended.");
+						else
+							console.error('EventSource failed:', error);
+
+						this.event_source.close();
+						this.game_destroy();
+						/* FIXME: Why is 'Unauthorized: you are already logged in.' appearing */
+						window.client.home();
+					}
+				}
 
 				this.event_source.onerror = (error) => {
 					console.error('EventSource failed:', error);
 					this.event_source.close();
 					this.game_destroy();
 				};
-
 			}
-		} catch (error) {
+		}
+		catch (error) {
 			console.error(error);
 			alert("An error occured when creating the game.");
+			this.game_destroy();
 			return;
 		}
 
-		this.sound.play_music();
+		// this.sound.play_music(); DEBUG UNCOMMENT
 		this.game = new game.Game();
 		window.client.nextPage("game-div");
 		this.request_id = requestAnimationFrame(this.update_loop.bind(this));
@@ -210,7 +254,7 @@ export class GameManager {
 	game_destroy() {
 		this.sound.stop_music();
 		cancelAnimationFrame(this.request_id);
-		window.client.nextPage("game-menu-div");
+		window.client.home();
 		this.reset();
 	}
 

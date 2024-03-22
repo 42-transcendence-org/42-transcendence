@@ -11,7 +11,7 @@ from django.contrib.auth import logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Profile, Friendship
+from .models import Profile, Friendship, Notifications, JankenGameCreation
 from django.contrib.auth.models import User
 from openai import OpenAI
 from django.http import JsonResponse
@@ -45,7 +45,7 @@ class LoginAPIView(APIView):
                 return JsonResponse({'token': token, 'username': user.username, 'message': 'Login successful'}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response({'error': "Connection refused: " + e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': "Connection refused: " + e.args[0]})
 
 class RegisterAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -70,7 +70,7 @@ class RegisterAPIView(APIView):
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
-            return Response({'error': "Registration refused: " + e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': "Registration refused: " + e.args[0]})
 
 class LogoutAPIView(APIView):
     def get(self, request, *args, **kwargs):
@@ -85,7 +85,7 @@ class LogoutAPIView(APIView):
             return Response({"message": "User logged out successfully"})
         except Exception as e:
             print(e)
-            return Response({'error': "Logout refused: " + e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': "Logout refused: " + e.args[0]})
 
 
 def check_authentication(request):
@@ -179,6 +179,7 @@ def getInfo(request):
                                 'username': request.user.username, \
                                 'nickname': profile.nickname, \
                                 'email': profile.email,
+                                'notifications': Notifications.countNotifications(profile),
                                 })
         except Exception as e:
             print(e)
@@ -207,7 +208,7 @@ class getFriendInfoAPIView(APIView):
                 raise Exception("You are not friends with this user")
         except Exception as e:
             print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]})
 
 class addFriendAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -227,11 +228,12 @@ class addFriendAPIView(APIView):
                     if Friendship.getFriendship(request.user.profile, new_friend).accepted == False:
                         raise Exception("Friend request already sent/pending")
                     raise Exception("Friendship already exists")
-                Friendship.objects.create(friend1=request.user.profile, friend2=new_friend)
+                new_friendship = Friendship.objects.create(friend1=request.user.profile, friend2=new_friend)
+                Notifications.objects.create(profile=new_friend, friendship=new_friendship, content=myself.nickname + " sent you a friend request")
                 return JsonResponse({'message': 'Friend request sent to ' + friend_name + " !"})
         except Exception as e:
             print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]})
 
 class getMyFriendsAPIView(APIView):
     def get(self, request, *args, **kwargs):
@@ -254,7 +256,7 @@ class getMyFriendsAPIView(APIView):
             return JsonResponse({'error': 'not authenticated'})
         except Exception as e:
             print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]})
 
 class FriendRequestsAPIView(APIView):
     def get(self, request, *args, **kwargs): #show all friend requests
@@ -267,13 +269,14 @@ class FriendRequestsAPIView(APIView):
                         if friendship.friend2 == request.user.profile:
                             friend_requests.append(friendship.friend1.nickname)
                     if friend_requests == []:
-                        return JsonResponse({'error': 'There is no pending friend request'}) 
+                        return JsonResponse({'error': 'There is no pending friend request'})
+                    Notifications.delMyNotifications(request.user.profile)
                     return JsonResponse({'friend_requests': friend_requests})
                 return JsonResponse({'error': 'There is no pending friend request'})
             return JsonResponse({'error': 'not authenticated'})
         except Exception as e:
             print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]})
         
     def post(self, request, *args, **kwargs): #accept a friend request
         try:
@@ -293,7 +296,7 @@ class FriendRequestsAPIView(APIView):
                 return JsonResponse({'message': 'success', 'friend': friend_name})
         except Exception as e:
             print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]})
 
 
 class RefuseFriendRequestAPIView(APIView):
@@ -301,20 +304,17 @@ class RefuseFriendRequestAPIView(APIView):
         try:
             if request.user.is_authenticated:
                 friend_name = request.data.get('friend', 'no friend')
-                print("ALLOOOOO")
                 if friend_name == 'no friend':
                     raise Exception("Friend is required")
                 friendship = Friendship.objects.filter(friend2=request.user.profile, friend1__nickname=friend_name).first()
-                print("JSUIS LAAAAA")
                 if friendship:
                     friendship.delete()
-                    print("tas suppr ?????????")
                     return JsonResponse({'success': True})
                 else:
                     return JsonResponse({'error': 'Error: friend request not found'})
         except Exception as e:
             print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]})
 
 class DeleteFriendAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -332,7 +332,7 @@ class DeleteFriendAPIView(APIView):
                     return JsonResponse({'error': 'Friendship already ended'})
         except Exception as e:
             print(e)
-            return JsonResponse({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'error': e.args[0]})
 
 def update_profile_picture(request):
     if request.method == 'POST':
@@ -417,7 +417,7 @@ class Login42APIView(APIView): #gets the access token from 42 for the user loggi
             return JsonResponse({})
         except Exception as e:
             print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]})
 
     def get(self, request, *args, **kwargs): #gets the user info from 42 and creates a user in the database
         try:
@@ -446,7 +446,7 @@ class Login42APIView(APIView): #gets the access token from 42 for the user loggi
             return Response({"message": "User registered successfully", 'username':userData['username'], 'password':password,}, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
-            return Response({'error': e.args[0]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': e.args[0]})
 
 class OAuthRedirectUrlAPIView(APIView): #returns the uri to redirect to 42's oauth page
     def get(self, request, *args, **kwargs):
@@ -522,6 +522,196 @@ class chatbotAPIView(APIView): #verifies the state received by the client is the
             print(e)
             return JsonResponse({'error': e.args[0]})
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from .models import JankenGameCreation, JankenGameInProgress
+
+#JANKEN GAME
+
+class createJankenGameAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                if (JankenGameCreation.objects.filter(creator=request.user.profile).exists() == True):
+                    raise Exception("You are already waiting for an opponent")
+                if (JankenGameInProgress.myGame(request.user.profile).exists() == True):
+                    raise Exception("You are already playing a game")
+                game = JankenGameCreation.objects.create(creator=request.user.profile)
+                game.save()
+                return JsonResponse({'game_id': game.id})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+class jankenGameAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                if (JankenGameCreation.objects.filter(creator=request.user.profile).exists() == True):
+                    raise Exception("You already have a game creation waiting for an opponent")
+                if (JankenGameInProgress.getMyGame(request.user.profile) != None):
+                    raise Exception("You already have a game in progress")
+                if (JankenGameCreation.objects.all().exists() == False):
+                    raise Exception("No game available")
+                game = JankenGameCreation.objects.all().first()
+                JankenGameInProgress.objects.create(creator=game.creator, opponent=request.user.profile)
+                game.delete()
+                return JsonResponse({'game_id': game.id})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+        
+    def post(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                game = JankenGameInProgress.getMyGame(request.user.profile)
+                if game is None:
+                    raise Exception("You are not part of a game")
+                if game.creator == request.user.profile and game.creator_choice != "None":
+                    raise Exception("You already gave your input")
+                if game.opponent == request.user.profile and game.opponent_choice != "None":
+                    raise Exception("You already gave your input")
+                JankenGameInProgress.giveInput(request.data.get('input', 'rock'), request.user.profile)
+                return JsonResponse({'message': 'success'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+class waitForResultsAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                game = JankenGameInProgress.getMyGame(request.user.profile)
+                if game is None:
+                    raise Exception("You are not part of a game")
+                if (JankenGameInProgress.getMyGame(request.user.profile).game_finished == False):
+                    raise Exception("The game is not finished yet")
+                return JsonResponse({'message': game.opponent.nickname + ' wins'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+import time
+
+class waitForOpponentAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                if (JankenGameCreation.objects.filter(creator=request.user.profile).exists() == True):
+                    if (JankenGameCreation.objects.get(creator=request.user.profile).isWaiting == True):
+                        raise Exception("You already have a game creation waiting for an opponent")
+                    JankenGameCreation.objects.get(creator=request.user.profile).isWaiting = True
+                    JankenGameCreation.objects.get(creator=request.user.profile).save()
+                if (JankenGameInProgress.myGame(request.user.profile).exists() == False):
+                    raise Exception("No opponent found")
+                game = JankenGameInProgress.objects.get(creator=request.user.profile)
+                return JsonResponse({'opponent': game.opponent.nickname})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+class gameInProgressAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                game = JankenGameInProgress.getMyGame(request.user.profile)
+                if game is None:
+                    if JankenGameCreation.objects.filter(creator=request.user.profile).exists() == False:
+                        raise Exception('You are not part of a game, please create one or join one')
+                    return JsonResponse({'message': 'waiting for opponent'})
+                if game.game_finished == True:
+                    return JsonResponse({'message': 'game finished'})
+                if game.creator == request.user.profile:
+                    if game.creator_choice != "None":
+                        return JsonResponse({'message': 'already played', 'opponent': game.opponent.nickname})
+                    return JsonResponse({'message': 'game in progress', 'opponent': game.opponent.nickname})
+                if game.opponent == request.user.profile:
+                    if game.opponent_choice != "None":
+                        return JsonResponse({'message': 'already played', 'opponent': game.creator.nickname}) 
+                    return JsonResponse({'message': 'game in progress', 'opponent': game.creator.nickname})
+                raise Exception('You are not part of a game')
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+
+class getResultsAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            game = JankenGameInProgress.getMyGame(request.user.profile)
+            results = {'message': 'success', 'creator': game.creator.nickname, 'opponent': game.opponent.nickname, 'creator_choice': game.creator_choice, 'opponent_choice': game.opponent_choice, 'result': game.result}
+            if game:
+                if game.to_delete == False:
+                    game.to_delete = True
+                    game.save()
+                else:
+                    game.delete()
+            return JsonResponse(results)
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+class deleteMyJankenGameCreationAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            game = JankenGameCreation.getMyGameCreation(request.user.profile)
+            if game:
+                game.delete()
+            return JsonResponse({'message': 'success'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+class amIPlayingAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                game = JankenGameInProgress.getMyGame(request.user.profile)
+                if game is None:
+                    return JsonResponse({'error': 'You are not playing a game'})
+                return JsonResponse({'message': 'You are playing a game'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

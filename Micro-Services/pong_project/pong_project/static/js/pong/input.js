@@ -60,13 +60,13 @@ export class InputManager {
 					if (game.status === g.STATUS_ACTIVE || game.status === g.STATUS_PAUSED) {
 						game.status = (game.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE);
 					} else if (game.status === g.STATUS_ENDED) {
-						game.reset();
+					console.log(window.client.game_manager.game_result);
+					game.reset();
 					}
 					break;
 				case g.INPUT_QUIT:
-					if (game.status === g.STATUS_ENDED) {
-						game.status = g.STATUS_QUIT;
-					}
+					game.status = g.STATUS_QUIT;
+					console.log(window.client.game_manager.game_result);
 					break;
 			}
 		});

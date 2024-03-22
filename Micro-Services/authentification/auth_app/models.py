@@ -55,31 +55,87 @@ class Friendship(models.Model):
             return Friendship.objects.get(friend1=friend2, friend2=friend1)
         else:
             return None
-    # def getAcceptedFriendshipWithAnother(friend1, friend2):
-    #     if Friendship.objects.filter(friend1=friend1, friend2=friend2).exists() and Friendship.objects.filter(friend1=friend1, friend2=friend2).accepted == True:
-    #         return Friendship.objects.get(friend1=friend1, friend2=friend2)
-    #     elif Friendship.objects.filter(friend1=friend2, friend2=friend1).exists() and Friendship.objects.filter(friend1=friend2, friend2=friend1).accepted == True:
-    #         return Friendship.objects.get(friend1=friend2, friend2=friend1)
-    #     else:
-    #         return None
-        
-    # def getAllMyFriendships(profile):
-    #     return Friendship.objects.filter(friend1=profile, accepted=True) | Friendship.objects.filter(friend2=profile, accepted=True)
-    
-    # def getAllMyFriendRequests(profile):
-    #     return Friendship.objects.filter(friend1=profile, accepted=False) | Friendship.objects.filter(friend2=profile, accepted=False)
-    
-    # def acceptFriendRequest(self):
-    #     self.accepted = True
-    #     self.save()
 
-    # def denyFriendRequest(self):
-    #     self.delete()
-
-    # def isFriendshipAccepted(self):
-    #     return self.accepted
-
-    
     class Meta:
         verbose_name = "Friendship"
         verbose_name_plural = "Friendships"
+
+class Notifications(models.Model):
+    profile = models.ForeignKey(Profile, on_delete = models.CASCADE)
+    friendship = models.ForeignKey(Friendship, on_delete = models.CASCADE, blank=True, null=True)
+    content = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.profile.nickname + " : " + self.content
+
+    class Meta:
+        verbose_name = "Notification"
+        verbose_name_plural = "Notifications"
+
+    def getNotifications(profile):
+        return Notifications.objects.filter(profile=profile)
+    
+    def delMyNotifications(profile):
+        Notifications.objects.filter(profile=profile).delete()
+
+    def countNotifications(profile):
+        return Notifications.objects.filter(profile=profile).count()
+    
+class JankenGameCreation(models.Model):
+    creator = models.ForeignKey(Profile, on_delete = models.CASCADE, related_name='creator_creation')
+    isWaiting = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.creator.nickname + " created a Janken Game"
+    
+    def findGame():
+        return JankenGameCreation.objects.all().first() | None
+    
+    def getMyGameCreation(profile):
+        if JankenGameCreation.objects.filter(creator=profile).exists():
+            return JankenGameCreation.objects.get(creator=profile)
+        else:
+            return None
+    
+    class Meta:
+        verbose_name = "Janken Game Creation"
+        verbose_name_plural = "Janken Game Creations"
+    
+class JankenGameInProgress(models.Model):
+    creator = models.ForeignKey(Profile, on_delete = models.CASCADE, related_name='creator')
+    opponent = models.ForeignKey(Profile, on_delete = models.CASCADE, related_name='opponent')
+    creator_choice = models.CharField(max_length=100, default="None")
+    opponent_choice = models.CharField(max_length=100, default="None")
+    game_finished = models.BooleanField(default=False)
+    to_delete = models.BooleanField(default=False)
+    result = models.CharField(max_length=100, default="None")
+
+    def __str__(self):
+        return self.creator.nickname + " vs " + self.opponent.nickname
+    
+    def myGame(profile):
+        return JankenGameInProgress.objects.filter(creator=profile) | JankenGameInProgress.objects.filter(opponent=profile)
+    
+    def getMyGame(profile):
+        if JankenGameInProgress.objects.filter(creator=profile).exists():
+            return JankenGameInProgress.objects.get(creator=profile)
+        elif JankenGameInProgress.objects.filter(opponent=profile).exists():
+            return JankenGameInProgress.objects.get(opponent=profile)
+        else:
+            return None
+    
+    def giveInput(choice, Profile):
+        if JankenGameInProgress.objects.filter(creator=Profile).exists():
+            game = JankenGameInProgress.objects.get(creator=Profile)
+            game.creator_choice = choice
+            if game.opponent_choice != "None":
+                game.game_finished = True
+            game.save()
+        elif JankenGameInProgress.objects.filter(opponent=Profile).exists():
+            game = JankenGameInProgress.objects.get(opponent=Profile)
+            game.opponent_choice = choice
+            if game.creator_choice != "None":
+                game.game_finished = True
+            game.save()
+        else:
+            return None

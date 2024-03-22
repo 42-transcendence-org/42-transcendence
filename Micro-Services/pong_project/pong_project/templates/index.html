@@ -34,7 +34,8 @@
 				<button id="tournament-button"> Tournament</button>
 				<button id="myprofile-button"> My profile</button>
 				<button id="chatbot-button"> Pong Chatbot</button>
-				<button id="friends-button"> Friends</button>
+				<button id="friends-button" data-count="0"> Friends</button>
+				<button id="janken-button"> Janken</button>
 			</div>
 			<div id="friends" style="display:none">
 				<p>Coucou</p>
@@ -104,6 +105,32 @@
 			</div>
 			<div id="friend-not-found" style="display: none;">
 				<p></p>
+			</div>
+			<div id="janken" style="display:none;">
+				<button id="janken-create-game-button">Create a game</button>
+				<button id="janken-join-game-button">Join a game</button>
+				<button id="janken-game-in-progress-button">Game in progress</button>
+			</div>
+			<div id="janken-lobby" style="display:none;">
+				<p>Waiting for an opponent</p>
+				<button id="janken-cancel-game">Cancel</button>
+				<button id="janken-lobby-back"> Back to Menu </button>
+			</div>
+			<div id="janken-game" style="display:none;">
+				<p>Choose your move</p>
+				<span id="janken-game-opponent-nickname"></span>
+				<button id="rock-button">Rock</button>
+				<button id="paper-button">Paper</button>
+				<button id="scissors-button">Scissors</button>
+				<button id="janken-game-back"> Back to Menu </button>
+			</div>
+			<div id="janken-already-played" style="display:none;">
+				<p>You already played, waiting for <span id="janken-already-played-opponent-nickname"></span> to play!</p>
+				<button id="janken-already-played-back"> Back to Menu </button>
+			</div>
+			<div id="janken-result" style="display:none;">
+				<p id="janken-result-text"></p>
+				<button id="janken-result-back"> Back to Menu </button>
 			</div>
 		</div>
 		<div id="isNotLogged" style="display: none;">

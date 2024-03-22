@@ -8,6 +8,8 @@ from .views import getInfo, getFriendInfoAPIView, addFriendAPIView, getMyFriends
 from .views import Login42APIView, OAuthRedirectUrlAPIView, OAuthVerifyStateAPIView
 #chatbot
 from .views import chatbotAPIView
+#janken
+from .views import createJankenGameAPIView, jankenGameAPIView, waitForOpponentAPIView, waitForResultsAPIView, getResultsAPIView, deleteMyJankenGameCreationAPIView, gameInProgressAPIView, amIPlayingAPIView
 
 
 urlpatterns = [
@@ -39,4 +41,13 @@ urlpatterns = [
     #chatbot
 	path('chatgpt/', chatbotAPIView.as_view(), name='chatgpt'),
 	
+    #janken
+	path('createJankenGame/', createJankenGameAPIView.as_view(), name='createJankenGame'),
+	path('jankenGame/', jankenGameAPIView.as_view(), name='jankenGame'),
+	path('waitForOpponent/', waitForOpponentAPIView.as_view(), name='waitForOpponent'),
+	path('waitForResults/', waitForResultsAPIView.as_view(), name='waitForResults'),
+	path('gameInProgress/', gameInProgressAPIView.as_view(), name='gameInProgress'),
+	path('getResults/', getResultsAPIView.as_view(), name='getResults'),
+	path('deleteMyJankenGameCreation/', deleteMyJankenGameCreationAPIView.as_view(), name='deleteMyJankenGameCreation'),
+	path('amIPlaying/', amIPlayingAPIView.as_view(), name='amIPlaying'),
 ]

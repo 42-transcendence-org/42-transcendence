@@ -78,7 +78,7 @@ export class Oauth {
 			window.client.nextPage('not-logged-home');
 			return ;
 		}
-		localStorage.setItem('jwt', data.token);
+		localStorage.setItem('jwt', response.token);
 		window.history.replaceState({id: 'logged-in-home'}, '', 'https://localhost:8443');
 		window.client.divDisplay('logged-in-home');
 	}

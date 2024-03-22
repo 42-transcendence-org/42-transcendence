@@ -13,9 +13,9 @@
     text-align: center;
 	position: fixed;
     top: 0; 
-    left: 0; 
+    left: 0;
     width: 100%;
-	height: 20%;
+height: 20%;
 }
 
 #home-banner {
@@ -30,8 +30,9 @@
 
 #unauthorized {
 	color:red;
-	font-size: 30px;
+	font-size: 20px;
 	width: 50%;
+	left: 25%;
 }
 
 #friend-not-found {
@@ -76,7 +77,9 @@ main {
 
 #alias-div,
 #logged-in-home,
-#game-div {
+#game-div,
+#janken-game, 
+#janken {
 	width: 25vw;
 	height: 50vh;
 	display: none;
@@ -107,7 +110,9 @@ main {
 }
 
 
-#logged-in-home button {
+#logged-in-home button,
+#janken button,
+#janken-game button{
 	display: block;
 	width: 100%;
 	/* Adjust based on the size of your largest button */
@@ -137,18 +142,36 @@ main {
 	/* Smooth transition for hover effects */
 }
 
-#logged-in-home button:hover {
+#logged-in-home button:hover ,
+#janken button:hover,
+#janken-game button:hover{
 	background-color: #252442;
 	/* Changes background on hover for interactive feel */
 	color: #FFD700;
 	/* Changes text color on hover */
 }
 
-#logged-in-home button:active {
+#logged-in-home button:active ,
+#janken button:active,
+#janken-game button:active{
 	background-color: #1C1B33;
 	/* Darker background for pressed effect */
 	color: #DAA520;
 	/* Changes text color to indicate active state */
+}
+
+#friends-button::before {
+	content: attr(data-count);
+	position: absolute;
+	width: 1.5em;
+	height: 1.5em;
+	display: var(--display-before, flex); 
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background-color: red;
+	color: white;
+
 }
 
 #friends {
@@ -195,4 +218,33 @@ main {
 
 #friends-requests {
     margin-top: 20px;
+}
+
+
+#janken-button::before {
+	content: "1";
+	position: absolute;
+	width: 1.5em;
+	height: 1.5em;
+	display: var(--display-before, none); 
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background-color: red;
+	color: white;
+
+}
+
+#janken-game-in-progress-button::before {
+	content: "1";
+	position: absolute;
+	width: 1.5em;
+	height: 1.5em;
+	display: var(--display-before, none); 
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background-color: red;
+	color: white;
+
 }

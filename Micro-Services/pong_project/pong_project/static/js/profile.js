@@ -17,8 +17,8 @@ export async function fetchProfileData(div_to_show) {
 
 	const data = await getUserData();
 
-	if (data.error) {
-		window.client.connection.logout_user_request();
+	if (data.error && data.error == 'Error: No profile for this user') {
+		await window.client.connection.logout_user_request();
 		alert("You don't have a user profile associated to your account, you have been disconnected");
 		return ;
 	}
@@ -36,6 +36,25 @@ export async function fetchProfileData(div_to_show) {
 	{
 		await this.show_friendlist();
 		await this.showFriendRequests();
+	}
+	else if (div_to_show === 'logged-in-home')
+	{
+		document.getElementById('friends-button').setAttribute('data-count', data.notifications);
+		if (data.notifications == 0) {
+			document.getElementById('friends-button').style.setProperty('--display-before', 'none');
+		} else {
+			document.getElementById('friends-button').style.setProperty('--display-before', 'flex');
+		}
+	}
+	if (!(div_to_show === 'janken-game' || div_to_show === 'janken-already-played' || div_to_show === 'janken-result')) {
+		const response = await window.client.janken.amIPlaying()
+		if (response.error) {
+			document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'none');
+			document.getElementById('janken-button').style.setProperty('--display-before', 'none');
+		} else {
+			document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'flex');
+			document.getElementById('janken-button').style.setProperty('--display-before', 'flex');
+		}
 	}
 }
 
