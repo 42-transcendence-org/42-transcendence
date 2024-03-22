@@ -53,16 +53,13 @@ export class Client {
 	//SHOWS THE DIV + ADDS IT TO HISTORY
 	async nextPage(div_to_show) {
 
-		const no_history = await this.divDisplay(div_to_show); // affiche la div à afficher
-		if (no_history === 0)
-			this.addToHistory(); //ajoute à l'historique
+		await this.divDisplay(div_to_show); // affiche la div à afficher
+		this.addToHistory(); //ajoute à l'historique
 	}
 
 	//ONLY SHOWS THE DIV, NO HISTORY ADDING
 	async divDisplay(div_to_show) {
 	
-		var no_history = 0;
-		console.log('div to show: ' + div_to_show);
 		const isLogged = await this.connection.isLoggedIn();
 
 		if (div_to_show === 'friend-profile') {
@@ -71,9 +68,6 @@ export class Client {
 		
 		if (div_to_show === 'janken-game' || div_to_show === 'janken-already-played' || div_to_show === 'janken-result') {
 			div_to_show = await this.janken.game_in_progress();
-			if (div_to_show === 'janken') {
-				no_history = 1;
-			}
 		}
 		
 		if (isLogged === 'true') {
@@ -81,12 +75,8 @@ export class Client {
 			await this.janken.relaunchGetters();
 		}
 
-		if (this.thisDivCanBeShown(isLogged, div_to_show) === false) {
-			div_to_show = 'unauthorized';
-			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (isLogged === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
-		}
-		this.sectionDisplay(isLogged);
-	
+		div_to_show = this.authorisationCheck(isLogged, div_to_show);
+			
 		if (this.previous_div) //hides previous div
 			this.previous_div.style.display = 'none';
 
@@ -96,11 +86,10 @@ export class Client {
 		div.style.display = 'block'; //show new div
 
 		this.previous_div = div; //enregistre la div actuelle pour pouvoir la cacher plus tard in english is better mais comment on dit enregistre jsplu trou de mémoire
-		return (no_history);
 	}
 
 	//to check if this div is allowed to be shown (example: you log out and try to access a logged in div)
-	thisDivCanBeShown(isLogged, div_to_show) {
+	authorisationCheck(isLogged, div_to_show) {
 		let childDivs = null;
 		if (isLogged === 'true') {
 			childDivs = this.loggedDiv.querySelectorAll('div');
@@ -113,12 +102,19 @@ export class Client {
 				canBeShown = true;
 			}
 		});
-		return canBeShown;
+
+		if (canBeShown === false ) {
+			div_to_show = 'unauthorized';
+			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (isLogged === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
+		}
+
+		this.sectionDisplay(isLogged);
+
+		return (div_to_show);
 	}
 
 	// If user is Logged, displays the logged divs and the banner elements, otherwise displays the not logged divs
 	sectionDisplay(isLogged) {
-
 		if (isLogged === 'true') {
 			this.loggedDiv.style.display = 'block';
 			this.logginBanner.style.display = 'block';

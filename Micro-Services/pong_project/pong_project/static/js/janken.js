@@ -21,10 +21,10 @@ export class Janken {
 	}
 	
 	async relaunchGetters() {
-		
 		const url = 'https://localhost:8443/auth/amIPlaying/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
+			document.getElementById("janken-game-in-progress-button").style.display = "none";
 			document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'none');
 			document.getElementById('janken-button').style.setProperty('--display-before', 'none');
 		} else {
@@ -46,13 +46,12 @@ export class Janken {
 		const url = 'https://localhost:8443/auth/gameInProgress/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
-			if (document.getElementById('janken').style.display == 'none')
-				alert(response.error);
-			return ('janken');
+			// if (document.getElementById('janken').style.display == 'none')
+			// 	alert(response.error);
+			return ('janken-not-authorized');
 		}
 		if (response.message == 'waiting for opponent') {
-			alert('Waiting for opponent to join your game');
-			return ('janken');
+			return ('janken-lobby');
 		} else if (response.message == 'game in progress') {
 			document.getElementById('janken-game-opponent-nickname').textContent = "Playing against " + response.opponent;
 			return ('janken-game');
@@ -93,7 +92,8 @@ export class Janken {
 			return ;
 		}
 		await window.client.nextPage('janken-lobby');
-		// create a game waiting for an opponent
+		document.getElementById("janken-game-in-progress-button").style.display = "block";
+			// create a game waiting for an opponent
 	}
 
 	async join_game() {
@@ -104,7 +104,8 @@ export class Janken {
 			return ;
 		}
 		await window.client.nextPage('janken-game');
-		// join a game waiting for an opponent
+		document.getElementById("janken-game-in-progress-button").style.display = "block";
+			// join a game waiting for an opponent
 	}
 
 	async play(choice) {
@@ -117,7 +118,6 @@ export class Janken {
 			alert(response.error);
 			return ;
 		}
-		console.log(response);
 		await window.client.nextPage('janken-already-played');
 	}
 
@@ -140,7 +140,6 @@ export class Janken {
 		
 	async waitResults() {
 		const url = 'https://localhost:8443/auth/waitForResults/'
-		console.log("hey");
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			if (response.error == 'Error: You are not part of a game')
@@ -166,10 +165,8 @@ export class Janken {
 			alert(response.error);
 			return ;
 		}
-		console.log(response);
 		var div = document.getElementById('janken-result-text');
 		div.textContent = response.creator + " played " + response.creator_choice + " and " + response.opponent + " played " + response.opponent_choice + ". ";
-		console.log(response);
 		if (response.winner == document.getElementById('banner-nickname-display').textContent) {
 			div.textContent += "You " + response.result + " !";
 			div.style.backgroundColor = "green";

@@ -270,7 +270,7 @@ class FriendRequestsAPIView(APIView):
                             friend_requests.append(friendship.friend1.nickname)
                     if friend_requests == []:
                         return JsonResponse({'error': 'There is no pending friend request'})
-                    Notifications.delMyNotifications(request.user.profile)
+                    # Notifications.delMyNotifications(request.user.profile) Used to delete all notifs when accessing friends div
                     return JsonResponse({'friend_requests': friend_requests})
                 return JsonResponse({'error': 'There is no pending friend request'})
             return JsonResponse({'error': 'not authenticated'})
