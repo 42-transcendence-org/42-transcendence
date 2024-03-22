@@ -46,16 +46,6 @@ export async function fetchProfileData(div_to_show) {
 			document.getElementById('friends-button').style.setProperty('--display-before', 'flex');
 		}
 	}
-	if (!(div_to_show === 'janken-game' || div_to_show === 'janken-already-played' || div_to_show === 'janken-result')) {
-		const response = await window.client.janken.amIPlaying()
-		if (response.error) {
-			document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'none');
-			document.getElementById('janken-button').style.setProperty('--display-before', 'none');
-		} else {
-			document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'flex');
-			document.getElementById('janken-button').style.setProperty('--display-before', 'flex');
-		}
-	}
 }
 
 export async function getUserData() {

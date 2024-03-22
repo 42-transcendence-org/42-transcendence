@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE)
@@ -109,6 +110,11 @@ class JankenGameInProgress(models.Model):
     game_finished = models.BooleanField(default=False)
     to_delete = models.BooleanField(default=False)
     result = models.CharField(max_length=100, default="None")
+    completion_time = models.DateTimeField(null=True, blank=True)
+    loser = models.CharField(max_length=100, default="None")
+    winner = models.CharField(max_length=100, default="None")
+    first_input_time = models.DateTimeField(default=None, null=True, blank=True)
+    first_input_nickname = models.CharField(max_length=100, default="None")
 
     def __str__(self):
         return self.creator.nickname + " vs " + self.opponent.nickname
@@ -130,12 +136,20 @@ class JankenGameInProgress(models.Model):
             game.creator_choice = choice
             if game.opponent_choice != "None":
                 game.game_finished = True
+                game.completion_time = timezone.now()
+            else:
+                game.first_input_time = timezone.now()
+                game.first_input_nickname = Profile.nickname
             game.save()
         elif JankenGameInProgress.objects.filter(opponent=Profile).exists():
             game = JankenGameInProgress.objects.get(opponent=Profile)
             game.opponent_choice = choice
             if game.creator_choice != "None":
                 game.game_finished = True
+                game.completion_time = timezone.now()
+            else:
+                game.first_input_time = timezone.now()
+                game.first_input_nickname = Profile.nickname
             game.save()
         else:
             return None

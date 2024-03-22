@@ -612,7 +612,7 @@ class waitForResultsAPIView(APIView):
                     raise Exception("You are not part of a game")
                 if (JankenGameInProgress.getMyGame(request.user.profile).game_finished == False):
                     raise Exception("The game is not finished yet")
-                return JsonResponse({'message': game.opponent.nickname + ' wins'})
+                return JsonResponse({'message': 'still waiting'})
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -665,7 +665,37 @@ class getResultsAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             game = JankenGameInProgress.getMyGame(request.user.profile)
-            results = {'message': 'success', 'creator': game.creator.nickname, 'opponent': game.opponent.nickname, 'creator_choice': game.creator_choice, 'opponent_choice': game.opponent_choice, 'result': game.result}
+            if game is None:
+                raise Exception('You are not part of a game')
+            #get winner
+            if game.creator_choice == game.opponent_choice:
+                game.result = "draw"
+            elif game.creator_choice == "rock":
+                if game.opponent_choice == "scissors":
+                    game.result = game.creator.nickname
+                elif game.opponent_choice == "paper":
+                    game.result = game.opponent.nickname
+            elif game.creator_choice == "paper":
+                if game.opponent_choice == "rock":
+                    game.result = game.creator.nickname
+                elif game.opponent_choice == "scissors":
+                    game.result = game.opponent.nickname
+            elif game.creator_choice == "scissors":
+                if game.opponent_choice == "paper":
+                    game.result = game.creator.nickname
+                elif game.opponent_choice == "rock":
+                    game.result = game.opponent.nickname
+            if game.result == game.creator.nickname:
+                game.winner = game.creator.nickname
+                game.loser = game.opponent.nickname
+            if game.result == game.opponent.nickname:
+                game.winner = game.opponent.nickname
+                game.loser = game.creator.nickname
+            if game.result != "draw" and game.result != "won by forfeit":
+                game.result = "won"
+            game.save()
+            results = {'message': 'success', 'creator': game.creator.nickname, 'opponent': game.opponent.nickname, 'creator_choice': game.creator_choice, \
+                    'opponent_choice': game.opponent_choice, 'result': game.result, 'loser': game.loser, 'winner': game.winner}
             if game:
                 if game.to_delete == False:
                     game.to_delete = True
@@ -688,14 +718,41 @@ class deleteMyJankenGameCreationAPIView(APIView):
             print(e)
             return JsonResponse({'error': e.args[0]})
 
+from django.utils import timezone
+
 class amIPlayingAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             if request.user.is_authenticated:
                 game = JankenGameInProgress.getMyGame(request.user.profile)
-                if game is None:
-                    return JsonResponse({'error': 'You are not playing a game'})
-                return JsonResponse({'message': 'You are playing a game'})
+                if game is not None:
+                    if game.game_finished == True:
+                        if (timezone.now() - game.completion_time).total_seconds() > 20:
+                            game.delete()
+                            raise Exception('You are not playing a game')
+                        return JsonResponse({'message': 'The game is finished'})
+                    if game.first_input_time != None:
+                        if (timezone.now() - game.first_input_time).total_seconds() > 300:
+                            game.completion_time = timezone.now()
+                            game.game_finished = True
+                            game.result = "won by forfeit"
+                            game.winner = game.first_input_nickname
+                            game.loser = game.creator.nickname
+                            if game.winner == game.creator.nickname:
+                                game.loser = game.opponent.nickname
+                            game.save()
+                            raise Exception('You are not playing a game')
+                    if game.creator == request.user.profile:
+                        if game.creator_choice == "None":
+                            return JsonResponse({'message': 'Waiting for your input'})
+                        return JsonResponse({'message': 'Waiting for your opponent to play'})
+                    if game.opponent == request.user.profile:
+                        if game.opponent_choice == "None":
+                            return JsonResponse({'message': 'Waiting for your input'})
+                        return JsonResponse({'message': 'Waiting for your opponent to play'})
+                if JankenGameCreation.getMyGameCreation(request.user.profile) is not None:
+                    return JsonResponse({'message': 'You are waiting for an opponent'})
+                raise Exception('You are not playing a game')
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})

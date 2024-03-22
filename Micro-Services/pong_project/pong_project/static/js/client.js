@@ -64,6 +64,7 @@ export class Client {
 		var no_history = 0;
 		console.log('div to show: ' + div_to_show);
 		const isLogged = await this.connection.isLoggedIn();
+
 		if (div_to_show === 'friend-profile') {
 			div_to_show = await profile.showFriendInfo();
 		}	
@@ -77,6 +78,7 @@ export class Client {
 		
 		if (isLogged === 'true') {
 			await profile.fetchProfileData(div_to_show);
+			await this.janken.relaunchGetters();
 		}
 
 		if (this.thisDivCanBeShown(isLogged, div_to_show) === false) {
