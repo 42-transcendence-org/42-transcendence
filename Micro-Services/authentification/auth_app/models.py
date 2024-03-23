@@ -22,6 +22,14 @@ class Profile(models.Model):
         verbose_name = "Profile"
         verbose_name_plural = "Profiles"
 
+    def getWinrateJanken(profile):
+        wins = FinishedJankenGames.countWins(profile)
+        losses = FinishedJankenGames.countLosses(profile)
+        if wins == 0 and losses == 0:
+            return 0
+        else:
+            return wins/(wins+losses)*100
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -105,7 +113,7 @@ class FinishedJankenGames(models.Model):
     def countWins(profile):
         return FinishedJankenGames.objects.filter(owner=profile, result="Victory").count()
     
-    def countLosses(profile):#return nb of defeats or 0 if no defeats
+    def countLosses(profile):
         return FinishedJankenGames.objects.filter(owner=profile, result="Defeat").count()
     
     def countDraws(profile): #return 0 if no game found
@@ -127,6 +135,15 @@ class JankenGameCreation(models.Model):
             return JankenGameCreation.objects.get(creator=profile)
         else:
             return None
+        
+    def matchMaking(profile):
+        if JankenGameCreation.objects.all().exists():
+            myWinrate = profile.getWinrateJanken()
+            for margin in range(0, 101, 5):
+                for game in JankenGameCreation.objects.all():
+                    if game.creator.getWinrateJanken() >= myWinrate - margin and game.creator.getWinrateJanken() <= myWinrate + margin:
+                        return game
+            return JankenGameCreation.objects.all().first()
     
     class Meta:
         verbose_name = "Janken Game Creation"

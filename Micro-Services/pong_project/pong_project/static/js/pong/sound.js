@@ -1,6 +1,5 @@
-const SOUND_COLLISION = 0;
-const SOUND_VICTORY = 1;
-const SOUND_SCORE = 2;
+import * as g from './global.js';
+
 const music = new Audio(window.ASSETS_URL + "jul.ogg");
 // const music = new Audio(window.ASSETS_URL + "glitchstairs.ogg");
 const victory = new Audio(window.ASSETS_URL + "victory.wav");
@@ -25,15 +24,9 @@ export class SoundManager {
 		this.score_sound = score_sound;
 	}
 
-	create_sound_events(arr) {
-		if (arr[0] != -1) {
-			this.events.push(new SoundEvent(arr[0], SOUND_COLLISION));
-		}
-		if (arr[1] != -1) {
-			this.events.push(new SoundEvent(arr[1], SOUND_SCORE));
-		}
-		if (arr[2] != -1) {
-			this.events.push(new SoundEvent(arr[2], SOUND_VICTORY));
+	create_sound_events(arr, len) {
+		for (let i = 0; i < len; i++) {
+			this.events.push(new SoundEvent(arr[i][0], arr[i][1]));
 		}
 	}
 
@@ -42,14 +35,15 @@ export class SoundManager {
 
 		for (let i = 0; i < this.events.length; i++) {
 			if (tick >= this.events[i].tick) {
+
 				switch (this.events[i].sound) {
-					case SOUND_COLLISION:
+					case g.SOUND_HIT:
 						this.play_hit_sound();
 						break;
-					case SOUND_SCORE:
+					case g.SOUND_SCORE:
 						this.play_score_sound();
 						break;
-					case SOUND_VICTORY:
+					case g.SOUND_VICTORY:
 						this.play_victory_sound();
 						break;
 				}

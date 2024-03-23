@@ -32,7 +32,9 @@ export async function fetchProfileData(div_to_show) {
 		document.getElementById('profile-username-display').innerText = data.username;
 		document.getElementById('profile-email-display').innerText = data.email;
 		document.getElementById('profile-nickname-display').innerText = data.nickname;
+		document.getElementById('profile-winrate-janken-display').innerText = (data.winrateJanken) + "%";
 		document.getElementById('profile-profile-picture-display').src = "auth/static/" + data.img;
+
 	}
 	else if (div_to_show === 'friends')
 	{
@@ -228,8 +230,8 @@ export async function getFriendHistory(friend_name) {
 	};
 	const response = await poster(url, data);
 	if (response.error) {
-		alert(response.error);
-		return ;
+		document.getElementById('friend-not-found').querySelector('p').textContent = 'When trying to access ' + friend_name + '\'s profile, ' + response.error;
+		return 'friend-not-found';
 	}
 	console.log(response);
 	document.getElementById('friend-janken-history-wins').textContent = response.janken_wins;

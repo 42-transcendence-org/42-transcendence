@@ -123,6 +123,14 @@
 					<input type="file" id="profile_picture_new" name="profile_picture" accept="image/*" required>
 					<button id="submit-profile-picture-button" type="submit">modify</button>
 				</form>
+				<button id="profile-janken-history-button"> My Janken History</button>
+				<button id="profile-pong-history-button"> My Pong History</button>
+			</div>
+			<div id="pong-history" style="display:none;">
+				<p>History</p>
+				<p>Wins: <span id="pong-history-wins"></span>, Losses: <span id="pong-history-losses"></span>, Draws: <span id="pong-history-draws"></span></p>
+				<button id="pong-history-back"> Back to Profile </button>
+				<div id="pong-history-list"></div>
 			</div>
 			<div id="pong-history" style="display:none;">
 				<p>History</p>
