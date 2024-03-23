@@ -155,18 +155,15 @@ export async function addFriend(event) {
 
 export async function show_friendlist() {
 	
-	
-	var list = document.getElementById('friends-list');
 	var list_names = document.getElementById('friends-list-names');
 	var list_delete = document.getElementById('friends-list-delete');
 	list_names.innerHTML = '';
-	// list.innerHTML = '';
 	list_delete.innerHTML = '';
 
 	const url = 'https://localhost:8443/auth/getMyFriends/';
 	const response = await getter(url);
 	if (response.error) {
-		list.textContent = "You have no friends yet !";
+		list_names.textContent = "You have no friends yet !";
 		return ;
 	}
 
@@ -219,8 +216,31 @@ export async function showFriendInfo() {
 
 	document.getElementById('friend-profile-nickname-display').textContent = response.nickname;
 	document.getElementById('friend-profile-profile-picture-display').src = "auth/static/" + response.img;
-	document.getElementById('friend-online-status-display').textContent = friend_profile.online_status;
+	document.getElementById('friend-online-status-display').textContent = response.online_status;
+	await getFriendHistory(friend_name);
 	return 'friend-profile';
+}
+
+export async function getFriendHistory(friend_name) {
+	const url = 'https://localhost:8443/auth/friendStats/';
+	const data = {
+		'friend': friend_name,
+	};
+	const response = await poster(url, data);
+	if (response.error) {
+		alert(response.error);
+		return ;
+	}
+	console.log(response);
+	document.getElementById('friend-janken-history-wins').textContent = response.janken_wins;
+	document.getElementById('friend-janken-history-draws').textContent = response.janken_draws;
+	document.getElementById('friend-janken-history-losses').textContent =  response.janken_losses;
+	document.getElementById('friend-pong-local-history-wins').textContent = response.pong_local_wins;
+	document.getElementById('friend-pong-local-history-losses').textContent = response.pong_local_losses;
+	document.getElementById('friend-pong-remote-history-wins').textContent = response.pong_remote_wins;
+	document.getElementById('friend-pong-remote-history-losses').textContent = response.pong_remote_losses;
+	document.getElementById('friend-pong-ai-history-wins').textContent = response.pong_ai_wins;
+	document.getElementById('friend-pong-ai-history-losses').textContent = response.pong_ai_losses;
 }
 
 

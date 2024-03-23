@@ -388,45 +388,6 @@ main {
 	
 }
 
-#friend-profile {
-    position: relative; /* Permet d'utiliser les positions relatives pour les éléments enfants */
-}
-
-#friend-profile-profile-picture-display {
-    position: absolute; /* Permet de positionner l'image par rapport à son conteneur parent */
-    top: 150px; /* Ajuste la distance depuis le haut de son conteneur parent */
-    right: 130px; /* Ajuste la distance depuis la droite de son conteneur parent */
-}
-
-
-
-#friend-nickname-welcome-p {
-    font-size: 30px; /* Changer la taille de la police selon vos besoins */
-	font-weight: bold;
-	top: 20px; /* Ajuste la distance depuis le haut de la page */
-	right: 30px; /* Ajuste la distance depuis la droite de la page */
-	color: #333;
-	margin-left: 0px; /* Centre l'élément horizontalement */
-    margin-right: 3px;
-	font-family: "Lucida Console", Monaco, monospace;
-	margin-bottom: 0; /* Supprime la marge inférieure par défaut */
-	width: 300%;
-
-}
-
-#friend-profile-nickname-display {
-    font-size: 30px; /* Changer la taille de la police selon vos besoins */
-	font-family: "Lucida Console", Monaco, monospace;
-	font-weight: bold;
-
-}
-
-#friend-online-status {
-    display: inline-block;
-    font-size: 16px;
-	font-family: "Lucida Console", Monaco, monospace;
-	margin-top: 200px;
-}
 
 
 
@@ -559,7 +520,7 @@ label[for="OpenAIquestion"] {
 }
 
 .chatgpt-center {
-
+	
 	position: absolute; /* Change la position de l'image */
 	top: 45%; /* Ajuste la distance depuis le haut de la page */
 	left: 50%; /* Ajuste la distance depuis la gauche de la page */
@@ -568,7 +529,7 @@ label[for="OpenAIquestion"] {
 
 
 #howcan {
-    position: absolute; /* Change la position du h2 */
+	position: absolute; /* Change la position du h2 */
     top: calc(45% + 25px); /* Ajuste la distance depuis le haut de la page en prenant en compte la hauteur de l'image */
     left: 50%; /* Ajuste la distance depuis la gauche de la page */
     transform: translateX(-50%); /* Centre le h2 horizontalement */
@@ -578,7 +539,7 @@ label[for="OpenAIquestion"] {
     margin-top: 60px; /* Ajoute de l'espace au-dessus du h2 */
     margin-bottom: 0; /* Supprime la marge inférieure par défaut */
 	font-size: 20px;
-
+	
 }
 
 
@@ -594,14 +555,126 @@ label[for="OpenAIquestion"] {
 }
 
 #OPENai {
-    margin-top: 350px; /* Ajustez cette valeur selon vos besoins pour déplacer le formulaire plus bas */
+	margin-top: 350px; /* Ajustez cette valeur selon vos besoins pour déplacer le formulaire plus bas */
 }
 
 
 #OpenAIquestion {
-    width: 400px; /* ou toute autre valeur de largeur que vous préférez */
+	width: 400px; /* ou toute autre valeur de largeur que vous préférez */
 	height: 50px; /* ou toute autre valeur de hauteur que vous préférez */
 	padding: 10px; /* Ajoute un remplissage pour améliorer l'apparence */
     border: none; /* Supprime la bordure par défaut */
     border-radius: 25px; /* Ajoute une bordure arrondie */
 }
+
+
+
+
+
+#friends-button::before {
+	content: attr(data-count);
+	position: absolute;
+	width: 1.5em;
+	height: 1.5em;
+	display: var(--display-before, flex); 
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background-color: red;
+	color: white;
+	
+}
+
+
+#janken-button::before {
+	content: "1";
+	position: absolute;
+	width: 1.5em;
+	height: 1.5em;
+	display: var(--display-before, none); 
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background-color: red;
+	color: white;
+	
+}
+
+#janken-game-in-progress-button::before {
+	content: "1";
+	position: absolute;
+	width: 1.5em;
+	height: 1.5em;
+	display: var(--display-before, none); 
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background-color: red;
+	color: white;
+	
+}
+
+#friend-profile {
+	position: relative; /* Permet d'utiliser les positions relatives pour les éléments enfants */
+}
+
+
+#friend-nickname-welcome-p {
+	font-size: 30px; /* Changer la taille de la police selon vos besoins */
+	font-weight: bold;
+	top: 20px; /* Ajuste la distance depuis le haut de la page */
+	right: 30px; /* Ajuste la distance depuis la droite de la page */
+	color: #333;
+	margin-left: 0px; /* Centre l'élément horizontalement */
+	margin-right: 3px;
+	font-family: "Lucida Console", Monaco, monospace;
+	margin-bottom: 0; /* Supprime la marge inférieure par défaut */
+	width: 300%;
+
+}
+
+#friend-profile-nickname-display {
+	font-size: 30px; /* Changer la taille de la police selon vos besoins */
+	font-family: "Lucida Console", Monaco, monospace;
+	font-weight: bold;
+
+}
+
+#friend-profile-profile-picture-display {
+	position: absolute; /* Change la position de l'image */
+	top: 100px; /* Ajuste la distance depuis le haut de la page */
+	right: 120px; /* Ajuste la distance depuis la droite de la page */
+	/* width: 100px;
+	height: 100px;
+	border-radius: 80%;
+	margin-right: 10px; */
+}
+
+#friend-online-status {
+	display: inline-block;
+	font-size: 16px;
+	font-family: "Lucida Console", Monaco, monospace;
+	margin-top: 80px;
+}
+
+#friend-profile-janken-history {
+	font-family: "Lucida Console", Monaco, monospace;
+	position: absolute;
+    top: 300px; /* ajustez cette valeur selon votre préférence */
+    left: 50%; /* centrer horizontalement */
+    transform: translateX(-200%);
+}
+
+#friend-profile-pong-local-history,
+#friend-profile-pong-ai-history,
+#friend-profile-pong-remote-history {
+	position: absolute;
+    right: 20%; /* ajustez cette valeur selon votre préférence */
+    transform: translateY(-300%);
+	font-family: "Lucida Console", Monaco, monospace;
+
+
+	
+} 
+
+

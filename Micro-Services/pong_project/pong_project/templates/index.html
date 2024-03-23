@@ -76,11 +76,29 @@
 				</form>
 			</div> -->
 			<div id="friend-profile" style="display:none;">
-				<img src="" id="friend-profile-profile-picture-display" width="75" height="87" alt="profile picture">
-				<p id="friend-nickname-welcome-p" style="display: inline-block; margin-bottom: 0;"><span id="friend-profile-nickname-display"></span>'s Profile !</p>
-				<p id="friend-online-status" style="display: inline-block;">online : <span id="friend-online-status-display"></span></p>
+				<div id="friends-info">
+					<img src="" id="friend-profile-profile-picture-display" width="75" height="87" alt="profile picture">
+					<p id="friend-nickname-welcome-p" style="display: inline-block; margin-bottom: 0;"><span id="friend-profile-nickname-display"></span>'s Profile !</p>
+					<p id="friend-online-status" style="display: inline-block;">online : <span id="friend-online-status-display"></span></p>
+				</div>
+				<div id="friend-history">
+					<div id="friend-profile-janken-history">
+						<p>Janken History</p>
+						<p>Wins: <span id="friend-janken-history-wins"></span>, Losses: <span id="friend-janken-history-losses"></span>, Draws: <span id="friend-janken-history-draws"></span></p>
+					</div>
+					<div id="friend-profile-pong-all-history">
+						<p>Pong in Local History</p>
+						<p>Wins: <span id="friend-pong-local-history-wins"></span>, Losses: <span id="friend-pong-local-history-losses"></span></p>
+						<p>Pong in Remote History</p>
+						<p>Wins: <span id="friend-pong-remote-history-wins"></span>, Losses: <span id="friend-pong-remote-history-losses"></span></p>
+						<p>Pong vs AI History</p>
+						<p>Wins: <span id="friend-pong-ai-history-wins"></span>, Losses: <span id="friend-pong-ai-history-losses"></span></p>
+					</div>
+				</div>
 			</div>
 			<div id="profile" style="display: none;">
+				<button id="profile-janken-history-button"> My Janken History</button>
+				<button id="profile-pong-history-button"> My Pong History</button>
 				<p id="username-welcome-p">My username : <span id="profile-username-display"></span></p>
 				<p id="nickname-welcome-p">My nickname : <span id="profile-nickname-display"></span></p>				
 				<p id="email-welcome-p" style="display: inline-block;">My e-mail : <span id="profile-email-display"></span></p>
@@ -105,8 +123,6 @@
 					<input type="file" id="profile_picture_new" name="profile_picture" accept="image/*" required>
 					<button id="submit-profile-picture-button" type="submit">modify</button>
 				</form>
-				<button id="profile-janken-history-button"> My Janken History</button>
-				<button id="profile-pong-history-button"> My Pong History</button>
 			</div>
 			<div id="pong-history" style="display:none;">
 				<p>History</p>
@@ -134,7 +150,8 @@
 			<div id="janken-history" style="display:none;">
 				<p>History</p>
 				<p>Wins: <span id="janken-history-wins"></span>, Losses: <span id="janken-history-losses"></span>, Draws: <span id="janken-history-draws"></span></p>
-				<button id="janken-history-back"> Back to Menu </button>
+				<button id="janken-history-back"> Back to Janken </button>
+				<button id="janken-history-back-to-profile"> Back to Profile </button>
 				<div id="janken-history-list"></div>
 			</div>
 			<div id="janken-lobby" style="display:none;">

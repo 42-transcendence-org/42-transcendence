@@ -18,6 +18,7 @@ export class Janken {
 		document.getElementById('janken-game-back').addEventListener('click', () => client.nextPage('janken'));
 		document.getElementById('janken-result-back').addEventListener('click', () => client.nextPage('janken'));
 		document.getElementById('janken-history-back').addEventListener('click', () => client.nextPage('janken'));
+		document.getElementById('janken-history-back-to-profile').addEventListener('click', () => client.nextPage('profile'));
 		document.getElementById('janken-history-button').addEventListener('click', () => client.nextPage('janken-history'));
 	}
 	

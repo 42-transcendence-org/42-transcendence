@@ -105,7 +105,7 @@ class FinishedJankenGames(models.Model):
     def countWins(profile):
         return FinishedJankenGames.objects.filter(owner=profile, result="Victory").count()
     
-    def countLosses(profile):
+    def countLosses(profile):#return nb of defeats or 0 if no defeats
         return FinishedJankenGames.objects.filter(owner=profile, result="Defeat").count()
     
     def countDraws(profile): #return 0 if no game found
@@ -224,12 +224,30 @@ class FinishedPongGames(models.Model):
     def getMyHistory(profile):
         return FinishedPongGames.objects.filter(owner=profile)
     
-    def countWins(profile):
+    def countAllWins(profile):
         return FinishedPongGames.objects.filter(owner=profile, result="Victory").count()
     
-    def countLosses(profile):
+    def countAllLosses(profile):
         return FinishedPongGames.objects.filter(owner=profile, result="Defeat").count()
     
-    def countDraws(profile): #return 0 if no game found
+    def countAllDraws(profile): #return 0 if no game found
         return FinishedPongGames.objects.filter(owner=profile, result="draw").count()
+
+    def countLocalWins(profile):
+        return FinishedPongGames.objects.filter(owner=profile, result="Victory", game_type="local").count()
+
+    def countLocalLosses(profile):
+        return FinishedPongGames.objects.filter(owner=profile, result="Defeat", game_type="local").count()
+
+    def countRemoteWins(profile):
+        return FinishedPongGames.objects.filter(owner=profile, result="Victory", game_type="remote").count()
+
+    def countRemoteLosses(profile):
+        return FinishedPongGames.objects.filter(owner=profile, result="Defeat", game_type="remote").count()
+
+    def countAiWins(profile):
+        return FinishedPongGames.objects.filter(owner=profile, result="Victory", game_type="ai").count()
+
+    def countAiLosses(profile):
+        return FinishedPongGames.objects.filter(owner=profile, result="Defeat", game_type="ai").count()
     

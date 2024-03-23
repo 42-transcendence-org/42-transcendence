@@ -271,7 +271,7 @@ class FriendRequestsAPIView(APIView):
                             friend_requests.append(friendship.friend1.nickname)
                     if friend_requests == []:
                         return JsonResponse({'error': 'There is no pending friend request'})
-                    # Notifications.delMyNotifications(request.user.profile) Used to delete all notifs when accessing friends div
+                    Notifications.delMyNotifications(request.user.profile) #Used to delete all notifs when accessing friends div
                     return JsonResponse({'friend_requests': friend_requests})
                 return JsonResponse({'error': 'There is no pending friend request'})
             return JsonResponse({'error': 'not authenticated'})
@@ -839,14 +839,41 @@ class pongHistoryAPIView(APIView):
                                     'end_time': game.completion_time, \
                                           })
                 return JsonResponse({'history': history, \
-                                     'wins': FinishedPongGames.countWins(request.user.profile), \
-                                     'draws': FinishedPongGames.countDraws(request.user.profile), \
-                                     'losses': FinishedPongGames.countLosses(request.user.profile)})
+                                     'wins': FinishedPongGames.countAllWins(request.user.profile), \
+                                     'draws': FinishedPongGames.countAllDraws(request.user.profile), \
+                                     'losses': FinishedPongGames.countAllLosses(request.user.profile)})
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
 
+class friendStatsAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                friend_name = request.data.get('friend', 'no friend')
+                if friend_name == 'no friend':
+                    raise Exception("friend is required")
+                try:
+                    friend = Profile.objects.get(nickname=friend_name)
+                except Profile.DoesNotExist:
+                    raise Exception("No user has this nickname.")
 
+                return JsonResponse({'friend': friend.nickname, \
+                                    'janken_wins': FinishedJankenGames.countWins(friend), \
+                                    'janken_draws': FinishedJankenGames.countDraws(friend), \
+                                    'janken_losses': FinishedJankenGames.countLosses(friend), \
+                                    'pong_local_wins': FinishedPongGames.countLocalWins(friend), \
+                                    'pong_local_losses': FinishedPongGames.countLocalLosses(friend), \
+                                    'pong_remote_wins': FinishedPongGames.countRemoteWins(friend), \
+                                    'pong_remote_losses': FinishedPongGames.countRemoteLosses(friend), \
+                                    'pong_ai_wins': FinishedPongGames.countAiWins(friend), \
+                                    'pong_ai_losses': FinishedPongGames.countAiLosses(friend), \
+                                    })
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+        
 
 
 
