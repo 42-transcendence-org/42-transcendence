@@ -181,6 +181,7 @@ def getInfo(request):
                                 'nickname': profile.nickname, \
                                 'email': profile.email,
                                 'notifications': Notifications.countNotifications(profile),
+                                'winrateJanken': profile.getWinrateJanken(),
                                 })
         except Exception as e:
             print(e)
@@ -207,6 +208,7 @@ class getFriendInfoAPIView(APIView):
                                         'online_status': friend.online,
                                         })
                 raise Exception("You are not friends with this user")
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return Response({'error': e.args[0]})
@@ -232,6 +234,7 @@ class addFriendAPIView(APIView):
                 new_friendship = Friendship.objects.create(friend1=request.user.profile, friend2=new_friend)
                 Notifications.objects.create(profile=new_friend, friendship=new_friendship, content=myself.nickname + " sent you a friend request")
                 return JsonResponse({'message': 'Friend request sent to ' + friend_name + " !"})
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return Response({'error': e.args[0]})
@@ -295,6 +298,7 @@ class FriendRequestsAPIView(APIView):
                 friendship.accepted = True
                 friendship.save()
                 return JsonResponse({'message': 'success', 'friend': friend_name})
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return Response({'error': e.args[0]})
@@ -313,6 +317,7 @@ class RefuseFriendRequestAPIView(APIView):
                     return JsonResponse({'success': True})
                 else:
                     return JsonResponse({'error': 'Error: friend request not found'})
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return Response({'error': e.args[0]})
@@ -331,6 +336,7 @@ class DeleteFriendAPIView(APIView):
                     return JsonResponse({'success': True})
                 else:
                     return JsonResponse({'error': 'Friendship already ended'})
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -565,6 +571,7 @@ class createJankenGameAPIView(APIView):
                 game = JankenGameCreation.objects.create(creator=request.user.profile)
                 game.save()
                 return JsonResponse({'game_id': game.id})
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -579,10 +586,11 @@ class jankenGameAPIView(APIView):
                     raise Exception("You already have a game in progress")
                 if (JankenGameCreation.objects.all().exists() == False):
                     raise Exception("No game available")
-                game = JankenGameCreation.objects.all().first()
+                game = JankenGameCreation.matchMaking(request.user.profile)
                 JankenGameInProgress.objects.create(creator=game.creator, opponent=request.user.profile)
                 game.delete()
                 return JsonResponse({'game_id': game.id})
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -599,6 +607,7 @@ class jankenGameAPIView(APIView):
                     raise Exception("You already gave your input")
                 JankenGameInProgress.giveInput(request.data.get('input', 'rock'), request.user.profile)
                 return JsonResponse({'message': 'success'})
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -613,6 +622,7 @@ class waitForResultsAPIView(APIView):
                 if (JankenGameInProgress.getMyGame(request.user.profile).game_finished == False):
                     raise Exception("The game is not finished yet")
                 return JsonResponse({'message': 'still waiting'})
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -632,6 +642,7 @@ class waitForOpponentAPIView(APIView):
                     raise Exception("No opponent found")
                 game = JankenGameInProgress.objects.get(creator=request.user.profile)
                 return JsonResponse({'opponent': game.opponent.nickname})
+            raise Exception("You are not authenticated")
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -656,6 +667,7 @@ class gameInProgressAPIView(APIView):
                         return JsonResponse({'message': 'already played', 'opponent': game.creator.nickname}) 
                     return JsonResponse({'message': 'game in progress', 'opponent': game.creator.nickname})
                 raise Exception('You are not part of a game')
+            raise Exception('You are not authenticated')
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -664,6 +676,8 @@ class gameInProgressAPIView(APIView):
 class getResultsAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
+            if not request.user.is_authenticated:
+                raise Exception('You are not authenticated')
             game = JankenGameInProgress.getMyGame(request.user.profile)
             if game is None:
                 raise Exception('You are not part of a game')
@@ -756,6 +770,7 @@ class amIPlayingAPIView(APIView):
                 if JankenGameCreation.getMyGameCreation(request.user.profile) is not None:
                     return JsonResponse({'message': 'You are waiting for an opponent'})
                 raise Exception('You are not playing a game')
+            raise Exception('You are not authenticated')
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -793,6 +808,7 @@ class jankenHistoryAPIView(APIView):
                                      'wins': FinishedJankenGames.countWins(request.user.profile), \
                                      'draws': FinishedJankenGames.countDraws(request.user.profile), \
                                      'losses': FinishedJankenGames.countLosses(request.user.profile)})
+            raise Exception('You are not authenticated')
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -802,7 +818,6 @@ from .models import FinishedPongGames
 class pongHistoryAPIView(APIView):
     def post(self, request, *args, **kwargs):
         try:
-            print("coucou")
             if request.user.is_authenticated:
                 FinishedPongGames.objects.create(
                     owner=request.user.profile, \
@@ -816,6 +831,7 @@ class pongHistoryAPIView(APIView):
                     completion_time= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"), \
                 )
                 return JsonResponse({'message': 'success'})
+            raise Exception('You are not authenticated')
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
@@ -842,6 +858,7 @@ class pongHistoryAPIView(APIView):
                                      'wins': FinishedPongGames.countWins(request.user.profile), \
                                      'draws': FinishedPongGames.countDraws(request.user.profile), \
                                      'losses': FinishedPongGames.countLosses(request.user.profile)})
+            raise Exception('You are not authenticated')
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})

@@ -389,13 +389,16 @@ main {
 }
 
 #friend-profile {
-    position: relative; /* Permet d'utiliser les positions relatives pour les éléments enfants */
+    position: absolute;
+	width:100%;
+	left:0%;	
+	/* width:300%; */
 }
 
 #friend-profile-profile-picture-display {
     position: absolute; /* Permet de positionner l'image par rapport à son conteneur parent */
-    top: 150px; /* Ajuste la distance depuis le haut de son conteneur parent */
-    right: 130px; /* Ajuste la distance depuis la droite de son conteneur parent */
+	top: 10%;
+	right: 10%
 }
 
 
@@ -411,6 +414,8 @@ main {
 	font-family: "Lucida Console", Monaco, monospace;
 	margin-bottom: 0; /* Supprime la marge inférieure par défaut */
 	width: 300%;
+	left: 30%;
+	position:absolute;
 
 }
 

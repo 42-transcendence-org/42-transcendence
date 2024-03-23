@@ -217,7 +217,7 @@ export class GameManager {
 
 	async game_create(type) {
 
-		if (this.game) {
+		if (this.game && this.game_type === type) {
 			window.client.nextPage("game-div");
 			return;
 		}
@@ -244,7 +244,7 @@ export class GameManager {
 							this.latest_server_tick = data[0];
 							this.update_remote_tick()
 							this.snapshot.save_server_data(data);
-							this.sound.create_sound_events(data[5]);
+							this.sound.create_sound_events(data[5], data[8]);
 						}
 
 					} catch (error) {

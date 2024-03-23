@@ -17,9 +17,9 @@ async def stream_generator(game_id):
             data = server.get_latest_snap(game_id)
             yield f"data: {json.dumps(data)}\n\n".encode("utf-8")
             await asyncio.sleep(g.SENDRATE)
-        except Exception as e:
+        except asyncio.CancelledError:
             server.handle_disconnect(game_id)
-            break
+            raise
 
 # @require_http_methods(["POST"])
 def game_create_view(request):
@@ -39,7 +39,10 @@ async def game_view(request, game_id):
         return JsonResponse({"error": "Unauthorized access"}, status=403)
 
     if request.method == "GET":
-        response = StreamingHttpResponse(stream_generator(game_id), content_type="text/event-stream")
+        try:
+            response = StreamingHttpResponse(stream_generator(game_id), content_type="text/event-stream")
+        except asyncio.CancelledError:
+            server.handle_disconnect(game_id)
         return response
 
     elif request.method == "PUT":

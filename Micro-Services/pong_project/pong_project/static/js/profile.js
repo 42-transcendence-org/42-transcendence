@@ -32,7 +32,9 @@ export async function fetchProfileData(div_to_show) {
 		document.getElementById('profile-username-display').innerText = data.username;
 		document.getElementById('profile-email-display').innerText = data.email;
 		document.getElementById('profile-nickname-display').innerText = data.nickname;
+		document.getElementById('profile-winrate-janken-display').innerText = (data.winrateJanken) + "%";
 		document.getElementById('profile-profile-picture-display').src = "auth/static/" + data.img;
+
 	}
 	else if (div_to_show === 'friends')
 	{
@@ -219,7 +221,7 @@ export async function showFriendInfo() {
 
 	document.getElementById('friend-profile-nickname-display').textContent = response.nickname;
 	document.getElementById('friend-profile-profile-picture-display').src = "auth/static/" + response.img;
-	document.getElementById('friend-online-status-display').textContent = friend_profile.online_status;
+	document.getElementById('friend-online-status-display').textContent = response.online_status;
 	return 'friend-profile';
 }
 

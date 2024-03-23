@@ -19,10 +19,9 @@ export const INPUT_NEUTRAL = 3;
 export const INPUT_QUIT = 4;
 
 /* SOUNDS */
-export const SOUND_MUSIC = 0;
-export const SOUND_VICTORY = 1;
-export const SOUND_HIT = 2;
-export const SOUND_SCORE = 3;
+export const SOUND_VICTORY = 0;
+export const SOUND_HIT = 1;
+export const SOUND_SCORE = 2;
 
 /* STATUSES */
 export const STATUS_ACTIVE = 1; /* game in progress */

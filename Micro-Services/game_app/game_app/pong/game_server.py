@@ -10,15 +10,11 @@ class GameServer:
         self.is_running = False
         self.thread = None
 
-    def signal_handler(signum, frame):
+    def signal_handler(self, signum, frame):
         server.server_stop()
 
     def server_run(self):
         self.is_running = True
-
-        # FIXME DEBUG
-        # for i in range(0, 8):
-        #     self.game_create(i)
 
         if self.thread is None:
             signal.signal(signal.SIGINT, self.signal_handler)
@@ -34,7 +30,6 @@ class GameServer:
 
     def update_game_sessions(self):
         update_times = []  # Store elapsed times for each update
-        last_print_time = time.perf_counter()
 
         while self.is_running:
             start_time = time.perf_counter()
@@ -42,6 +37,10 @@ class GameServer:
             # Simulate updating each game session
             for game_id, session in self.game_sessions.items():
                 session.update(self.tick_rate)
+                # TODO Save game state and handle g.STATUS_QUIT
+                if session.get_status() == g.STATUS_ENDED:
+                    pass
+            
 
             elapsed_time = time.perf_counter() - start_time
             update_times.append(elapsed_time)
@@ -49,28 +48,24 @@ class GameServer:
             # Sleep to maintain the tick rate, if necessary
             time.sleep(max(0, self.tick_rate - elapsed_time))
 
-            # FIXME DEBUG
-            # if time.perf_counter() - last_print_time >= 1:
-            #     average_update_time = sum(update_times) / len(update_times) * 1000
-            #     print(f"Average update time: {average_update_time:.2f} ms over {len(update_times)} updates")
-            #     update_times.clear()
-            #     last_print_time = time.perf_counter()
-
     # FIXME: Handle this properly
     def handle_disconnect(self, game_id):
-        self.game_sessions[game_id].game.status = g.STATUS_WAITING
+        if game_id in self.game_sessions:
+            self.game_delete(game_id)
 
     def game_create(self, game_id):
         self.game_sessions[game_id] = game_manager.GameManager()
 
     def game_delete(self, game_id):
-        del self.game_sessions[game_id]
+        if game_id in self.game_sessions:
+            del self.game_sessions[game_id]
 
     def game_exists(self, game_id):
         return game_id in self.game_sessions
 
     def player_is_in_session(self, game_id, alias):
-        return alias in self.game_sessions[game_id].aliases
+        if game_id in self.game_sessions:
+            return alias in self.game_sessions[game_id].aliases
 
     def player_has_active_session(self, alias):
         for game_id, session in self.game_sessions.items():
@@ -79,13 +74,16 @@ class GameServer:
         return None
 
     def add_player(self, game_id, alias):
-        aliases = self.game_sessions[game_id].aliases
-        player_id = g.ID_PLAYER1 if aliases[g.ID_PLAYER1] == "" else g.ID_PLAYER2
-        aliases[player_id] = alias
+        if game_id in self.game_sessions:
+            aliases = self.game_sessions[game_id].aliases
+            player_id = g.ID_PLAYER1 if aliases[g.ID_PLAYER1] == "" else g.ID_PLAYER2
+            aliases[player_id] = alias
 
     def get_latest_snap(self, game_id):
-        # print(self.game_sessions[game_id].get_latest_snap())
-        return self.game_sessions[game_id].get_latest_snap()
+        if game_id in self.game_sessions:
+            return self.game_sessions[game_id].get_latest_snap()
+        else:
+            return "Game has ended."
 
     def matchmaker(self, alias):
         # Try to fill an open session

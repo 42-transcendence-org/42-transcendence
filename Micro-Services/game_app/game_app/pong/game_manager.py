@@ -2,6 +2,7 @@ import time
 
 import game_app.pong.game as game
 import game_app.pong.constants as g
+import game_app.pong.sound as sound
 import game_app.pong.input as input
 
 class GameManager:
@@ -12,7 +13,9 @@ class GameManager:
         self.game = game.Game()
         self.aliases = ["", ""]
         self.snapshot = None
+        self.sound_events = []
         self.input = input.InputManager()
+        self.sound = sound.SoundManager()
 
     def update(self, dt):
         new_time = time.perf_counter()
@@ -31,6 +34,8 @@ class GameManager:
 
             self.game.update(dt)
 
+            self.sound.create_sound_events(self.tick, self.game.collision_happened, self.game.score_happened, self.game.victory_happened)
+
             self.accumulator -= dt
 
         self.serialize()
@@ -41,6 +46,9 @@ class GameManager:
 
     def get_latest_snap(self):
         return self.snapshot
+    
+    def get_status(self):
+        return self.game.status
 
     def serialize(self):
         active_particles = self.game.particle_pool.get()
@@ -48,9 +56,9 @@ class GameManager:
         ready_arr = [self.game.players_ready[g.ID_PLAYER1], self.game.players_ready[g.ID_PLAYER2]]
         position_arr = [self.game.ball.position.x, self.game.ball.position.y, self.game.player1.position.x, self.game.player2.position.x]
         particle_arr = [(particle.rectangle.position.x, particle.rectangle.position.y) for particle in active_particles]
-        event_arr = [self.game.collision_happened, self.game.score_happened, self.game.victory_happened]
-        self.game.collision_happened = self.game.score_happened = self.game.victory_happened = False
+        sound_arr = self.sound.serialize_sound_events()
         len_particle_arr = len(active_particles)
+        len_sound_arr = len(sound_arr)
 
         self.snapshot = [
             self.tick, # 0
@@ -58,7 +66,8 @@ class GameManager:
             score_arr, # 2
             ready_arr, # 3
             position_arr, # 4
-            event_arr, # 5
+            sound_arr, # 5
             particle_arr, # 6
             len_particle_arr, # 7
+            len_sound_arr, # 8
         ]

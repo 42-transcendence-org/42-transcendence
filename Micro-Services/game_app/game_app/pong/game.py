@@ -126,6 +126,10 @@ class Game:
 
         if self.status not in [g.STATUS_ACTIVE, g.STATUS_ENDED]:
             return
+        
+        self.collision_happened = False
+        self.victory_happened = False
+        self.score_happened = False
 
         self.update_paddle_position(self.player1, dt)
         self.update_paddle_position(self.player2, dt)
