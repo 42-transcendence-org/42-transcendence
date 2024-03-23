@@ -44,6 +44,7 @@ export async function fetchProfileData(div_to_show) {
 		}
 		document.getElementById('friend-profile-nickname-display').textContent = friend_profile.nickname;
 		document.getElementById('friend-profile-profile-picture-display').src = "auth/static/" + friend_profile.img;
+		document.getElementById('friend-online-status-display').textContent = friend_profile.online_status;
 	}
 }
 
@@ -153,7 +154,11 @@ export async function addFriend(event) {
 export async function show_friendlist() {
 	
 	var list = document.getElementById('friends-list');
-	list.innerHTML = '';
+	var list_names = document.getElementById('friends-list-names');
+	var list_delete = document.getElementById('friends-list-delete');
+	list_names.innerHTML = '';
+	// list.innerHTML = '';
+	list_delete.innerHTML = '';
 
 	const url = 'https://localhost:8443/auth/getMyFriends/';
 	const response = await getter(url);
@@ -166,16 +171,17 @@ export async function show_friendlist() {
 	for (var i = 0; i < length; i++) {
 
 		var new_friend = document.createElement('button');
-		new_friend.textContent = 'Friend name: ' + response.friends[i] + ' online= ' + response.online_status[i];
+		new_friend.textContent = response.friends[i];
 		new_friend.name = response.friends[i];
 		new_friend.addEventListener('click', (event) => showFriendProfile(event));
-		list.appendChild(new_friend);
+		list_names.appendChild(new_friend);
+
 
 		var delete_button = document.createElement('button');
 		delete_button.name = response.friends[i];
 		delete_button.addEventListener('click', (event) => deleteFriend(event));
 		delete_button.textContent = 'Delete';
-		list.appendChild(delete_button);
+		list_delete.appendChild(delete_button);
 	}
 }
 
@@ -193,6 +199,7 @@ export async function showFriendProfile(event) {
 
 	document.getElementById('friend-profile-nickname-display').textContent = response.nickname;
 	document.getElementById('friend-profile-profile-picture-display').src = "auth/static/" + response.img;
+	document.getElementById('friend-online-status-display').textContent = response.online_status;
 	localStorage.setItem('friend_profile', JSON.stringify(response));
 	window.client.nextPage('friend-profile');
 }

@@ -1,0 +1,134 @@
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* font-family: Palatino, sans-serif; */
+	font-family: 'Times New Roman', Times, serif;
+    /* background-color: #999; */
+	background-image: url('../images/gris.jpg');
+    background-repeat: repeat;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.banner {
+    /* background-color: #333; */
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.banner h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+	z-index:100;
+
+}
+
+#login-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#login-banner p {
+    margin: 0 10px;
+}
+
+#login-banner button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#isLogged {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+#isLogged > div {
+    flex-basis: 48%;
+    margin-bottom: 20px;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#not-logged-home {
+    height: 100vh; /* Utilise toute la hauteur de la fenêtre */
+    display: flex;
+    justify-content: center; /* Centre les éléments horizontalement */
+    align-items: center; /* Centre les éléments verticalement */
+    text-align: center; /* Ajuste le texte au centre */
+}
+
+#not-logged-home button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+
+button:hover {
+    background-color: #45a049;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+form input {
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#profile {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#profile img {
+    margin-right: 20px;
+}
+
+#chatbot h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#chatbot form input {
+    width: calc(100% - 20px);
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+}
