@@ -31,7 +31,7 @@ export class Connection {
 			alert(response.error);
 			return ;
 		}
-		localStorage.setItem('jwt', data.token);
+		localStorage.setItem('jwt', response.token);
 		window.client.home();
 	}
 
@@ -48,6 +48,7 @@ export class Connection {
 		};
 		const response = await Oauth.poster(url, data);
 		
+		//FOR automatic login
 		document.getElementById('username_login').value = document.getElementById('username_register').value;
 		document.getElementById('password_login').value = document.getElementById('password1_register').value;
 		

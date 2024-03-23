@@ -35,9 +35,6 @@ export class SnapshotManager {
 		snap_state.ball.position.y = data[4][1];
 		snap_state.player1.position.x = data[4][2];
 		snap_state.player2.position.x = data[4][3];
-		snap_state.collision_happened = data[5][0];
-		snap_state.score_happened = data[5][1];
-		snap_state.victory_happened = data[5][2];
 
 		const particle_arr = data[6];
 		const len_particle_arr = data[7];
@@ -56,7 +53,6 @@ export class SnapshotManager {
 		this.index = (this.index + 1) % this.size;
 	}
 
-	/* FIXME Cleanup */
 	get_interpolated_snapshots(remote_tick) {
 		if (remote_tick < 0) {
 
@@ -68,22 +64,19 @@ export class SnapshotManager {
 			let found_older_snap = null;
 			let found_newer_snap = null;
 
-			// Loop through snap_buffer to find the two snapshots surrounding remote_tick
 			for (let i = 0; i < this.size; i++) {
 				let snap = this.snap_buffer[i];
 
-				// Skip snapshots without a defined tick
 				if (snap.tick === undefined) continue;
 
 				if (snap.tick <= remote_tick && (!found_older_snap || snap.tick > found_older_snap.tick)) {
-					found_older_snap = snap; // This snapshot is the closest older snapshot so far
+					found_older_snap = snap;
 				}
 				if (snap.tick > remote_tick && (!found_newer_snap || snap.tick < found_newer_snap.tick)) {
-					found_newer_snap = snap; // This snapshot is the closest newer snapshot so far
+					found_newer_snap = snap;
 				}
 			}
 
-			// Update older_snap and newer_snap if suitable ones were found
 			if (found_older_snap && found_newer_snap) {
 				this.older_snap = found_older_snap;
 				this.newer_snap = found_newer_snap;

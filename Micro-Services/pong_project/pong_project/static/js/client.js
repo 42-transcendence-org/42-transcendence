@@ -5,6 +5,7 @@ import * as game_manager from './pong/game_manager.js';
 import * as sound from './pong/sound.js';
 import * as connection from './connection.js';
 import * as chatbot from './chatbot.js';
+import * as janken from './janken.js';
 
 export class Client {
 
@@ -19,6 +20,7 @@ export class Client {
 		this.connection = new connection.Connection();
 		this.chatbot = new chatbot.Chatbot();
 		this.Oauth = new Oauth.Oauth();
+		this.janken = new janken.Janken();
 		sound.mute_music(); //no music for now
 	}
 
@@ -29,6 +31,7 @@ export class Client {
 		profile.eventlisteners(); //profile
 		this.chatbot.eventlisteners(); //chabot
 		this.Oauth.eventlisterners(); //42login
+		this.janken.eventlisteners(); //janken
 		
 		//spa and 42login, has to be altogether for f5/redirection/firstload
 		if (await this.Oauth.isRedirectedFrom42API() === true) { // redirection from 42 API when trying to connect via 42
@@ -44,10 +47,12 @@ export class Client {
 		//client event listeners
 		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
 		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
+
 	}
 
 	//SHOWS THE DIV + ADDS IT TO HISTORY
 	async nextPage(div_to_show) {
+
 		await this.divDisplay(div_to_show); // affiche la div à afficher
 		this.addToHistory(); //ajoute à l'historique
 	}
@@ -57,16 +62,29 @@ export class Client {
 	
 		const isLogged = await this.connection.isLoggedIn();
 
-		if (this.thisDivCanBeShown(isLogged, div_to_show) === false) {
-			div_to_show = 'unauthorized';
-			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (isLogged === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
+		if (div_to_show === 'friend-profile') {
+			div_to_show = await profile.showFriendInfo();
+		}	
+		
+		if (div_to_show === 'janken-game' || div_to_show === 'janken-already-played' || div_to_show === 'janken-result') {
+			div_to_show = await this.janken.game_in_progress();
 		}
 
+		if (div_to_show === 'janken-history') {
+			await this.janken.getHistory();
+		}
+
+		if (div_to_show === 'pong-history') {
+			await profile.getPongHistory();
+		}
+		
 		if (isLogged === 'true') {
 			await profile.fetchProfileData(div_to_show);
+			await this.janken.relaunchGetters();
 		}
-		this.sectionDisplay(isLogged);
-	
+
+		div_to_show = this.authorisationCheck(isLogged, div_to_show);
+			
 		if (this.previous_div) //hides previous div
 			this.previous_div.style.display = 'none';
 
@@ -79,7 +97,7 @@ export class Client {
 	}
 
 	//to check if this div is allowed to be shown (example: you log out and try to access a logged in div)
-	thisDivCanBeShown(isLogged, div_to_show) {
+	authorisationCheck(isLogged, div_to_show) {
 		let childDivs = null;
 		if (isLogged === 'true') {
 			childDivs = this.loggedDiv.querySelectorAll('div');
@@ -92,12 +110,19 @@ export class Client {
 				canBeShown = true;
 			}
 		});
-		return canBeShown;
+
+		if (canBeShown === false ) {
+			div_to_show = 'unauthorized';
+			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (isLogged === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
+		}
+
+		this.sectionDisplay(isLogged);
+
+		return (div_to_show);
 	}
 
 	// If user is Logged, displays the logged divs and the banner elements, otherwise displays the not logged divs
 	sectionDisplay(isLogged) {
-
 		if (isLogged === 'true') {
 			this.loggedDiv.style.display = 'block';
 			this.logginBanner.style.display = 'block';
@@ -120,9 +145,8 @@ export class Client {
 
 		if (history.state !== null) {
 			if (div.id === 'friend-profile') {
-				const friendInfo = JSON.parse(localStorage.getItem('friend_profile'));
-				localStorage.removeItem('friend_profile');
-				history.pushState({id: div.id, friend_profile: friendInfo}, '', '');
+				history.pushState({id: div.id, friend_nickname: localStorage.getItem('friend_nickname')}, '', '');
+				localStorage.removeItem('friend_nickname');
 			} else {
 				history.pushState({id: div.id}, '', '');
 			}

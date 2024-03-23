@@ -13,7 +13,7 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
 	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
 		<link rel="manifest" href="{% static 'site.webmanifest' %}">
-	    <style>
+		<style>
 			#not-logged-home button {
 				width: 200px; /* Changer la largeur selon vos besoins */
 				height: 70px; /* Changer la hauteur selon vos besoins */
@@ -42,7 +42,8 @@
 				<button id="tournament-button"> Tournament</button>
 				<button id="myprofile-button"> My profile</button>
 				<button id="chatbot-button"> Pong Chatbot</button>
-				<button id="friends-button"> Friends</button>
+				<button id="friends-button" data-count="0"> Friends</button>
+				<button id="janken-button"> Janken</button>
 			</div>
 			<div id="friends" style="display:none">
 				<form id="add-friend-form">
@@ -84,12 +85,11 @@
 				<p id="nickname-welcome-p">My nickname : <span id="profile-nickname-display"></span></p>				
 				<p id="email-welcome-p" style="display: inline-block;">My e-mail : <span id="profile-email-display"></span></p>
 				<form id="modify_email">
-					<p id="title-p">Modify my personal information: <span id="title-display"></span></p>
 					<label for="email_new">email:</label>
 					<input type="email" id="email_new" name="email" autocomplete="email" required>
 					<button id="submit-email-button" type="submit">modify</button>
 				</form>
-					<form id="modify_nickname">
+				<form id="modify_nickname">
 					<label for="nickname_new">nickname:</label>
 					<input type="first_name" id="nickname_new" name="first_name" autocomplete="first_name" required>
 					<button id="submit-nickname-button" type="submit">modify</button>
@@ -101,19 +101,66 @@
 				</form>	
 				<img src="" id="profile-profile-picture-display" width="280" height="320" alt="profile picture">
 				<form id="modify_profile_picture">
+					<label for="profile_picture_new">profile picture:</label>
 					<input type="file" id="profile_picture_new" name="profile_picture" accept="image/*" required>
 					<button id="submit-profile-picture-button" type="submit">modify</button>
 				</form>
+				<button id="profile-janken-history-button"> My Janken History</button>
+				<button id="profile-pong-history-button"> My Pong History</button>
+			</div>
+			<div id="pong-history" style="display:none;">
+				<p>History</p>
+				<p>Wins: <span id="pong-history-wins"></span>, Losses: <span id="pong-history-losses"></span>, Draws: <span id="pong-history-draws"></span></p>
+				<button id="pong-history-back"> Back to Profile </button>
+				<div id="pong-history-list"></div>
 			</div>
 			<div id="chatbot" style="display: none;">
 				<h1 id="title-chat">Pong's ChatBot </h1>
 				<img src="../static/images/chatgpt.jpg/" alt="chatgpt logo" height="50" width="50" class="chatgpt-center">
 				<h2 id="howcan">Hello ! How can I help you today ? </h1>
-
-
 				<form id="OPENai">
 					<input type="text" id="OpenAIquestion" name="question" autocomplete="question" required placeholder="Message Pong's ChatBot...">
 				</form>
+			</div>
+			<div id="friend-not-found" style="display: none;">
+				<p></p>
+			</div>
+			<div id="janken" style="display:none;">
+				<button id="janken-create-game-button">Create a game</button>
+				<button id="janken-join-game-button">Matchmaking</button>
+				<button id="janken-game-in-progress-button">Game in progress</button>
+				<button id="janken-history-button"> My History</button>
+			</div>
+			<div id="janken-history" style="display:none;">
+				<p>History</p>
+				<p>Wins: <span id="janken-history-wins"></span>, Losses: <span id="janken-history-losses"></span>, Draws: <span id="janken-history-draws"></span></p>
+				<button id="janken-history-back"> Back to Menu </button>
+				<div id="janken-history-list"></div>
+			</div>
+			<div id="janken-lobby" style="display:none;">
+				<p>Waiting for an opponent</p>
+				<button id="janken-cancel-game">Cancel</button>
+				<button id="janken-lobby-back"> Back to Menu </button>
+			</div>
+			<div id="janken-game" style="display:none;">
+				<p>Choose your move</p>
+				<span id="janken-game-opponent-nickname"></span>
+				<button id="rock-button">Rock</button>
+				<button id="paper-button">Paper</button>
+				<button id="scissors-button">Scissors</button>
+				<button id="janken-game-back"> Back to Menu </button>
+			</div>
+			<div id="janken-already-played" style="display:none;">
+				<p>You already played, waiting for <span id="janken-already-played-opponent-nickname"></span> to play!</p>
+				<button id="janken-already-played-back"> Back to Menu </button>
+			</div>
+			<div id="janken-result" style="display:none;">
+				<p id="janken-result-text"></p>
+				<p id="janken-result-result"></p>
+				<button id="janken-result-back"> Back to Menu </button>
+			</div>
+			<div id="janken-not-authorized" style="display: none;">
+				<p>You are not in a game !</p>
 			</div>
 		</div>
 		<div id="isNotLogged" style="display: none;">

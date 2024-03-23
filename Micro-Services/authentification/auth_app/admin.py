@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .models import Profile, Friendship
+from .models import Profile, Friendship, Notifications
+from .models import JankenGameCreation, JankenGameInProgress, FinishedJankenGames
+from .models import FinishedPongGames
 
 class ProfileInline(admin.StackedInline):
     model = Profile
@@ -23,5 +25,10 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(Profile)
 admin.site.register(Friendship)
+admin.site.register(Notifications)
+admin.site.register(JankenGameCreation)
+admin.site.register(JankenGameInProgress)
+admin.site.register(FinishedJankenGames)
+admin.site.register(FinishedPongGames)
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
