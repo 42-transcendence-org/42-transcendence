@@ -204,7 +204,7 @@ class getFriendInfoAPIView(APIView):
                     return JsonResponse({'img': friend.profile_picture, \
                                         'correction_points': friend.correction_points, \
                                         'nickname': friend.nickname, \
-                                        'online': friend.online,
+                                        'online_status': friend.online,
                                         })
                 raise Exception("You are not friends with this user")
         except Exception as e:

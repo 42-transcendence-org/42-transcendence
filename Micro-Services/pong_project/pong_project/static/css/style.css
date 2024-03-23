@@ -4,48 +4,42 @@
 }
 
 .banner {
-    background-color: #B0C4DE;
+    /* background-color: #B0C4DE; */
+	background-image: url('../images/gris.jpg');
+
     /* padding: 10px; */
     /* display: flex; */
     /* justify-content: space-between; */
     align-items: center;
     color: #EEE2DE;
     text-align: center;
-	/* position: fixed; */
+	position: fixed;
     top: 0; 
-    left: 0;
+    left: 0; 
     width: 100%;
-height: 20%;
+	height: 20%;
+	z-index:100;
+
 }
 
 #home-banner {
     /* margin: 0 auto; */
+	z-index:100;
     text-shadow: 5px 5px 0px #252442;
 	width: 100%;
 }
 
+#sound-button,
 #logout-button:hover {
-    background-color: #4169E1; /* Bleu foncé au survol */
+    background-color: #f0f0f0;
 }
 
 #unauthorized {
-	color:red;
-	font-size: 20px;
-	width: 50%;
-	left: 25%;
-}
-
-#friend-not-found {
 	color:red;
 	font-size: 30px;
 	width: 50%;
 }
 
-#username-welcome-p {
-	display: inline-block;
-	background-color: #2B2A4C;
-	padding: 5;
-}
 
 body {
 	font-family: 'Code Page 437', sans-serif;
@@ -55,7 +49,9 @@ body {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: #2B2A4C;
+	/* background-color: #2B2A4C; */
+	background-image: url('../images/gris.jpg');
+
 	min-height: 100vh;
 	/* Ensure the body takes up at least the viewport height */
 }
@@ -73,16 +69,20 @@ main {
 	/* Added padding for some spacing inside main */
 	box-sizing: border-box;
 	/* Ensure padding doesn't add to the width */
+
+	width: 25vw;
+	height: 50vh;
+	/* display: none; */
 }
 
 #alias-div,
 #logged-in-home,
-#game-div,
-#janken-game, 
-#janken {
+#game-div {
 	width: 25vw;
 	height: 50vh;
 	display: none;
+
+
 }
 
 #logged-in-home {
@@ -97,22 +97,9 @@ main {
 
 
 
-#chatgpt-response {
-	/* color: #EEE2DE; */
-	font-family: 'Courier New', Courier, monospace;
-	width: 60%;
-	left: 20%;
-	top: 60%;
-	position:absolute;
-	background-color:#B0C4DE;
-	text-align:center;
-	/* Light color for text */
-}
 
-
-#logged-in-home button,
-#janken button,
-#janken-game button{
+#logged-in-home button, 
+#isNotLogged button{
 	display: block;
 	width: 100%;
 	/* Adjust based on the size of your largest button */
@@ -142,117 +129,479 @@ main {
 	/* Smooth transition for hover effects */
 }
 
-#logged-in-home button:hover ,
-#janken button:hover,
-#janken-game button:hover{
-	background-color: #252442;
+#logged-in-home button:hover,
+#isNotLogged button:hover {
+	background-color: #f0f0f0;
 	/* Changes background on hover for interactive feel */
-	color: #FFD700;
+	color: #352c26;
 	/* Changes text color on hover */
 }
 
-#logged-in-home button:active ,
-#janken button:active,
-#janken-game button:active{
+#logged-in-home button:active,
+#isNotLogged button:active{
 	background-color: #1C1B33;
 	/* Darker background for pressed effect */
 	color: #DAA520;
 	/* Changes text color to indicate active state */
 }
-#janken-history {
-	width: 50%;
-	left: 25%;
-	top: 30%;
-	position:absolute;
-	background-color:#B0C4DE;
-	text-align:center;
-}
 
-#friends-button::before {
-	content: attr(data-count);
-	position: absolute;
-	width: 1.5em;
-	height: 1.5em;
-	display: var(--display-before, flex); 
-	justify-content: center;
-	align-items: center;
-	border-radius: 50%;
-	background-color: red;
-	color: white;
 
-}
 
 #friends {
-    background-color: #f0f0f0;
+	/* background-color: #f0f0f0;
+	*/
+	background-color: #DCDCDC; /* Marron foncé */
+	
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 5px;
-    margin-top: 20px;
+    margin-top: 40px;
+	width: 200%;
+	height: auto;
+	margin-left: -150px; /* Centre l'élément horizontalement */
+    margin-right: 20px; /* Centre l'élément horizontalement */
+}
+
+#friends label {
+	font-size: 20px;
+	color: #333;
+	font-family: "Lucida Console", Monaco, monospace;
+	text-align: center;
+	
 }
 
 #friends p {
-    font-size: 18px;
+	font-size: 18px;
     color: #333;
+	font-family: "Lucida Console", Monaco, monospace;
+	
+}
+
+#add-friend-p {
+	text-align: center;
 }
 
 #add-friend-form {
-    margin-top: 20px;
+	margin-top: 20px;
+	
 }
 
+
+
 #add-friend-input {
-    width: 200px;
+	width: 200px;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 3px;
+    margin-left: 150px;
+	margin-right: 10px;
+	
+	
 }
 
 #submit-add-friend-button {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: #fff;
+	padding: 5px 10px;
+    background-color: #f0f0f0;
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    margin-left: 10px;
+    margin-left: 30px;
+	width: 80px;
+	height: 25px;
 }
 
 #submit-add-friend-button:hover {
-    background-color: #0056b3;
+	background-color: #f0f0f0;
 }
 
 #friends-list {
-    margin-top: 20px;
+	margin-top: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+	font-family: "Lucida Console", Monaco, monospace;
+	
+}
+
+#friend-list-p
+{
+	text-decoration: underline;
+}
+
+
+#friends-list-names button {
+	/* width:15%; */
+	display: flex;
+    flex-direction: column;
+	margin-top: 20px; /* Ajustez cette valeur selon votre préférence */
+    width: auto; /* Changer la largeur selon vos besoins */
+    height: auto; /* Changer la hauteur selon vos besoins */
+    font-size: 15px; /* Changer la taille de police selon vos besoins */
+    margin-bottom: 2px; /* Ajoute un espace entre les champs */
+    padding: 10px; /* Ajoute un remplissage pour améliorer l'apparence */
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 5px; /* Ajoute une bordure arrondie */
+    background-color: #f0f0f0; /* Marron foncé */
+	text-align: center;
+	line-height: 8px;
+	font-family: "Lucida Console", Monaco, monospace;
+}
+#friends-list-delete button {
+	/* width:10%; */
+	display: flex;
+    flex-direction: column;
+	margin-top: 20px; /* Ajustez cette valeur selon votre préférence */
+    width: auto; /* Changer la largeur selon vos besoins */
+    height: auto; /* Changer la hauteur selon vos besoins */
+    font-size: 15px; /* Changer la taille de police selon vos besoins */
+    margin-bottom: 2px; /* Ajoute un espace entre les champs */
+    padding: 10px; /* Ajoute un remplissage pour améliorer l'apparence */
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 5px; /* Ajoute une bordure arrondie */
+    background-color: #f0f0f0; /* Marron foncé */
+	text-align: center;
+	line-height: 8px;
+	font-family: "Lucida Console", Monaco, monospace;
 }
 
 #friends-requests {
-    margin-top: 20px;
+	margin-top: 20px;
+	font-family: "Lucida Console", Monaco, monospace;
+	
+}
+
+#not-logged-home button {
+	width: 150px; /* Changer la largeur selon vos besoins */
+    height: 50px; /* Changer la hauteur selon vos besoins */
+    font-size: 16px; /* Changer la taille de police selon vos besoins */
+    margin-right: 10px; /* Ajoute un espace entre les boutons */
+	/* display: flex; */
+}
+
+#Register {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+	text-align: center;
+	
+}
+
+#Register input[type="text"],
+#Register input[type="password"],
+#Register input[type="email"] {
+	width: 280px; /* Changer la largeur selon vos besoins */
+    height: 40px; /* Changer la hauteur selon vos besoins */
+    font-size: 20px; /* Changer la taille de police selon vos besoins */
+    margin-bottom: 10px; /* Ajoute un espace entre les champs */
+    padding: 10px; /* Ajoute un remplissage pour améliorer l'apparence */
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 5px; /* Ajoute une bordure arrondie */
 }
 
 
-#janken-button::before {
-	content: "1";
+
+#Register button {
+	width: 300px; /* Changer la largeur selon vos besoins */
+    height: 50px; /* Changer la hauteur selon vos besoins */
+    font-size: 25px; /* Changer la taille de police selon vos besoins */
+    margin-top: 20px; /* Ajoute un espace au-dessus du bouton */
+    color: #fff; /* Couleur du texte blanc */
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 5px; /* Ajoute une bordure arrondie */
+    cursor: pointer; /* Change le curseur au survol */
+	text-align: center;
+	margin: 0 auto;
+	
+}
+
+#Register label {
+	font-size: 21px; /* Changer la taille de police selon vos besoins */
+    margin-bottom: 5px; /* Ajoute un espacement entre les labels */
+	text-align: center;
+}
+
+#Login label {
+	font-size: 20px; /* Changer la taille de police des labels selon vos besoins */
+}
+
+#Login input[type="text"],
+#Login input[type="password"] {
+	font-size: 15px; /* Changer la taille de police des champs de saisie selon vos besoins */
+    padding: 15px; /* Changer le remplissage des champs de saisie selon vos besoins */
+	border-radius: 10px;
+}
+
+#Login form {
+	display: flex;
+	flex-direction: column;
+    align-items: center; /* Pour aligner verticalement les éléments */
+}
+
+#Login button {
+	margin-top: 10px;
+}
+
+#login-banner {
+	z-index: 5;
+	position: fixed;
+	top: 45px; /* Ajustez cette valeur selon votre préférence */
+	left: 10px; /* Ajustez cette valeur selon votre préférence */
+	display: flex;
+	align-items: center; /* Centre les éléments verticalement */
+	width: calc(100% - 20px); /* Réduire la largeur pour laisser de la place à l'image de profil */
+	
+}
+
+#banner-profile-image-display {
 	position: absolute;
-	width: 1.5em;
-	height: 1.5em;
-	display: var(--display-before, none); 
-	justify-content: center;
-	align-items: center;
-	border-radius: 50%;
-	background-color: red;
-	color: white;
+    top: 10px; /* Ajustez cette valeur selon votre préférence */
+    right: 10px; /* Ajustez cette valeur selon votre préférence */
+	/* width: 100px;
+	height: 100px;
+	border-radius: 80%;
+	margin-right: 10px; */
+}
+
+#welcomeMessage {
+	font-size: 20px;
+	margin-bottom: 10px;
+    margin-top: 20px; /* Ajustez cette valeur selon votre préférence */
+	text-align: center;
+	font-family: "Lucida Console", Monaco, monospace;
+	
+}
+
+/* #welcomeMessage, */
+#sound-button,
+#logout-button {
+	margin-top: 100px; /* Ajustez cette valeur selon votre préférence */
+	width: 90px; /* Changer la largeur selon vos besoins */
+    height: 30px; /* Changer la hauteur selon vos besoins */
+    font-size: 13px; /* Changer la taille de police selon vos besoins */
+    margin-bottom: 10px; /* Ajoute un espace entre les champs */
+    padding: 10px; /* Ajoute un remplissage pour améliorer l'apparence */
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 5px; /* Ajoute une bordure arrondie */
+	background-color: #9e887a;
+	text-align: center;
+	
+}
+
+#friend-profile {
+    position: relative; /* Permet d'utiliser les positions relatives pour les éléments enfants */
+}
+
+#friend-profile-profile-picture-display {
+    position: absolute; /* Permet de positionner l'image par rapport à son conteneur parent */
+    top: 150px; /* Ajuste la distance depuis le haut de son conteneur parent */
+    right: 130px; /* Ajuste la distance depuis la droite de son conteneur parent */
+}
+
+
+
+#friend-nickname-welcome-p {
+    font-size: 30px; /* Changer la taille de la police selon vos besoins */
+	font-weight: bold;
+	top: 20px; /* Ajuste la distance depuis le haut de la page */
+	right: 30px; /* Ajuste la distance depuis la droite de la page */
+	color: #333;
+	margin-left: 0px; /* Centre l'élément horizontalement */
+    margin-right: 3px;
+	font-family: "Lucida Console", Monaco, monospace;
+	margin-bottom: 0; /* Supprime la marge inférieure par défaut */
+	width: 300%;
 
 }
 
-#janken-game-in-progress-button::before {
-	content: "1";
-	position: absolute;
-	width: 1.5em;
-	height: 1.5em;
-	display: var(--display-before, none); 
-	justify-content: center;
-	align-items: center;
-	border-radius: 50%;
-	background-color: red;
-	color: white;
+#friend-profile-nickname-display {
+    font-size: 30px; /* Changer la taille de la police selon vos besoins */
+	font-family: "Lucida Console", Monaco, monospace;
+	font-weight: bold;
 
+}
+
+#friend-online-status {
+    display: inline-block;
+    font-size: 16px;
+	font-family: "Lucida Console", Monaco, monospace;
+	margin-top: 200px;
+}
+
+
+
+
+
+#profile button{
+	margin-top: 20px; /* Ajustez cette valeur selon votre préférence */
+    width: 70px; /* Changer la largeur selon vos besoins */
+    height: 25px; /* Changer la hauteur selon vos besoins */
+    font-size: 15px; /* Changer la taille de police selon vos besoins */
+    margin-bottom: 2px; /* Ajoute un espace entre les champs */
+    padding: 10px; /* Ajoute un remplissage pour améliorer l'apparence */
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 5px; /* Ajoute une bordure arrondie */
+    background-color: #9e887a; /* Marron foncé */
+	text-align: center;
+	line-height: 8px;
+	font-family: "Lucida Console", Monaco, monospace;
+	
+}
+
+#profile label {
+	font-size: 17px; /* Changer la taille de police selon vos besoins */
+    margin-bottom: 5px; /* Ajoute un espacement entre les labels */
+	text-align: center;
+}
+
+#username-welcome-p,
+#email-welcome-p,
+#nickname-welcome-p {
+	font-size: 17px; /* Changer la taille de police selon vos besoins */
+	margin-right: auto; /* Espacement entre les éléments à gauche */
+	margin-bottom: 2px;
+	text-align: left;
+	margin-left: 0px;
+	vertical-align: top;
+	margin-top: 40px;
+	font-family: "Lucida Console", Monaco, monospace;
+	
+	color: #1a1613;
+	
+}
+
+#title-p {
+	color: #1a1613;
+	
+    font-size: 16px;
+    margin-bottom: 10px;
+	text-decoration: underline;
+}
+
+#profile {
+	display: flex;
+	width: 1000px;
+	height: 1000px;
+	flex-direction: column;
+	color: #1a1613;
+	
+}
+
+
+#modify_email,
+#modify_nickname,
+#modify_password,
+#modify_profile_picture {
+	margin-left: auto; /* Alignement à droite */
+	font-family: "Lucida Console", Monaco, monospace;
+	color: #1a1613;
+	
+	
+	
+}
+
+#modify_password {
+	margin-bottom: 20px; /* Ajoute un espace supplémentaire en dessous du premier formulaire */
+}
+
+
+#profile form {
+	text-align: right; /* Aligne le texte à droite à l'intérieur des formulaires */
+}
+
+#profile-profile-picture-display {
+	position: absolute; /* Change la position de l'image */
+    top: 450px; /* Ajuste la distance depuis le haut de la page */
+	/* Centre l'image horizontalement */
+    transform: translateX(-1%);
+}
+
+#modify_email input,
+#modify_nickname input,
+#modify_password input {
+	/* Ajoutez vos styles personnalisés pour les champs de saisie ici */
+    margin-left: auto; /* Alignement à droite */
+	font-family: "Lucida Console", Monaco, monospace;
+	color: #1a1613;
+	width: 90px; /* Changer la largeur selon vos besoins */
+    height: 4px; /* Changer la hauteur selon vos besoins */
+    font-size: 20px; /* Changer la taille de police selon vos besoins */
+    margin-bottom: 10px; /* Ajoute un espacement entre les champs */
+    padding: 10px; /* Ajoute un remplissage pour améliorer l'apparence */
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 5px; /* Ajoute une bordure arrondie */
+}
+
+
+#modify_profile_picture input {
+	padding: 10px; /* Ajoute un remplissage pour améliorer l'apparence */
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 5px; /* Ajoute une bordure arrondie */
+	color: #1a1613;
+	
+}
+
+
+
+label[for="OpenAIquestion"] {
+	font-family: "Lucida Console", Monaco, monospace;
+	
+}
+
+#title-chat {
+	top: 20px; /* Ajuste la distance depuis le haut de la page */
+	right: 30px; /* Ajuste la distance depuis la droite de la page */
+	color: #333;
+	margin-left: 90px; /* Centre l'élément horizontalement */
+    margin-right: auto;
+	font-family: "Lucida Console", Monaco, monospace;
+	margin-bottom: 0; /* Supprime la marge inférieure par défaut */
+}
+
+.chatgpt-center {
+
+	position: absolute; /* Change la position de l'image */
+	top: 45%; /* Ajuste la distance depuis le haut de la page */
+	left: 50%; /* Ajuste la distance depuis la gauche de la page */
+	transform: translate(-50%, 50%);
+}
+
+
+#howcan {
+    position: absolute; /* Change la position du h2 */
+    top: calc(45% + 25px); /* Ajuste la distance depuis le haut de la page en prenant en compte la hauteur de l'image */
+    left: 50%; /* Ajuste la distance depuis la gauche de la page */
+    transform: translateX(-50%); /* Centre le h2 horizontalement */
+    font-family: "Lucida Console", Monaco, monospace;
+    width: 100%; /* Ajuste la largeur du h2 */
+    text-align: center; /* Centre le texte horizontalement */
+    margin-top: 60px; /* Ajoute de l'espace au-dessus du h2 */
+    margin-bottom: 0; /* Supprime la marge inférieure par défaut */
+	font-size: 20px;
+
+}
+
+
+#chatgpt-response {
+	/* color: #EEE2DE; */
+	font-family: "Lucida Console", Monaco, monospace;
+	width: 60%;
+	left: 20%;
+	top: 60%;
+	position:absolute;
+	text-align:center;
+	/* Light color for text */
+}
+
+#OPENai {
+    margin-top: 350px; /* Ajustez cette valeur selon vos besoins pour déplacer le formulaire plus bas */
+}
+
+
+#OpenAIquestion {
+    width: 400px; /* ou toute autre valeur de largeur que vous préférez */
+	height: 50px; /* ou toute autre valeur de hauteur que vous préférez */
+	padding: 10px; /* Ajoute un remplissage pour améliorer l'apparence */
+    border: none; /* Supprime la bordure par défaut */
+    border-radius: 25px; /* Ajoute une bordure arrondie */
 }

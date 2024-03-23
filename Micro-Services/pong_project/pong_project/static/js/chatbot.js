@@ -21,6 +21,6 @@ export class Chatbot {
 			return ;
 		}
 
-		document.getElementById('chatgpt-response').textContent = response.response;
+		document.getElementById('howcan').textContent = response.response;
 	}
 }

@@ -15,7 +15,8 @@ export class Connection {
 
 
 	async login_user_request(event) {
-		event.preventDefault()
+		if (event)
+			event.preventDefault()
 		const url = 'https://localhost:8443/auth/login/';
 		const data = {
 			username: document.getElementById('username_login').value,
@@ -47,6 +48,10 @@ export class Connection {
 		};
 		const response = await Oauth.poster(url, data);
 		
+		//FOR automatic login
+		document.getElementById('username_login').value = document.getElementById('username_register').value;
+		document.getElementById('password_login').value = document.getElementById('password1_register').value;
+		
 		document.getElementById('username_register').value = '';
 		document.getElementById('password1_register').value = '';
 		document.getElementById('password2_register').value = '';
@@ -58,7 +63,8 @@ export class Connection {
 			return ;
 		}
 		alert('Registration was successful');
-		window.client.nextPage("not-logged-home");
+		// window.client.nextPage("not-logged-home");
+		this.login_user_request();
 	}
 
 	async logout_user_request(event) {
