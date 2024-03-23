@@ -10,7 +10,9 @@ export async function eventlisteners() {
 	//friends
 	document.getElementById('friends-button').addEventListener('click', (event) => window.client.nextPage("friends"));
 	document.getElementById('add-friend-form').addEventListener('submit', (event) => addFriend(event));
-		
+	document.getElementById('profile-janken-history-button').addEventListener('click', () => window.client.nextPage('janken-history'));
+	document.getElementById('profile-pong-history-button').addEventListener('click', () => window.client.nextPage('pong-history'));
+	document.getElementById('pong-history-back').addEventListener('click', () => window.client.nextPage('profile'));
 }
 
 export async function fetchProfileData(div_to_show) {
@@ -299,4 +301,51 @@ export async function refuseFriendRequest(event) {
         return ;
     }
     document.getElementById('friend_request_from_' + friend_name).remove();
+}
+
+
+export async function getPongHistory() {
+	const url = 'https://localhost:8443/auth/pongHistory/'
+	const response = await getter(url);
+	if (response.error) {
+		document.getElementById('pong-history-wins').textContent = 0;
+		document.getElementById('pong-history-draws').textContent = 0;
+		document.getElementById('pong-history-losses').textContent =  0;
+		return ;
+	}
+	var div = document.getElementById('pong-history-list');
+	console.log(response);
+	div.textContent = "";
+	const limit = response.history.length > 10 ? response.history.length - 10 : 0;
+	for (var i = response.history.length - 1; i >= limit; i--) {
+		var p = document.createElement('p');
+		var p2 = document.createElement('p');
+		var p3 = document.createElement('p');
+		p.textContent = response.history[i].owner + " played ";
+		p.textContent += "a " + response.history[i].game_type + " game against ";
+		p.textContent += response.history[i].opponent + ". ";
+
+		p2.textContent += "Score: " + response.history[i].owner + ": " + response.history[i].player_score;
+		p2.textContent += " and " + response.history[i].opponent + ": " + response.history[i].opponent_score + ". ";
+		p2.textContent += "Winner: " + response.history[i].winner + ". ";
+		p3.textContent += "Game ended the " + response.history[i].end_day + " at " + response.history[i].end_time + ".";
+		if (response.history[i].winner == "Owner") {
+			// p.textContent += "You " + response.history[i].result + " !";
+			p.style.backgroundColor = "green";
+		}
+		else if (response.history[i].result == "draw") {
+			// p.textContent += "It's a draw !";
+			p.style.backgroundColor = "yellow";
+		}
+		else {
+			// p.textContent += response.history[i].winner + " " + response.history[i].result + " !";
+			p.style.backgroundColor = "red";
+		}
+		div.appendChild(p);
+		p.appendChild(p2);
+		p2.appendChild(p3);
+	}
+	document.getElementById('pong-history-wins').textContent = response.wins;
+	document.getElementById('pong-history-draws').textContent = response.draws;
+	document.getElementById('pong-history-losses').textContent =  response.losses;
 }

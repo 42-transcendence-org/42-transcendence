@@ -17,7 +17,8 @@ export class Janken {
 		document.getElementById('janken-lobby-back').addEventListener('click', () => client.nextPage('janken'));
 		document.getElementById('janken-game-back').addEventListener('click', () => client.nextPage('janken'));
 		document.getElementById('janken-result-back').addEventListener('click', () => client.nextPage('janken'));
-
+		document.getElementById('janken-history-back').addEventListener('click', () => client.nextPage('janken'));
+		document.getElementById('janken-history-button').addEventListener('click', () => client.nextPage('janken-history'));
 	}
 	
 	async relaunchGetters() {
@@ -42,6 +43,48 @@ export class Janken {
 		}
 	}
 
+	async getHistory() {
+		const url = 'https://localhost:8443/auth/jankenHistory/'
+		const response = await Oauth.getter(url);
+		if (response.error) {
+			document.getElementById('janken-history-wins').textContent = 0;
+			document.getElementById('janken-history-draws').textContent = 0;
+			document.getElementById('janken-history-losses').textContent =  0;
+			return ;
+		}
+		var div = document.getElementById('janken-history-list');
+		console.log(response);
+		div.textContent = "";
+		const limit = response.history.length > 10 ? response.history.length - 10 : 0;
+		for (var i = response.history.length - 1; i >= limit; i--) {
+			var p = document.createElement('p');
+			var p2 = document.createElement('p');
+			p.textContent = response.history[i].owner + " played ";
+			p.textContent += response.history[i].owner_choice  + (response.history[i].owner_choice == "None" ? "(Forfeit)" : "");
+			p.textContent += " and " + response.history[i].opponent + " played ";
+			p.textContent += response.history[i].opponent_choice + (response.history[i].opponent_choice == "None" ? "(Forfeit)" : "");
+			p.textContent += ". Result: " + response.history[i].result + ". ";
+			p2.textContent += "Game ended the " + response.history[i].end_day + " at " + response.history[i].end_time + ".";
+			if (response.history[i].winner == response.history[i].owner) {
+				// p.textContent += "You " + response.history[i].result + " !";
+				p.style.backgroundColor = "green";
+			}
+			else if (response.history[i].result == "draw") {
+				// p.textContent += "It's a draw !";
+				p.style.backgroundColor = "yellow";
+			}
+			else {
+				// p.textContent += response.history[i].winner + " " + response.history[i].result + " !";
+				p.style.backgroundColor = "red";
+			}
+			div.appendChild(p);
+			p.appendChild(p2);
+		}
+		document.getElementById('janken-history-wins').textContent = response.wins;
+		document.getElementById('janken-history-draws').textContent = response.draws;
+		document.getElementById('janken-history-losses').textContent =  response.losses;
+	}
+
 	async game_in_progress() {
 		const url = 'https://localhost:8443/auth/gameInProgress/'
 		const response = await Oauth.getter(url);
@@ -63,19 +106,6 @@ export class Janken {
 			return ('janken-result');
 		}
 		// get the game in progress
-	}
-
-	async cancel_game() {
-		const url = 'https://localhost:8443/auth/deleteMyJankenGameCreation/'
-		const response = await Oauth.getter(url);
-		if (response.error) {
-			alert(response.error);
-			return ;
-		}
-		await window.client.nextPage('janken');
-		clearInterval(localStorage.getItem('id_interval_game_waiting'));
-		localStorage.removeItem('id_interval_game_waiting');
-		// cancel the game
 	}
 
 	async create_game() {
@@ -167,7 +197,7 @@ export class Janken {
 		}
 		var div = document.getElementById('janken-result-text');
 		div.textContent = response.creator + " played " + response.creator_choice + " and " + response.opponent + " played " + response.opponent_choice + ". ";
-		if (response.winner == document.getElementById('banner-nickname-display').textContent) {
+		if (response.winner == response.myself) {
 			div.textContent += "You " + response.result + " !";
 			div.style.backgroundColor = "green";
 		}
@@ -179,5 +209,18 @@ export class Janken {
 			div.textContent += response.winner + " " + response.result + " !";
 			div.style.backgroundColor = "red";
 		}
+	}
+	
+	async cancel_game() {
+		const url = 'https://localhost:8443/auth/deleteMyJankenGameCreation/'
+		const response = await Oauth.getter(url);
+		if (response.error) {
+			alert(response.error);
+			return ;
+		}
+		await window.client.nextPage('janken');
+		clearInterval(localStorage.getItem('id_interval_game_waiting'));
+		localStorage.removeItem('id_interval_game_waiting');
+		// cancel the game
 	}
 }

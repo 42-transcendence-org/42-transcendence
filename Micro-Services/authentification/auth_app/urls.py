@@ -10,7 +10,8 @@ from .views import Login42APIView, OAuthRedirectUrlAPIView, OAuthVerifyStateAPIV
 from .views import chatbotAPIView
 #janken
 from .views import createJankenGameAPIView, jankenGameAPIView, waitForOpponentAPIView, waitForResultsAPIView, getResultsAPIView, deleteMyJankenGameCreationAPIView, gameInProgressAPIView, amIPlayingAPIView
-
+#history
+from .views import jankenHistoryAPIView, pongHistoryAPIView
 
 urlpatterns = [
     
@@ -50,4 +51,8 @@ urlpatterns = [
 	path('getResults/', getResultsAPIView.as_view(), name='getResults'),
 	path('deleteMyJankenGameCreation/', deleteMyJankenGameCreationAPIView.as_view(), name='deleteMyJankenGameCreation'),
 	path('amIPlaying/', amIPlayingAPIView.as_view(), name='amIPlaying'),
+
+	#history
+	path('jankenHistory/', jankenHistoryAPIView.as_view(), name='jankenHistory'),
+	path('pongHistory/', pongHistoryAPIView.as_view(), name='pongHistory'),
 ]

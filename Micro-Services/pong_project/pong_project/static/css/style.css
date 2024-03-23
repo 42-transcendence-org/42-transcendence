@@ -11,7 +11,7 @@
     align-items: center;
     color: #EEE2DE;
     text-align: center;
-	position: fixed;
+	/* position: fixed; */
     top: 0; 
     left: 0;
     width: 100%;
@@ -158,6 +158,14 @@ main {
 	/* Darker background for pressed effect */
 	color: #DAA520;
 	/* Changes text color to indicate active state */
+}
+#janken-history {
+	width: 50%;
+	left: 25%;
+	top: 30%;
+	position:absolute;
+	background-color:#B0C4DE;
+	text-align:center;
 }
 
 #friends-button::before {

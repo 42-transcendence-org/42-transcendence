@@ -11,7 +11,8 @@ from django.contrib.auth import logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Profile, Friendship, Notifications, JankenGameCreation
+from .models import Profile, Friendship, Notifications
+from .models import JankenGameCreation, JankenGameInProgress
 from django.contrib.auth.models import User
 from openai import OpenAI
 from django.http import JsonResponse
@@ -550,7 +551,6 @@ class chatbotAPIView(APIView): #verifies the state received by the client is the
 
 
 
-from .models import JankenGameCreation, JankenGameInProgress
 
 #JANKEN GAME
 
@@ -693,15 +693,18 @@ class getResultsAPIView(APIView):
                 game.loser = game.creator.nickname
             if game.result != "draw" and game.result != "won by forfeit":
                 game.result = "won"
+            print(game.result + " and " + game.winner)
             game.save()
             results = {'message': 'success', 'creator': game.creator.nickname, 'opponent': game.opponent.nickname, 'creator_choice': game.creator_choice, \
-                    'opponent_choice': game.opponent_choice, 'result': game.result, 'loser': game.loser, 'winner': game.winner}
-            if game:
-                if game.to_delete == False:
-                    game.to_delete = True
-                    game.save()
-                else:
-                    game.delete()
+                    'opponent_choice': game.opponent_choice, 'result': game.result, 'loser': game.loser, 'winner': game.winner, 'myself':request.user.profile.nickname}
+            if request.user.profile.nickname == game.creator.nickname:
+                game.to_delete_creator = True
+                game.save()
+            if request.user.profile.nickname == game.opponent.nickname:
+                game.to_delete_opponent = True
+                game.save()
+            if game.to_delete_creator == True and game.to_delete_opponent == True:
+                game.addToHistory()
             return JsonResponse(results)
         except Exception as e:
             print(e)
@@ -728,7 +731,7 @@ class amIPlayingAPIView(APIView):
                 if game is not None:
                     if game.game_finished == True:
                         if (timezone.now() - game.completion_time).total_seconds() > 20:
-                            game.delete()
+                            game.addToHistory()
                             raise Exception('You are not playing a game')
                         return JsonResponse({'message': 'The game is finished'})
                     if game.first_input_time != None:
@@ -766,11 +769,82 @@ class amIPlayingAPIView(APIView):
 
 
 
+from .models import FinishedJankenGames
 
+class jankenHistoryAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                games = FinishedJankenGames.objects.filter(owner=request.user.profile)
+                if games.exists() == False:
+                    raise Exception('You never played a game !')
+                history = []
+                for game in games:
+                    history.append({'opponent': game.opponent.nickname,\
+                                    'opponent_choice': game.opponent_choice, \
+                                    'owner': game.owner.nickname, \
+                                    'owner_choice': game.owner_choice, \
+                                    'result': game.result, \
+                                    'end_day': game.completion_time.astimezone(timezone.get_current_timezone()).strftime("%m/%d"), \
+                                    'end_time': game.completion_time.astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"), \
+                                    'winner': game.winner, \
+                                          })
+                return JsonResponse({'history': history, \
+                                     'wins': FinishedJankenGames.countWins(request.user.profile), \
+                                     'draws': FinishedJankenGames.countDraws(request.user.profile), \
+                                     'losses': FinishedJankenGames.countLosses(request.user.profile)})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
 
+from .models import FinishedPongGames
 
-
-
+class pongHistoryAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            print("coucou")
+            if request.user.is_authenticated:
+                FinishedPongGames.objects.create(
+                    owner=request.user.profile, \
+                    game_type=request.data.get('game_type', 'undefined'), \
+                    opponent=request.data.get('opponent', 'undefined'), \
+                    player_score=request.data.get('player_score', 'undefined'), \
+                    opponent_score=request.data.get('opponent_score', 'undefined'), \
+                    winner=request.data.get('winner', 'undefined'), \
+                    result=request.data.get('result', 'undefined'), \
+                    completion_day=timezone.now().astimezone(timezone.get_current_timezone()).strftime("%m/%d"), \
+                    completion_time= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"), \
+                )
+                return JsonResponse({'message': 'success'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+        
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                games = FinishedPongGames.objects.filter(owner=request.user.profile)
+                if games.exists() == False:
+                    raise Exception('You never played a game !')
+                history = []
+                for game in games:
+                    history.append({'owner': game.owner.nickname, \
+                                    'game_type': game.game_type, \
+                                    'opponent': game.opponent, \
+                                    'player_score': game.player_score, \
+                                    'opponent_score': game.opponent_score, \
+                                    'winner': game.winner, \
+                                    'result': game.result, \
+                                    'end_day': game.completion_day, \
+                                    'end_time': game.completion_time, \
+                                          })
+                return JsonResponse({'history': history, \
+                                     'wins': FinishedPongGames.countWins(request.user.profile), \
+                                     'draws': FinishedPongGames.countDraws(request.user.profile), \
+                                     'losses': FinishedPongGames.countLosses(request.user.profile)})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
 
 
 

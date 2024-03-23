@@ -170,12 +170,42 @@ export class GameManager {
 
 	save_game_result() {
 		if (this.game_result.length === 0) {
-			this.game_result[0] = this.game_type;
-			this.game_result[1] = this.aliases[0]; /* Player 1 name */
-			this.game_result[2] = this.aliases[1]; /* Player 2 name */
-			this.game_result[3] = this.game.scores[0]; /* Player 1 score */
-			this.game_result[4] = this.game.scores[1]; /* Player 2 score */
-			this.game_result[5] = new Date().toLocaleString();
+			var game = "local";
+			if (this.game_type === g.TYPE_REMOTE) {
+				game = "remote";
+			} else if (this.game_type === g.TYPE_AI) {
+				game = "ai";
+			}
+			var opponent = "Computer"
+			if (game === "remote") {
+				opponent = "Player 2"
+			}
+
+			var winner = opponent;
+
+			if (this.game.scores[0] > this.game.scores[1]) {
+				winner = "Owner";
+			}
+
+			var result = "Defeat";
+
+			if (winner === "Owner") {
+				result = "Victory";
+			}
+
+			this.game_result = {
+				"game_type": game,
+				"opponent": opponent,
+				"player_score": this.game.scores[0],
+				"opponent_score": this.game.scores[1],
+				"winner": winner,
+				"result": result,
+			}
+			// this.game_result[0] = this.game_type;
+			// this.game_result[1] = this.aliases[0]; /* Player 1 name */
+			// this.game_result[2] = this.aliases[1]; /* Player 2 name */
+			// this.game_result[3] = this.game.scores[0]; /* Player 1 score */
+			// this.game_result[4] = this.game.scores[1]; /* Player 2 score */
 		}
 	}
 

@@ -69,6 +69,14 @@ export class Client {
 		if (div_to_show === 'janken-game' || div_to_show === 'janken-already-played' || div_to_show === 'janken-result') {
 			div_to_show = await this.janken.game_in_progress();
 		}
+
+		if (div_to_show === 'janken-history') {
+			await this.janken.getHistory();
+		}
+
+		if (div_to_show === 'pong-history') {
+			await profile.getPongHistory();
+		}
 		
 		if (isLogged === 'true') {
 			await profile.fetchProfileData(div_to_show);

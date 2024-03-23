@@ -1,4 +1,5 @@
 import * as g from './global.js';
+import * as Oauth from '../Oauth.js';
 
 class Input {
 	constructor(player_id, input_id) {
@@ -60,13 +61,15 @@ export class InputManager {
 					if (game.status === g.STATUS_ACTIVE || game.status === g.STATUS_PAUSED) {
 						game.status = (game.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE);
 					} else if (game.status === g.STATUS_ENDED) {
-					console.log(window.client.game_manager.game_result);
+					const url = 'https://localhost:8443/auth/pongHistory/';
+					Oauth.poster(url, window.client.game_manager.game_result);
 					game.reset();
 					}
 					break;
 				case g.INPUT_QUIT:
 					game.status = g.STATUS_QUIT;
-					console.log(window.client.game_manager.game_result);
+					const url = 'https://localhost:8443/auth/pongHistory/';
+					Oauth.poster(url, window.client.game_manager.game_result);
 					break;
 			}
 		});

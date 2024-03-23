@@ -78,7 +78,7 @@
 					<input type="email" id="email_new" name="email" autocomplete="email" required>
 					<button id="submit-email-button" type="submit">modify</button>
 				</form>
-								<form id="modify_nickname">
+				<form id="modify_nickname">
 					<label for="nickname_new">nickname:</label>
 					<input type="first_name" id="nickname_new" name="first_name" autocomplete="first_name" required>
 					<button id="submit-nickname-button" type="submit">modify</button>
@@ -94,7 +94,14 @@
 					<input type="file" id="profile_picture_new" name="profile_picture" accept="image/*" required>
 					<button id="submit-profile-picture-button" type="submit">modify</button>
 				</form>
+				<button id="profile-janken-history-button"> My Janken History</button>
+				<button id="profile-pong-history-button"> My Pong History</button>
 			</div>
+			<div id="pong-history" style="display:none;">
+				<p>History</p>
+				<p>Wins: <span id="pong-history-wins"></span>, Losses: <span id="pong-history-losses"></span>, Draws: <span id="pong-history-draws"></span></p>
+				<button id="pong-history-back"> Back to Profile </button>
+				<div id="pong-history-list"></div>
 			<div id="chatbot" style="display: none;">
 				<h1> Pong's ChatBot </h1>
 				<form id="OPENai">
@@ -108,8 +115,15 @@
 			</div>
 			<div id="janken" style="display:none;">
 				<button id="janken-create-game-button">Create a game</button>
-				<button id="janken-join-game-button">Join a game</button>
+				<button id="janken-join-game-button">Matchmaking</button>
 				<button id="janken-game-in-progress-button">Game in progress</button>
+				<button id="janken-history-button"> My History</button>
+			</div>
+			<div id="janken-history" style="display:none;">
+				<p>History</p>
+				<p>Wins: <span id="janken-history-wins"></span>, Losses: <span id="janken-history-losses"></span>, Draws: <span id="janken-history-draws"></span></p>
+				<button id="janken-history-back"> Back to Menu </button>
+				<div id="janken-history-list"></div>
 			</div>
 			<div id="janken-lobby" style="display:none;">
 				<p>Waiting for an opponent</p>
@@ -134,7 +148,7 @@
 				<button id="janken-result-back"> Back to Menu </button>
 			</div>
 			<div id="janken-not-authorized" style="display: none;">
-				<p>This game is over !</p>
+				<p>You are not in a game !</p>
 			</div>
 		</div>
 		<div id="isNotLogged" style="display: none;">
