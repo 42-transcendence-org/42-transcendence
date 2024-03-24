@@ -275,7 +275,7 @@ export class GameManager {
 			return;
 		}
 
-		// this.sound.play_music(); DEBUG UNCOMMENT
+		this.sound.play_music();
 		this.game = new game.Game();
 		window.client.nextPage("game-div");
 		this.request_id = requestAnimationFrame(this.update_loop.bind(this));

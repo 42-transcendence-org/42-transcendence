@@ -18,6 +18,7 @@ export class Janken {
 		document.getElementById('janken-game-back').addEventListener('click', () => client.nextPage('janken'));
 		document.getElementById('janken-result-back').addEventListener('click', () => client.nextPage('janken'));
 		document.getElementById('janken-history-back').addEventListener('click', () => client.nextPage('janken'));
+		document.getElementById('janken-history-back-to-profile').addEventListener('click', () => client.nextPage('profile'));
 		document.getElementById('janken-history-button').addEventListener('click', () => client.nextPage('janken-history'));
 	}
 	
@@ -53,7 +54,6 @@ export class Janken {
 			return ;
 		}
 		var div = document.getElementById('janken-history-list');
-		console.log(response);
 		div.textContent = "";
 		const limit = response.history.length > 10 ? response.history.length - 10 : 0;
 		for (var i = response.history.length - 1; i >= limit; i--) {
