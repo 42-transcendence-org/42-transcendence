@@ -324,84 +324,20 @@ main {
 #Register label,
 #Login label {
 	font-size: 150%;
-	/* Changer la taille de police selon vos besoins */
 	margin-bottom: 5px;
-	/* Ajoute un espacement entre les labels */
 	text-align: center;
-}
-
-#friend-profile {
-	position: absolute;
-	width: 100%;
-	left: 0%;
-	/* width:300%; */
-}
-
-#friend-profile-profile-picture-display {
-	position: absolute;
-	/* Permet de positionner l'image par rapport à son conteneur parent */
-	top: 10%;
-	right: 10%
-}
-
-
-
-#friend-nickname-welcome-p {
-	font-size: 30px;
-	/* Changer la taille de la police selon vos besoins */
-	font-weight: bold;
-	top: 20px;
-	/* Ajuste la distance depuis le haut de la page */
-	right: 30px;
-	/* Ajuste la distance depuis la droite de la page */
-	color: #333;
-	margin-left: 0px;
-	/* Centre l'élément horizontalement */
-	margin-right: 3px;
-	font-family: "Lucida Console", Monaco, monospace;
-	margin-bottom: 0;
-	/* Supprime la marge inférieure par défaut */
-	width: 300%;
-	left: 30%;
-	position: absolute;
-
-}
-
-#friend-profile-nickname-display {
-	font-size: 30px;
-	/* Changer la taille de la police selon vos besoins */
-	font-family: "Lucida Console", Monaco, monospace;
-	font-weight: bold;
-
-}
-
-#friend-online-status {
-	display: inline-block;
-	font-size: 16px;
-	font-family: "Lucida Console", Monaco, monospace;
-	margin-top: 200px;
 }
 
 
 #profile button {
-	margin-top: 20px;
-	/* Ajustez cette valeur selon votre préférence */
 	width: 70px;
-	/* Changer la largeur selon vos besoins */
 	height: 25px;
-	/* Changer la hauteur selon vos besoins */
 	font-size: 15px;
-	/* Changer la taille de police selon vos besoins */
 	margin-bottom: 2px;
-	/* Ajoute un espace entre les champs */
 	padding: 10px;
-	/* Ajoute un remplissage pour améliorer l'apparence */
 	border: none;
-	/* Supprime la bordure par défaut */
 	border-radius: 5px;
-	/* Ajoute une bordure arrondie */
 	background-color: #9e887a;
-	/* Marron foncé */
 	text-align: center;
 	line-height: 8px;
 	font-family: "Lucida Console", Monaco, monospace;
@@ -409,10 +345,8 @@ main {
 }
 
 #profile label {
-	font-size: 17px;
-	/* Changer la taille de police selon vos besoins */
-	margin-bottom: 5px;
-	/* Ajoute un espacement entre les labels */
+	font-size: 100%;
+	width: 23%;
 	text-align: center;
 }
 
@@ -420,101 +354,114 @@ main {
 #email-welcome-p,
 #nickname-welcome-p {
 	font-size: 17px;
-	/* Changer la taille de police selon vos besoins */
-	margin-right: auto;
+	margin-left:5%;
+	/* margin-right: auto; */
 	/* Espacement entre les éléments à gauche */
-	margin-bottom: 2px;
+	margin-bottom: 2%;
 	text-align: left;
-	margin-left: 0px;
 	vertical-align: top;
-	margin-top: 40px;
+	margin-top: 2%;
 	font-family: "Lucida Console", Monaco, monospace;
 
 	color: #1a1613;
 
-}
-
-#title-p {
-	color: #1a1613;
-
-	font-size: 16px;
-	margin-bottom: 10px;
-	text-decoration: underline;
 }
 
 #profile {
 	display: flex;
 	flex-direction: column;
 	color: #1a1613;
+	background-color: #DCDCDC;
+
+	border: 1px solid #ccc;
+	padding: 20px;
+	border-radius: 5px;
+	width:60%;
+	margin:auto;
+	height: auto;
 
 }
 
+#my-profile-history {
+	display:flex;
+	flex-direction: row;
+	justify-content: center;
+	margin:auto;
+}
+
+
+#profile-profile-picture-display {
+	width: 25%;
+	height: 28%;
+	margin:auto;
+}
+
+#my-profile-history-buttons {
+	display:flex;
+	width:35%;
+	height:100%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin:auto;
+}
+
+#my-profile-history-buttons button {
+	width: 100%;
+	height: 200%;
+	font-size: 100%;
+	margin-bottom: 2px;
+}
 
 #modify_email,
 #modify_nickname,
-#modify_password,
-#modify_profile_picture {
+#modify_password {
+	margin-right: 5%;
 	margin-left: auto;
-	/* Alignement à droite */
 	font-family: "Lucida Console", Monaco, monospace;
 	color: #1a1613;
-
-
-
 }
 
-#modify_password {
-	margin-bottom: 20px;
-	/* Ajoute un espace supplémentaire en dessous du premier formulaire */
-}
-
-
-#profile form {
+#modify_password,
+#modify_email,
+#modify_nickname {
 	text-align: right;
-	/* Aligne le texte à droite à l'intérieur des formulaires */
 }
 
-#profile-profile-picture-display {
-	position: absolute;
-	/* Change la position de l'image */
-	top: 450px;
-	/* Ajuste la distance depuis le haut de la page */
-	/* Centre l'image horizontalement */
-	transform: translateX(-1%);
+#modify_profile_picture {
+	text-align: center;
+	margin-top: 3%;
+	font-family: "Lucida Console", Monaco, monospace;
+	color: #1a1613;
 }
 
 #modify_email input,
 #modify_nickname input,
 #modify_password input {
-	/* Ajoutez vos styles personnalisés pour les champs de saisie ici */
 	margin-left: auto;
-	/* Alignement à droite */
 	font-family: "Lucida Console", Monaco, monospace;
 	color: #1a1613;
-	width: 90px;
-	/* Changer la largeur selon vos besoins */
+	width: 20%;
 	height: 4px;
-	/* Changer la hauteur selon vos besoins */
 	font-size: 20px;
-	/* Changer la taille de police selon vos besoins */
 	margin-bottom: 10px;
-	/* Ajoute un espacement entre les champs */
 	padding: 10px;
-	/* Ajoute un remplissage pour améliorer l'apparence */
 	border: none;
-	/* Supprime la bordure par défaut */
 	border-radius: 5px;
-	/* Ajoute une bordure arrondie */
 }
 
 
+#modify_profile_picture {
+	display:flexbox;
+	width:100%;
+	align-items: center;
+	align-content: center;
+}
+
 #modify_profile_picture input {
 	padding: 10px;
-	/* Ajoute un remplissage pour améliorer l'apparence */
 	border: none;
-	/* Supprime la bordure par défaut */
 	border-radius: 5px;
-	/* Ajoute une bordure arrondie */
 	color: #1a1613;
 
 }
@@ -541,33 +488,22 @@ label[for="OpenAIquestion"] {
 .chatgpt-center {
 
 	position: absolute;
-	/* Change la position de l'image */
 	top: 45%;
-	/* Ajuste la distance depuis le haut de la page */
 	left: 50%;
-	/* Ajuste la distance depuis la gauche de la page */
 	transform: translate(-50%, 50%);
 }
 
 
 #howcan {
 	position: absolute;
-	/* Change la position du h2 */
 	top: calc(45% + 25px);
-	/* Ajuste la distance depuis le haut de la page en prenant en compte la hauteur de l'image */
 	left: 50%;
-	/* Ajuste la distance depuis la gauche de la page */
 	transform: translateX(-50%);
-	/* Centre le h2 horizontalement */
 	font-family: "Lucida Console", Monaco, monospace;
 	width: 100%;
-	/* Ajuste la largeur du h2 */
 	text-align: center;
-	/* Centre le texte horizontalement */
 	margin-top: 60px;
-	/* Ajoute de l'espace au-dessus du h2 */
 	margin-bottom: 0;
-	/* Supprime la marge inférieure par défaut */
 	font-size: 20px;
 
 }
@@ -586,7 +522,6 @@ label[for="OpenAIquestion"] {
 
 #OPENai {
 	margin-top: 350px;
-	/* Ajustez cette valeur selon vos besoins pour déplacer le formulaire plus bas */
 }
 
 
@@ -644,6 +579,28 @@ label[for="OpenAIquestion"] {
 	background-color: red;
 	color: white;
 
+}
+
+#friend-profile {
+	position: absolute;
+	width: 100%;
+	left: 0%;
+	/* width:300%; */
+}
+
+#friend-profile-nickname-display {
+	font-size: 30px;
+	/* Changer la taille de la police selon vos besoins */
+	font-family: "Lucida Console", Monaco, monospace;
+	font-weight: bold;
+
+}
+
+#friend-online-status {
+	display: inline-block;
+	font-size: 16px;
+	font-family: "Lucida Console", Monaco, monospace;
+	margin-top: 200px;
 }
 
 #friend-profile {

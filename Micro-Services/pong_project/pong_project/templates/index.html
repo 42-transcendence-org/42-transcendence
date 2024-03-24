@@ -87,59 +87,51 @@
 					</div>
 				</div>
 			</div>
+
+
 			<div id="profile" style="display: none;">
-				<button id="profile-janken-history-button"> My Janken History</button>
-				<button id="profile-pong-history-button"> My Pong History</button>
-				<p id="username-welcome-p">My username : <span id="profile-username-display"></span></p>
-				<p id="nickname-welcome-p">My nickname : <span id="profile-nickname-display"></span></p>				
-				<p id="email-welcome-p" style="display: inline-block;">My e-mail : <span id="profile-email-display"></span></p>
+				<div id="my-profile-history">
+					<img src="" id="profile-profile-picture-display" width="280" height="320" alt="profile picture">
+					<div id="my-profile-history-buttons">
+						<button id="profile-janken-history-button"> My Janken History</button>
+						<button id="profile-pong-history-button"> My Pong History</button>
+					</div>
+				</div>
 				<form id="modify_email">
+					<p id="email-welcome-p">My e-mail : <span id="profile-email-display"></span></p>
 					<label for="email_new">email:</label>
 					<input type="email" id="email_new" name="email" autocomplete="email" required>
 					<button id="submit-email-button" type="submit">modify</button>
 				</form>
 				<form id="modify_nickname">
+					<p id="nickname-welcome-p">My nickname : <span id="profile-nickname-display"></span></p>				
 					<label for="nickname_new">nickname:</label>
 					<input type="first_name" id="nickname_new" name="first_name" autocomplete="first_name" required>
 					<button id="submit-nickname-button" type="submit">modify</button>
 				</form>
 				<form id="modify_password">
+					<p id="username-welcome-p">My username : <span id="profile-username-display"></span></p>
 					<label for="password_new">password:</label>
 					<input type="password" id="password_new" name="password" autocomplete="password" required>
 					<button id="submit-password-button" type="submit">modify</button>
 				</form>	
-				<img src="" id="profile-profile-picture-display" width="280" height="320" alt="profile picture">
 				<form id="modify_profile_picture">
 					<label for="profile_picture_new">profile picture:</label>
 					<input type="file" id="profile_picture_new" name="profile_picture" accept="image/*" required>
 					<button id="submit-profile-picture-button" type="submit">modify</button>
 				</form>
-				<button id="profile-janken-history-button"> My Janken History</button>
-				<button id="profile-pong-history-button"> My Pong History</button>
 			</div>
+			
+			
 			<div id="pong-history" style="display:none;">
 				<p>History</p>
 				<p>Wins: <span id="pong-history-wins"></span>, Losses: <span id="pong-history-losses"></span>, Draws: <span id="pong-history-draws"></span></p>
 				<button id="pong-history-back"> Back to Profile </button>
 				<div id="pong-history-list"></div>
 			</div>
-			<div id="pong-history" style="display:none;">
-				<p>History</p>
-				<p>Wins: <span id="pong-history-wins"></span>, Losses: <span id="pong-history-losses"></span>, Draws: <span id="pong-history-draws"></span></p>
-				<button id="pong-history-back"> Back to Profile </button>
-				<div id="pong-history-list"></div>
-			</div>
-			<div id="chatbot" style="display: none;">
-				<h1 id="title-chat">Pong's ChatBot </h1>
-				<img src="../static/images/chatgpt.jpg/" alt="chatgpt logo" height="50" width="50" class="chatgpt-center">
-				<h2 id="howcan">Hello ! How can I help you today ? </h1>
-				<form id="OPENai">
-					<input type="text" id="OpenAIquestion" name="question" autocomplete="question" required placeholder="Message Pong's ChatBot...">
-				</form>
-			</div>
-			<div id="friend-not-found" style="display: none;">
-				<p></p>
-			</div>
+			
+			
+			
 			<div id="janken" style="display:none;">
 				<button id="janken-create-game-button">Create a game</button>
 				<button id="janken-join-game-button">Matchmaking</button>
@@ -175,47 +167,62 @@
 				<p id="janken-result-result"></p>
 				<button id="janken-result-back"> Back to Menu </button>
 			</div>
-			<div id="janken-not-authorized" style="display: none;">
-				<p>You are not in a game !</p>
+			
+			
+			<div id="chatbot" style="display: none;">
+				<h1 id="title-chat">Pong's ChatBot </h1>
+				<img src="../static/images/chatgpt.jpg/" alt="chatgpt logo" height="50" width="50" class="chatgpt-center">
+				<h2 id="howcan">Hello ! How can I help you today ? </h1>
+					<form id="OPENai">
+						<input type="text" id="OpenAIquestion" name="question" autocomplete="question" required placeholder="Message Pong's ChatBot...">
+					</form>
+				</div>
+				
+				
+				<div id="janken-not-authorized" style="display: none;">
+					<p>You are not in a game !</p>
+				</div>
+				<div id="friend-not-found" style="display: none;">
+					<p></p>
+				</div>
 			</div>
-		</div>
-		<div id="isNotLogged" style="display: none;">
-			<div id="Login" style="display: none;">
-				<form id="loginForm">
-					<label for="username_login">Username:</label>
-					<input type="text" id="username_login" name="username" autocomplete="username" required>
-					<label for="password_login">Password:</label>
-					<input type="password" id="password_login" name="password" autocomplete="current-password" required>
-					<button id="submit-login-button" type="submit">Login</button>
-				</form>
-			</div>			
-			<div id="Register" style="display: none;">
-				<form id="registerForm">
-					<label for="username_register">Username:</label>
-					<input type="text" id="username_register" name="username" autocomplete="username" required>
-					<label for="password1_register">Password:</label>
-					<input type="password" id="password1_register" name="password1" autocomplete="new-password" required>
-					<label for="password2_register">Confirm Password:</label>
-					<input type="password" id="password2_register" name="password2" autocomplete="new-password" required>
-					<label for="email_address_register">Input email:</label>
-					<input type="email" id="email_address_register" name="email_address" autocomplete="email" required>
-					<label for="first_name_register">Input first_name:</label>
-					<input type="text" id="first_name_register" name="first_name" autocomplete="given-name" required>
-					<button id="submit-register-button" type="submit">Register</button>
-				</form>
+			<div id="isNotLogged" style="display: none;">
+				<div id="Login" style="display: none;">
+					<form id="loginForm">
+						<label for="username_login">Username:</label>
+						<input type="text" id="username_login" name="username" autocomplete="username" required>
+						<label for="password_login">Password:</label>
+						<input type="password" id="password_login" name="password" autocomplete="current-password" required>
+						<button id="submit-login-button" type="submit">Login</button>
+					</form>
+				</div>			
+				<div id="Register" style="display: none;">
+					<form id="registerForm">
+						<label for="username_register">Username:</label>
+						<input type="text" id="username_register" name="username" autocomplete="username" required>
+						<label for="password1_register">Password:</label>
+						<input type="password" id="password1_register" name="password1" autocomplete="new-password" required>
+						<label for="password2_register">Confirm Password:</label>
+						<input type="password" id="password2_register" name="password2" autocomplete="new-password" required>
+						<label for="email_address_register">Input email:</label>
+						<input type="email" id="email_address_register" name="email_address" autocomplete="email" required>
+						<label for="first_name_register">Input first_name:</label>
+						<input type="text" id="first_name_register" name="first_name" autocomplete="given-name" required>
+						<button id="submit-register-button" type="submit">Register</button>
+					</form>
+				</div>
+				<div id="not-logged-home" style="display: none;">
+					<button id="login-button" type="submit">Login</button>
+					<button id="register-button" type="submit">Register</button>
+					<button id="42-login-button">42 login</button>
+				</div>
+				<div id="Registered" style="display: none;">
+					<p>You've been registered, you can now loggin</p>
+				</div>
 			</div>
-			<div id="not-logged-home" style="display: none;">
-				<button id="login-button" type="submit">Login</button>
-				<button id="register-button" type="submit">Register</button>
-				<button id="42-login-button">42 login</button>
+			<div id="unauthorized" style="display: none;">
+				<p>Unauthorized</p>
 			</div>
-			<div id="Registered" style="display: none;">
-				<p>You've been registered, you can now loggin</p>
-			</div>
-		</div>
-		<div id="unauthorized" style="display: none;">
-			<p>Unauthorized</p>
-		</div>
 		<div id="loading" style="display: block;">
 			<p>Loading...</p>
 		</div>
