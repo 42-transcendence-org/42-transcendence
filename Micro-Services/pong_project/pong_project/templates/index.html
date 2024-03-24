@@ -13,16 +13,7 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
 	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
 		<link rel="manifest" href="{% static 'site.webmanifest' %}">
-		<style>
-			#not-logged-home button {
-				width: 200px; /* Changer la largeur selon vos besoins */
-				height: 70px; /* Changer la hauteur selon vos besoins */
-				font-size: 15px; /* Changer la taille de police selon vos besoins */
-				/* Ajoutez d'autres styles personnalisés si nécessaire */
-			}
-		</style>
 </head>
-
 <body>
 	<main>
 		<header class="banner">	
@@ -31,8 +22,8 @@
 				<p id="welcomeMessage" style="display: inline-block;">Welcome, <span id="banner-nickname-display">NO NICKNAME</span> ! </p>
 				<button id="sound-button" style="display: inline-block;">Mute</button>
 				<button id="logout-button" type="submit" style="display: inline-block;">Logout</button>
-				<img id="banner-profile-image-display" width="100" height="110" src="" alt="User Image" style="display: inline-block;">
 			</div>
+			<img id="banner-profile-image-display" width="100" height="110" src="" alt="User Image" style="display: inline-block;">
 		</header>
 		<div id="isLogged" style="display: none;">
 			<div id="logged-in-home" style="display: none;">
@@ -56,7 +47,7 @@
 					<div id="friends-list-names"></div>
 					<div id="friends-list-delete"></div>
 				</div>
-				<p>Friend requests:</p>
+				<p id="friend-requests-p">Friend requests:</p>
 				<div id="friends-requests"></div>
 			</div>
 			<div id="game-div" style="display: none;">
@@ -84,7 +75,7 @@
 				<div id="friend-history">
 					<div id="friend-profile-janken-history">
 						<p>Janken History</p>
-						<p>Wins: <span id="friend-janken-history-wins"></span>, Losses: <span id="friend-janken-history-losses"></span>, Draws: <span id="friend-janken-history-draws"></span></p>
+						<p>Wins: <span id="friend-janken-history-wins"></span>, Losses: <span id="friend-janken-history-losses"></span>, Draws: <span id="friend-janken-history-draws"></span>. Winrate: <span id="profile-winrate-janken-display"></span></p>
 					</div>
 					<div id="friend-profile-pong-all-history">
 						<p>Pong in Local History</p>
