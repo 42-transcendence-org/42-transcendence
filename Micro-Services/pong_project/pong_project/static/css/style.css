@@ -371,9 +371,9 @@ main {
 	display: flex;
 	flex-direction: column;
 	color: #1a1613;
-	background-color: #DCDCDC;
+	/* background-color: #DCDCDC; */
 
-	border: 1px solid #ccc;
+	/* border: 1px solid #ccc; */
 	padding: 20px;
 	border-radius: 5px;
 	width:60%;
