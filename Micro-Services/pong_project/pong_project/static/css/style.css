@@ -68,11 +68,10 @@ main {
 
 }
 
-/* #welcomeMessage, */
 #sound-button,
 #logout-button {
-	width: 10%;
-	height: 100%;
+	width: auto;
+	height: auto;
 	font-size: 100%;
 	margin-bottom: 1%;
 	margin-left: 5%;
@@ -85,7 +84,6 @@ main {
 #sound-button {
 	position:absolute;
 	top:3%;
-	height: 5%;
 	left: 3%;
 	margin-left:0%;
 }
@@ -125,7 +123,8 @@ main {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	margin-bottom: 1.5%;
+	margin-top: -1%;
+	margin-bottom: 1.6%;
 	width: 30%;
 	height: 15%;
 	background-color: #0A0A0A;
@@ -330,8 +329,8 @@ main {
 
 
 #profile button {
-	width: 70px;
-	height: 25px;
+	width: auto;
+	height: auto;
 	font-size: 15px;
 	margin-bottom: 2px;
 	padding: 10px;
@@ -371,9 +370,6 @@ main {
 	display: flex;
 	flex-direction: column;
 	color: #1a1613;
-	background-color: #DCDCDC;
-
-	border: 1px solid #ccc;
 	padding: 20px;
 	border-radius: 5px;
 	width:60%;

@@ -47,7 +47,13 @@ export class Client {
 		//client event listeners
 		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
 		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
+		document.getElementById('tournament-button').addEventListener('click', () => this.tournament()); //tournament
+	}
 
+	async tournament() {
+		const url= 'https://localhost:8443/tournament/test/';
+		const response = await Oauth.getter(url);
+		console.log(response);
 	}
 
 	//SHOWS THE DIV + ADDS IT TO HISTORY

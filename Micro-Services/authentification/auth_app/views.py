@@ -274,7 +274,7 @@ class FriendRequestsAPIView(APIView):
                             friend_requests.append(friendship.friend1.nickname)
                     if friend_requests == []:
                         return JsonResponse({'error': 'There is no pending friend request'})
-                    # Notifications.delMyNotifications(request.user.profile) Used to delete all notifs when accessing friends div
+                    Notifications.delMyNotifications(request.user.profile)
                     return JsonResponse({'friend_requests': friend_requests})
                 return JsonResponse({'error': 'There is no pending friend request'})
             return JsonResponse({'error': 'not authenticated'})
@@ -558,6 +558,19 @@ class chatbotAPIView(APIView): #verifies the state received by the client is the
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 #JANKEN GAME
 
 class createJankenGameAPIView(APIView):
@@ -800,7 +813,7 @@ class jankenHistoryAPIView(APIView):
                                     'owner': game.owner.nickname, \
                                     'owner_choice': game.owner_choice, \
                                     'result': game.result, \
-                                    'end_day': game.completion_time.astimezone(timezone.get_current_timezone()).strftime("%m/%d"), \
+                                    'end_day': game.completion_time.astimezone(timezone.get_current_timezone()).strftime("%d/%m"), \
                                     'end_time': game.completion_time.astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"), \
                                     'winner': game.winner, \
                                           })
@@ -827,7 +840,7 @@ class pongHistoryAPIView(APIView):
                     opponent_score=request.data.get('opponent_score', 'undefined'), \
                     winner=request.data.get('winner', 'undefined'), \
                     result=request.data.get('result', 'undefined'), \
-                    completion_day=timezone.now().astimezone(timezone.get_current_timezone()).strftime("%m/%d"), \
+                    completion_day=timezone.now().astimezone(timezone.get_current_timezone()).strftime("%d/%m"), \
                     completion_time= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"), \
                 )
                 return JsonResponse({'message': 'success'})
