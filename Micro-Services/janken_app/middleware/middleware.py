@@ -16,6 +16,7 @@ class JWTAuthenticationMiddleware:
             except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, ValueError) as e:
                 # Decide how you want to handle errors: log, set request.user_id to None, or return an error response
                 #FIXME
+                print("error")
                 pass
         return self.get_response(request)
     
@@ -29,5 +30,7 @@ class JWTAuthenticationMiddleware:
                     return token
                 
             except ValueError:
+                print("error")
                 pass
+
         return request.GET.get('token')
