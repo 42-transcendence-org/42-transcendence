@@ -891,6 +891,97 @@ class pongHistoryAPIView(APIView):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#TOURNAMENT
+class tournamentAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                # if (Tournament.objects.filter(creator=request.user.profile).exists() == True):
+                #     raise Exception("You are already hosting a tournament")
+                                
+                # return JsonResponse({'tournament_id': tournament.id})
+                return JsonResponse({'message': 'success'})
+            raise Exception('You are not authenticated')
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #poubelle
 
 # class OAuthGetAppTokenAPIView(APIView):

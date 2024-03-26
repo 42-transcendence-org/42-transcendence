@@ -6,6 +6,7 @@ import * as sound from './pong/sound.js';
 import * as connection from './connection.js';
 import * as chatbot from './chatbot.js';
 import * as janken from './janken.js';
+import * as tournament from './tournament.js';
 
 export class Client {
 
@@ -21,6 +22,7 @@ export class Client {
 		this.chatbot = new chatbot.Chatbot();
 		this.Oauth = new Oauth.Oauth();
 		this.janken = new janken.Janken();
+		this.tournament = new tournament.Tournament();
 		sound.mute_music(); //no music for now
 	}
 
@@ -32,6 +34,7 @@ export class Client {
 		this.chatbot.eventlisteners(); //chabot
 		this.Oauth.eventlisterners(); //42login
 		this.janken.eventlisteners(); //janken
+		this.tournament.eventlisteners(); //tournament
 		
 		//spa and 42login, has to be altogether for f5/redirection/firstload
 		if (await this.Oauth.isRedirectedFrom42API() === true) { // redirection from 42 API when trying to connect via 42
@@ -47,13 +50,6 @@ export class Client {
 		//client event listeners
 		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
 		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
-		document.getElementById('tournament-button').addEventListener('click', () => this.tournament()); //tournament
-	}
-
-	async tournament() {
-		const url= 'https://localhost:8443/tournament/test/';
-		const response = await Oauth.getter(url);
-		console.log(response);
 	}
 
 	//SHOWS THE DIV + ADDS IT TO HISTORY

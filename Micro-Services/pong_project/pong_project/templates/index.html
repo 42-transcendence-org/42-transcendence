@@ -36,6 +36,12 @@
 				<button id="friends-button" data-count="0"> Friends</button>
 				<button id="janken-button"> Janken</button>
 			</div>
+			<div id="game-div" style="display: none;">
+				<canvas id="game-canvas" width="480" height="650"></canvas>
+			</div>
+			
+			
+			
 			<div id="friends" style="display:none">
 				<form id="add-friend-form">
 					<p id="add-friend-p">Input the nickname of who you want to add as friend:</p>
@@ -50,22 +56,6 @@
 				<p id="friend-requests-p">Friend requests:</p>
 				<div id="friends-requests"></div>
 			</div>
-			<div id="game-div" style="display: none;">
-				<canvas id="game-canvas" width="480" height="650"></canvas>
-			</div>
-			<!-- <div id="tournament" style="display: none;">
-				<p>TOURNAMENT</p>
-				<form id="new-tournament">
-					<label for="new_tournament">Name of the new tournament:</label>
-					<input type="tournament-creations" id="new-tournament-input" name="tournament-creations" required>
-					<button id="submit-new-tournament-button" type="submit">Enter a name</button>
-				</form>
-				<form id="join-tournament">
-					<label for="join_tournament">Join a tournament:</label>
-					<input type="tournament-joining" id="join-tournament-input" name="tournament-joining" required>
-					<button id="submit-join-tournament-button" type="submit">modify</button>
-				</form>
-			</div> -->
 			<div id="friend-profile" style="display:none;">
 				<div id="friends-info">
 					<img src="" id="friend-profile-profile-picture-display" width="75" height="87" alt="profile picture">
@@ -172,12 +162,28 @@
 			<div id="chatbot" style="display: none;">
 				<h1 id="title-chat">Pong's ChatBot </h1>
 				<img src="../static/images/chatgpt.jpg/" alt="chatgpt logo" height="50" width="50" class="chatgpt-center">
-				<h2 id="howcan">Hello ! How can I help you today ? </h1>
+				<h2 id="howcan">Hello ! How can I help you today ? </h2>
 					<form id="OPENai">
 						<input type="text" id="OpenAIquestion" name="question" autocomplete="question" required placeholder="Message Pong's ChatBot...">
 					</form>
-				</div>
+			</div>
 				
+
+			<div id="tournament-lobby" style="display: none;">
+				<p>Host a tournament</p>
+				<button id="new-tournament-4p-button">4 players</button>
+				<button id="new-tournament-8p-button">8 players</button>
+				<button id="new-tournament-16p-button">16 players</button>
+				<button id="new-tournament-32p-button">32 players</button>
+			</div>
+			<div id="tournament-nicknames" style="display: none;">
+				<p>Input the nicknames of the players:</p>
+				<p> <span id="tournament-host-nickname"></span> will be the host</p>
+				<form id="tournament-nicknames-form">
+					<button id="submit-tournament-nicknames-button" type="submit">Submit</button>
+				</form>
+			</div>
+
 				
 				<div id="janken-not-authorized" style="display: none;">
 					<p>You are not in a game !</p>
@@ -186,40 +192,42 @@
 					<p></p>
 				</div>
 			</div>
-			<div id="isNotLogged" style="display: none;">
-				<div id="Login" style="display: none;">
-					<form id="loginForm">
-						<label for="username_login">Username:</label>
-						<input type="text" id="username_login" name="username" autocomplete="username" required>
-						<label for="password_login">Password:</label>
-						<input type="password" id="password_login" name="password" autocomplete="current-password" required>
-						<button id="submit-login-button" type="submit">Login</button>
-					</form>
-				</div>			
-				<div id="Register" style="display: none;">
-					<form id="registerForm">
-						<label for="username_register">Username:</label>
-						<input type="text" id="username_register" name="username" autocomplete="username" required>
-						<label for="password1_register">Password:</label>
-						<input type="password" id="password1_register" name="password1" autocomplete="new-password" required>
-						<label for="password2_register">Confirm Password:</label>
-						<input type="password" id="password2_register" name="password2" autocomplete="new-password" required>
-						<label for="email_address_register">Input email:</label>
-						<input type="email" id="email_address_register" name="email_address" autocomplete="email" required>
-						<label for="first_name_register">Input first_name:</label>
-						<input type="text" id="first_name_register" name="first_name" autocomplete="given-name" required>
-						<button id="submit-register-button" type="submit">Register</button>
-					</form>
-				</div>
-				<div id="not-logged-home" style="display: none;">
-					<button id="login-button" type="submit">Login</button>
-					<button id="register-button" type="submit">Register</button>
-					<button id="42-login-button">42 login</button>
-				</div>
-				<div id="Registered" style="display: none;">
-					<p>You've been registered, you can now loggin</p>
-				</div>
+
+		
+		<div id="isNotLogged" style="display: none;">
+			<div id="Login" style="display: none;">
+				<form id="loginForm">
+					<label for="username_login">Username:</label>
+					<input type="text" id="username_login" name="username" autocomplete="username" required>
+					<label for="password_login">Password:</label>
+					<input type="password" id="password_login" name="password" autocomplete="current-password" required>
+					<button id="submit-login-button" type="submit">Login</button>
+				</form>
+			</div>			
+			<div id="Register" style="display: none;">
+				<form id="registerForm">
+					<label for="username_register">Username:</label>
+					<input type="text" id="username_register" name="username" autocomplete="username" required>
+					<label for="password1_register">Password:</label>
+					<input type="password" id="password1_register" name="password1" autocomplete="new-password" required>
+					<label for="password2_register">Confirm Password:</label>
+					<input type="password" id="password2_register" name="password2" autocomplete="new-password" required>
+					<label for="email_address_register">Input email:</label>
+					<input type="email" id="email_address_register" name="email_address" autocomplete="email" required>
+					<label for="first_name_register">Input first_name:</label>
+					<input type="text" id="first_name_register" name="first_name" autocomplete="given-name" required>
+					<button id="submit-register-button" type="submit">Register</button>
+				</form>
 			</div>
+			<div id="not-logged-home" style="display: none;">
+				<button id="login-button" type="submit">Login</button>
+				<button id="register-button" type="submit">Register</button>
+				<button id="42-login-button">42 login</button>
+			</div>
+			<div id="Registered" style="display: none;">
+				<p>You've been registered, you can now loggin</p>
+			</div>
+		</div>
 			<div id="unauthorized" style="display: none;">
 				<p>Unauthorized</p>
 			</div>

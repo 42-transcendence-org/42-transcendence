@@ -81,12 +81,6 @@ main {
 	background-color: #9e887a;
 	text-align: center;
 }
-#sound-button {
-	position:absolute;
-	top:3%;
-	left: 3%;
-	margin-left:0%;
-}
 
 #not-logged-home button {
 	display: flex;
