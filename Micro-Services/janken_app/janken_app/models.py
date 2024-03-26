@@ -3,8 +3,8 @@ from django.utils import timezone
 
 
 class FinishedJankenGames(models.Model):
-    owner = models.ForeignKey(Profile, on_delete = models.CASCADE, related_name='JankenHistoryOwner')
-    opponent = models.ForeignKey(Profile, on_delete = models.CASCADE, related_name='JankenHistoryOpponent')
+    owner = models.CharField(max_length=100)
+    opponent = models.CharField(max_length=100)
     owner_choice = models.CharField(max_length=100)
     opponent_choice = models.CharField(max_length=100)
     result = models.CharField(max_length=100)
@@ -33,11 +33,11 @@ class FinishedJankenGames(models.Model):
     
 
 class JankenGameCreation(models.Model):
-    creator = models.ForeignKey(Profile, on_delete = models.CASCADE, related_name='creator_creation')
+    creator = models.CharField(max_length=100)
     isWaiting = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.creator.nickname + " created a Janken Game"
+        return self.creator + " created a Janken Game"
     
     def findGame():
         return JankenGameCreation.objects.all().first() | None
@@ -49,12 +49,12 @@ class JankenGameCreation(models.Model):
             return None
         
     def matchMaking(profile):
-        if JankenGameCreation.objects.all().exists():
-            myWinrate = profile.getWinrateJanken()
-            for margin in range(0, 101, 5):
-                for game in JankenGameCreation.objects.all():
-                    if game.creator.getWinrateJanken() >= myWinrate - margin and game.creator.getWinrateJanken() <= myWinrate + margin:
-                        return game
+        # if JankenGameCreation.objects.all().exists():
+        #     myWinrate = profile.getWinrateJanken()
+        #     for margin in range(0, 101, 5):
+        #         for game in JankenGameCreation.objects.all():
+        #             if game.creator.getWinrateJanken() >= myWinrate - margin and game.creator.getWinrateJanken() <= myWinrate + margin:
+        #                 return game
             return JankenGameCreation.objects.all().first()
     
     class Meta:
@@ -62,8 +62,8 @@ class JankenGameCreation(models.Model):
         verbose_name_plural = "Janken Game Creations"
     
 class JankenGameInProgress(models.Model):
-    creator = models.ForeignKey(Profile, on_delete = models.CASCADE, related_name='creator')
-    opponent = models.ForeignKey(Profile, on_delete = models.CASCADE, related_name='opponent')
+    creator = models.CharField(max_length=100)
+    opponent = models.CharField(max_length=100)
     creator_choice = models.CharField(max_length=100, default="None")
     opponent_choice = models.CharField(max_length=100, default="None")
     game_finished = models.BooleanField(default=False)
@@ -77,7 +77,7 @@ class JankenGameInProgress(models.Model):
     first_input_nickname = models.CharField(max_length=100, default="None")
 
     def __str__(self):
-        return self.creator.nickname + " vs " + self.opponent.nickname
+        return self.creator + " vs " + self.opponent.nickname
     
     class Meta:
         verbose_name = "Janken Game In Progress"
@@ -103,7 +103,7 @@ class JankenGameInProgress(models.Model):
                 game.completion_time = timezone.now()
             else:
                 game.first_input_time = timezone.now()
-                game.first_input_nickname = Profile.nickname
+                game.first_input_nickname = Profile
             game.save()
         elif JankenGameInProgress.objects.filter(opponent=Profile).exists():
             game = JankenGameInProgress.objects.get(opponent=Profile)
@@ -113,7 +113,7 @@ class JankenGameInProgress(models.Model):
                 game.completion_time = timezone.now()
             else:
                 game.first_input_time = timezone.now()
-                game.first_input_nickname = Profile.nickname
+                game.first_input_nickname = Profile
             game.save()
         else:
             return None
@@ -122,7 +122,7 @@ class JankenGameInProgress(models.Model):
         if self.result == "draw":
             FinishedJankenGames.objects.create(owner=self.creator, opponent=self.opponent, owner_choice=self.creator_choice, opponent_choice=self.opponent_choice, result=self.result, completion_time=self.completion_time, loser=self.loser, winner=self.winner)
             FinishedJankenGames.objects.create(owner=self.opponent, opponent=self.creator, owner_choice=self.opponent_choice, opponent_choice=self.creator_choice, result=self.result, completion_time=self.completion_time, loser=self.loser, winner=self.winner)
-        elif self.winner == self.creator.nickname:
+        elif self.winner == self.creator:
             FinishedJankenGames.objects.create(owner=self.creator, opponent=self.opponent, owner_choice=self.creator_choice, opponent_choice=self.opponent_choice, result="Victory", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
             FinishedJankenGames.objects.create(owner=self.opponent, opponent=self.creator, owner_choice=self.opponent_choice, opponent_choice=self.creator_choice, result="Defeat", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
         elif self.winner == self.opponent.nickname:

@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .views import createJankenGameAPIView, jankenGameAPIView, waitForOpponentAPIView, waitForResultsAPIView, getResultsAPIView, deleteMyJankenGameCreationAPIView, gameInProgressAPIView, amIPlayingAPIView
+from .views import test, createJankenGameAPIView, jankenGameAPIView, waitForOpponentAPIView, waitForResultsAPIView, getResultsAPIView, deleteMyJankenGameCreationAPIView, gameInProgressAPIView, amIPlayingAPIView
 
 
 urlpatterns = [
@@ -32,4 +32,7 @@ urlpatterns = [
 	path('getResults/', getResultsAPIView.as_view(), name='getResults'),
 	path('deleteMyJankenGameCreation/', deleteMyJankenGameCreationAPIView.as_view(), name='deleteMyJankenGameCreation'),
 	path('amIPlaying/', amIPlayingAPIView.as_view(), name='amIPlaying'),
+	
+
+    path('test/', test.as_view(), name='test'),
 ]

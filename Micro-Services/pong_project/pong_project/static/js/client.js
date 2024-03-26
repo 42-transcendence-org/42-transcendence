@@ -50,6 +50,13 @@ export class Client {
 		//client event listeners
 		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
 		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
+		document.getElementById('test').addEventListener('click', () =>  this.test()); //test
+	}
+
+	async test() {
+		const url = 'https://localhost:8443/janken/test/'
+		const response = await Oauth.getter(url);
+		console.log(response);
 	}
 
 	//SHOWS THE DIV + ADDS IT TO HISTORY

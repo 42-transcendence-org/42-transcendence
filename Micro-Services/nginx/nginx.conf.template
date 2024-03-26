@@ -11,6 +11,10 @@ upstream game_service {
     server ${HOST_IP}:8003;
 }
 
+upstream janken_service {
+    server ${HOST_IP}:8004;
+}
+
 upstream tournament_service {
     server ${HOST_IP}:8005;
 }
@@ -67,6 +71,18 @@ server {
         # Redirect requests to the game service
     location /game/ {
         proxy_pass http://game_service/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
+        proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Pour le forwarding d'IP
+        proxy_set_header X-Forwarded-Proto $scheme; # Transmet le schéma utilisé (http ou https)
+        # Assurez-vous de transmettre le Cookie header pour conserver les cookies de session, y compris csrftoken
+        proxy_set_header Cookie $http_cookie;    
+    }
+    
+        # Redirect requests to the game service
+    location /janken/ {
+        proxy_pass http://janken_service/;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
         proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client

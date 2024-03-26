@@ -1,5 +1,5 @@
 import jwt
-from game_app import settings
+from janken_app import settings
 
 
 class JWTAuthenticationMiddleware:
