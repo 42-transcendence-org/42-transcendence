@@ -982,6 +982,51 @@ class tournamentAPIView(APIView):
 
 
 
+
+
+
+
+
+
+
+
+
+
+class createTournamentAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                print(request.data)
+                return JsonResponse({'tournament_id': 'coucou'})
+            raise Exception('You are not authenticated')
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #poubelle
 
 # class OAuthGetAppTokenAPIView(APIView):

@@ -1,69 +1,96 @@
+import * as Oauth from './Oauth.js';
+
 export class Tournament {
 
 	constructor() {}
 
 	eventlisteners() {
 		document.getElementById('tournament-button').addEventListener('click', () => window.client.nextPage('tournament-lobby'));
-		document.getElementById('new-tournament-4p-button').addEventListener('click', () => this.tournamentCreation(4));
-		document.getElementById('new-tournament-8p-button').addEventListener('click', () => this.tournamentCreation(8));
-		document.getElementById('new-tournament-16p-button').addEventListener('click', () => this.tournamentCreation(16));
-		document.getElementById('new-tournament-32p-button').addEventListener('click', () => this.tournamentCreation(32));
-		document.getElementById('tournament-nicknames-form').addEventListener('submit', () => this.createTournament());
+		// document.getElementById('tournament-nicknames-form').addEventListener('submit', (event) => this.createTournament(event));
+		// document.getElementById('tournament-game-start-button').addEventListener('click', () => window.client.game_manager.game_create(4));
+		// document.getElementById('tournament-game-start-button-round2').addEventListener('click', () => window.client.game_manager.game_create(4));
+		document.getElementById('tournament-nicknames-form').addEventListener('click', (event) => this.createTournament(event));
+		document.getElementById('tournament-game-start-button').addEventListener('click', () => this.secondGame(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
+		document.getElementById('tournament-game-start-button-round2').addEventListener('click', () => this.finalGame(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
+		document.getElementById('tournament-game-start-button-final').addEventListener('click', () => this.displayWinner(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
 	}
 
-	async tournament() {
-		// const url = 'https://localhost:8443/auth/tournament';
-		// const response = await Oauth.getter(url);
+	displayWinner(winnerFinal, loserFinal) {
+		document.getElementById('tournament-display-final-winner').textContent = winnerFinal;
+		document.getElementById('tournament-display-final-loser').textContent = loserFinal;
+		window.client.nextPage('tournament-display-winner');
+	}
+
+	finalGame(winnerGame2, loserGame2) {
+		document.getElementById('tournament-display-second-match-winner').textContent = winnerGame2;
+		document.getElementById('tournament-display-second-match-loser').textContent = loserGame2;
+		document.getElementById('tournament-display-final-p1').textContent = localStorage.getItem('tournament-winner-game1');
+		document.getElementById('tournament-display-final-p2').textContent = winnerGame2;
+
+		localStorage.setItem('tournament-game-p1', localStorage.getItem('tournament-winner-game1')); //get ids in game through this
+		localStorage.setItem('tournament-game-p2', winnerGame2);
+
+		localStorage.removeItem('tournament-winner-game1');
+		window.client.nextPage('tournament-display-final');
+	}
+
+	//call this when 1st game ends
+	secondGame(winnerGame1, loserGame1) {
+		document.getElementById('tournament-display-first-match-winner').textContent = winnerGame1;
+		document.getElementById('tournament-display-first-match-loser').textContent = loserGame1;
+		document.getElementById('tournament-display-round2-p1').textContent = localStorage.getItem('tournament-p3');
+		document.getElementById('tournament-display-round2-p2').textContent = localStorage.getItem('tournament-p4');
+		localStorage.setItem('tournament-winner-game1', winnerGame1);
+		
+		localStorage.setItem('tournament-game-p1', localStorage.getItem('tournament-p3')); //get ids in game through this
+		localStorage.setItem('tournament-game-p2', localStorage.getItem('tournament-p4'));
+
+		localStorage.removeItem('tournament-p3');
+		localStorage.removeItem('tournament-p4');
+
+		window.client.nextPage('tournament-display-round2');
+	}
 
 
-		// if not in a tournament, do:
+	async createTournament(event) {
+		if (event)
+			event.preventDefault();
+		const data = [
+			document.getElementById('tournament-host-nickname').innerText,
+			"A", "B", "C",
+			// document.getElementById('tournament-player-2').value,
+			// document.getElementById('tournament-player-3').value,
+			// document.getElementById('tournament-player-4').value,
+		]
 
-		// window.client.nextPage('tournament-lobby');
+		document.getElementById('tournament-host-nickname').value = '';
+		document.getElementById('tournament-player-2').value = '';
+		document.getElementById('tournament-player-3').value = '';
+		document.getElementById('tournament-player-4').value = '';
+
+		console.log(this.shuffleArray(data));
+
+		document.getElementById('tournament-display-p1').textContent = data[0];
+		document.getElementById('tournament-display-p2').textContent = data[1];
+		document.getElementById('tournament-display-p3').textContent = data[2];
+		document.getElementById('tournament-display-p4').textContent = data[3];
 
 		
-	}
-	// <label for="">Player 1</label>
-	// 				<input type="text" id="username_login" name="username" autocomplete="username" required></input>
+		localStorage.setItem('tournament-p3', data[2]);
+		localStorage.setItem('tournament-p4', data[3]);
 
-	async tournamentCreation(nb_players) {
+		localStorage.setItem('tournament-game-p1', data[0]);  //get ids in game through this
+		localStorage.setItem('tournament-game-p2', data[1]);
 
-		document.getElementById('tournament-host-nickname').innerHTML = document.getElementById('banner-nickname-display').innerHTML;
-		let form = document.getElementById('tournament-nicknames-form');
-		form.innerHTML = '';
-		for (let i = 1; i < nb_players; i++) {
-			
-			document.createElement('label').innerHTML = `Player ${i + 1}`;
-			document.createElement('input').setAttribute('type', 'text');
-			document.createElement('input').setAttribute('id', `player-${i}-nickname`);
-			document.createElement('input').setAttribute('name', 'username');
-			document.createElement('input').setAttribute('autocomplete', 'username');
-			document.createElement('input').setAttribute('required', '');
-			form.appendChild(document.createElement('label'));
-			form.appendChild(document.createElement('input'));
-
-		}
-		// let button = document.createElement('button').setAttribute('type', 'submit');
-		// button.innerHTML = 'Create Tournament';
-		// form.appendChild(button);
-
-		// await window.client.nextPage('tournament-nicknames');
+		window.client.nextPage('tournament-display-start');
 
 	}
-
-	async createTournament() {
-		nb_players = document.getElementById('tournament-nicknames-form').children.length;
-
-		data = {
-			'host': document.getElementById('tournament-host-nickname').innerHTML,
-			'players': []
+	shuffleArray(array) {
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
 		}
-
-		for (let i = 1; i < nb_players; i++) {
-			data['players'].push(document.getElementById(`player-${i}-nickname`).value);
-		}
-
-
-		console.log(data);
+		return array;
 	}
 
 }

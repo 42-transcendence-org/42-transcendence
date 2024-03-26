@@ -250,3 +250,23 @@ class FinishedPongGames(models.Model):
     def countDraws(profile): #return 0 if no game found
         return FinishedPongGames.objects.filter(owner=profile, result="draw").count()
     
+
+
+# import random
+
+# class Tournament(models.Model):
+#     p1 = models.CharField(max_length=100, default="None")
+#     p2 = models.CharField(max_length=100, default="None")
+#     p3 = models.CharField(max_length=100, default="None")
+#     p4 = models.CharField(max_length=100, default="None")
+
+#     def __str__(self):
+#         return "tournament:" + self.p1 + " " + self.p2 + " " + self.p3 + " " + self.p4
+    
+#     class Meta:
+#         verbose_name = "Tournament"
+#         verbose_name_plural = "Tournaments"
+
+#     def createFirstRounds():
+#         var = random.randint(0, 100000) % 4
+#         if var == 0:

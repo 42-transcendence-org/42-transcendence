@@ -172,27 +172,47 @@
 
 			<div id="tournament-lobby" style="display: none;">
 				<p>Host a tournament</p>
-				<button id="new-tournament-4p-button">4 players</button>
-				<button id="new-tournament-8p-button">8 players</button>
-				<button id="new-tournament-16p-button">16 players</button>
-				<button id="new-tournament-32p-button">32 players</button>
-			</div>
-			<div id="tournament-nicknames" style="display: none;">
+				<p><span id="tournament-host-nickname"></span> will be the host</p>
 				<p>Input the nicknames of the players:</p>
-				<p> <span id="tournament-host-nickname"></span> will be the host</p>
 				<form id="tournament-nicknames-form">
-					<button id="submit-tournament-nicknames-button" type="submit">Submit</button>
+					<label for="tournament-player-2">Player 2:</label>
+					<input type="username" id="tournament-player-2" name="tournament-p2" required>
+					<label for="tournament-player-3">Player 3:</label>
+					<input type="username" id="tournament-player-3" name="tournament-p3" required>
+					<label for="tournament-player-4">Player 4:</label>
+					<input type="username" id="tournament-player-4" name="tournament-p4" required>
+					<button id="create-tournament-button" type="submit">Create a tournament</button>
 				</form>
 			</div>
-
-				
-				<div id="janken-not-authorized" style="display: none;">
-					<p>You are not in a game !</p>
-				</div>
-				<div id="friend-not-found" style="display: none;">
-					<p></p>
-				</div>
+			<div id="tournament-display-start" style="display: none;">
+				<p> First match will be <span id="tournament-display-p1"></span> against <span id="tournament-display-p2"></span></p>
+				<p> Second match will be <span id="tournament-display-p3"></span> against <span id="tournament-display-p4"></span></p>
+				<button id="tournament-game-start-button">Start game 1</button>
 			</div>
+			<div id="tournament-display-round2" style="display: none;">
+				<p><span id="tournament-display-first-match-winner" style="background-color: green;"></span> won and goes to final ! <span id="tournament-display-first-match-loser" style="background-color: red;"></span> lost, goodbye !</p>
+				<p> The next game will be <span id="tournament-display-round2-p1"></span> against <span id="tournament-display-round2-p2"></span></p>
+				<button id="tournament-game-start-button-round2">Start game 2</button>
+			</div>
+			<div id="tournament-display-final" style="display: none;">
+				<p><span id="tournament-display-second-match-winner" style="background-color: green;"></span> won and goes to final ! <span id="tournament-display-second-match-loser" style="background-color: red;"></span>  lost, goodbye !</p>
+				<p> The final will be <span id="tournament-display-final-p1"></span> against <span id="tournament-display-final-p2"></span></p>
+				<button id="tournament-game-start-button-final">Start final</button>
+			</div>
+			<div id="tournament-display-winner" style="display: none;">
+				<p><span id="tournament-display-final-winner" style="background-color: green;"></span> won the tournament !</p>
+				<p>Second place: <span id="tournament-display-final-loser" style="background-color: red;"></span></p>
+			</div>
+
+
+
+			<div id="janken-not-authorized" style="display: none;">
+				<p>You are not in a game !</p>
+			</div>
+			<div id="friend-not-found" style="display: none;">
+				<p></p>
+			</div>
+		</div>
 
 		
 		<div id="isNotLogged" style="display: none;">

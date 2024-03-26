@@ -86,7 +86,7 @@ export class Client {
 		if (div_to_show === 'pong-history') {
 			await profile.getPongHistory();
 		}
-		
+
 		if (isLogged === 'true') {
 			await profile.fetchProfileData(div_to_show);
 			await this.janken.relaunchGetters();

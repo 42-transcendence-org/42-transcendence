@@ -34,6 +34,7 @@ export const STATUS_WAITING = 5; /* waiting for a second player */
 export const TYPE_REMOTE = 0;
 export const TYPE_LOCAL = 1;
 export const TYPE_AI = 2;
+export const TYPE_TOURNY = 3;
 
 /* PLAYERS' IDS */
 export const ID_PLAYER1 = 0;
