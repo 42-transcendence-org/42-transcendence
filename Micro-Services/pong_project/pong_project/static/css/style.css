@@ -22,6 +22,11 @@ main {
 	align-items: center;
 }
 
+main button:hover {
+	cursor: pointer;
+	transition: background-color 0.3s, color 0.3s;
+}
+
 #isLogged ,
 #isNotLogged,
 #not-logged-home,
@@ -335,6 +340,12 @@ main {
 	line-height: 8px;
 	font-family: "Lucida Console", Monaco, monospace;
 
+}
+
+#profile button:hover {
+	background-color: #f0f0f0;
+	cursor: pointer;
+	transition: background-color 0.3s, color 0.3s;
 }
 
 #profile label {
