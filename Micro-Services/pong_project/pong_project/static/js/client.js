@@ -41,7 +41,7 @@ export class Client {
 			this.Oauth.login42();
 		} else if (history.length > 1 && history.state != null) { //reload of the page: SPA PART
 			this.divDisplay(history.state.id); //NOT ADDING TO HISTORY IF RELOAD
-		} else { //first load of the page, joigning via URL https://localhost:8443 for the first time
+		} else { //first load of the page, joigning via URL https://${window.location.host} for the first time
 			this.home();		
 		}
 

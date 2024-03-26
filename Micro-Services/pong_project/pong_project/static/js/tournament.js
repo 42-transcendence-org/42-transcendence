@@ -12,7 +12,7 @@ export class Tournament {
 	}
 
 	async tournament() {
-		// const url = 'https://localhost:8443/auth/tournament';
+		// const url = 'https://${window.location.host}/auth/tournament';
 		// const response = await Oauth.getter(url);
 
 

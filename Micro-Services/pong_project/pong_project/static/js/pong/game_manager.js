@@ -229,7 +229,7 @@ export class GameManager {
 				await this.send_game_creation_request();
 
 				const token = localStorage.getItem("jwt");
-				const url = `http://localhost:8003/${this.game_id}/?token=${encodeURIComponent(token)}`;
+				const url = `http://${window.location.host}:8003/${this.game_id}/?token=${encodeURIComponent(token)}`;
 				this.event_source = new EventSource(url);
 
 				this.event_source.onmessage = (event) => {
@@ -290,7 +290,7 @@ export class GameManager {
 
 	async send_game_creation_request() {
 		const token = localStorage.getItem("jwt");
-		const response = await fetch('https://localhost:8443/game/', {
+		const response = await fetch(`https://${window.location.host}/game/`, {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${token}`,
