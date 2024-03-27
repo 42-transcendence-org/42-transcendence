@@ -68,6 +68,7 @@ export async function changeEmail(event) {
 
 	const response = await poster(url, data);
 	document.getElementById('email_new').value = '';
+
 	if (response.error) {
 		alert(response.error);
 		return ;

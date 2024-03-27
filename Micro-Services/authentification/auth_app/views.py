@@ -343,50 +343,69 @@ class DeleteFriendAPIView(APIView):
 
 def update_profile_picture(request):
     if request.method == 'POST':
-        profile_picture = request.FILES.get('profile_picture')
-        name = "profile_picture_" + request.user.username + ".jpg"
-        if profile_picture:
-            with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:
-                for chunk in profile_picture.chunks():
-                    f.write(chunk)
-            request.user.profile.profile_picture = name
-            request.user.profile.save()
-            request.user.save()
-            return JsonResponse({'profile_picture': request.user.profile.profile_picture})
+        try:
+            profile_picture = request.FILES.get('profile_picture')
+            name = "profile_picture_" + request.user.username + ".jpg"
+            if profile_picture:
+                with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:
+                    for chunk in profile_picture.chunks():
+                        f.write(chunk)
+                request.user.profile.profile_picture = name
+                request.user.profile.save()
+                request.user.save()
+                return JsonResponse({'profile_picture': request.user.profile.profile_picture})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+        
     return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
 
 class EmailAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        email = request.data.get('email', 'no email')
-        if email == 'no email':
-            return (JsonResponse({"error": "email is required"}, status=400))
-        request.user.profile.email = email
-        request.user.profile.save()
-        request.user.save()
-        return (JsonResponse({"message": "success", "email": email}, status=200))
+        try:
+            email = request.data.get('email', 'no email')
+            if email == 'no email':
+                return (JsonResponse({"error": "email is required"}, status=400))
+            if request.user.profile.is42account == True:
+                return (JsonResponse({"error": "You can't change your email if you are a 42 account"}, status=400))
+            request.user.profile.email = email
+            request.user.profile.save()
+            request.user.save()
+            return (JsonResponse({"message": "success", "email": email}, status=200))
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
 
 class NicknameAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            first_name = request.data.get('first_name', 'no first_name')
-            if first_name == 'no first_name':
-                return (JsonResponse({"error": "nickname is required"}, status=400))
-            if (isNicknameUnique(first_name) == False):
-                return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
-            request.user.profile.nickname = first_name
-            request.user.profile.save()
-            request.user.save()
-            return (JsonResponse({"message": "success", "first_name": first_name}, status=200))
-        return JsonResponse({'error': "not authenticated"})
+        try:
+            if request.user.is_authenticated:
+                first_name = request.data.get('first_name', 'no first_name')
+                if first_name == 'no first_name':
+                    return (JsonResponse({"error": "nickname is required"}, status=400))
+                if (isNicknameUnique(first_name) == False):
+                    return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
+                request.user.profile.nickname = first_name
+                request.user.profile.save()
+                request.user.save()
+                return (JsonResponse({"message": "success", "first_name": first_name}, status=200))
+            return JsonResponse({'error': "not authenticated"})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
 
 class PasswordAPIView(APIView): #FIXME: check les password, et les hash, faire plein de trucs liés aux password à demander aux copains du groupe
     def post(self, request, *args, **kwargs):
-        password = request.data.get('password', 'no password')
-        if password == 'no password':
-            return (JsonResponse({"error": "password is required"}, status=400))
-        request.user.set_password(password)
-        request.user.save()
-        return (JsonResponse({"message": "success", "password": password}, status=200))
+        try:
+            password = request.data.get('password', 'no password')
+            if password == 'no password':
+                return (JsonResponse({"error": "password is required"}, status=400))
+            request.user.set_password(password)
+            request.user.save()
+            return (JsonResponse({"message": "success", "password": password}, status=200))
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
 
 
 
