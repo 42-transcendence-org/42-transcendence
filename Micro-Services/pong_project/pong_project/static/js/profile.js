@@ -169,6 +169,8 @@ export async function show_friendlist() {
 	const url = 'https://' + window.location.host + '/auth/getMyFriends/';
 	const response = await getter(url);
 	if (response.error) {
+		if (response.error == 'Error: no friends')
+			list_names.textContent = "You have no friends yet !";
 		return ;
 	}
 
@@ -213,7 +215,6 @@ export async function showFriendInfo() {
 	};
 	const response = await poster(url, data);
 
-
 	if (response.error) {
 		document.getElementById('friend-not-found').querySelector('p').textContent = 'When trying to access ' + friend_name + '\'s profile, ' + response.error;
 		return 'friend-not-found';
@@ -238,6 +239,7 @@ export async function deleteFriend(event) {
 		alert(response.error);
 		return ;
 	}
+
 	show_friendlist();
 }
 
@@ -248,6 +250,7 @@ export async function showFriendRequests() {
 
 	const url = 'https://' + window.location.host + '/auth/FriendRequests/';
 	const response = await getter(url);
+
 	if (response.error) {
 		list.textContent = "You have no pending friend requests !";
 		return ;
@@ -271,11 +274,7 @@ export async function showFriendRequests() {
 		refuse_button.addEventListener('click', (event) => refuseFriendRequest(event));
 		new_friend.appendChild(refuse_button);
 
-
-		// new_friend.addEventListener('click', (event) => acceptFriendRequest(event));
-
 		list.appendChild(new_friend);
-
 		
 	}
 }
@@ -293,7 +292,8 @@ export async function acceptFriendRequest(event) {
 		return ;
 	}
 	document.getElementById('friend_request_from_' + friend_name).remove();
-	show_friendlist();
+	await show_friendlist();
+	await showFriendRequests();
 }
 
 
@@ -310,6 +310,8 @@ export async function refuseFriendRequest(event) {
         return ;
     }
     document.getElementById('friend_request_from_' + friend_name).remove();
+	await show_friendlist();
+	await showFriendRequests();
 }
 
 
@@ -323,7 +325,6 @@ export async function getPongHistory() {
 		return ;
 	}
 	var div = document.getElementById('pong-history-list');
-	console.log(response);
 	div.textContent = "";
 	const limit = response.history.length > 10 ? response.history.length - 10 : 0;
 	for (var i = response.history.length - 1; i >= limit; i--) {

@@ -72,8 +72,14 @@ export class Tournament {
 		document.getElementById('tournament-player-2').value = '';
 		document.getElementById('tournament-player-3').value = '';
 		document.getElementById('tournament-player-4').value = '';
+		
+		if (data[0] == data[1] || data[0] == data[2] || data[0] == data[3] || data[1] == data[2] || data[1] == data[3] || data[2] == data[3]) {
+			await window.client.home();
+			alert('Nicknames must be unique');
+			return;
+		}
 
-		console.log(this.shuffleArray(data));
+		this.shuffleArray(data);
 
 		document.getElementById('tournament-display-p1').textContent = data[0];
 		document.getElementById('tournament-display-p2').textContent = data[1];

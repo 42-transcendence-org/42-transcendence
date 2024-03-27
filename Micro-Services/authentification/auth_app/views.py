@@ -304,7 +304,6 @@ class FriendRequestsAPIView(APIView):
             print(e)
             return Response({'error': e.args[0]})
 
-
 class RefuseFriendRequestAPIView(APIView):
     def post(self, request, *args, **kwargs):
         try:
@@ -387,7 +386,6 @@ class NicknameAPIView(APIView):
                     return (JsonResponse({"error": "nickname is required"}, status=400))
                 if (isNicknameUnique(first_name) == False):
                     return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
-                
                 request.user.profile.nickname = first_name
                 request.user.profile.save()
                 request.user.save()
@@ -403,6 +401,8 @@ class PasswordAPIView(APIView): #FIXME: check les password, et les hash, faire p
             password = request.data.get('password', 'no password')
             if password == 'no password':
                 return (JsonResponse({"error": "password is required"}, status=400))
+            if request.user.profile.is42account == True:
+                return (JsonResponse({"error": "You can't change your password if you are a 42 account"}, status=400))
             request.user.set_password(password)
             request.user.save()
             return (JsonResponse({"message": "success", "password": password}, status=200))
