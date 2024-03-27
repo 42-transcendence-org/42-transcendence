@@ -541,6 +541,7 @@ label[for="OpenAIquestion"] {
 #friends-button::before {
 	content: attr(data-count);
 	position: absolute;
+	left: 40%;
 	width: 1.5em;
 	height: 1.5em;
 	display: var(--display-before, flex);
@@ -556,6 +557,7 @@ label[for="OpenAIquestion"] {
 #janken-button::before {
 	content: "1";
 	position: absolute;
+	left: 40%;
 	width: 1.5em;
 	height: 1.5em;
 	display: var(--display-before, none);
