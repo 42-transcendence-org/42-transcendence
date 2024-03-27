@@ -415,7 +415,7 @@ class Login42APIView(APIView): #gets the access token from 42 for the user loggi
                 'client_id': 'u-s4t2ud-5e7e4a91d71b25aa41be7416b66b5e707d70b920b1c6521d6dfaa920a5ee8eb2',
                 'client_secret': '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',
                 'code': request.data.get('code', 'no code'),
-                'redirect_uri': 'https://localhost:8443',
+                'redirect_uri': os.environ.get("OAUTH_REDIRECT_URI"),
                 'state': os.environ.get('OAUTH_STATE')
             }
             response = requests.post(api_host, data=api_data, headers={'Content-Type': 'application/x-www-form-urlencoded'})

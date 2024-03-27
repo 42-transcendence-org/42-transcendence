@@ -17,7 +17,7 @@ export class Connection {
 	async login_user_request(event) {
 		if (event)
 			event.preventDefault()
-		const url = 'https://localhost:8443/auth/login/';
+		const url = 'https://' + window.location.host + '/auth/login/';
 		const data = {
 			username: document.getElementById('username_login').value,
 			password: document.getElementById('password_login').value,
@@ -38,7 +38,7 @@ export class Connection {
 	
 	async register_user_request(event) {
 		event.preventDefault()
-		const url = 'https://localhost:8443/auth/register/';
+		const url = 'https://' + window.location.host + '/auth/register/';
 		const data = {
 			username: document.getElementById('username_register').value,
 			password1: document.getElementById('password1_register').value,
@@ -70,7 +70,7 @@ export class Connection {
 	async logout_user_request(event) {
 		if (event)
 			event.preventDefault()
-		const url = 'https://localhost:8443/auth/logout/'
+		const url = 'https://' + window.location.host + '/auth/logout/'
 		const response = await Oauth.getter(url);
 
 		if (response.error) {
@@ -83,7 +83,7 @@ export class Connection {
 	}
 
 	async isLoggedIn() {
-		const url = 'https://localhost:8443/auth/check-authentication/';
+		const url = 'https://' + window.location.host + '/auth/check-authentication/';
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			return 'false';

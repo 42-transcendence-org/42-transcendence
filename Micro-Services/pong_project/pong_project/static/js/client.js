@@ -54,7 +54,7 @@ export class Client {
 	}
 
 	async test() {
-		const url = 'https://localhost:8443/janken/test/'
+		const url = 'https://' + window.location.host + '/janken/test/'
 		const response = await Oauth.getter(url);
 		console.log(response);
 	}

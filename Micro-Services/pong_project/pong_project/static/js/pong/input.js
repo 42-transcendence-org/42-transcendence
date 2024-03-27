@@ -61,14 +61,14 @@ export class InputManager {
 					if (game.status === g.STATUS_ACTIVE || game.status === g.STATUS_PAUSED) {
 						game.status = (game.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE);
 					} else if (game.status === g.STATUS_ENDED) {
-					const url = 'https://localhost:8443/auth/pongHistory/';
+					const url = 'https://' + window.location.host + '/auth/pongHistory/';
 					Oauth.poster(url, window.client.game_manager.game_result);
 					game.reset();
 					}
 					break;
 				case g.INPUT_QUIT:
 					game.status = g.STATUS_QUIT;
-					const url = 'https://localhost:8443/auth/pongHistory/';
+					const url = 'https://' + window.location.host + '/auth/pongHistory/';
 					Oauth.poster(url, window.client.game_manager.game_result);
 					break;
 			}
@@ -143,7 +143,7 @@ export class InputManager {
 		const token = localStorage.getItem("jwt");
 
 		try {
-			const response = await fetch(`https://localhost:8443/game/${game_id}/`, {
+			const response = await fetch('https://' + window.Location.host + '/game/${game_id}/', {
 				method: 'PUT',
 				headers: {
 					'Authorization': `Bearer ${token}`,

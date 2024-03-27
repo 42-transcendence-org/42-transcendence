@@ -23,7 +23,7 @@ export class Janken {
 	}
 	
 	async relaunchGetters() {
-		const url = 'https://localhost:8443/auth/amIPlaying/'
+		const url = 'https://' + window.location.host + '/auth/amIPlaying/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			document.getElementById("janken-game-in-progress-button").style.display = "none";
@@ -45,7 +45,7 @@ export class Janken {
 	}
 
 	async getHistory() {
-		const url = 'https://localhost:8443/auth/jankenHistory/'
+		const url = 'https://' + window.location.host + '/auth/jankenHistory/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			document.getElementById('janken-history-wins').textContent = 0;
@@ -86,7 +86,7 @@ export class Janken {
 	}
 
 	async game_in_progress() {
-		const url = 'https://localhost:8443/auth/gameInProgress/'
+		const url = 'https://' + window.location.host + '/auth/gameInProgress/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			// if (document.getElementById('janken').style.display == 'none')
@@ -109,7 +109,7 @@ export class Janken {
 	}
 
 	async create_game() {
-		const url = 'https://localhost:8443/auth/createJankenGame/'
+		const url = 'https://' + window.location.host + '/auth/createJankenGame/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			// if (response.error == "Error: You are already playing a game") {
@@ -127,7 +127,7 @@ export class Janken {
 	}
 
 	async join_game() {
-		const url = 'https://localhost:8443/auth/jankenGame/'
+		const url = 'https://' + window.location.host + '/auth/jankenGame/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			alert(response.error);
@@ -139,7 +139,7 @@ export class Janken {
 	}
 
 	async play(choice) {
-		const url = 'https://localhost:8443/auth/jankenGame/'
+		const url = 'https://' + window.location.host + '/auth/jankenGame/'
 		const data = {
 			'input': choice,
 		};
@@ -152,7 +152,7 @@ export class Janken {
 	}
 
 	async waitForOpponent() {
-		const url = 'https://localhost:8443/auth/waitForOpponent/'
+		const url = 'https://' + window.location.host + '/auth/waitForOpponent/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			return ;
@@ -169,7 +169,7 @@ export class Janken {
 	}		
 		
 	async waitResults() {
-		const url = 'https://localhost:8443/auth/waitForResults/'
+		const url = 'https://' + window.location.host + '/auth/waitForResults/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			if (response.error == 'Error: You are not part of a game')
@@ -189,7 +189,7 @@ export class Janken {
 		
 		clearInterval(localStorage.getItem('id_interval_wait_results'));
 		localStorage.removeItem('id_interval_wait_results');
-		const url = 'https://localhost:8443/auth/getResults/'
+		const url = 'https://' + window.location.host + '/auth/getResults/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			alert(response.error);
@@ -212,7 +212,7 @@ export class Janken {
 	}
 	
 	async cancel_game() {
-		const url = 'https://localhost:8443/auth/deleteMyJankenGameCreation/'
+		const url = 'https://' + window.location.host + '/auth/deleteMyJankenGameCreation/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			alert(response.error);

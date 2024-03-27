@@ -10,7 +10,7 @@ export class Chatbot {
 	
 	async chatgpt(event) { //checks the state gotten from the redirection post login on 42 website
 		event.preventDefault();
-		const url = 'https://localhost:8443/auth/chatgpt/';
+		const url = 'https://' + window.location.host + '/auth/chatgpt/';
 		const data = {
 			'question': document.getElementById('OpenAIquestion').value,
 		};

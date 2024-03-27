@@ -54,14 +54,14 @@ export async function fetchProfileData(div_to_show) {
 }
 
 export async function getUserData() {
-	const url = 'https://localhost:8443/auth/getInfo/';
+	const url = 'https://' + window.location.host + '/auth/getInfo/';
 	return (await getter(url));
 }
 
 
 export async function changeEmail(event) {
 	event.preventDefault()
-	const url = 'https://localhost:8443/auth/email/';
+	const url = 'https://' + window.location.host + '/auth/email/';
 	const data = {
         email: document.getElementById('email_new').value,
     };
@@ -77,7 +77,7 @@ export async function changeEmail(event) {
 
 export async function changeNickname(event) {
 	event.preventDefault()
-	const url = 'https://localhost:8443/auth/nickname/';
+	const url = 'https://' + window.location.host + '/auth/nickname/';
 	const data = {
         first_name: document.getElementById('nickname_new').value,
     };
@@ -94,7 +94,7 @@ export async function changeNickname(event) {
 
 export async function changePassword(event) { //FIXME: avoir deux champs password pour vérifier que le password est bien celui que l'user croit avoir tapé fin bref qu'il change pas son mdp a l'arrache on vérifie 2 champs
 	event.preventDefault()
-	const url = 'https://localhost:8443/auth/password/';
+	const url = 'https://' + window.location.host + '/auth/password/';
 	const data = {
         password: document.getElementById('password_new').value,
     };
@@ -110,7 +110,7 @@ export async function changePassword(event) { //FIXME: avoir deux champs passwor
 
 export async function changeProfilePicture(event) {
 	event.preventDefault()
-	const url = 'https://localhost:8443/auth/update_profile_picture/';
+	const url = 'https://' + window.location.host + '/auth/update_profile_picture/';
 	const formData = new FormData(document.getElementById('modify_profile_picture'));
 	try {
 		const response = await fetch(url, {
@@ -143,7 +143,7 @@ export async function changeProfilePicture(event) {
 
 export async function addFriend(event) {
 	event.preventDefault()
-	const url = 'https://localhost:8443/auth/addFriend/';
+	const url = 'https://' + window.location.host + '/auth/addFriend/';
 	const data = {
 		friend: document.getElementById('add-friend-input').value,
 	};
@@ -166,7 +166,7 @@ export async function show_friendlist() {
 	// list.innerHTML = '';
 	list_delete.innerHTML = '';
 
-	const url = 'https://localhost:8443/auth/getMyFriends/';
+	const url = 'https://' + window.location.host + '/auth/getMyFriends/';
 	const response = await getter(url);
 	if (response.error) {
 		list.textContent = "You have no friends yet !";
@@ -208,7 +208,7 @@ export async function showFriendInfo() {
 		friend_name = localStorage.getItem('friend_nickname');
 	}
 
-	const url = 'https://localhost:8443/auth/getFriendInfo/';
+	const url = 'https://' + window.location.host + '/auth/getFriendInfo/';
 	const data = {
 		'friend': friend_name,
 	};
@@ -229,7 +229,7 @@ export async function showFriendInfo() {
 
 export async function deleteFriend(event) {
 	const friend_name = event.target.name;
-	const url = 'https://localhost:8443/auth/DeleteFriend/';
+	const url = 'https://' + window.location.host + '/auth/DeleteFriend/';
 
 	const data = {
 		'friend': friend_name,
@@ -247,7 +247,7 @@ export async function showFriendRequests() {
 	var list = document.getElementById('friends-requests');
 	list.innerHTML = '';
 
-	const url = 'https://localhost:8443/auth/FriendRequests/';
+	const url = 'https://' + window.location.host + '/auth/FriendRequests/';
 	const response = await getter(url);
 	if (response.error) {
 		list.textContent = "You have no pending friend requests !";
@@ -282,7 +282,7 @@ export async function showFriendRequests() {
 }
 
 export async function acceptFriendRequest(event) {
-	const url = 'https://localhost:8443/auth/FriendRequests/';
+	const url = 'https://' + window.location.host + '/auth/FriendRequests/';
 	const friend_name = event.target.name;
 
 	const data = {
@@ -301,7 +301,7 @@ export async function acceptFriendRequest(event) {
 
 export async function refuseFriendRequest(event) {
     const friend_name = event.target.name;
-    const url = 'https://localhost:8443/auth/RefuseFriendRequest/';
+    const url = 'https://' + window.location.host + '/auth/RefuseFriendRequest/';
     const data = {
         friend: friend_name,
     };
@@ -315,7 +315,7 @@ export async function refuseFriendRequest(event) {
 
 
 export async function getPongHistory() {
-	const url = 'https://localhost:8443/auth/pongHistory/'
+	const url = 'https://' + window.location.host + '/auth/pongHistory/'
 	const response = await getter(url);
 	if (response.error) {
 		document.getElementById('pong-history-wins').textContent = 0;

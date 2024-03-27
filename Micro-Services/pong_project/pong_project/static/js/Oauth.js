@@ -9,13 +9,16 @@ export class Oauth {
 	
 	async RedirectTo42Login() //step 1
 	{
-		const url = 'https://localhost:8443/auth/OAuthRedirectUrl/';
+		const url = 'https://' + window.location.host + '/auth/OAuthRedirectUrl/';
 		const response = await getter(url);
 		if (response.error) {
 			return ;
 		}
 		window.addEventListener('pageshow', this.redirHandlerPageshow); //NEEDED otherwise we see the not logged in page even if we are logged in when we come back from 42
 		window.addEventListener('unload', this.redirHandlerUnload); //NEDED SAME HARD TO HANDLE F M LIFE
+		// console.log(response.uri);
+		// console.log(window.location.host);
+		response.uri = response.uri.replace('localhost:8443', window.location.host)
 		window.location.href = response.uri;
 		// Now the user will be redirected to the 42 login page, which will proc isRedirectedFrom42API() in the listners !
 		// isRedirectedFrom42API() will be triggered because the url will contain the code and state parameters
@@ -52,7 +55,7 @@ export class Oauth {
 	}
 	
 	async obtainUserAccessToken() { //first step that get a specific user token, stored temporarily in the backend
-		const url = 'https://localhost:8443/auth/login42/';
+		const url = 'https://' + window.location.host + '/auth/login42/';
 		const data = {
 			'code': this.code,
 		};
@@ -61,7 +64,7 @@ export class Oauth {
 	}
 	
 	async CreateUserAndGetHisIDs() {
-		const url = 'https://localhost:8443/auth/login42/'
+		const url = 'https://' + window.location.host + '/auth/login42/'
 		const response = await getter(url);
 		if (response.error) {
 			alert(response.error);
@@ -72,14 +75,14 @@ export class Oauth {
 	
 	async LogTheUserIn(data) {
 		data['is42'] = true;
-		const url = 'https://localhost:8443/auth/login/';
+		const url = 'https://' + window.location.host + '/auth/login/';
 		const response = await poster(url, data);
 		if (response.error) {
 			window.client.nextPage('not-logged-home');
 			return ;
 		}
 		localStorage.setItem('jwt', response.token);
-		window.history.replaceState({id: 'logged-in-home'}, '', 'https://localhost:8443');
+		window.history.replaceState({id: 'logged-in-home'}, '', 'https://' + window.location.host);
 		window.client.divDisplay('logged-in-home');
 	}
 	
@@ -87,7 +90,7 @@ export class Oauth {
 
 	//checks the state gotten from the redirection post login on 42 website (identity check)
 	async isValidState(state) {
-		const url = 'https://localhost:8443/auth/OAuthVerifyState/';
+		const url = 'https://' + window.location.host + '/auth/OAuthVerifyState/';
 		const data = {
 			'state': state,
 		};
@@ -189,7 +192,7 @@ export async function poster(url, data) {
 // }
 
 // async function postToken(input){
-// 	const url = 'https://localhost:8443/auth/OAuth/';
+// 	const url = 'https://' + window.location.host + '/auth/OAuth/';
 // 	const formData = {
 //         path: input,
 //     };

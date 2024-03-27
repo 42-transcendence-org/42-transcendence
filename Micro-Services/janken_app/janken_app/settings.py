@@ -27,7 +27,7 @@ DEBUG = True
 
 MY_IP = os.environ.get('HOST_IP', '127.0.0.1')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', MY_IP]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', MY_IP, '192.168.252.193']
 
 
 # Application definition
