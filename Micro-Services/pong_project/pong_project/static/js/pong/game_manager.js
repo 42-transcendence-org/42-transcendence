@@ -16,6 +16,8 @@ export class GameManager {
 		this.request_id = undefined;
 		this.event_source = null;
 
+		this.key_handler_func = (event) => this.input.key_handler(event);
+
 		this.timestep = g.TIMESTEP;
 		this.local_tick = 0;
 		this.remote_tick = -1;
@@ -33,8 +35,6 @@ export class GameManager {
 	}
 
 	eventlisteners() {
-		document.addEventListener('keydown', (event) => this.input.key_handler(event));
-		document.addEventListener('keyup', (event) => this.input.key_handler(event));
 		document.getElementById('local-button').addEventListener('click', () => this.game_create(g.TYPE_LOCAL));
 		document.getElementById('remote-button').addEventListener('click', () => this.game_create(g.TYPE_REMOTE));
 		document.getElementById('ai-button').addEventListener('click', () => this.game_create(g.TYPE_AI));
@@ -48,6 +48,8 @@ export class GameManager {
 		this.aliases = ["Player 1", "Player 2"];
 		this.request_id = undefined;
 		this.event_source = null;
+
+		this.key_handler_func = (event) => this.input.key_handler(event);
 
 		this.timestep = g.TIMESTEP;
 		this.local_tick = 0;
@@ -201,26 +203,13 @@ export class GameManager {
 				"winner": winner,
 				"result": result,
 			}
-			// this.game_result[0] = this.game_type;
-			// this.game_result[1] = this.aliases[0]; /* Player 1 name */
-			// this.game_result[2] = this.aliases[1]; /* Player 2 name */
-			// this.game_result[3] = this.game.scores[0]; /* Player 1 score */
-			// this.game_result[4] = this.game.scores[1]; /* Player 2 score */
 		}
-	}
-
-	get_game_result() {
-		const r = [...this.game_result];
-		this.game_result = [];
-		return r;
 	}
 
 	async game_create(type) {
 
-		if (this.game && this.game_type === type) {
-			window.client.nextPage("game-div");
-			return;
-		}
+		document.addEventListener('keydown', this.key_handler_func);
+		document.addEventListener('keyup', this.key_handler_func);
 
 		this.game_type = type;
 
@@ -280,6 +269,10 @@ export class GameManager {
 	}
 
 	game_destroy(go_home) {
+
+		document.removeEventListener('keyup', this.key_handler_func);
+		document.removeEventListener('keydown', this.key_handler_func);
+
 		this.sound.stop_music();
 		cancelAnimationFrame(this.request_id);
 		if (go_home) {
@@ -306,6 +299,6 @@ export class GameManager {
 			throw new Error(data.error || 'Network response was not ok.');
 		}
 
-		this.game_id = data.id
+		this.game_id = data.id;
 	}
 }
