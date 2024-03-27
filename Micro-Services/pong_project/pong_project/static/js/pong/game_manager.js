@@ -31,7 +31,7 @@ export class GameManager {
 		this.graphics = new graphics.GraphicsManager();
 		this.snapshot = new snapshot.SnapshotManager();
 	}
-	
+
 	eventlisteners() {
 		document.addEventListener('keydown', (event) => this.input.key_handler(event));
 		document.addEventListener('keyup', (event) => this.input.key_handler(event));
@@ -129,7 +129,7 @@ export class GameManager {
 		}
 
 		if (this.game.status === g.STATUS_QUIT) {
-			this.game_destroy();
+			this.game_destroy(true);
 			return;
 		}
 
@@ -255,23 +255,21 @@ export class GameManager {
 							console.error('EventSource failed:', error);
 
 						this.event_source.close();
-						this.game_destroy();
-						/* FIXME: Why is 'Unauthorized: you are already logged in.' appearing */
-						window.client.home();
+						this.game_destroy(true);
 					}
 				}
 
 				this.event_source.onerror = (error) => {
 					console.error('EventSource failed:', error);
 					this.event_source.close();
-					this.game_destroy();
+					this.game_destroy(true);
 				};
 			}
 		}
 		catch (error) {
 			console.error(error);
 			alert("An error occured when creating the game.");
-			this.game_destroy();
+			this.game_destroy(true);
 			return;
 		}
 
@@ -281,10 +279,12 @@ export class GameManager {
 		this.request_id = requestAnimationFrame(this.update_loop.bind(this));
 	}
 
-	game_destroy() {
+	game_destroy(go_home) {
 		this.sound.stop_music();
 		cancelAnimationFrame(this.request_id);
-		window.client.home();
+		if (go_home) {
+			window.client.home();
+		}
 		this.reset();
 	}
 

@@ -35,22 +35,22 @@ export class Client {
 		this.Oauth.eventlisterners(); //42login
 		this.janken.eventlisteners(); //janken
 		this.tournament.eventlisteners(); //tournament
-		
+
 		//spa and 42login, has to be altogether for f5/redirection/firstload
 		if (await this.Oauth.isRedirectedFrom42API() === true) { // redirection from 42 API when trying to connect via 42
 			this.Oauth.login42();
 		} else if (history.length > 1 && history.state != null) { //reload of the page: SPA PART
 			this.divDisplay(history.state.id); //NOT ADDING TO HISTORY IF RELOAD
 		} else { //first load of the page, joigning via URL https://localhost:8443 for the first time
-			this.home();		
+			this.home();
 		}
 
 		//history event listener (back/forward buttons)
-		window.addEventListener('popstate', async () => {await this.HistoryButtonsClicked();});
+		window.addEventListener('popstate', async () => { await this.HistoryButtonsClicked(); });
 		//client event listeners
-		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
-		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
-		document.getElementById('test').addEventListener('click', () =>  this.test()); //test
+		document.getElementById('sound-button').addEventListener('click', function (event) { event.preventDefault(); sound.mute_sounds(); }); //mute/unmute
+		document.getElementById('home-banner').addEventListener('click', () => this.home()); //home
+		document.getElementById('test').addEventListener('click', () => this.test()); //test
 	}
 
 	async test() {
@@ -68,19 +68,23 @@ export class Client {
 
 	//ONLY SHOWS THE DIV, NO HISTORY ADDING
 	async divDisplay(div_to_show) {
-	
+
 		const isLogged = await this.connection.isLoggedIn();
 
 		if (div_to_show === 'friend-profile') {
 			div_to_show = await profile.showFriendInfo();
-		}	
-		
+		}
+
 		if (div_to_show === 'janken-game' || div_to_show === 'janken-already-played' || div_to_show === 'janken-result') {
 			div_to_show = await this.janken.game_in_progress();
 		}
 
 		if (div_to_show === 'janken-history') {
 			await this.janken.getHistory();
+		}
+
+		if (div_to_show !== 'game-div') {
+			this.game_manager.game_destroy(false);
 		}
 
 		if (div_to_show === 'pong-history') {
@@ -93,7 +97,7 @@ export class Client {
 		}
 
 		div_to_show = this.authorisationCheck(isLogged, div_to_show);
-			
+
 		if (this.previous_div) //hides previous div
 			this.previous_div.style.display = 'none';
 
@@ -120,7 +124,7 @@ export class Client {
 			}
 		});
 
-		if (canBeShown === false ) {
+		if (canBeShown === false) {
 			div_to_show = 'unauthorized';
 			document.getElementById('unauthorized').querySelector('p').textContent = 'Unauthorized: ' + (isLogged === 'true' ? 'you are already logged in.' : 'you need to be logged in to see this page.');
 		}
@@ -146,33 +150,33 @@ export class Client {
 	// HISTORY FUNCTIONS
 	// TO PUT THE DIV IN THE HISTORY FOR BACK AND FORWARD BUTTON EVENTS
 	addToHistory() {
-	
+
 		let div = this.previous_div;
 		if (div === null) {
-			return ;
+			return;
 		}
 
 		if (history.state !== null) {
 			if (div.id === 'friend-profile') {
-				history.pushState({id: div.id, friend_nickname: localStorage.getItem('friend_nickname')}, '', '');
+				history.pushState({ id: div.id, friend_nickname: localStorage.getItem('friend_nickname') }, '', '');
 				localStorage.removeItem('friend_nickname');
 			} else {
-				history.pushState({id: div.id}, '', '');
+				history.pushState({ id: div.id }, '', '');
 			}
 		} else {
-			history.replaceState({id: div.id}, '', '');
+			history.replaceState({ id: div.id }, '', '');
 		}
 	}
-	
+
 	//for BACK and FORWARD buttons
 	async HistoryButtonsClicked() {
 
 		if (history.state === null) {
-			return ;
+			return;
 		}
 		await this.divDisplay(history.state.id);
 	}
-	
+
 
 	// HOME BUTTON FUNCTION
 	async home() {
@@ -183,7 +187,7 @@ export class Client {
 			this.nextPage("not-logged-home");
 		}
 	}
-	
+
 	//COOKIE FUNCTION
 	/* FIXME: Could be probably be replaced by var csrf = document.querySelector('meta[name="csrf-token"]').content; */
 	get_cookie(name) {
