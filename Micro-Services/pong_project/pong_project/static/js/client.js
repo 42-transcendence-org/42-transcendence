@@ -80,7 +80,7 @@ export class Client {
 			div_to_show = await profile.showFriendInfo();
 		}	
 		
-		if (div_to_show === 'janken-game' || div_to_show === 'janken-already-played' || div_to_show === 'janken-result') {
+		if (div_to_show === 'janken-game' || div_to_show === 'janken-already-played' || div_to_show === 'janken-result' || div_to_show === 'janken-lobby') {
 			div_to_show = await this.janken.game_in_progress();
 		}
 

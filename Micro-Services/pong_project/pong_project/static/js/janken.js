@@ -2,6 +2,7 @@ import * as Oauth from './Oauth.js';
 
 export class Janken {
 	constructor() {
+		this.inJankenGame = false;
 	}
 	
 	eventlisteners() {
@@ -30,7 +31,9 @@ export class Janken {
 			document.getElementById("janken-game-in-progress-button").style.display = "none";
 			document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'none');
 			document.getElementById('janken-button').style.setProperty('--display-before', 'none');
+			this.inJankenGame = false;
 		} else {
+			this.inJankenGame = true;
 			if (response.message == 'You are waiting for an opponent') {
 				clearInterval(localStorage.getItem('id_interval_game_waiting'));
 				localStorage.setItem('id_interval_game_waiting', setInterval(this.waitForOpponent, 1000));
