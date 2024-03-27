@@ -345,6 +345,8 @@ def update_profile_picture(request):
     if request.method == 'POST':
         try:
             profile_picture = request.FILES.get('profile_picture')
+            if profile_picture.content_type.startswith('image') == False:
+                raise Exception("The file is not an image.")
             name = "profile_picture_" + request.user.username + ".jpg"
             if profile_picture:
                 with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:
@@ -357,7 +359,6 @@ def update_profile_picture(request):
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
-        
     return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
 
 class EmailAPIView(APIView):
@@ -385,6 +386,7 @@ class NicknameAPIView(APIView):
                     return (JsonResponse({"error": "nickname is required"}, status=400))
                 if (isNicknameUnique(first_name) == False):
                     return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
+                
                 request.user.profile.nickname = first_name
                 request.user.profile.save()
                 request.user.save()

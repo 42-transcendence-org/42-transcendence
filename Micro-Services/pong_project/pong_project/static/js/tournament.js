@@ -18,6 +18,7 @@ export class Tournament {
 	displayWinner(winnerFinal, loserFinal) {
 		document.getElementById('tournament-display-final-winner').textContent = winnerFinal;
 		document.getElementById('tournament-display-final-loser').textContent = loserFinal;
+		//stocker dans la blockchain le vainqueur final ici, ou les score des différents match dans 'secondgame' et 'finalgame', ou dans le back au fur et à esure et envoyer une requete depuis là bas à la fin, tout est faisable
 		window.client.nextPage('tournament-display-winner');
 	}
 

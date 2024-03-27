@@ -33,6 +33,8 @@ server {
     ssl_certificate /etc/nginx/certs/cert.pem;
     ssl_certificate_key /etc/nginx/certs/key.pem;
 
+    client_max_body_size 100M;
+
     # Define allowed SSL protocols
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
 

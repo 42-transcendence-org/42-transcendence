@@ -18,6 +18,7 @@ export class Chatbot {
 
 		const response = await poster(url, data);
 		if (response.error) {
+			console.warn(response.error);
 			return ;
 		}
 
