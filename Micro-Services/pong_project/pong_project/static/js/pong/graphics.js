@@ -164,7 +164,7 @@ export class GraphicsManager {
 
 	render_text_ended(game_type) {
 		const who_won = this.display.scores[g.ID_PLAYER1] > this.display.scores[g.ID_PLAYER2] ? 1 : 0;
-		const text_victory = who_won ? "Player 1 won !" : "Player 2 won !";
+		const text_victory = who_won ? window.client.game_manager.aliases[0] + " won !" : window.client.game_manager.aliases[1] + " won !";
 		const text_again = "Hit 'Space' to play again";
 		const text_quit = "or 'Escape' to quit";
 		const nreplay = this.display.players_ready[g.ID_PLAYER1] + this.display.players_ready[g.ID_PLAYER2];

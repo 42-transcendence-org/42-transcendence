@@ -20,6 +20,7 @@ export class Janken {
 		document.getElementById('janken-history-back').addEventListener('click', () => client.nextPage('janken'));
 		document.getElementById('janken-history-back-to-profile').addEventListener('click', () => client.nextPage('profile'));
 		document.getElementById('janken-history-button').addEventListener('click', () => client.nextPage('janken-history'));
+		document.getElementById('janken-not-authorized-back').addEventListener('click', () => client.nextPage('janken'));
 	}
 	
 	async relaunchGetters() {

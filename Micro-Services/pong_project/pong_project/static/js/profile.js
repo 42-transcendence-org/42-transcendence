@@ -13,6 +13,8 @@ export async function eventlisteners() {
 	document.getElementById('profile-janken-history-button').addEventListener('click', () => window.client.nextPage('janken-history'));
 	document.getElementById('profile-pong-history-button').addEventListener('click', () => window.client.nextPage('pong-history'));
 	document.getElementById('pong-history-back').addEventListener('click', () => window.client.nextPage('profile'));
+
+	document.getElementById('friend-not-found-back').addEventListener('click', () => window.client.nextPage('friends'));
 }
 
 export async function fetchProfileData(div_to_show) {
@@ -160,17 +162,14 @@ export async function addFriend(event) {
 export async function show_friendlist() {
 	
 	
-	var list = document.getElementById('friends-list');
 	var list_names = document.getElementById('friends-list-names');
 	var list_delete = document.getElementById('friends-list-delete');
 	list_names.innerHTML = '';
-	// list.innerHTML = '';
 	list_delete.innerHTML = '';
 
 	const url = 'https://' + window.location.host + '/auth/getMyFriends/';
 	const response = await getter(url);
 	if (response.error) {
-		list.textContent = "You have no friends yet !";
 		return ;
 	}
 

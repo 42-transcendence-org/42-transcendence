@@ -6,19 +6,22 @@ export class Tournament {
 
 	eventlisteners() {
 		document.getElementById('tournament-button').addEventListener('click', () => window.client.nextPage('tournament-lobby'));
-		// document.getElementById('tournament-nicknames-form').addEventListener('submit', (event) => this.createTournament(event));
-		// document.getElementById('tournament-game-start-button').addEventListener('click', () => window.client.game_manager.game_create(4));
-		// document.getElementById('tournament-game-start-button-round2').addEventListener('click', () => window.client.game_manager.game_create(4));
-		document.getElementById('tournament-nicknames-form').addEventListener('click', (event) => this.createTournament(event));
-		document.getElementById('tournament-game-start-button').addEventListener('click', () => this.secondGame(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
-		document.getElementById('tournament-game-start-button-round2').addEventListener('click', () => this.finalGame(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
-		document.getElementById('tournament-game-start-button-final').addEventListener('click', () => this.displayWinner(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
+		document.getElementById('tournament-nicknames-form').addEventListener('submit', (event) => this.createTournament(event));
+		document.getElementById('tournament-game-start-button').addEventListener('click', () => window.client.game_manager.game_create(3));
+		document.getElementById('tournament-game-start-button-round2').addEventListener('click', () => window.client.game_manager.game_create(3));
+		document.getElementById('tournament-game-start-button-final').addEventListener('click', () => window.client.game_manager.game_create(3));
+		// document.getElementById('tournament-nicknames-form').addEventListener('click', (event) => this.createTournament(event));
+		// document.getElementById('tournament-game-start-button').addEventListener('click', () => this.secondGame(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
+		// document.getElementById('tournament-game-start-button-round2').addEventListener('click', () => this.finalGame(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
+		// document.getElementById('tournament-game-start-button-final').addEventListener('click', () => this.displayWinner(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
 	}
 
 	displayWinner(winnerFinal, loserFinal) {
 		document.getElementById('tournament-display-final-winner').textContent = winnerFinal;
 		document.getElementById('tournament-display-final-loser').textContent = loserFinal;
+
 		//stocker dans la blockchain le vainqueur final ici, ou les score des différents match dans 'secondgame' et 'finalgame', ou dans le back au fur et à esure et envoyer une requete depuis là bas à la fin, tout est faisable
+		window.client.inTournament = false;
 		window.client.nextPage('tournament-display-winner');
 	}
 
@@ -31,6 +34,7 @@ export class Tournament {
 		localStorage.setItem('tournament-game-p1', localStorage.getItem('tournament-winner-game1')); //get ids in game through this
 		localStorage.setItem('tournament-game-p2', winnerGame2);
 
+		localStorage.setItem('tournament-round', 3);
 		localStorage.removeItem('tournament-winner-game1');
 		window.client.nextPage('tournament-display-final');
 	}
@@ -48,6 +52,7 @@ export class Tournament {
 
 		localStorage.removeItem('tournament-p3');
 		localStorage.removeItem('tournament-p4');
+		localStorage.setItem('tournament-round', 2);
 
 		window.client.nextPage('tournament-display-round2');
 	}
@@ -58,10 +63,9 @@ export class Tournament {
 			event.preventDefault();
 		const data = [
 			document.getElementById('tournament-host-nickname').innerText,
-			"A", "B", "C",
-			// document.getElementById('tournament-player-2').value,
-			// document.getElementById('tournament-player-3').value,
-			// document.getElementById('tournament-player-4').value,
+			document.getElementById('tournament-player-2').value,
+			document.getElementById('tournament-player-3').value,
+			document.getElementById('tournament-player-4').value,
 		]
 
 		document.getElementById('tournament-host-nickname').value = '';
@@ -82,7 +86,9 @@ export class Tournament {
 
 		localStorage.setItem('tournament-game-p1', data[0]);  //get ids in game through this
 		localStorage.setItem('tournament-game-p2', data[1]);
+		localStorage.setItem('tournament-round', 1);
 
+		window.client.inTournament = true;
 		window.client.nextPage('tournament-display-start');
 
 	}

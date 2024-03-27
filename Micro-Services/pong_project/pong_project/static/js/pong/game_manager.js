@@ -119,6 +119,9 @@ export class GameManager {
 				this.game.update(this.timestep);
 
 				if (this.game.status === g.STATUS_ENDED) {
+					if (this.game_type === g.TYPE_TOURNY) {
+						this.game.status = g.STATUS_QUIT;
+					}
 					this.save_game_result();
 				}
 
@@ -175,21 +178,21 @@ export class GameManager {
 				game = "remote";
 			} else if (this.game_type === g.TYPE_AI) {
 				game = "ai";
+			} else if (this.game_type === g.TYPE_TOURNY) {
+				game = "tournament";
 			}
-			var opponent = "Computer"
-			if (game === "remote") {
-				opponent = "Player 2"
-			}
-
+			var opponent = this.aliases[1];
 			var winner = opponent;
+			var loser = this.aliases[0];
 
 			if (this.game.scores[0] > this.game.scores[1]) {
-				winner = "Owner";
+				winner = this.aliases[0];
+				loser = this.aliases[1];
 			}
 
 			var result = "Defeat";
 
-			if (winner === "Owner") {
+			if (winner === this.aliases[0]) {
 				result = "Victory";
 			}
 
@@ -199,6 +202,7 @@ export class GameManager {
 				"player_score": this.game.scores[0],
 				"opponent_score": this.game.scores[1],
 				"winner": winner,
+				"loser": loser,
 				"result": result,
 			}
 			// this.game_result[0] = this.game_type;
@@ -223,6 +227,13 @@ export class GameManager {
 		}
 
 		this.game_type = type;
+		if (type === g.TYPE_TOURNY && localStorage.getItem('tournament-game-p1') && localStorage.getItem('tournament-game-p2')) {
+			this.aliases[0] = localStorage.getItem('tournament-game-p1');
+			this.aliases[1] = localStorage.getItem('tournament-game-p2');
+		}
+
+		document.getElementById('game-div-p1').textContent = this.aliases[1];
+		document.getElementById('game-div-p2').textContent = this.aliases[0];
 
 		try {
 			if (this.game_type === g.TYPE_REMOTE) {
@@ -284,7 +295,24 @@ export class GameManager {
 	game_destroy() {
 		this.sound.stop_music();
 		cancelAnimationFrame(this.request_id);
-		window.client.home();
+		if (this.game_type !== g.TYPE_TOURNY)
+			window.client.home();
+		else {
+			if (localStorage.getItem('tournament-round') === "1") {
+				window.client.tournament.secondGame(this.game_result['winner'], this.game_result['loser']);
+			} else if (localStorage.getItem('tournament-round') === "2") {
+				window.client.tournament.finalGame(this.game_result['winner'], this.game_result['loser']);
+			} else if (localStorage.getItem('tournament-round') === "3") {
+				window.client.tournament.displayWinner(this.game_result['winner'], this.game_result['loser']);
+			}
+
+		}
+		this.reset();
+	}
+
+	game_delete() {
+		this.sound.stop_music();
+		cancelAnimationFrame(this.request_id);
 		this.reset();
 	}
 

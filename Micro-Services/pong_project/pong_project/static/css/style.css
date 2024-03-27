@@ -670,13 +670,15 @@ label[for="OpenAIquestion"] {
 #tournament-lobby,
 #tournament-display-start,
 #tournament-display-round2,
-#tournament-display-final {
+#tournament-display-final,
+#tournament-display-winner {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	width: 60%;
 	height: 100%;
+	font-size: 25px;
 	margin:auto;
 	background-color: #DCDCDC;
 	border: 1px solid #ccc;

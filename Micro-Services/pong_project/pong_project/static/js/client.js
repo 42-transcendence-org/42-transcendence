@@ -23,6 +23,8 @@ export class Client {
 		this.Oauth = new Oauth.Oauth();
 		this.janken = new janken.Janken();
 		this.tournament = new tournament.Tournament();
+
+		this.inTournament = false;
 		sound.mute_music(); //no music for now
 	}
 
@@ -51,6 +53,9 @@ export class Client {
 		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
 		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
 		document.getElementById('test').addEventListener('click', () =>  this.test()); //test
+
+		document.getElementById('pong-not-authorized-back').addEventListener('click', () => this.home());
+		document.getElementById('tournament-display-not-authorized-back').addEventListener('click', () => this.home());
 	}
 
 	async test() {
@@ -83,8 +88,20 @@ export class Client {
 			await this.janken.getHistory();
 		}
 
+		if (div_to_show !== 'game-div') {
+			this.game_manager.game_delete();
+		}
+
 		if (div_to_show === 'pong-history') {
 			await profile.getPongHistory();
+		}
+
+		if (div_to_show === 'game-div' && this.game_manager.game === null) {
+			div_to_show = 'pong-not-authorized';
+		}
+
+		if (div_to_show.includes('tournament-display') && this.inTournament === false) {
+			div_to_show = 'tournament-display-not-authorized';
 		}
 
 		if (isLogged === 'true') {
