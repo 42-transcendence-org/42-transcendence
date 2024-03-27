@@ -46,6 +46,7 @@ services:
       - OAUTH_REDIRECT_URI=${OAUTH_REDIRECT_URI}
       - OAUTH_USERS_PASSWORD=${OAUTH_USERS_PASSWORD}
       - OPENAI_API_KEY=${OPEN_KEY}
+      - JANKEN_SECRET=${JANKEN_SECRET}
     volumes:
       - ./Micro-Services/authentification:/app
     ports:
@@ -104,6 +105,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - HOST_IP=${HOST_IP}
+      - JANKEN_SECRET=${JANKEN_SECRET}
     volumes:
       - ./Micro-Services/janken_app/:/app
     ports:

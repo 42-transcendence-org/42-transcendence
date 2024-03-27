@@ -210,6 +210,7 @@ class amIPlayingAPIView(APIView): #check if you are playing a game
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
+from django.contrib.auth.decorators import login_required
 
 class jankenHistoryAPIView(APIView): #get the history of your games
     def get(self, request, *args, **kwargs):

@@ -363,7 +363,7 @@ export async function getNicknameWithUserId(user_id) {
 	};
 	const response = await poster(url, data);
 	if (response.error) {
-		alert(response.error);
+		return 'deleted-user'
 		return ;
 	}
 	return (response.nickname);

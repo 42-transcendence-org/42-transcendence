@@ -119,6 +119,7 @@ def generate_jwt_token(user):
         'user_id': user.id,
         'username': user.username,
         'nickname': user.profile.nickname,
+        'secret': os.environ.get('JANKEN_SECRET'),
         'exp': int(dt.strftime('%s'))
     }, settings.SECRET_KEY, algorithm="HS256")
 

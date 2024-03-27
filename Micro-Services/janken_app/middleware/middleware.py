@@ -1,6 +1,7 @@
 import jwt
 from janken_app import settings
-
+import os
+from django.http import JsonResponse
 
 class JWTAuthenticationMiddleware:
     def __init__(self, get_response):
@@ -12,12 +13,15 @@ class JWTAuthenticationMiddleware:
             try:
                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
                 request.user_id = payload.get('user_id')
+                request.secret = payload.get('secret')
                 request.username = payload.get('username')
+                if (request.user_id is None) or (request.secret is None) or (request.username is None):
+                    raise ValueError('Invalid payload')
+                if (request.secret != os.environ.get('JANKEN_SECRET')):
+                    raise ValueError('Invalid secret')
             except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, ValueError) as e:
                 print('failure jwt')
-                # Decide how you want to handle errors: log, set request.user_id to None, or return an error response
-                #FIXME
-                pass
+                return JsonResponse({'error': str(e)}, status=400)
         return self.get_response(request)
     
     @staticmethod
