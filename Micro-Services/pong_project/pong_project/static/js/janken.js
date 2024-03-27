@@ -1,4 +1,5 @@
 import * as Oauth from './Oauth.js';
+import { getNicknameWithUserId } from './profile.js';
 
 export class Janken {
 	constructor() {
@@ -24,8 +25,140 @@ export class Janken {
 		document.getElementById('janken-not-authorized-back').addEventListener('click', () => client.nextPage('janken'));
 	}
 	
+	async game_in_progress() {
+		const url = 'https://' + window.location.host + '/janken/gameInProgress/'
+		const response = await Oauth.getter(url);
+		if (response.error) {
+			return ('janken-not-authorized');
+		}
+		if (response.message == 'waiting for opponent') {
+			return ('janken-lobby');
+		} else if (response.message == 'game in progress') {
+			document.getElementById('janken-game-opponent-nickname').textContent = "Playing against " + await getNicknameWithUserId(response.opponent);
+			return ('janken-game');
+		} else if (response.message == 'already played') {
+			document.getElementById('janken-already-played-opponent-nickname').textContent = await getNicknameWithUserId(response.opponent);
+			return ('janken-already-played');
+		} else if (response.message == 'game finished') {
+			await this.displayResults();
+			return ('janken-result');
+		}
+		// get the game in progress
+	}
+
+	async create_game() {
+		const url = 'https://' + window.location.host + '/janken/createJankenGame/'
+		const response = await Oauth.getter(url);
+		if (response.error) {
+
+			if (response.error == "Error: You are already waiting for an opponent") {
+				await window.client.nextPage('janken-lobby');
+			}
+			return ;
+		}
+		await window.client.nextPage('janken-lobby');
+		document.getElementById("janken-game-in-progress-button").style.display = "block";
+	}
+
+	async join_game() {
+		const url = 'https://' + window.location.host + '/janken/jankenGame/'
+		const response = await Oauth.getter(url);
+		if (response.error) {
+			alert(response.error);
+			return ;
+		}
+		await window.client.nextPage('janken-game');
+		document.getElementById("janken-game-in-progress-button").style.display = "block";
+	}
+
+	async play(choice) {
+		const url = 'https://' + window.location.host + '/janken/jankenGame/'
+		const data = {
+			'input': choice,
+		};
+		const response = await Oauth.poster(url, data);
+		if (response.error) {
+			alert(response.error);
+			return ;
+		}
+		await window.client.nextPage('janken-already-played');
+	}
+
+	async waitForOpponent() {
+		const url = 'https://' + window.location.host + '/janken/waitForOpponent/'
+		const response = await Oauth.getter(url);
+		if (response.error) {
+			return ;
+		}
+		clearInterval(localStorage.getItem('id_interval_game_waiting'));
+		localStorage.removeItem('id_interval_game_waiting');
+		if (document.getElementById('janken-lobby').style.display != 'none') {
+			await window.client.nextPage('janken-game');
+		} else {
+			alert(await getNicknameWithUserId(response.opponent) + " joined your game !")
+			document.getElementById('janken-button').style.setProperty('--display-before', 'flex');
+			document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'flex');
+		}
+	}		
+		
+	async waitResults() {
+		const url = 'https://' + window.location.host + '/janken/waitForResults/'
+		const response = await Oauth.getter(url);
+		if (response.error) {
+			if (response.error == 'Error: You are not part of a game')
+				clearInterval(localStorage.getItem('id_interval_wait_results'));
+			return ;
+		}
+		clearInterval(localStorage.getItem('id_interval_wait_results'));
+		localStorage.removeItem('id_interval_wait_results');
+		if (document.getElementById('janken-already-played').style.display != 'none')
+			await window.client.nextPage('janken-result');
+		else
+			alert("The game is finished !")
+	}
+
+	async displayResults() {
+		
+		clearInterval(localStorage.getItem('id_interval_wait_results'));
+		localStorage.removeItem('id_interval_wait_results');
+		const url = 'https://' + window.location.host + '/janken/getResults/'
+		const response = await Oauth.getter(url);
+		if (response.error) {
+			alert(response.error);
+			return ;
+		}
+		response.creator = await getNicknameWithUserId(response.creator);
+		response.opponent = await getNicknameWithUserId(response.opponent);
+
+		var div = document.getElementById('janken-result-text');
+		div.textContent = response.creator + " played " + response.creator_choice + " and " + response.opponent + " played " + response.opponent_choice + ". ";
+		if (response.winner == response.myself) {
+			div.textContent += "You " + response.result + " !";
+			div.style.backgroundColor = "green";
+		}
+		else if (response.result == "draw") {
+			div.textContent += "It's a draw !";
+			div.style.backgroundColor = "yellow";
+		}
+		else {
+			div.textContent += await getNicknameWithUserId(response.winner) + " " + response.result + " !";
+			div.style.backgroundColor = "red";
+		}
+	}
+	
+	async cancel_game() {
+		const url = 'https://' + window.location.host + '/janken/deleteMyJankenGameCreation/'
+		const response = await Oauth.getter(url);
+		if (response.error) {
+			return ;
+		}
+		await window.client.nextPage('janken');
+		clearInterval(localStorage.getItem('id_interval_game_waiting'));
+		localStorage.removeItem('id_interval_game_waiting');
+	}
+
 	async relaunchGetters() {
-		const url = 'https://' + window.location.host + '/auth/amIPlaying/'
+		const url = 'https://' + window.location.host + '/janken/amIPlaying/'
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			document.getElementById("janken-game-in-progress-button").style.display = "none";
@@ -48,183 +181,47 @@ export class Janken {
 		}
 	}
 
-	async getHistory() {
-		const url = 'https://' + window.location.host + '/auth/jankenHistory/'
+	async displayJankenHistory() {
+		const url = 'https://' + window.location.host + '/janken/jankenHistory/'
+		var div = document.getElementById('janken-history-list');
+		div.textContent = "";
 		const response = await Oauth.getter(url);
 		if (response.error) {
 			document.getElementById('janken-history-wins').textContent = 0;
 			document.getElementById('janken-history-draws').textContent = 0;
-			document.getElementById('janken-history-losses').textContent =  0;
+			document.getElementById('janken-history-losses').textContent = 0;
+			document.getElementById('janken-history-winrate-display').textContent = "No winrate to display";
 			return ;
 		}
-		var div = document.getElementById('janken-history-list');
-		div.textContent = "";
 		const limit = response.history.length > 10 ? response.history.length - 10 : 0;
 		for (var i = response.history.length - 1; i >= limit; i--) {
 			var p = document.createElement('p');
 			var p2 = document.createElement('p');
+			response.history[i].owner = await getNicknameWithUserId(response.history[i].owner);
+			response.history[i].opponent = await getNicknameWithUserId(response.history[i].opponent);
 			p.textContent = response.history[i].owner + " played ";
 			p.textContent += response.history[i].owner_choice  + (response.history[i].owner_choice == "None" ? "(Forfeit)" : "");
 			p.textContent += " and " + response.history[i].opponent + " played ";
 			p.textContent += response.history[i].opponent_choice + (response.history[i].opponent_choice == "None" ? "(Forfeit)" : "");
 			p.textContent += ". Result: " + response.history[i].result + ". ";
 			p2.textContent += "Game ended the " + response.history[i].end_day + " at " + response.history[i].end_time + ".";
-			if (response.history[i].winner == response.history[i].owner) {
-				// p.textContent += "You " + response.history[i].result + " !";
+			
+			if (response.history[i].result == "Victory") {
 				p.style.backgroundColor = "green";
 			}
 			else if (response.history[i].result == "draw") {
-				// p.textContent += "It's a draw !";
 				p.style.backgroundColor = "yellow";
 			}
 			else {
-				// p.textContent += response.history[i].winner + " " + response.history[i].result + " !";
 				p.style.backgroundColor = "red";
 			}
 			div.appendChild(p);
 			p.appendChild(p2);
 		}
+		document.getElementById('janken-history-winrate-display').textContent = response.winrate;
 		document.getElementById('janken-history-wins').textContent = response.wins;
 		document.getElementById('janken-history-draws').textContent = response.draws;
 		document.getElementById('janken-history-losses').textContent =  response.losses;
 	}
 
-	async game_in_progress() {
-		const url = 'https://' + window.location.host + '/auth/gameInProgress/'
-		const response = await Oauth.getter(url);
-		if (response.error) {
-			// if (document.getElementById('janken').style.display == 'none')
-			// 	alert(response.error);
-			return ('janken-not-authorized');
-		}
-		if (response.message == 'waiting for opponent') {
-			return ('janken-lobby');
-		} else if (response.message == 'game in progress') {
-			document.getElementById('janken-game-opponent-nickname').textContent = "Playing against " + response.opponent;
-			return ('janken-game');
-		} else if (response.message == 'already played') {
-			document.getElementById('janken-already-played-opponent-nickname').textContent = response.opponent;
-			return ('janken-already-played');
-		} else if (response.message == 'game finished') {
-			await this.displayResults();
-			return ('janken-result');
-		}
-		// get the game in progress
-	}
-
-	async create_game() {
-		const url = 'https://' + window.location.host + '/auth/createJankenGame/'
-		const response = await Oauth.getter(url);
-		if (response.error) {
-			// if (response.error == "Error: You are already playing a game") {
-			// 	window.client.nextPage('janken-game');
-			// } else 
-			if (response.error == "Error: You are already waiting for an opponent") {
-				await window.client.nextPage('janken-lobby');
-			}
-			alert(response.error);
-			return ;
-		}
-		await window.client.nextPage('janken-lobby');
-		document.getElementById("janken-game-in-progress-button").style.display = "block";
-			// create a game waiting for an opponent
-	}
-
-	async join_game() {
-		const url = 'https://' + window.location.host + '/auth/jankenGame/'
-		const response = await Oauth.getter(url);
-		if (response.error) {
-			alert(response.error);
-			return ;
-		}
-		await window.client.nextPage('janken-game');
-		document.getElementById("janken-game-in-progress-button").style.display = "block";
-			// join a game waiting for an opponent
-	}
-
-	async play(choice) {
-		const url = 'https://' + window.location.host + '/auth/jankenGame/'
-		const data = {
-			'input': choice,
-		};
-		const response = await Oauth.poster(url, data);
-		if (response.error) {
-			alert(response.error);
-			return ;
-		}
-		await window.client.nextPage('janken-already-played');
-	}
-
-	async waitForOpponent() {
-		const url = 'https://' + window.location.host + '/auth/waitForOpponent/'
-		const response = await Oauth.getter(url);
-		if (response.error) {
-			return ;
-		}
-		clearInterval(localStorage.getItem('id_interval_game_waiting'));
-		localStorage.removeItem('id_interval_game_waiting');
-		if (document.getElementById('janken-lobby').style.display != 'none') {
-			await window.client.nextPage('janken-game');
-		} else {
-			alert(response.opponent + "joined your game !")
-			document.getElementById('janken-button').style.setProperty('--display-before', 'flex');
-			document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'flex');
-		}
-	}		
-		
-	async waitResults() {
-		const url = 'https://' + window.location.host + '/auth/waitForResults/'
-		const response = await Oauth.getter(url);
-		if (response.error) {
-			if (response.error == 'Error: You are not part of a game')
-				clearInterval(localStorage.getItem('id_interval_wait_results'));
-			return ;
-		}
-		clearInterval(localStorage.getItem('id_interval_wait_results'));
-		localStorage.removeItem('id_interval_wait_results');
-		if (document.getElementById('janken-already-played').style.display != 'none')
-			await window.client.nextPage('janken-result');
-		else
-			alert("The game is finished !")
-		// wait for the results
-	}
-
-	async displayResults() {
-		
-		clearInterval(localStorage.getItem('id_interval_wait_results'));
-		localStorage.removeItem('id_interval_wait_results');
-		const url = 'https://' + window.location.host + '/auth/getResults/'
-		const response = await Oauth.getter(url);
-		if (response.error) {
-			alert(response.error);
-			return ;
-		}
-		var div = document.getElementById('janken-result-text');
-		div.textContent = response.creator + " played " + response.creator_choice + " and " + response.opponent + " played " + response.opponent_choice + ". ";
-		if (response.winner == response.myself) {
-			div.textContent += "You " + response.result + " !";
-			div.style.backgroundColor = "green";
-		}
-		else if (response.result == "draw") {
-			div.textContent += "It's a draw !";
-			div.style.backgroundColor = "yellow";
-		}
-		else {
-			div.textContent += response.winner + " " + response.result + " !";
-			div.style.backgroundColor = "red";
-		}
-	}
-	
-	async cancel_game() {
-		const url = 'https://' + window.location.host + '/auth/deleteMyJankenGameCreation/'
-		const response = await Oauth.getter(url);
-		if (response.error) {
-			alert(response.error);
-			return ;
-		}
-		await window.client.nextPage('janken');
-		clearInterval(localStorage.getItem('id_interval_game_waiting'));
-		localStorage.removeItem('id_interval_game_waiting');
-		// cancel the game
-	}
 }

@@ -85,7 +85,7 @@ export class Client {
 		}
 
 		if (div_to_show === 'janken-history') {
-			await this.janken.getHistory();
+			await this.janken.displayJankenHistory();
 		}
 
 		if (div_to_show !== 'game-div') {

@@ -3,17 +3,13 @@ from django.urls import path
 #connection.js
 from .views import LoginAPIView, RegisterAPIView, LogoutAPIView, check_authentication
 #profile
-from .views import getInfo, getFriendInfoAPIView, addFriendAPIView, getMyFriendsAPIView, FriendRequestsAPIView, update_profile_picture, EmailAPIView, NicknameAPIView, PasswordAPIView, RefuseFriendRequestAPIView, DeleteFriendAPIView
+from .views import getInfo, getFriendInfoAPIView, addFriendAPIView, getMyFriendsAPIView, FriendRequestsAPIView, update_profile_picture, EmailAPIView, NicknameAPIView, PasswordAPIView, RefuseFriendRequestAPIView, DeleteFriendAPIView, getNicknameWithUserIdAPIView
 #42Oauth
 from .views import Login42APIView, OAuthRedirectUrlAPIView, OAuthVerifyStateAPIView
 #chatbot
 from .views import chatbotAPIView
-#janken
-from .views import createJankenGameAPIView, jankenGameAPIView, waitForOpponentAPIView, waitForResultsAPIView, getResultsAPIView, deleteMyJankenGameCreationAPIView, gameInProgressAPIView, amIPlayingAPIView
 #history
-from .views import jankenHistoryAPIView, pongHistoryAPIView
-#tournament
-from .views import createTournamentAPIView
+from .views import pongHistoryAPIView
 
 
 urlpatterns = [
@@ -36,7 +32,8 @@ urlpatterns = [
     path("email/", EmailAPIView.as_view(), name="email_change"),
     path("nickname/", NicknameAPIView.as_view(), name="nickname_change"),
     path("password/", PasswordAPIView.as_view(), name="password"),
-
+	path('getNicknameWithUserId/', getNicknameWithUserIdAPIView.as_view(), name='getNicknameWithUserId'),
+	
     #42OAuth
 	path('login42/', Login42APIView.as_view(), name='Login42'),
 	path('OAuthRedirectUrl/', OAuthRedirectUrlAPIView.as_view(), name='OAuthRedirectUrl'),
@@ -45,19 +42,6 @@ urlpatterns = [
     #chatbot
 	path('chatgpt/', chatbotAPIView.as_view(), name='chatgpt'),
 	
-    #janken
-	path('createJankenGame/', createJankenGameAPIView.as_view(), name='createJankenGame'),
-	path('jankenGame/', jankenGameAPIView.as_view(), name='jankenGame'),
-	path('waitForOpponent/', waitForOpponentAPIView.as_view(), name='waitForOpponent'),
-	path('waitForResults/', waitForResultsAPIView.as_view(), name='waitForResults'),
-	path('gameInProgress/', gameInProgressAPIView.as_view(), name='gameInProgress'),
-	path('getResults/', getResultsAPIView.as_view(), name='getResults'),
-	path('deleteMyJankenGameCreation/', deleteMyJankenGameCreationAPIView.as_view(), name='deleteMyJankenGameCreation'),
-	path('amIPlaying/', amIPlayingAPIView.as_view(), name='amIPlaying'),
-
 	#history
-	path('jankenHistory/', jankenHistoryAPIView.as_view(), name='jankenHistory'),
 	path('pongHistory/', pongHistoryAPIView.as_view(), name='pongHistory'),
-
-	path('createTournament/', createTournamentAPIView.as_view(), name='createTournament'),
 ]

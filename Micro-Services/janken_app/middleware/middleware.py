@@ -14,6 +14,7 @@ class JWTAuthenticationMiddleware:
                 request.user_id = payload.get('user_id')
                 request.username = payload.get('username')
             except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, ValueError) as e:
+                print('failure jwt')
                 # Decide how you want to handle errors: log, set request.user_id to None, or return an error response
                 #FIXME
                 pass

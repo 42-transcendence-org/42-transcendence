@@ -4,7 +4,7 @@ DOCKER_COMPOSE_CMD := $(shell command -v docker-compose || echo "docker compose"
 # -f = specify the location of the compose file
 DOCKER_COMPOSE	:= $(DOCKER_COMPOSE_CMD) -f ./docker-compose.yml --env-file ./.env
 
-VOLUMES_DIR		:= front_db auth_db game_db bot_db
+VOLUMES_DIR		:= front_db auth_db game_db bot_db janken_db
 VOLUMES_PATH	:= /home/will/code/data/transcendence_data_our#MODIFY IF NEEDED
 VOLUMES			:= $(addprefix $(VOLUMES_PATH)/,$(VOLUMES_DIR))
 

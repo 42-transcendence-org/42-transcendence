@@ -108,7 +108,24 @@ services:
       - ./Micro-Services/janken_app/:/app
     ports:
       - "8004:8000"
+    networks:
+      - janken_app
+    depends_on:
+      - janken_db
     restart: on-failure
+
+  janken_db:
+    image: postgres:16-bookworm
+    volumes:
+      - janken_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: janken_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+    networks:
+      - janken_app
+    restart: on-failure
+
 
   tournament:
     build:
@@ -186,6 +203,13 @@ volumes:
       o: 'bind'
       device: $GAME_APP_DB_VOL
 
+  janken_db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $JANKEN_DB_VOL
+
   grafana-storage:
 
   prometheus-storage:
@@ -199,4 +223,6 @@ networks:
   user:
     driver: bridge
   tournament:
+    driver: bridge
+  janken_app:
     driver: bridge

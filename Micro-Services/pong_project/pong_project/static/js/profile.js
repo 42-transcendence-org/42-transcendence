@@ -30,14 +30,13 @@ export async function fetchProfileData(div_to_show) {
 	document.getElementById('banner-nickname-display').innerText = data.nickname;
 	document.getElementById('banner-profile-image-display').src = "auth/static/" + data.img;
 	document.getElementById('tournament-host-nickname').innerText = data.nickname;
+	localStorage.setItem('jwt', data.token);
 	
 	if (div_to_show === 'profile') {
 		document.getElementById('profile-username-display').innerText = data.username;
 		document.getElementById('profile-email-display').innerText = data.email;
 		document.getElementById('profile-nickname-display').innerText = data.nickname;
-		document.getElementById('profile-winrate-janken-display').innerText = (data.winrateJanken) + "%";
 		document.getElementById('profile-profile-picture-display').src = "auth/static/" + data.img;
-
 	}
 	else if (div_to_show === 'friends')
 	{
@@ -352,4 +351,19 @@ export async function getPongHistory() {
 	document.getElementById('pong-history-wins').textContent = response.wins;
 	document.getElementById('pong-history-draws').textContent = response.draws;
 	document.getElementById('pong-history-losses').textContent =  response.losses;
+}
+
+
+
+export async function getNicknameWithUserId(user_id) {
+	const url = 'https://' + window.location.host + '/auth/getNicknameWithUserId/'
+	const data = {
+		'user_id': user_id,
+	};
+	const response = await poster(url, data);
+	if (response.error) {
+		alert(response.error);
+		return ;
+	}
+	return (response.nickname);
 }
