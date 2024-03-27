@@ -15,13 +15,8 @@ from .models import Profile, Friendship, Notifications
 from .models import JankenGameCreation, JankenGameInProgress
 from django.contrib.auth.models import User
 from openai import OpenAI
-from django.http import JsonResponse
-
 
 #views
-
-
-
 
 
 

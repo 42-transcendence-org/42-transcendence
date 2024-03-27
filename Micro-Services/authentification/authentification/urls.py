@@ -19,10 +19,12 @@ from django.urls import include, path
 from .settings import STATIC_URL
 from django.conf.urls.static import static
 
+
 app_name = 'auth_app'
 
-urlpatterns = [
+urlpatterns =  [
     path('', include('auth_app.urls')),
     path('admin/', admin.site.urls),
 	path('prometheus/', include("django_prometheus.urls")),
+	
 ] + static(STATIC_URL)

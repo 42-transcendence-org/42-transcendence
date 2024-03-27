@@ -23,6 +23,7 @@ urlpatterns = [
     path('register/', RegisterAPIView.as_view(), name='api_register'),
     path('logout/', LogoutAPIView.as_view(), name='api_register'),
     path('check-authentication/', check_authentication, name='check_authentication'),
+	
 
     #profile
 	path('getInfo/', getInfo, name='get42info'),
@@ -60,4 +61,6 @@ urlpatterns = [
 	path('pongHistory/', pongHistoryAPIView.as_view(), name='pongHistory'),
 
 	path('createTournament/', createTournamentAPIView.as_view(), name='createTournament'),
+
+	
 ]

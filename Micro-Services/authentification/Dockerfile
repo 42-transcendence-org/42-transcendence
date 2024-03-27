@@ -9,7 +9,10 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Installation des outils GNU gettext
+# RUN apt-get update && apt-get install -y gettext
+
 EXPOSE 8000
 
-# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-CMD ["uvicorn", "--reload", "authentification.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["uvicorn", "--reload", "authentification.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
