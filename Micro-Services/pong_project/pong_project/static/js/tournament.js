@@ -16,13 +16,13 @@ export class Tournament {
 		// document.getElementById('tournament-game-start-button-final').addEventListener('click', () => this.displayWinner(localStorage.getItem('tournament-game-p1'), localStorage.getItem('tournament-game-p2')));
 	}
 
-	displayWinner(winnerFinal, loserFinal) {
+	async displayWinner(winnerFinal, loserFinal) {
 		document.getElementById('tournament-display-final-winner').textContent = winnerFinal;
 		document.getElementById('tournament-display-final-loser').textContent = loserFinal;
 
 		//stocker dans la blockchain le vainqueur final ici, ou les score des différents match dans 'secondgame' et 'finalgame', ou dans le back au fur et à esure et envoyer une requete depuis là bas à la fin, tout est faisable
+		await window.client.nextPage('tournament-display-winner');
 		window.client.inTournament = false;
-		window.client.nextPage('tournament-display-winner');
 	}
 
 	finalGame(winnerGame2, loserGame2) {
