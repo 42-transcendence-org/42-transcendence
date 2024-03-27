@@ -1,0 +1,1547 @@
+[33mcommit 7a5ea32c8b19cfd6b3db3258161075482ae69b85[m[33m ([m[1;36mHEAD -> [m[1;32msplitSecondGame[m[33m)[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 27 12:17:13 2024 +0100
+
+    .
+
+[33mcommit f2cd919acf0212f9b84e40bfe793e58e6c7c5aa1[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 27 12:16:55 2024 +0100
+
+    .
+
+[33mcommit 5e0e364d5cd089456705eecad49de1faae4c0370[m[33m ([m[1;31morigin/splitSecondGame[m[33m)[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 27 10:02:12 2024 +0100
+
+    CSRF issues
+
+[33mcommit 5c2922bd75e572cf4d38303b7c5b1a7ef4587943[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 27 09:51:15 2024 +0100
+
+    oauth
+
+[33mcommit 80539e99a94ba2ab5675bc945c3e1876e52ac7fb[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 27 00:51:57 2024 +0100
+
+    tournoi architecture, manque le lancement des games/le spa handling
+
+[33mcommit 3044a25a7a99b7ea69f609010ffda04ac2d82e9c[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 27 00:49:09 2024 +0100
+
+    tournoi architecture, manque le lancement des games/le spa handling
+
+[33mcommit b616e09c9773e25398bf8c146ecfc1aba3ef6931[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Tue Mar 26 23:12:28 2024 +0100
+
+    déconnexion quand fetch sur l'endpoint test? jsp pourquoi
+
+[33mcommit c3c743d3609e78e8420af5639e407ddeb47e7d90[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Tue Mar 26 23:11:41 2024 +0100
+
+    déconnexion quand fetch sur l'endpoint test? jsp pourquoi
+
+[33mcommit ec6dcbe0df38deaa313560548440b70855475523[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Mar 26 15:00:34 2024 +0100
+
+    deport logique janken game
+
+[33mcommit 33b829dcab41e9206a3d40e78ccdb646899275ab[m[33m ([m[1;31morigin/will1[m[33m, [m[1;31morigin/merge[m[33m, [m[1;32mwill1[m[33m)[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Tue Mar 26 09:03:48 2024 +0100
+
+    .
+
+[33mcommit 62ef692f8d47a2a94f970624b1f6bd40af6f680c[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Tue Mar 26 09:01:02 2024 +0100
+
+    .
+
+[33mcommit a4ae6b5217605be9c7fadbee41e953bd82fbb08e[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Mon Mar 25 23:34:12 2024 +0100
+
+    .
+
+[33mcommit 264935e7337faca669e6863e743574d467c6249d[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Sun Mar 24 14:44:26 2024 +0100
+
+    .
+
+[33mcommit 9572351effa4f6ba1f91aa4e2f4bff72dcb8c679[m[33m ([m[1;31morigin/will[m[33m, [m[1;32mwill[m[33m)[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Sat Mar 23 23:08:06 2024 +0100
+
+    merge les commits de remote-finish
+
+[33mcommit e7d80bb337c14b5043ff6f3144095fcadd7ed2cf[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Sat Mar 23 14:06:14 2024 +0100
+
+    merge
+
+[33mcommit 0879138f79508659f8176f79c1bbf09763092186[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Sat Mar 23 12:47:55 2024 +0100
+
+    nv jeu en ligne (pierre feuille ciseaux) en multiplayer
+
+[33mcommit baee466ddf7c424f56fac4cb5aa173a5ab4f0fe4[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Sat Mar 23 00:23:07 2024 +0100
+
+    nv jeu en ligne (pierre feuille ciseaux) en multiplayer
+
+[33mcommit ad6273b57a134e59661323a06e63e37b8d8e0290[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Fri Mar 22 21:43:36 2024 +0100
+
+    nv jeu en ligne (pierre feuille ciseaux) en multiplayer
+
+[33mcommit 4c73a8433a8ded40b33d4139b1af7043aa75c55c[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Fri Mar 22 18:39:26 2024 +0100
+
+    nv jeu en ligne (pierre feuille ciseaux) en multiplayer
+
+[33mcommit d07c099aae34f4d4bad186ae1b476a063512e889[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Thu Mar 21 15:39:00 2024 +0100
+
+    history fix pour les fichiers d'arbesa/friendship deleted:unauthorized
+
+[33mcommit cc2c41beb8f8ee3a7d8c112e6ea164da1f3bd143[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Thu Mar 21 13:56:40 2024 +0100
+
+    history fix pour les fichiers d'arbesa
+
+[33mcommit 68f374cbaa18e3ff86d7466e61c52a9fd4282a6b[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Thu Mar 21 13:46:41 2024 +0100
+
+    history fix pour les fichiers d'arbesa
+
+[33mcommit 65a5e41c7711b5e907304712e4b71be7a3efc031[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Thu Mar 21 12:51:51 2024 +0100
+
+    small fixes
+
+[33mcommit e8a118b74c221d6fdf16d6411595a10339f85cc6[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Thu Mar 21 12:25:36 2024 +0100
+
+    small fixes
+
+[33mcommit b440b6ea965b05945a3e06f1a027cb11b4ac20b2[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Thu Mar 21 10:27:47 2024 +0100
+
+    profile clean
+
+[33mcommit 5350586e602ad88fa59d2fb52ae77f087a13d75f[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Thu Mar 21 10:13:35 2024 +0100
+
+    front/back clean
+
+[33mcommit 99d31f7af64898cd81c605acadecab327e81050c[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Thu Mar 21 09:19:34 2024 +0100
+
+    fusion firnedhips
+
+[33mcommit d59e39ccf0576bf2f8d9f3619db2d0a90478ec85[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 20 21:34:50 2024 +0100
+
+    a
+
+[33mcommit 82531816474d82a7f80f59f0ab4650d0fafa037f[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 20 16:45:13 2024 +0100
+
+    template
+
+[33mcommit 6361ee7df82cfcd14526ecdcb4ebf2e53d00d978[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 20 16:30:44 2024 +0100
+
+    disabling console errors in geter/poster
+
+[33mcommit ff06f3277847ba2581c3c61dab59b99545f1d2c6[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 20 16:16:37 2024 +0100
+
+    disabling console errors in geter/poster
+
+[33mcommit 041058775364dada21dacd1d3fadd8a1a6f718fb[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 20 16:15:54 2024 +0100
+
+    cutie files
+
+[33mcommit 8dd8dbd1d5cee20eeb0fca60d0bf056e287e34a5[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 20 16:10:48 2024 +0100
+
+    back clean
+
+[33mcommit ed2b84209f462434b9aac07684cf35c95c911748[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 20 15:44:42 2024 +0100
+
+    front clean
+
+[33mcommit 61cbd97df833d793b4074cd5dcba3cb52f3db610[m[33m ([m[1;31morigin/arbesa_2[m[33m)[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 20 13:32:52 2024 +0100
+
+    .
+
+[33mcommit 9151866f3a1ac002638bc161b8c8044f91d24f88[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Wed Mar 20 01:55:20 2024 +0100
+
+    .
+
+[33mcommit dc210f4e587713b67c5971571d9b6640ab36a3e9[m[33m ([m[1;31morigin/Merge[m[33m)[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Tue Mar 19 22:22:06 2024 +0100
+
+    .
+
+[33mcommit 38cd7eae3a18ab7da1c6f41fffe79bde526b8273[m
+Author: willrsq1 <william.ruetsuquet@gmail.com>
+Date:   Tue Mar 19 22:10:31 2024 +0100
+
+    nickname fix
+
+[33mcommit 67cdce5fd11b01aa0047ccc590d36eea82107c95[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Mar 19 16:20:59 2024 +0100
+
+    fix csrf for pp, mail et remot-game
+
+[33mcommit cde98abf9e956c9b25589e83185b132fe1354f81[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Mar 19 15:47:24 2024 +0100
+
+    fix ce putain de forbiden
+
+[33mcommit d50153bdb95bbc0d905d359e2cfe576efb3e4ac6[m[33m ([m[1;31morigin/full-architecture[m[33m)[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Mar 19 12:53:55 2024 +0100
+
+    merge improved remote
+
+[33mcommit b80f4dd887e9e2b21bf4e4cff33e6a614e99d08d[m
+Merge: f9b5355 ccf74dd
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Mar 19 12:43:02 2024 +0100
+
+    Merge remote-tracking branch 'origin/remote-improvement' into full-architecture
+
+[33mcommit ccf74dd74441ee89e7438c38404c96b4f61bf05d[m[33m ([m[1;31morigin/remote-improvement[m[33m)[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Mar 18 15:29:13 2024 +0000
+
+    Give better variable names.
+
+[33mcommit 85235255201fe1cc12a0954a19805fe72e86ac6a[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Mar 18 15:18:50 2024 +0000
+
+    Change speeds
+
+[33mcommit 26a6f9fcdef602452d79c85b947750c1bd81c762[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Mar 18 14:38:57 2024 +0000
+
+    Cleanup
+
+[33mcommit 5b2147bc5c0b2a99e1cc2c640bf71f0e045546ac[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Mar 18 10:33:53 2024 +0000
+
+    Cleanup
+
+[33mcommit be4339e3a5755eab827ff8a513fc8a142c00cc41[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Mar 18 10:21:47 2024 +0000
+
+    Cleanup
+
+[33mcommit c7b647bba3d5a7d54ff3a9944ea0764828ca8fff[m[33m ([m[1;31morigin/ai-improvement[m[33m)[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Mar 18 09:17:36 2024 +0000
+
+    Update speeds
+
+[33mcommit a3440da337ad233f4aafb24ba259357b6157c2f9[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Mar 15 12:13:08 2024 +0000
+
+    Fix clipping problem server side.
+
+[33mcommit 8845bc4c611098295d39f3730ef3965920f2196c[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Mar 15 11:59:59 2024 +0000
+
+    Fix clipping problem.
+
+[33mcommit a22e0bd3aeb195ff99e7033d165fbfb456f68da2[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Mar 14 12:03:20 2024 +0000
+
+    save
+
+[33mcommit d755fecdd30b324f55449eb44f92f23b6f931add[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Mar 14 11:14:56 2024 +0000
+
+    Cleanup.
+
+[33mcommit fb1e2cf6afe3275200f072778414cc7290ed5b4b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Mar 14 10:20:44 2024 +0000
+
+    Fix input glitch.
+
+[33mcommit fbd752920db13431606d3fb19f1f057842a2c0c1[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Mar 14 09:58:21 2024 +0000
+
+    save
+
+[33mcommit f9b535571f663840a0bdcc9386703a5baa8a3446[m
+Author: V-Burton97 <victor.burton@hotmail.fr>
+Date:   Thu Mar 14 08:50:28 2024 +0100
+
+    suppress unused comment in auth.urls
+
+[33mcommit 5f08753f2f76d66d098811dbd39f8cc975f7c842[m
+Author: V-Burton97 <victor.burton@hotmail.fr>
+Date:   Thu Mar 14 08:35:49 2024 +0100
+
+    add nginx conf
+
+[33mcommit afa726c51eed699bd1c29bf61eca4bf4616ba4b9[m
+Author: V-Burton97 <victor.burton@hotmail.fr>
+Date:   Thu Mar 14 08:32:45 2024 +0100
+
+    full-architecture
+
+[33mcommit 2fce4432542c35b62fd868913f479437edf63287[m
+Merge: c0a96c3 555b9ed
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Mar 13 15:03:21 2024 +0100
+
+    change env.template
+
+[33mcommit c0a96c3075761bc6a30917c9a9031b0f8046404b[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Mar 13 15:02:19 2024 +0100
+
+    add csrf protection to check-authentication
+
+[33mcommit 555b9ed24cbf664c2556107f1856867d27962d28[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Mar 13 14:01:39 2024 +0000
+
+    Update template.
+
+[33mcommit 57cbcc90578ec91fd5aac41227822a53c5a49817[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Mar 13 14:07:31 2024 +0100
+
+    remove storage in local variable loggedIn. Replace it by a variable in the constructor that update itself
+
+[33mcommit 25a2d1b0e574a3f0abc3c9ac57e700a4e176cd0d[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Mar 13 13:20:11 2024 +0100
+
+    miss one from last push
+
+[33mcommit b9110f46a1573143134c5c95485fa0cc0ccb4b1d[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Mar 13 13:18:34 2024 +0100
+
+    change .then-> into awit data = response.json in client.js
+
+[33mcommit b62e8de2d93b798a66e17f9d719ad47e3799ff99[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Mar 13 11:40:47 2024 +0100
+
+    delete print
+
+[33mcommit 58d65098866e9cf5f981c248889883ac4ae0b332[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Mar 12 18:39:25 2024 +0100
+
+    successful merge with improved remote player
+
+[33mcommit a3bd54df83efb5206c0a22d581410602615b8e6a[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Mar 12 16:36:06 2024 +0100
+
+    Mege success
+
+[33mcommit 92be49470e614d0509c4da7bc4f8233f4228d1bb[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Fri Mar 8 17:33:37 2024 +0100
+
+    modifi requirement.txt and dockerfile so it runs on uvicorn
+
+[33mcommit 387dbff9f20fb0b05f14f3d81c362a1b057d5d36[m[33m ([m[1;31morigin/testDisplayLogin[m[33m)[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Fri Mar 8 15:49:55 2024 +0100
+
+    Fix: -Display form, flash of all html when reload, right username, error if user already exist or wrong identifier
+
+[33mcommit 12a2b1766ffccbc6d554b49006c68cd3160c7de8[m
+Author: victor <victor@MacBook-Pro-de-victor-2.local>
+Date:   Wed Mar 6 09:49:35 2024 +0100
+
+    remove logout button in game
+
+[33mcommit 991d1056e342bac02e60d006073fd7c096be8cbb[m
+Author: victor <victor@MacBook-Pro-de-victor-2.local>
+Date:   Mon Mar 4 16:28:27 2024 +0100
+
+    Proper spa with well display of logged-in or not
+
+[33mcommit 120d2c1e1fdc33fb87e01fdb3a9614e908da92dc[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Fri Feb 23 18:31:18 2024 +0100
+
+    change makefile to work with docker-compose and docker compose + refactor auth display nd logic -> pass to real spa
+
+[33mcommit 92da6dfcde1930862d8bae4da417840f78561520[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Fri Feb 23 15:05:45 2024 +0100
+
+    chnge .gitignore + add job game in prometheus
+
+[33mcommit 0817fbe9e1e3b68d27ad9629f514f30f2593f5a6[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Thu Feb 22 18:16:40 2024 +0100
+
+    base clean before refactor front
+
+[33mcommit a4af23e6e1897bbb0b94cb4edd1dde953578b59a[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Thu Feb 22 14:58:58 2024 +0100
+
+    ue of get_cookie fromutils.js
+
+[33mcommit f9d50ea76673d4f0c658b06c7de09b5a0667c7d6[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Thu Feb 22 11:29:55 2024 +0100
+
+    add .env.template
+
+[33mcommit 4ba7a6918c12d754da9f2ef352ad9a1482f1524e[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Thu Feb 22 11:17:10 2024 +0100
+
+    modify f*** .gitignore
+
+[33mcommit f5607cbf325083a372d8e36228941b56fe68758b[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Feb 21 17:45:55 2024 +0100
+
+    successfully add game in micro-services
+
+[33mcommit 40ee5e4893e875a90aeb5962afe63e021e3c201a[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Feb 21 16:39:43 2024 +0100
+
+    addapt game-improvement to micro-service
+
+[33mcommit be8526a21bb3546ef836ef22784a5243da0ad7a4[m
+Merge: 9aa3db8 7eb4859
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Feb 21 16:10:40 2024 +0100
+
+    will be suppress
+
+[33mcommit 9aa3db83fd36f562ff7f260c7614520839669f23[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Feb 21 16:08:38 2024 +0100
+
+    Save before merge game
+
+[33mcommit 7eb48596b3326c6b39cbdfdc1a96e42e56480025[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 13 16:20:33 2024 +0000
+
+    save
+
+[33mcommit ad1a74d37a6968c76d416cce3cd24ec1314701f2[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 13 16:15:55 2024 +0000
+
+    save
+
+[33mcommit 97b03bd9ed0eecd6f4ae82c2a70b604683cb08a8[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 13 15:47:33 2024 +0000
+
+    save
+
+[33mcommit 4d0a392ef252e62d111ddc700290ca2b943cc483[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 13 15:10:02 2024 +0000
+
+    save
+
+[33mcommit af5864f32f7ae499920a38a4a31f895250eb3522[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 13 14:42:45 2024 +0000
+
+    save
+
+[33mcommit a19859da5bc22c0adbe4faf815446813a7e6d50e[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 13 13:20:47 2024 +0000
+
+    save
+
+[33mcommit 6a84aba7bd08a8dc8aaa83e552e8503215d4f519[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 13 10:36:00 2024 +0000
+
+    save
+
+[33mcommit d727db86089fede55de5dfd6cec91936e5783793[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 13 10:09:57 2024 +0000
+
+    save
+
+[33mcommit 86c6c7d02cfe3cfd6d0d140cbc9698961c4dd00b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 12 15:11:55 2024 +0000
+
+    save
+
+[33mcommit ae45bec2849cbae1a2f36c40aa5734ea412ec3ea[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 12 15:08:33 2024 +0000
+
+    save
+
+[33mcommit 19a308373fd00aeb49d454a99c01a41961dccf66[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 12 14:29:14 2024 +0000
+
+    save
+
+[33mcommit 347a9bdbe4db2461cc62ac62fd017ca6c7d625aa[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 12 14:04:56 2024 +0000
+
+    save
+
+[33mcommit 9f9fae0e97d2c0ba84dc8589bfa3aabc53749034[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 12 10:33:46 2024 +0000
+
+    save
+
+[33mcommit dc6170eae4896a9c92faced7062cc337f9a26aea[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 12 09:55:48 2024 +0000
+
+    save
+
+[33mcommit 44835319fd96e1efc6fef89feda4f7571e08ae5f[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 12 09:48:41 2024 +0000
+
+    save
+
+[33mcommit a3af87523a27fe51d11ac49699f377cc74887fbb[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Feb 9 16:23:40 2024 +0000
+
+    save
+
+[33mcommit c4e5c0df7c902f51a812faa523f69ca3dd490e6f[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Feb 9 16:17:10 2024 +0000
+
+    save
+
+[33mcommit bbdf36ab4a44b3a45e50950ddcc473372180698b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Feb 9 13:50:55 2024 +0000
+
+    save
+
+[33mcommit c482a3586d52b6f908fabebe316b7e2ef7a90152[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Feb 9 13:42:05 2024 +0000
+
+    save
+
+[33mcommit 4f3be0bf54cb749bf7dd6cdaa3855bcaaddab76c[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Feb 9 11:50:24 2024 +0000
+
+    save
+
+[33mcommit d1d5658c65efc748f19903b8b783a2640aa3ac86[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Feb 9 11:07:22 2024 +0000
+
+    save
+
+[33mcommit 2091c65af9377f786e5276da5ff538008721e844[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Feb 9 10:20:27 2024 +0000
+
+    save
+
+[33mcommit febb2d48e67cb11b2c60653f1afdbcb22e7e6a54[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 21:18:22 2024 +0000
+
+    save
+
+[33mcommit 76f56521d1d2a9a25e2fc8f98d20f0c089328f50[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 21:06:45 2024 +0000
+
+    save
+
+[33mcommit 82d1d6f458ab24aa45a7d0ee956ed307be5f96d4[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 19:27:52 2024 +0000
+
+    save
+
+[33mcommit a39aceceb638538b912c5cb998adf7df7de09279[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 18:17:31 2024 +0000
+
+    Save
+
+[33mcommit c5a3671f376d113eb2e9d190f54974faa50912b3[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 18:01:21 2024 +0000
+
+    save
+
+[33mcommit 4888ccda78b42aac3fb31d46a5ba1553853fc51b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 17:36:48 2024 +0000
+
+    save
+
+[33mcommit 1c66c9286bd378fdb184af23e91a33e42be744c4[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 17:13:08 2024 +0000
+
+    save
+
+[33mcommit f98c82b1d4242cb26b6a0a53742c0ed51fb667f5[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 15:48:23 2024 +0000
+
+    Cleanup
+
+[33mcommit 1158900ac1e4d2e4ff48cf7e06371d83c9b0ce0b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 15:34:32 2024 +0000
+
+    Cleanup CSS
+
+[33mcommit ad7ab6e841e6f77e8ab7b875b72bfe355f3e7ccd[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 15:31:04 2024 +0000
+
+    save
+
+[33mcommit ac2c5dc73d362258b22417cf5610e17b90981f79[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 15:23:31 2024 +0000
+
+    save
+
+[33mcommit e55c45997b8b75528d32297e8921500981f1ce45[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 14:29:38 2024 +0000
+
+    Save
+
+[33mcommit 3904230a4323574293579f29df7a2a1fee4e42cf[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 12:03:46 2024 +0000
+
+    save
+
+[33mcommit c39569ab8485450ef924d10d05648c0e9778b465[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 11:51:54 2024 +0000
+
+    save
+
+[33mcommit 9e48f9d2b47f43b08ef94918ffbe52cd239d9edf[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 11:00:08 2024 +0000
+
+    save
+
+[33mcommit be5c06ec405e3311dcfbb2e2137edc47fb90fc75[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 10:25:32 2024 +0000
+
+    save
+
+[33mcommit ce8620a0f54299dedd25dc49cd8b45d8aee6b18b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 10:04:56 2024 +0000
+
+    save
+
+[33mcommit fa6c580c79238400e64f9345c628679451e12d79[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 10:00:10 2024 +0000
+
+    save
+
+[33mcommit 9694714034b8b9029ad1dfc0b7d977c5f3ccc90d[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 09:43:19 2024 +0000
+
+    save
+
+[33mcommit f627b97e78eb159fd0f286a391119a72d87afa0d[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 09:42:36 2024 +0000
+
+    save
+
+[33mcommit 8204bcb5ce8136f037325059c13aaac673236635[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Feb 8 09:28:14 2024 +0000
+
+    save
+
+[33mcommit 1d1f127b1bc117243daa0c8828748206a3195122[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 21:57:11 2024 +0000
+
+    save
+
+[33mcommit c451d4f03fbcadccaefb7bb148c880c2feee27b7[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 21:55:51 2024 +0000
+
+    save
+
+[33mcommit f157c788799743f0947a956e46b7836aa7a1ce2e[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 21:49:06 2024 +0000
+
+    save
+
+[33mcommit da75b9bd9868ef7a127113c4c0acb2d11ea3406d[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 21:48:54 2024 +0000
+
+    save
+
+[33mcommit 71f5d2d7add0c40a1ea93fe276daa91b960b1fcf[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 19:32:44 2024 +0000
+
+    save
+
+[33mcommit 52f7dbecac13eacba3fcdec20ab1d2f8b723eff9[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 18:10:49 2024 +0000
+
+    asve
+
+[33mcommit 27ea3261fa23f038b4251039aec6adb086f4ac9d[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 16:54:10 2024 +0000
+
+    save
+
+[33mcommit c0aff68b3d6f386a0b6f37a01c727097cf9b1208[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 16:43:15 2024 +0000
+
+    save
+
+[33mcommit cc83d1106a0d037f020c22745b1178d73315fab4[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 16:00:02 2024 +0000
+
+    save
+
+[33mcommit cc3a15b2ae03e2e337fc0789d8371eb03c7b8455[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 15:25:24 2024 +0000
+
+    cleanup
+
+[33mcommit 88ee3fca5945726089e22d4ff2284a6c1ab3bf7c[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 15:18:15 2024 +0000
+
+    Implement quit
+
+[33mcommit 0e3fb825a1b2b8045dd1bf8cb96ef5be9bec1391[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 12:39:56 2024 +0000
+
+    Add pause.
+
+[33mcommit 6e2b0e52f54bcf5fb215e178e338b72a1b0ed521[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 12:17:40 2024 +0000
+
+    save
+
+[33mcommit 9d3a85e3f6261678f2e8bc7276847cf429f87458[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 11:52:31 2024 +0000
+
+    save
+
+[33mcommit 4fcc7b0ca6ef3011bf7da3a0d5a0815c5fcc2ef5[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 11:45:11 2024 +0000
+
+    save
+
+[33mcommit c161ebea94cc7d093dbc58c108c4b4ad7652907c[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 11:34:45 2024 +0000
+
+    save
+
+[33mcommit 36471e91e2807506a8621e44f0058297ffc75347[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 11:26:07 2024 +0000
+
+    save
+
+[33mcommit 3f640fa84bb56a65cbb5ce818195720aaa480908[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 10:36:10 2024 +0000
+
+    save
+
+[33mcommit 176890b50ac5463ff4fc86039f4f4956e148ece1[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Feb 7 10:31:55 2024 +0000
+
+    save
+
+[33mcommit 8d7215a6ef4feeee7718be1b73675156803fb2c9[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 6 21:26:50 2024 +0000
+
+    save
+
+[33mcommit 111acbf86ef866cf39c3a3be596bd25e7fb76fa3[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 6 21:16:14 2024 +0000
+
+    save
+
+[33mcommit 06252ceccb65fbbdf3dfbe8012dc178b6d463359[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 6 18:15:58 2024 +0000
+
+    save
+
+[33mcommit 6a02f2873e1910667e5e2342db516d1a48b7759a[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 6 18:07:03 2024 +0000
+
+    save
+
+[33mcommit c3f7f5b8eae3f40cb5d5d14fd090f3de1d60d934[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 6 17:39:16 2024 +0000
+
+    save
+
+[33mcommit e3a65d85eb996052712d09ca58b4a471001acc0e[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 6 16:05:00 2024 +0000
+
+    save
+
+[33mcommit 0dc763b327710257b58aabee361cabd576da3995[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 6 12:21:33 2024 +0000
+
+    save
+
+[33mcommit bca047e68165d59cbebdaef2ad0acace4c641aca[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Feb 6 10:52:03 2024 +0000
+
+    save
+
+[33mcommit 42e37898aefc726f35b6dcd0d5b25b96bf6d1e06[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 5 20:15:36 2024 +0000
+
+    save
+
+[33mcommit 8a46a9f1801bafc2b2b8ad094006520b3861101a[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 5 18:07:40 2024 +0000
+
+    save
+
+[33mcommit ee0e30045578d59e48a0a6bfd3a922767003a7ae[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 5 15:34:47 2024 +0000
+
+    save
+
+[33mcommit 37e5a2a1c3571871ac10141c62c7d7719ca5df54[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 5 14:39:25 2024 +0000
+
+    save
+
+[33mcommit 5bcbfb7e7f3c1f4a8c04143bd4a9821d444dd166[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 5 14:16:14 2024 +0000
+
+    save
+
+[33mcommit 7c9952d2e34af36334a98560e8d4b566fc08b2a6[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 5 11:55:04 2024 +0000
+
+    save
+
+[33mcommit bacc6a77c72682759651a8f7d5d9b094217338fc[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Feb 5 10:17:55 2024 +0000
+
+    save
+
+[33mcommit 3e17ca9792c96c1429770ac48988f065b42a4cb3[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sun Feb 4 16:12:27 2024 +0000
+
+    save
+
+[33mcommit 45fc3fd0c776965cf79f62e3fad445f8dc3e04f8[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sun Feb 4 14:45:40 2024 +0000
+
+    save
+
+[33mcommit aa41a1ed15ec80cc3b03465e16eb2115e214861b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sun Feb 4 13:37:05 2024 +0000
+
+    save
+
+[33mcommit 2c2ed12915f7020e34450745be1a4a64a107e435[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sun Feb 4 10:55:05 2024 +0000
+
+    save
+
+[33mcommit 23fb090a0b5dea1888545903b618d7d8134e8ade[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sun Feb 4 10:41:59 2024 +0000
+
+    save
+
+[33mcommit 93f45f20b44d6619879614956790d123cbe1caf7[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sun Feb 4 10:38:54 2024 +0000
+
+    save
+
+[33mcommit 485e4f4134460a6c3b8400ef50e1de7e7c4a7442[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sun Feb 4 09:52:03 2024 +0000
+
+    save
+
+[33mcommit 8e3c8d5ecd79f14cbf9d99d8e51afb02199115b5[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Feb 3 17:03:07 2024 +0000
+
+    save
+
+[33mcommit b213829a1db71756d12c82d6809d85d5d7922a22[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Feb 3 17:01:48 2024 +0000
+
+    save
+
+[33mcommit f2cb470359ab22f66978244b7b3f85dc7fc3acbc[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Feb 3 16:10:22 2024 +0000
+
+    save
+
+[33mcommit 88d6cada69fe19aeb64f195c9e04145308ed68b5[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Feb 3 16:00:59 2024 +0000
+
+    save
+
+[33mcommit a649319f33e3520c65b706b866379ab8befbc4c6[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Feb 3 14:44:25 2024 +0000
+
+    save
+
+[33mcommit 2ffb06e539a4c4f6774d259c320f09ad1cacdc99[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Feb 3 14:16:34 2024 +0000
+
+    save
+
+[33mcommit dc1b1cf22bdb1b8bb33bbedc3e89ee52a9123b2b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Feb 3 10:42:34 2024 +0000
+
+    save
+
+[33mcommit fc58971c7d8184cda92fd52abc6d6b8bc7a20ec8[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Feb 3 10:21:17 2024 +0000
+
+    save
+
+[33mcommit e374932ec744795b6efe8e6eca060e5d4c98b962[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 30 10:51:40 2024 +0000
+
+    save
+
+[33mcommit e2fd699afb810efa9eb4004f9d3421d2b34d82b5[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Jan 29 22:00:41 2024 +0000
+
+    save
+
+[33mcommit cbf4832f82e10f83fe6d0f8bccb91ac7e8ab2e36[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Jan 29 13:30:28 2024 +0000
+
+    save
+
+[33mcommit 564f400fdb25ee4028aa7eb755bf6b4c28508229[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Jan 29 12:34:30 2024 +0000
+
+    save
+
+[33mcommit 9205966b72d52ee12a3e3b5bd1400790d24cf35c[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Jan 29 11:25:04 2024 +0000
+
+    save
+
+[33mcommit 4c370ea9f682debde530e0ca84eb372a6fe0f318[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Jan 27 17:04:09 2024 +0000
+
+    Save
+
+[33mcommit 228a17a544131e06346e03ae37852d8976bebd2e[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Jan 27 15:51:03 2024 +0000
+
+    save
+
+[33mcommit 9537730daa96c71ab3027711d7ec92adcb85a6dc[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Jan 27 15:23:25 2024 +0000
+
+    save
+
+[33mcommit e3ae2642b00c679be1687568cc9b7faa17032dd9[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Sat Jan 27 14:27:52 2024 +0000
+
+    Refactor into several apps
+
+[33mcommit 9ebf767d68b3ed0413e72dd209fa2e7a335165bb[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 17:32:54 2024 +0000
+
+    Add TODO
+
+[33mcommit d60540601b1a13688d5a197c8e7734e4752f75ca[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 17:32:02 2024 +0000
+
+    save
+
+[33mcommit c8260816fd90a9db463f34c3cf8390b1b918d3a7[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 16:58:51 2024 +0000
+
+    Add TODO items
+
+[33mcommit 1e1df32d54e5f1c253d4cf4a4dc98d652b8e357f[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 16:30:57 2024 +0000
+
+    Cleanup
+
+[33mcommit 1229a46896283c8b67989efe09105ecf26d723be[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 16:29:36 2024 +0000
+
+    Refactor
+
+[33mcommit 89ab04403e390886e548542e787444a81da4d7af[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 15:54:14 2024 +0000
+
+    refactor
+
+[33mcommit d12d90a2b6342fe28de1927948ca92f47a4a59b4[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 14:54:02 2024 +0000
+
+    Refactor
+
+[33mcommit 66cb2e48086d7f0fb63f65ce874d8bc129c6f1db[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 14:03:14 2024 +0000
+
+    save
+
+[33mcommit cad4c2aedffcc77e4c6da45997114a81d9c437ff[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 12:10:02 2024 +0000
+
+    save
+
+[33mcommit c60c8429dba266b82671db3ff68e8ff7e50c1d59[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 11:54:48 2024 +0000
+
+    save
+
+[33mcommit b3973c1c7c4298c65ea34bfbf426d42ff19a83e6[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 11:30:49 2024 +0000
+
+    save
+
+[33mcommit 727ccd1130afd555e9ed4d848ded72310e4c0c55[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 26 11:19:41 2024 +0000
+
+    save
+
+[33mcommit 5802f78aff0fb00cf9c15bd8cc743385ce828be6[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Jan 25 22:07:01 2024 +0000
+
+    Save
+
+[33mcommit bb63282d0d6e27e176d9355cc9154c7bacca5c82[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Jan 25 21:47:40 2024 +0000
+
+    Refactor
+
+[33mcommit 0639ca11281371dfbc0dd5d99b1c899701eeaa0e[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Jan 25 21:29:29 2024 +0000
+
+    Refactor
+
+[33mcommit f9ac05eef24a7677aad65a6f3b332b5b4ffa537d[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Jan 25 19:10:24 2024 +0000
+
+    save
+
+[33mcommit a91b5668de87fb4e1c59bff390674192aa52e37e[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Jan 25 14:50:52 2024 +0000
+
+    save
+
+[33mcommit 674e5bf9bf1c362b0f6b6af8d93b0ecf963aac25[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Jan 24 20:32:13 2024 +0000
+
+    save
+
+[33mcommit 1b0c8077cb0e477f178c5097ee3dc3422fe367e2[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Jan 24 20:00:59 2024 +0000
+
+    save
+
+[33mcommit 5cf4f922e6727a24557b361b6838a8a7ba8b3e21[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Jan 24 19:55:03 2024 +0000
+
+    save
+
+[33mcommit b73c8aa715dbbce1946af9448c749df238dc018c[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Jan 24 19:44:31 2024 +0000
+
+    Refactor
+
+[33mcommit b47d65b53ad8583bdd7aac6c225d776aab65d17b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Jan 24 18:33:21 2024 +0000
+
+    save
+
+[33mcommit 5221af3f988d6ba8fd9be7c5d44a6ee696d03872[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Jan 24 15:17:04 2024 +0000
+
+    save
+
+[33mcommit fc26e8492a3b1ef5402ffadb6fd7966a094a883a[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 23 16:52:19 2024 +0000
+
+    save
+
+[33mcommit 584e03e1b538ba6696dbec5e9b522056867020cc[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 23 15:15:49 2024 +0000
+
+    save
+
+[33mcommit 031e30b2c320057a24ee83db4497fa9cab7fb556[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 23 14:34:39 2024 +0000
+
+    save
+
+[33mcommit fe048dce97069b502bc2c077472d677cd3fde7ca[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 23 14:33:39 2024 +0000
+
+    save
+
+[33mcommit 4f8afa01764bcd6fddd50a737464c66d14f49a4e[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 23 11:26:55 2024 +0000
+
+    save
+
+[33mcommit 2001bd787a1547310dcccc98be0704f8984205a6[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 23 11:18:38 2024 +0000
+
+    save
+
+[33mcommit cf4c121b8b93192dfed19064ce530ddf85ce5112[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 23 10:18:32 2024 +0000
+
+    save
+
+[33mcommit e016432825afa559231ce043f6d38602299ee1d9[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 23 09:56:02 2024 +0000
+
+    save
+
+[33mcommit 9e68c488446feb47dc526e09beabf001cb75a843[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Jan 23 09:02:59 2024 +0000
+
+    Initial commit
+
+[33mcommit 0e1455e4d898556536baec8a424e7d0cbbc3d142[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Jan 22 15:24:32 2024 +0000
+
+    save
+
+[33mcommit 17194b34ca989ae47d05f37e9bafe600a80ef6ba[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Mon Jan 22 14:15:02 2024 +0000
+
+    save
+
+[33mcommit 8a20b80804baf7e30c3b255a7af3319a5b40966b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 19 15:51:00 2024 +0000
+
+    Cleanup
+
+[33mcommit 7b807fced4f7ac4772ee873c6651b816a3e19462[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 19 15:27:28 2024 +0000
+
+    Implement login / register endpoints
+
+[33mcommit e9ab753d502084899193bc32819712107b4294e0[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 19 13:19:26 2024 +0000
+
+    Add pong_project
+
+[33mcommit 001720d6911532165edd7291982ede0163010a39[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Jan 19 13:17:50 2024 +0000
+
+    Update gitignore
+
+[33mcommit ec3e015917374cba428f5bf56cc3329be09f2146[m
+Author: Brieuc Poumeau de Lafforest <bpoumeau@42Lyon.fr>
+Date:   Tue Jan 9 10:19:03 2024 +0100
+
+    restart on failure
+
+[33mcommit 5aa348dc568c7f910ea8662cffb38e5d9b5af37d[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Matthieu Barberis <foobarberis@gmail.com>
+Date:   Mon Jan 8 17:44:42 2024 +0100
+
+    Update README.md
+
+[33mcommit b1958df32e961779e90acec8091283fb93455696[m
+Merge: bfbdade 560bb62
+Author: Matthieu Barberis <foobarberis@gmail.com>
+Date:   Mon Jan 8 17:39:25 2024 +0100
+
+    Merge pull request #5 from 42-transcendence-org/foobarberis-patch-1
+    
+    Update README.md
+
+[33mcommit 560bb623bc6c92c68a54faefa905e7b71348813a[m
+Author: Matthieu Barberis <foobarberis@gmail.com>
+Date:   Mon Jan 8 17:39:07 2024 +0100
+
+    Update README.md
+
+[33mcommit b12f57107cc3e08dddd8ef088a3e762b819c166d[m
+Author: Victor <victor.burton@hotmail.fr>
+Date:   Mon Jan 8 08:56:13 2024 +0000
+
+    setup of grafana and prometheus
+
+[33mcommit 8e9c030cdff4ae7f9db8fc45941e2593ebb1b480[m
+Author: Victor <victor.burton@hotmail.fr>
+Date:   Fri Jan 5 14:48:50 2024 +0000
+
+    deported db
+
+[33mcommit 06cc52653e1b3c9ec9d04dd22f0de53adfcb1fab[m
+Author: Victor <victor.burton@hotmail.fr>
+Date:   Fri Jan 5 10:52:42 2024 +0000
+
+    all connection fonctionnal with internal db
+
+[33mcommit c2a662ea9667aed77e4fce94666f73e90a99d76b[m
+Author: Victor <victor.burton@hotmail.fr>
+Date:   Thu Jan 4 15:48:33 2024 +0000
+
+    save before modifying register form
+
+[33mcommit 64c5ffbf08e49edc807208c0aa808fe63400c654[m
+Author: Victor <victor.burton@hotmail.fr>
+Date:   Thu Jan 4 14:34:55 2024 +0000
+
+    a little clean in front jsScript
+
+[33mcommit 1a79d5dfcbe1bac5b1f65af79621f81da5dc0cb3[m
+Author: Victor <victor.burton@hotmail.fr>
+Date:   Thu Jan 4 13:34:31 2024 +0000
+
+    rigth display when login isn't correct
+
+[33mcommit c32707e145c512a9e2f9cd519682c305294650db[m
+Author: Victor <victor.burton@hotmail.fr>
+Date:   Wed Jan 3 18:57:13 2024 +0000
+
+    diplay correctly the login/logout buttons depends on a user is already register or not + persistant login
+
+[33mcommit 08058273f17b818f516fe261724fff8333b932c5[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Jan 3 16:17:45 2024 +0100
+
+    working on persistant login
+
+[33mcommit 24c10d03cdcffe69462123b691ad8eb77c56f2e5[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Jan 3 14:41:45 2024 +0100
+
+    moove the button to the top left and display the nae of the user once loged
+
+[33mcommit e1ef11dcde63d3ba3ae21e640faf7e982921eb97[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Jan 3 13:25:16 2024 +0100
+
+    register working
+
+[33mcommit 757071e26cee81b2a982a6190feb531260505222[m
+Author: Victor <victor.burton@hotmail.fr>
+Date:   Tue Jan 2 18:59:06 2024 +0000
+
+    can log from the front
+
+[33mcommit 9e5f305391908505a706f47875d7543995d7446e[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Fri Dec 22 19:50:13 2023 +0100
+
+    authentification by default with django
+
+[33mcommit a1c41152427f05e2e0c837350845f00242ce2090[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Dec 19 18:41:28 2023 +0100
+
+    save before trying cleaner way to save data
+
+[33mcommit bfbdade1d396c50f246fcb6043dc381a674b2bb4[m
+Author: Matthieu Barberis <foobarberis@gmail.com>
+Date:   Tue Dec 19 16:24:39 2023 +0100
+
+    Add modules to README
+
+[33mcommit 138985d2aa9979c451dcdcddf3a294c5e4f24749[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Mon Dec 18 15:48:38 2023 +0100
+
+    handle display logIn/Register different views
+
+[33mcommit ad747587d1b000d94e6bda2404b6844007377cf2[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Fri Dec 15 21:14:56 2023 +0100
+
+    Save user into sqlite db
+
+[33mcommit 3e8b972aae7e4c69d2157ccc6a3cd3f6a53d89a6[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Dec 13 14:51:42 2023 +0100
+
+    add makefile + generalise docker-compose
+
+[33mcommit ed17d050a97ba2fc76f81c1857ebbd46188950ea[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Dec 13 10:15:18 2023 +0100
+
+    First proposal of archiecture. All micro service are configure with core and rest_api but tht's it
+
+[33mcommit 933aa9a9d2248d26da76aba4f6a20ce4cf2bbdb7[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Dec 12 14:59:48 2023 +0100
+
+    save before adding micro-service
+
+[33mcommit 9e575f69de1859ef09e136cf1f0e4aaf829ffef3[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Thu Dec 7 17:59:36 2023 +0100
+
+    add show and hide register form
+
+[33mcommit 3703ba1dae12fa813f021b2bf77238ff31c90203[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Thu Dec 7 17:18:20 2023 +0100
+
+    fetch html inside the authemtification service
+
+[33mcommit d045fe4069acf374ad09221ebe6543b1b629f3e9[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Wed Dec 6 18:20:04 2023 +0100
+
+    add auth microservice + display auth button when clicking on log in register button
+
+[33mcommit a558a67a013e71cb57e16ea53efa68ca5b25387b[m
+Author: Matthieu Barberis <foobarberis@gmail.com>
+Date:   Tue Dec 5 17:25:23 2023 +0100
+
+    Fix broken link.
+
+[33mcommit 4675dfcbb4c8cc2c5fa451b5a443fe53f62d97b6[m
+Merge: d4159bf 013065b
+Author: Matthieu Barberis <foobarberis@gmail.com>
+Date:   Tue Dec 5 17:23:53 2023 +0100
+
+    Merge pull request #4 from 42-transcendence-org/mbarberi
+    
+    Add basic design document to the README.
+
+[33mcommit 013065bad686682b6c1071fb9c8f693c776c059b[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Tue Dec 5 16:22:39 2023 +0000
+
+    Create basic design document for the project.
+
+[33mcommit fe5e08ba314967de9fa2667a84a5e1a2691bd83a[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Tue Dec 5 16:55:26 2023 +0100
+
+    first micro-service
+
+[33mcommit 17a6bc0a1b0eff5169df0fe5077b01699b96ffe0[m
+Author: victor <victor.burton@hotmail.fr>
+Date:   Mon Nov 27 17:37:30 2023 +0100
+
+    creation of first service game
+
+[33mcommit 6106e49cd5e4c193a7db8f597486f453cb1ba050[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Nov 17 16:55:36 2023 +0100
+
+    Implement basic ball movement and collision detection.
+
+[33mcommit 3b924d71fe09161edb904ddba819baf9a99e8d02[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Fri Nov 17 15:56:45 2023 +0100
+
+    Implement first version of the game.
+
+[33mcommit 35f16cf635e148bff9276092bed61c694571ccc8[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Thu Nov 16 12:38:45 2023 +0000
+
+    Initial commit for basic Pong game.
+
+[33mcommit d4159bf086bed9f895c8a8957769b8e236714201[m
+Merge: 57df1b3 e19e95a
+Author: Matthieu Barberis <foobarberis@gmail.com>
+Date:   Wed Nov 15 13:56:17 2023 +0100
+
+    Merge pull request #1 from foobarberis/mbarberi
+    
+    Add subject.
+
+[33mcommit e19e95a857806163cdbd251b58562e5dd1621a40[m
+Author: foobarberis <foobarberis@gmail.com>
+Date:   Wed Nov 15 11:56:04 2023 +0000
+
+    Add subject.
+
+[33mcommit 57df1b3f0a50c140a4e0905195c9ccdd9fb33975[m
+Author: Matthieu Barberis <00.mbgb@gmail.com>
+Date:   Wed Nov 15 12:50:43 2023 +0100
+
+    Initial commit
