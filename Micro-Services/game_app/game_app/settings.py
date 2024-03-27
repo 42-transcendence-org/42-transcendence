@@ -70,7 +70,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = ['https://localhost:8443']
+CSRF_TRUSTED_ORIGINS = ['https://localhost:8443', 'https://192.168.252.193:8443']
 
 ROOT_URLCONF = 'game_app.urls'
 

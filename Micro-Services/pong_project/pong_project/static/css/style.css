@@ -153,7 +153,6 @@ main button:hover {
 
 #friends {
 	background-color: #DCDCDC;
-
 	border: 1px solid #ccc;
 	padding: 20px;
 	border-radius: 5px;
@@ -666,4 +665,19 @@ label[for="OpenAIquestion"] {
 
 
 
+}
+
+#tournament-lobby,
+#tournament-display-start,
+#tournament-display-round2,
+#tournament-display-final {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 60%;
+	height: 100%;
+	margin:auto;
+	background-color: #DCDCDC;
+	border: 1px solid #ccc;
 }

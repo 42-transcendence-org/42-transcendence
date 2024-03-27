@@ -12,6 +12,9 @@ from .views import chatbotAPIView
 from .views import createJankenGameAPIView, jankenGameAPIView, waitForOpponentAPIView, waitForResultsAPIView, getResultsAPIView, deleteMyJankenGameCreationAPIView, gameInProgressAPIView, amIPlayingAPIView
 #history
 from .views import jankenHistoryAPIView, pongHistoryAPIView
+#tournament
+from .views import createTournamentAPIView
+
 
 urlpatterns = [
     
@@ -55,4 +58,6 @@ urlpatterns = [
 	#history
 	path('jankenHistory/', jankenHistoryAPIView.as_view(), name='jankenHistory'),
 	path('pongHistory/', pongHistoryAPIView.as_view(), name='pongHistory'),
+
+	path('createTournament/', createTournamentAPIView.as_view(), name='createTournament'),
 ]

@@ -27,6 +27,7 @@ export async function fetchProfileData(div_to_show) {
 
 	document.getElementById('banner-nickname-display').innerText = data.nickname;
 	document.getElementById('banner-profile-image-display').src = "auth/static/" + data.img;
+	document.getElementById('tournament-host-nickname').innerText = data.nickname;
 	
 	if (div_to_show === 'profile') {
 		document.getElementById('profile-username-display').innerText = data.username;
@@ -67,6 +68,7 @@ export async function changeEmail(event) {
 
 	const response = await poster(url, data);
 	document.getElementById('email_new').value = '';
+
 	if (response.error) {
 		alert(response.error);
 		return ;

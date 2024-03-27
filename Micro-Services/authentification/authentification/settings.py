@@ -27,7 +27,7 @@ DEBUG = True
 
 MY_IP = os.environ.get('HOST_IP', '127.0.0.1')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', MY_IP]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', MY_IP, '192.168.252.193']
 
 
 # Application definition
@@ -66,7 +66,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = ['https://localhost:8443']
+CSRF_TRUSTED_ORIGINS = ['https://localhost:8443', 'https://192.168.252.193:8443']
 
 LOGGIN_REDIRECT_URL = 'home'
 

@@ -50,6 +50,13 @@ export class Client {
 		//client event listeners
 		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
 		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
+		document.getElementById('test').addEventListener('click', () =>  this.test()); //test
+	}
+
+	async test() {
+		const url = 'https://' + window.location.host + '/janken/test/'
+		const response = await Oauth.getter(url);
+		console.log(response);
 	}
 
 	//SHOWS THE DIV + ADDS IT TO HISTORY
@@ -79,7 +86,7 @@ export class Client {
 		if (div_to_show === 'pong-history') {
 			await profile.getPongHistory();
 		}
-		
+
 		if (isLogged === 'true') {
 			await profile.fetchProfileData(div_to_show);
 			await this.janken.relaunchGetters();

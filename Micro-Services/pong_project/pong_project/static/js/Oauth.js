@@ -16,6 +16,9 @@ export class Oauth {
 		}
 		window.addEventListener('pageshow', this.redirHandlerPageshow); //NEEDED otherwise we see the not logged in page even if we are logged in when we come back from 42
 		window.addEventListener('unload', this.redirHandlerUnload); //NEDED SAME HARD TO HANDLE F M LIFE
+		// console.log(response.uri);
+		// console.log(window.location.host);
+		response.uri = response.uri.replace('localhost:8443', window.location.host)
 		window.location.href = response.uri;
 		// Now the user will be redirected to the 42 login page, which will proc isRedirectedFrom42API() in the listners !
 		// isRedirectedFrom42API() will be triggered because the url will contain the code and state parameters

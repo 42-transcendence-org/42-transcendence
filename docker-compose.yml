@@ -98,14 +98,14 @@ services:
       - game_app
     restart: on-failure
 
-  user:
+  janken:
     build:
-      context: ./Micro-Services/user/
+      context: ./Micro-Services/janken_app/
       dockerfile: Dockerfile
     environment:
       - HOST_IP=${HOST_IP}
     volumes:
-      - ./Micro-Services/user/:/app
+      - ./Micro-Services/janken_app/:/app
     ports:
       - "8004:8000"
     restart: on-failure
