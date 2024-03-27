@@ -38,6 +38,22 @@ export class GameManager {
 		document.getElementById('local-button').addEventListener('click', () => this.game_create(g.TYPE_LOCAL));
 		document.getElementById('remote-button').addEventListener('click', () => this.game_create(g.TYPE_REMOTE));
 		document.getElementById('ai-button').addEventListener('click', () => this.game_create(g.TYPE_AI));
+
+
+		document.getElementById('game-div-test-K').addEventListener('mousedown', () => this.input.key_handler(null, 'keydown', 'k'));
+		document.getElementById('game-div-test-L').addEventListener('mousedown', () => this.input.key_handler(null, 'keydown', 'l'));
+		document.getElementById('game-div-test-A').addEventListener('mousedown', () => this.input.key_handler(null, 'keydown', 'a'));
+		document.getElementById('game-div-test-S').addEventListener('mousedown', () => this.input.key_handler(null, 'keydown', 's'));
+		document.getElementById('game-div-test-ESC').addEventListener('mousedown', () => this.input.key_handler(null, 'keydown', 'Escape'));
+		document.getElementById('game-div-test-Space').addEventListener('mousedown', () => this.input.key_handler(null, 'keydown', ' '));
+
+		document.getElementById('game-div-test-K').addEventListener('mouseup', () => this.input.key_handler(null, 'keyup', 'k'));
+		document.getElementById('game-div-test-L').addEventListener('mouseup', () => this.input.key_handler(null, 'keyup', 'l'));
+		document.getElementById('game-div-test-A').addEventListener('mouseup', () => this.input.key_handler(null, 'keyup', 'a'));
+		document.getElementById('game-div-test-S').addEventListener('mouseup', () => this.input.key_handler(null, 'keyup', 's'));
+		document.getElementById('game-div-test-ESC').addEventListener('mouseup', () => this.input.key_handler(null, 'keyup', 'Escape'));
+		document.getElementById('game-div-test-Space').addEventListener('mouseup', () => this.input.key_handler(null, 'keyup', ' '));
+
 	}
 
 	reset() {
@@ -205,11 +221,6 @@ export class GameManager {
 				"loser": loser,
 				"result": result,
 			}
-			// this.game_result[0] = this.game_type;
-			// this.game_result[1] = this.aliases[0]; /* Player 1 name */
-			// this.game_result[2] = this.aliases[1]; /* Player 2 name */
-			// this.game_result[3] = this.game.scores[0]; /* Player 1 score */
-			// this.game_result[4] = this.game.scores[1]; /* Player 2 score */
 		}
 	}
 
@@ -230,6 +241,13 @@ export class GameManager {
 		if (type === g.TYPE_TOURNY && localStorage.getItem('tournament-game-p1') && localStorage.getItem('tournament-game-p2')) {
 			this.aliases[0] = localStorage.getItem('tournament-game-p1');
 			this.aliases[1] = localStorage.getItem('tournament-game-p2');
+		} else if (type === g.TYPE_LOCAL || type === g.TYPE_AI) {
+			this.aliases[0] = document.getElementById('banner-nickname-display').textContent;
+			if (type === g.TYPE_LOCAL) {
+				this.aliases[1] = "Player 2";
+			} else if (type === g.TYPE_AI) {
+				this.aliases[1] = "AI";
+			}
 		}
 
 		document.getElementById('game-div-p1').textContent = this.aliases[1];

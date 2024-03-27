@@ -124,7 +124,7 @@ export async function getter(url) {
 			credentials: 'include',
 		});
 		const rep = await response.json();
-
+		
 		if (rep.error) {
 			throw new Error(rep.error);
 		}

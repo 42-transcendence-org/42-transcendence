@@ -108,27 +108,33 @@ export class InputManager {
 		}
 	}
 
-	key_handler(event) {
+	key_handler(event, bouton_action, button_key) {
 		const relevant_keys = ['a', 's', 'k', 'l', ' ', 'Escape'];
-		if (!relevant_keys.includes(event.key)) {
-			return;
+		let type = bouton_action;
+		let key = button_key;
+		if (event && event.key && event.type) {
+			key = event.key;
+			type = event.type;
 		}
 
-		let player_id = event.key === 'a' || event.key === 's' || event.key === ' ' || event.key === 'Escape' ? g.ID_PLAYER1 : g.ID_PLAYER2;
+		if (!relevant_keys.includes(key)) {
+			return;
+		}
+		let player_id = key === 'a' || key === 's' || key === ' ' || key === 'Escape' ? g.ID_PLAYER1 : g.ID_PLAYER2;
 
-		if (event.type === 'keydown') {
-			if (!this.keyboard_state[event.key]) {
-				this.keyboard_state[event.key] = true;
-				let input_id = this.get_input_id(event.key);
+		if (type === 'keydown') {
+			if (!this.keyboard_state[key]) {
+				this.keyboard_state[key] = true;
+				let input_id = this.get_input_id(key);
 				this.create_input(player_id, input_id);
 			}
-		} else if (event.type === 'keyup') {
-			this.keyboard_state[event.key] = false;
+		} else if (type === 'keyup') {
+			this.keyboard_state[key] = false;
 			let opposite_key = 0;
 			if (player_id == g.ID_PLAYER1) {
-				opposite_key = event.key === 'a' ? 's' : 'a';
+				opposite_key = key === 'a' ? 's' : 'a';
 			} else {
-				opposite_key = event.key === 'k' ? 'l' : 'k';
+				opposite_key = key === 'k' ? 'l' : 'k';
 			}
 			if (this.keyboard_state[opposite_key]) {
 				let input_id = this.get_input_id(opposite_key);

@@ -683,3 +683,13 @@ label[for="OpenAIquestion"] {
 	background-color: #DCDCDC;
 	border: 1px solid #ccc;
 }
+
+
+#game-div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+}

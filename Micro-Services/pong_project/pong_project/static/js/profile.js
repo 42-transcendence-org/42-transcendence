@@ -339,16 +339,10 @@ export async function getPongHistory() {
 		p2.textContent += " and " + response.history[i].opponent + ": " + response.history[i].opponent_score + ". ";
 		p2.textContent += "Winner: " + response.history[i].winner + ". ";
 		p3.textContent += "Game ended the " + response.history[i].end_day + " at " + response.history[i].end_time + ".";
-		if (response.history[i].winner == "Owner") {
-			// p.textContent += "You " + response.history[i].result + " !";
+		if (response.history[i].result == "Victory") {
 			p.style.backgroundColor = "green";
 		}
-		else if (response.history[i].result == "draw") {
-			// p.textContent += "It's a draw !";
-			p.style.backgroundColor = "yellow";
-		}
 		else {
-			// p.textContent += response.history[i].winner + " " + response.history[i].result + " !";
 			p.style.backgroundColor = "red";
 		}
 		div.appendChild(p);
