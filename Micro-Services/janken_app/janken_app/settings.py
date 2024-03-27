@@ -69,6 +69,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = ['https://localhost:8443', f'https://{MY_IP}:8443']
 
+# SESSION_COOKIE_DOMAIN = 'localhost:8001'
+SESSION_COOKIE_DOMAIN = f'{MY_IP}:8001'
+
 ROOT_URLCONF = 'janken_app.urls'
 
 TEMPLATES = [
