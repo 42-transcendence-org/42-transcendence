@@ -15,9 +15,10 @@ from .models import Profile, Friendship, Notifications
 from .models import JankenGameCreation, JankenGameInProgress
 from django.contrib.auth.models import User
 from openai import OpenAI
+from django.shortcuts import render
+# from django.shortcuts import redirect
 
 #views
-
 
 
 #CONNECTION.JS LOGIN/LOGOUT/REGISTER VIEWS
@@ -174,7 +175,8 @@ def getInfo(request):
                                 'correction_points': profile.correction_points, \
                                 'username': request.user.username, \
                                 'nickname': profile.nickname, \
-                                'email': profile.email,
+                                'email': profile.email, \
+                                'default_language': profile.default_language,
                                 'notifications': Notifications.countNotifications(profile),
                                 'winrateJanken': profile.getWinrateJanken(),
                                 })
@@ -403,7 +405,31 @@ class PasswordAPIView(APIView): #FIXME: check les password, et les hash, faire p
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
+        
 
+class SaveLanguageAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                language = request.data.get('language', 'no language')
+                if language == 'no language':
+                    return (JsonResponse({"error": "language is required"}, status=400))
+                request.user.profile.default_language = language
+                request.user.profile.save()
+                request.user.save()
+                return (JsonResponse({"message": "success", "language": language}, status=200))
+            return JsonResponse({'error': "not authenticated"})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+    def get(self, request, *args, **kwargs):
+        try:
+            if request.user.is_authenticated:
+                return JsonResponse({'language': request.user.profile.default_language})
+            return JsonResponse({'error': 'not authenticated'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
 
 
 

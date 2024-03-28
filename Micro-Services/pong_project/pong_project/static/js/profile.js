@@ -1,4 +1,5 @@
 import { poster, getter } from './Oauth.js';
+import { Client } from './client.js';
 
 export async function eventlisteners() {
 		//Profile
@@ -6,6 +7,7 @@ export async function eventlisteners() {
 	document.getElementById('modify_email').addEventListener('submit', (event) => changeEmail(event));
 	document.getElementById('modify_nickname').addEventListener('submit', (event) => changeNickname(event));
 	document.getElementById('modify_password').addEventListener('submit', (event) => changePassword(event));
+	document.getElementById('modify_language').addEventListener('submit', (event) => updateDefaultLanguage(event));
 	document.getElementById('modify_profile_picture').addEventListener('submit', (event) => changeProfilePicture(event));
 	//friends
 	document.getElementById('friends-button').addEventListener('click', (event) => window.client.nextPage("friends"));
@@ -24,6 +26,9 @@ export async function fetchProfileData(div_to_show) {
 		alert("You don't have a user profile associated to your account, you have been disconnected");
 		return ;
 	}
+	const defaultLanguage = await window.client.getDefaultLanguage();
+    window.client.changeLanguage(defaultLanguage);
+
 
 	document.getElementById('banner-nickname-display').innerText = data.nickname;
 	document.getElementById('banner-profile-image-display').src = "auth/static/" + data.img;
@@ -91,6 +96,8 @@ export async function changeNickname(event) {
 	}
 	document.getElementById('profile-nickname-display').textContent = response.first_name;
 	document.getElementById('banner-nickname-display').textContent = response.first_name;
+
+	
 }
 
 export async function changePassword(event) { //FIXME: avoir deux champs password pour vérifier que le password est bien celui que l'user croit avoir tapé fin bref qu'il change pas son mdp a l'arrache on vérifie 2 champs
@@ -107,6 +114,43 @@ export async function changePassword(event) { //FIXME: avoir deux champs passwor
 		return ;
 	}
 }
+
+
+
+
+
+export async function updateDefaultLanguage(event) {
+    event.preventDefault();
+    const url = 'https://' + window.location.host + '/auth/SaveLanguage/';
+
+
+    const languageInput = document.getElementById('language_new');
+    const languageValue = languageInput.value.trim(); 
+
+    
+    const languagePattern = /^(fr|es|en)$/; 
+    if (!languagePattern.test(languageValue)) {
+        alert("Invalid language value. Please enter 'fr', 'es', or 'en'.");
+        return;
+    }
+
+    const data = {
+        language: languageValue,
+    };
+
+    const response = await poster(url, data);
+
+    languageInput.value = ''; 
+
+    if (response.error) {
+        alert(response.error);
+        return;
+    }
+
+	window.location.reload();
+	
+}
+
 
 
 export async function changeProfilePicture(event) {

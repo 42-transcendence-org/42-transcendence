@@ -1,10 +1,14 @@
 import * as g from './global.js';
 
-const music = new Audio(window.ASSETS_URL + "jul.ogg");
-// const music = new Audio(window.ASSETS_URL + "glitchstairs.ogg");
+// const music = new Audio(window.ASSETS_URL + "jul.ogg");
+const music = new Audio(window.ASSETS_URL + "glitchstairs.ogg");
 const victory = new Audio(window.ASSETS_URL + "victory.wav");
 const hit_sound = new Audio(window.ASSETS_URL + "hit.wav");
 const score_sound = new Audio(window.ASSETS_URL + "explosion.wav");
+// const music=null;
+// const victory=null;
+// const hit_sound=null;
+// const score_sound=null;
 
 export let sound_off = false;
 class SoundEvent {
@@ -85,6 +89,7 @@ export class SoundManager {
 
 export function mute_music() {
 	sound_off = true;
+	// return ;
 	music.muted = sound_off;
 	victory.muted = sound_off;
 	hit_sound.muted = sound_off;
@@ -94,6 +99,7 @@ export function mute_music() {
 
 export function mute_sounds () {
 	sound_off = (sound_off) ? false : true;
+	// returb ;
 	music.muted = sound_off;
 	victory.muted = sound_off;
 	hit_sound.muted = sound_off;

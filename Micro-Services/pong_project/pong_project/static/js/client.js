@@ -26,8 +26,34 @@ export class Client {
 		sound.mute_music(); //no music for now
 	}
 
+	async changeLanguage(lang) {
+		var elements = document.querySelectorAll("[data-en]");
+		elements.forEach(function(elem) {
+			if (lang === 'fr') {
+				elem.textContent = elem.getAttribute('data-fr');
+			} else if (lang === 'en') {
+				elem.textContent = elem.getAttribute('data-en');
+			} else if (lang === 'es') {
+				elem.textContent = elem.getAttribute('data-es');
+			}
+		});
+	}
+
+    async getDefaultLanguage() {
+        const url = 'https://' + window.location.host + '/auth/SaveLanguage/';
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.language;
+    }
+
+
 	async init() {
 		//event listeners
+
+		const defaultLanguage = await this.getDefaultLanguage();
+        this.changeLanguage(defaultLanguage);
+
+
 		this.game_manager.eventlisteners(); //game
 		this.connection.eventlisteners(); //registration/login/logout
 		profile.eventlisteners(); //profile
@@ -44,20 +70,33 @@ export class Client {
 		} else { //first load of the page, joigning via URL https://localhost:8443 for the first time
 			this.home();		
 		}
-
+		
 		//history event listener (back/forward buttons)
 		window.addEventListener('popstate', async () => {await this.HistoryButtonsClicked();});
 		//client event listeners
 		document.getElementById('sound-button').addEventListener('click', function(event) {event.preventDefault(); sound.mute_sounds();}); //mute/unmute
 		document.getElementById('home-banner').addEventListener('click', () =>  this.home()); //home
-		document.getElementById('test').addEventListener('click', () =>  this.test()); //test
+		document.getElementById('language-dropdown').addEventListener('change', (event) => {const selectedLanguage = event.target.value;this.changeLanguage(selectedLanguage);const defaultLanguage = profile.getUserData();this.changeLanguage(defaultLanguage);});
+		
+		
+		
+		
+		
 	}
+	
+	
 
-	async test() {
-		const url = 'https://' + window.location.host + '/janken/test/'
-		const response = await Oauth.getter(url);
-		console.log(response);
-	}
+	
+	
+
+
+
+
+	// async test() {
+	// 	const url = 'https://' + window.location.host + '/janken/test/'
+	// 	const response = await Oauth.getter(url);
+	// 	console.log(response);
+	// }
 
 	//SHOWS THE DIV + ADDS IT TO HISTORY
 	async nextPage(div_to_show) {

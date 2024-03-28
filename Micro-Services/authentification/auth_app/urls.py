@@ -3,7 +3,7 @@ from django.urls import path
 #connection.js
 from .views import LoginAPIView, RegisterAPIView, LogoutAPIView, check_authentication
 #profile
-from .views import getInfo, getFriendInfoAPIView, addFriendAPIView, getMyFriendsAPIView, FriendRequestsAPIView, update_profile_picture, EmailAPIView, NicknameAPIView, PasswordAPIView, RefuseFriendRequestAPIView, DeleteFriendAPIView
+from .views import getInfo, getFriendInfoAPIView, addFriendAPIView, getMyFriendsAPIView, FriendRequestsAPIView, update_profile_picture, EmailAPIView, NicknameAPIView, PasswordAPIView, RefuseFriendRequestAPIView, DeleteFriendAPIView, SaveLanguageAPIView
 #42Oauth
 from .views import Login42APIView, OAuthRedirectUrlAPIView, OAuthVerifyStateAPIView
 #chatbot
@@ -37,6 +37,7 @@ urlpatterns = [
     path("email/", EmailAPIView.as_view(), name="email_change"),
     path("nickname/", NicknameAPIView.as_view(), name="nickname_change"),
     path("password/", PasswordAPIView.as_view(), name="password"),
+	path("SaveLanguage/", SaveLanguageAPIView.as_view(), name="SaveLanguage"),
 
     #42OAuth
 	path('login42/', Login42APIView.as_view(), name='Login42'),

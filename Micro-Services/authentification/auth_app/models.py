@@ -14,6 +14,7 @@ class Profile(models.Model):
     nickname = models.CharField(max_length=100, blank=True, default="No Nickname Yet")
     correction_points = models.IntegerField(default=0)
     online = models.BooleanField(default=False)
+    default_language = models.CharField(max_length=2, default='en')
 
     def __str__(self):
         return self.nickname

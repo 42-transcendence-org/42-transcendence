@@ -681,3 +681,16 @@ label[for="OpenAIquestion"] {
 	background-color: #DCDCDC;
 	border: 1px solid #ccc;
 }
+
+/* Style pour redimensionner les drapeaux */
+
+  
+  #language-dropdown {
+	width: 300px; /* Ajustez la largeur selon vos besoins */
+	padding: 10px;
+  }
+  
+  #language-dropdown option {
+	font-size: 70px; /* Taille du texte de l'option */
+  }
+  
