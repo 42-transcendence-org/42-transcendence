@@ -15,8 +15,7 @@ from .models import Profile, Friendship, Notifications
 from django.contrib.auth.models import User
 from openai import OpenAI
 from django.http import JsonResponse
-from  django.contrib.auth.hashers import check_password
-
+from django.contrib.auth.password_validation import validate_password
 
 #views
 
@@ -380,7 +379,6 @@ class EmailAPIView(APIView):
             return JsonResponse({'error': e.args[0]})
         
 
-from django.contrib.auth.password_validation import validate_password
 class NicknameAPIView(APIView):
     def post(self, request, *args, **kwargs):
         try:

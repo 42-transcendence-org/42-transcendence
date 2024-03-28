@@ -1,15 +1,13 @@
 import json, asyncio
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 import game_app.pong.constants as g
 from game_app.pong.game_server import server
-
-
-from asgiref.sync import sync_to_async
-
+from django.http import JsonResponse
+import json
+from rest_framework.views import APIView
+from django.http import JsonResponse
 from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.cache import never_cache
-from django.views.decorators.http import require_http_methods
 
 async def stream_generator(game_id):
     while True:
@@ -59,3 +57,53 @@ async def game_view(request, game_id):
 
         server.create_input(game_id, username, input_id, timestamp)
         return JsonResponse({}, status=200)
+
+
+
+from .models import FinishedPongGames
+from django.utils import timezone
+
+class pongHistoryAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            FinishedPongGames.objects.create(
+                owner=request.user_id, \
+                game_type=request.data.get('game_type', 'undefined'), \
+                opponent=request.data.get('opponent', 'undefined'), \
+                player_score=request.data.get('player_score', 'undefined'), \
+                opponent_score=request.data.get('opponent_score', 'undefined'), \
+                winner=request.data.get('winner', 'undefined'), \
+                result=request.data.get('result', 'undefined'), \
+                completion_day= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%d/%m"), \
+                completion_time= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"), \
+            )
+            return JsonResponse({'message': 'success'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+        
+    def get(self, request, *args, **kwargs):
+        try:
+            games = FinishedPongGames.objects.filter(owner=request.user_id)
+            if games.exists() == False:
+                raise Exception('You never played a game !')
+            history = []
+            for game in games:
+                history.append({'owner': game.owner, \
+                                'game_type': game.game_type, \
+                                'opponent': game.opponent, \
+                                'player_score': game.player_score, \
+                                'opponent_score': game.opponent_score, \
+                                'winner': game.winner, \
+                                'result': game.result, \
+                                'end_day': game.completion_day, \
+                                'end_time': game.completion_time, \
+                                        })
+            return JsonResponse({'history': history, \
+                                'wins': FinishedPongGames.countWins(request.user_id), \
+                                'draws': FinishedPongGames.countDraws(request.user_id), \
+                                'losses': FinishedPongGames.countLosses(request.user_id)})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
+

@@ -61,14 +61,14 @@ export class InputManager {
 					if (game.status === g.STATUS_ACTIVE || game.status === g.STATUS_PAUSED) {
 						game.status = (game.status === g.STATUS_ACTIVE ? g.STATUS_PAUSED : g.STATUS_ACTIVE);
 					} else if (game.status === g.STATUS_ENDED) {
-					const url = 'https://' + window.location.host + '/auth/pongHistory/';
+					const url = 'https://' + window.location.host + '/game/pongHistory/';
 					Oauth.poster(url, window.client.game_manager.game_result);
 					game.reset();
 					}
 					break;
 				case g.INPUT_QUIT:
 					game.status = g.STATUS_QUIT;
-					const url = 'https://' + window.location.host + '/auth/pongHistory/';
+					const url = 'https://' + window.location.host + '/game/pongHistory/';
 					Oauth.poster(url, window.client.game_manager.game_result);
 					break;
 			}

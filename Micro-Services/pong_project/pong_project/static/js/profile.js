@@ -324,7 +324,7 @@ export async function refuseFriendRequest(event) {
 
 
 export async function getPongHistory() {
-	const url = 'https://' + window.location.host + '/auth/pongHistory/'
+	const url = 'https://' + window.location.host + '/game/pongHistory/'
 	const response = await getter(url);
 	if (response.error) {
 		document.getElementById('pong-history-wins').textContent = 0;
@@ -339,11 +339,14 @@ export async function getPongHistory() {
 		var p = document.createElement('p');
 		var p2 = document.createElement('p');
 		var p3 = document.createElement('p');
-		p.textContent = response.history[i].owner + " played ";
+		var owner = await getNicknameWithUserId(response.history[i].owner);
+		if (response.history[i].winner == response.history[i].owner)
+			response.history[i].winner = owner;
+		p.textContent = owner + " played ";
 		p.textContent += "a " + response.history[i].game_type + " game against ";
 		p.textContent += response.history[i].opponent + ". ";
 
-		p2.textContent += "Score: " + response.history[i].owner + ": " + response.history[i].player_score;
+		p2.textContent += "Score: " + owner + ": " + response.history[i].player_score;
 		p2.textContent += " and " + response.history[i].opponent + ": " + response.history[i].opponent_score + ". ";
 		p2.textContent += "Winner: " + response.history[i].winner + ". ";
 		p3.textContent += "Game ended the " + response.history[i].end_day + " at " + response.history[i].end_time + ".";
