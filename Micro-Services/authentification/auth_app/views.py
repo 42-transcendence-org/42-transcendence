@@ -15,6 +15,7 @@ from .models import Profile, Friendship, Notifications
 from django.contrib.auth.models import User
 from openai import OpenAI
 from django.http import JsonResponse
+from  django.contrib.auth.hashers import check_password
 
 
 #views
@@ -377,7 +378,9 @@ class EmailAPIView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
+        
 
+from django.contrib.auth.password_validation import validate_password
 class NicknameAPIView(APIView):
     def post(self, request, *args, **kwargs):
         try:
@@ -404,6 +407,11 @@ class PasswordAPIView(APIView): #FIXME: check les password, et les hash, faire p
                 return (JsonResponse({"error": "password is required"}, status=400))
             if request.user.profile.is42account == True:
                 return (JsonResponse({"error": "You can't change your password if you are a 42 account"}, status=400))
+            try:
+                validate_password(password, request.user)
+            except Exception as e:
+                errors = list(e.messages)
+                return Response({"error": errors}, status=400)
             request.user.set_password(password)
             request.user.save()
             return (JsonResponse({"message": "success", "password": password}, status=200))

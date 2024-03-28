@@ -107,6 +107,8 @@ export async function changePassword(event) { //FIXME: avoir deux champs passwor
 		alert(response.error);
 		return ;
 	}
+	await window.client.home();
+	alert("You have changed your password, please log back in !");
 }
 
 
