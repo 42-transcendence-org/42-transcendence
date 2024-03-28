@@ -80,35 +80,3 @@ class Notifications(models.Model):
 
     def countNotifications(profile):
         return Notifications.objects.filter(profile=profile).count()
-
-
-class FinishedPongGames(models.Model):
-    owner = models.ForeignKey(Profile, on_delete = models.CASCADE, related_name='PongHistoryOwner')
-    game_type = models.CharField(max_length=100, default="None")
-    opponent = models.CharField(max_length=100, default="None")
-    player_score = models.IntegerField(default=0)
-    opponent_score = models.IntegerField(default=0)
-    winner = models.CharField(max_length=100, default="None")
-    result = models.CharField(max_length=100, default="None")
-    completion_day = models.CharField(max_length=100, default="None")
-    completion_time = models.CharField(max_length=100, default="None")
-
-    def __str__(self):
-        return self.owner.nickname + " " + self.result
-    
-    class Meta:
-        verbose_name = "Finished Pong Game"
-        verbose_name_plural = "Finished Pong Games"
-    
-    def getMyHistory(profile):
-        return FinishedPongGames.objects.filter(owner=profile)
-    
-    def countWins(profile):
-        return FinishedPongGames.objects.filter(owner=profile, result="Victory").count()
-    
-    def countLosses(profile):
-        return FinishedPongGames.objects.filter(owner=profile, result="Defeat").count()
-    
-    def countDraws(profile): #return 0 if no game found
-        return FinishedPongGames.objects.filter(owner=profile, result="draw").count()
-    

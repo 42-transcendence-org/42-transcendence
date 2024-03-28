@@ -8,8 +8,6 @@ from .views import getInfo, getFriendInfoAPIView, addFriendAPIView, getMyFriends
 from .views import Login42APIView, OAuthRedirectUrlAPIView, OAuthVerifyStateAPIView
 #chatbot
 from .views import chatbotAPIView
-#history
-from .views import pongHistoryAPIView
 
 
 urlpatterns = [
@@ -42,6 +40,4 @@ urlpatterns = [
     #chatbot
 	path('chatgpt/', chatbotAPIView.as_view(), name='chatgpt'),
 	
-	#history
-	path('pongHistory/', pongHistoryAPIView.as_view(), name='pongHistory'),
 ]
