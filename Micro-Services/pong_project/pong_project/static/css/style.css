@@ -108,15 +108,14 @@ main button:hover {
 	background-color: #f0f0f0;
 }
 
-#unauthorized {
-	color: red;
-	font-size: 30px;
-	width: 50%;
-}
-
-
 #logged-in-home button,
-#isNotLogged button {
+#isNotLogged button,
+#janken button,
+#janken-history button,
+#janken-lobby button,
+#janken-game button, 
+#janken-result button,
+#janken-already-played button{
 	display: flex;
 	margin:auto;
 	flex-direction: column;
@@ -211,12 +210,21 @@ main button:hover {
 	background-color: #f0f0f0;
 }
 
-#friends-list,
-#friends-requests {
+#friends-list {
 	margin-top: 1%;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	margin-bottom: 0.5%;
+	font-family: "Lucida Console", Monaco, monospace;
+
+}
+#friends-requests {
+	margin-top: 1%;
+	display: flex;
+	flex-direction: column;
+	justify-content: left;
+	align-items: flex-start;
 	margin-bottom: 0.5%;
 	font-family: "Lucida Console", Monaco, monospace;
 
@@ -233,56 +241,52 @@ main button:hover {
 	/* width:15%; */
 	display: flex;
 	flex-direction: column;
-	margin-top: 20px;
-	/* Ajustez cette valeur selon votre préférence */
 	width: auto;
-	/* Changer la largeur selon vos besoins */
 	height: auto;
-	/* Changer la hauteur selon vos besoins */
 	font-size: 15px;
-	/* Changer la taille de police selon vos besoins */
 	margin-bottom: 2px;
-	/* Ajoute un espace entre les champs */
 	padding: 10px;
-	/* Ajoute un remplissage pour améliorer l'apparence */
 	border: none;
-	/* Supprime la bordure par défaut */
 	border-radius: 5px;
-	/* Ajoute une bordure arrondie */
 	background-color: #f0f0f0;
-	/* Marron foncé */
 	text-align: center;
 	line-height: 8px;
 	font-family: "Lucida Console", Monaco, monospace;
 }
 
-#friends-list-delete button {
+#friends-list-delete button{
 	/* width:10%; */
 	display: flex;
 	flex-direction: column;
-	margin-top: 20px;
-	/* Ajustez cette valeur selon votre préférence */
 	width: auto;
-	/* Changer la largeur selon vos besoins */
 	height: auto;
-	/* Changer la hauteur selon vos besoins */
 	font-size: 15px;
-	/* Changer la taille de police selon vos besoins */
 	margin-bottom: 2px;
-	/* Ajoute un espace entre les champs */
 	padding: 10px;
-	/* Ajoute un remplissage pour améliorer l'apparence */
 	border: none;
-	/* Supprime la bordure par défaut */
 	border-radius: 5px;
-	/* Ajoute une bordure arrondie */
 	background-color: #f0f0f0;
-	/* Marron foncé */
 	text-align: center;
 	line-height: 8px;
 	font-family: "Lucida Console", Monaco, monospace;
 }
 
+
+#friends-requests button{
+	/* width:10%; */
+	display: flex;
+	flex-direction: column;
+	width: auto;
+	height: auto;
+	font-size: 15px;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	background-color: #f0f0f0;
+	text-align: center;
+	line-height: 8px;
+	font-family: "Lucida Console", Monaco, monospace;
+}
 
 #Register input[type="text"],
 #Register input[type="password"],
@@ -290,19 +294,12 @@ main button:hover {
 #Login input[type="text"],
 #Login input[type="password"]{
 	width: 20%;
-	/* Changer la largeur selon vos besoins */
 	height: 10%;
-	/* Changer la hauteur selon vos besoins */
 	font-size: 20px;
-	/* Changer la taille de police selon vos besoins */
 	margin-bottom: 1%;
-	/* Ajoute un espace entre les champs */
 	padding: 10px;
-	/* Ajoute un remplissage pour améliorer l'apparence */
 	border: none;
-	/* Supprime la bordure par défaut */
 	border-radius: 5px;
-	/* Ajoute une bordure arrondie */
 }
 
 #Register button,
@@ -373,6 +370,9 @@ main button:hover {
 #profile {
 	display: flex;
 	flex-direction: column;
+	
+	background-color: #DCDCDC;
+	border: 1px solid #ccc;
 	color: #1a1613;
 	padding: 20px;
 	border-radius: 5px;
@@ -571,6 +571,7 @@ label[for="OpenAIquestion"] {
 
 #janken-game-in-progress-button::before {
 	content: "1";
+	left: 40%;
 	position: absolute;
 	width: 1.5em;
 	height: 1.5em;
@@ -701,4 +702,65 @@ label[for="OpenAIquestion"] {
 	
 	background-color: #DCDCDC;
 	border: 1px solid #ccc;
+}
+
+#janken-history-list,
+#pong-history-list {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+
+#friend-not-found,
+#janken-not-authorized,
+#pong-not-authorized,
+#tournament-display-not-authorized,
+#unauthorized {
+	width: 40%;
+	font-size: 20px;
+	margin: auto;
+	margin-top: 5%;
+	display: flex;
+	
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background-color: #DC3333;
+	padding: 10%;
+	border: 1px solid #ccc;
+}
+
+#janken-game {
+	display:flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+#janken-game-subdiv {
+	display:flex;
+	margin:auto;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 20%;
+	background-color: #DCDCDC;
+	border: 1px solid #ccc;
+	padding: 20px;
+	margin-bottom: 5%;
+}
+
+#janken-result {
+	display:flex;
+	margin:auto;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 40%;
+	background-color: #DCDCDC;
+	border: 1px solid #ccc;
+	padding: 20px;
+	margin-bottom: 5%;
 }

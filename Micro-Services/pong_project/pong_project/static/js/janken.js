@@ -53,6 +53,8 @@ export class Janken {
 
 			if (response.error == "Error: You are already waiting for an opponent") {
 				await window.client.nextPage('janken-lobby');
+			} else {
+				alert(response.error);
 			}
 			return ;
 		}
@@ -216,6 +218,10 @@ export class Janken {
 				p.style.backgroundColor = "red";
 			}
 			div.appendChild(p);
+			p.style.width = "50%";
+			p.style.border = "1px solid #ccc";
+			p.style.borderRadius = "5px";
+			p.style.padding = "10px";
 			p.appendChild(p2);
 		}
 		document.getElementById('janken-history-winrate-display').textContent = response.winrate;

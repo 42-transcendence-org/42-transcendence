@@ -160,7 +160,6 @@ export async function addFriend(event) {
 
 export async function show_friendlist() {
 	
-	
 	var list_names = document.getElementById('friends-list-names');
 	var list_delete = document.getElementById('friends-list-delete');
 	list_names.innerHTML = '';
@@ -261,10 +260,17 @@ export async function showFriendRequests() {
 		var new_friend = document.createElement('div');
 		new_friend.textContent = 'Friend request from: ' + response.friend_requests[i];
 		new_friend.id = "friend_request_from_" + response.friend_requests[i];
+		new_friend.style.width = "100%";
+		new_friend.style.alignItems = "center";
+		new_friend.style.display = "flex";
+		new_friend.style.marginTop = "1%";
 
 		var accept_button = document.createElement('button');
 		accept_button.textContent = 'Accept';
 		accept_button.name = response.friend_requests[i];
+		accept_button.style.marginLeft = "auto";
+		accept_button.style.marginRight = "3%";
+		
 		accept_button.addEventListener('click', (event) => acceptFriendRequest(event));
 		new_friend.appendChild(accept_button);
 
@@ -347,6 +353,10 @@ export async function getPongHistory() {
 		}
 		div.appendChild(p);
 		p.appendChild(p2);
+		p.style.width = "50%";
+		p.style.border = "1px solid #ccc";
+		p.style.borderRadius = "5px";
+		p.style.padding = "10px";
 		p2.appendChild(p3);
 	}
 	document.getElementById('pong-history-wins').textContent = response.wins;
@@ -364,7 +374,6 @@ export async function getNicknameWithUserId(user_id) {
 	const response = await poster(url, data);
 	if (response.error) {
 		return 'deleted-user'
-		return ;
 	}
 	return (response.nickname);
 }

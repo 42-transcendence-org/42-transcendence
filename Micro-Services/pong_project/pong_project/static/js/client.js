@@ -56,6 +56,7 @@ export class Client {
 
 		document.getElementById('pong-not-authorized-back').addEventListener('click', () => this.home());
 		document.getElementById('tournament-display-not-authorized-back').addEventListener('click', () => this.home());
+		document.getElementById('unauthorized-button').addEventListener('click', () => this.home());
 	}
 
 	async test() {

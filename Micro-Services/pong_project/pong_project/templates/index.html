@@ -153,8 +153,10 @@
 				<button id="janken-lobby-back"> Back to Menu </button>
 			</div>
 			<div id="janken-game" style="display:none;">
-				<p>Choose your move</p>
-				<span id="janken-game-opponent-nickname"></span>
+				<div id="janken-game-subdiv" style="display:flex;">
+					<p>Choose your move</p>
+					<span id="janken-game-opponent-nickname"></span>
+				</div>
 				<button id="rock-button">Rock</button>
 				<button id="paper-button">Paper</button>
 				<button id="scissors-button">Scissors</button>
@@ -272,6 +274,7 @@
 		</div>
 			<div id="unauthorized" style="display: none;">
 				<p>Unauthorized</p>
+				<button id="unauthorized-button">Back to the home menu</button>
 			</div>
 		<div id="loading" style="display: block;">
 			<p>Loading...</p>
