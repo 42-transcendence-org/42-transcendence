@@ -68,7 +68,7 @@ export class Client {
 
 	//ONLY SHOWS THE DIV, NO HISTORY ADDING
 	async divDisplay(div_to_show) {
-	
+		console.log("sessionid cookie: ", window.client.get_cookie("sessionid"))
 		const isLogged = await this.connection.isLoggedIn();
 
 		if (div_to_show === 'friend-profile') {

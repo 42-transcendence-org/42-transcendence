@@ -11,8 +11,11 @@ from django.http import JsonResponse
 #JANKEN GAME
 
 class test(APIView):
+    print("coucou")
     def get(self, request, *args, **kwargs):
-        return JsonResponse({'message': request.username, 'and': request.user_id})
+        username = getattr(request, 'username', None)
+        print(username)
+        return JsonResponse({'message': username})
 
 class createJankenGameAPIView(APIView):
     def get(self, request, *args, **kwargs):

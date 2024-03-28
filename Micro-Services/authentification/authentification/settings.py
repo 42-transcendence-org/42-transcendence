@@ -27,7 +27,7 @@ DEBUG = True
 
 MY_IP = os.environ.get('HOST_IP', '127.0.0.1')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', MY_IP, '192.168.252.193']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', MY_IP, '192.168.252.193', '10.14.8.3']
 
 
 # Application definition
@@ -59,16 +59,15 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-	'http://localhost:8001',
-    'http://localhost:8002',
-    'https://localhost:8443',
+	'http://' + MY_IP + ':8001',
+    'http://' + MY_IP + ':8002',
+    'http://' + MY_IP + ':8004',
+    'https://' + MY_IP + ':8443',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = ['https://localhost:8443', 'https://192.168.252.193:8443']
-
-LOGGIN_REDIRECT_URL = 'home'
+CSRF_TRUSTED_ORIGINS = ['https://' + MY_IP + ':8443', 'https://192.168.252.193:8443']
 
 ROOT_URLCONF = 'authentification.urls'
 

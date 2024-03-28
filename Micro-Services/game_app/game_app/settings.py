@@ -62,15 +62,15 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-	'http://localhost:8001',
-    'http://localhost:8002',
-    'https://localhost:8443',
-    'https://10.14.8.3:8443'
+	'http://' + MY_IP + ':8001',
+    'http://' + MY_IP + ':8002',
+    'https://10.14.8.3:8003',
+    'https://' + MY_IP + ':8443'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = ['https://localhost:8443', 'https://192.168.252.193:8443']
+CSRF_TRUSTED_ORIGINS = ['https://10.14.8.3:8443', 'https://192.168.252.193:8443', 'https://10.14.8.3:8003']
 
 ROOT_URLCONF = 'game_app.urls'
 

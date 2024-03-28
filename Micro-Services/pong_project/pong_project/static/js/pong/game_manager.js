@@ -229,7 +229,8 @@ export class GameManager {
 				await this.send_game_creation_request();
 
 				const token = localStorage.getItem("jwt");
-				const url = `http://${window.location.host}:8003/${this.game_id}/?token=${encodeURIComponent(token)}`;
+				const url = `https://10.14.8.3:8443/game/${this.game_id}/?token=${encodeURIComponent(token)}`;
+				console.log("url: ", url);
 				this.event_source = new EventSource(url);
 
 				this.event_source.onmessage = (event) => {

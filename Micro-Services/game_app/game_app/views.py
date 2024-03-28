@@ -26,6 +26,7 @@ def game_create_view(request):
     username = getattr(request, 'username', None)
 
     has_session = server.player_has_active_session(username)
+    print("coucou")
     if has_session:
         return JsonResponse({"id": has_session}, status=200)
 

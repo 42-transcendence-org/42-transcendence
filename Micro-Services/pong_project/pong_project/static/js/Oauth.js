@@ -90,7 +90,7 @@ export class Oauth {
 
 	//checks the state gotten from the redirection post login on 42 website (identity check)
 	async isValidState(state) {
-		const url = `https://${window.location.host}/auth/OAuthVerifyState/`;
+		const url = 'https://localhost:8443/auth/OAuthVerifyState/';
 		const data = {
 			'state': state,
 		};
@@ -124,7 +124,6 @@ export async function getter(url) {
 			credentials: 'include',
 		});
 		const rep = await response.json();
-
 		if (rep.error) {
 			throw new Error(rep.error);
 		}

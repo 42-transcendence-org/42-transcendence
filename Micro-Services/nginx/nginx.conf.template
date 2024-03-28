@@ -11,19 +11,24 @@ upstream game_service {
     server ${HOST_IP}:8003;
 }
 
+upstream event_source {
+    server ${HOST_IP}:8003;
+}
+
 upstream janken_service {
     server ${HOST_IP}:8004;
 }
 
 upstream tournament_service {
-    server ${HOST_IP}:8005;
+    server ${HOST_IP}:8003;
 }
 
 
 # First server block for handling HTTPS connections
 server {
     # Listen on port 443 (default port for HTTPS) and enable SSL
-    listen 8443 ssl;
+    listen 8443 ssl http2;
+    listen [::]:8443 ssl http2;
 
     # Define server names (domain names)
     # Here, it listens to localhost and an IP address
@@ -32,15 +37,28 @@ server {
     # SSL certificate and key files location
     ssl_certificate /etc/nginx/certs/cert.pem;
     ssl_certificate_key /etc/nginx/certs/key.pem;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    #OCSP
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 8.8.8.8 valid=300s;
+    resolver_timeout 5s;
+
+
 
     # Define allowed SSL protocols
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
+    ssl_prefer_server_ciphers on;
+
 
     # Define SSL ciphers to determine the encryption methods
     # HIGH: This represents a group of high-strength ciphers.
     # !aNULL: This excludes anonymous ciphers, which do not authenticate the server and are thus insecure.
     # !MD5: This specifically excludes any ciphers that use MD5, due to its known vulnerabilities.
-    ssl_ciphers HIGH:!aNULL:!MD5;
+    # ssl_ciphers HIGH:!aNULL:!MD5;
 
     # Location block for the root URL
     location / {
@@ -79,6 +97,15 @@ server {
         # Assurez-vous de transmettre le Cookie header pour conserver les cookies de session, y compris csrftoken
         proxy_set_header Cookie $http_cookie;    
     }
+
+    location /event_source/ {
+    proxy_pass http://event_source/; # Votre service EventSource interne sur HTTP
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    # Plus de configurations proxy au besoin...
+}
     
         # Redirect requests to the game service
     location /janken/ {

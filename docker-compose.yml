@@ -14,11 +14,13 @@ services:
       - pong_project
       - authentification
       - game_app
+      - janken
     environment:
       - HOST_IP=${HOST_IP}
     networks:
       - auth
       - game_app
+      - janken
     command: /docker-entrypoint.d/init-nginx.sh
 
 
@@ -75,6 +77,8 @@ services:
     build:
       context: ./Micro-Services/game_app
       dockerfile: Dockerfile
+    environment:
+      - HOST_IP=${HOST_IP}
     volumes:
       - ./Micro-Services/game_app:/app
     ports:
@@ -108,6 +112,8 @@ services:
       - ./Micro-Services/janken_app/:/app
     ports:
       - "8004:8000"
+    networks:
+      - janken
     restart: on-failure
 
   tournament:
@@ -196,7 +202,7 @@ networks:
     driver: bridge
   game_app:
     driver: bridge
-  user:
+  janken:
     driver: bridge
   tournament:
     driver: bridge

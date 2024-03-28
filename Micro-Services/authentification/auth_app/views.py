@@ -91,6 +91,7 @@ class LogoutAPIView(APIView):
 
 def check_authentication(request):
     try:
+        print("yolo", request.user)
         if request.user.is_authenticated:
             try:
                 request.user.profile.online = True

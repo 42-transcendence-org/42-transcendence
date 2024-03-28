@@ -27,7 +27,7 @@ DEBUG = True
 
 MY_IP = os.environ.get('HOST_IP', '127.0.0.1')
 
-ALLOWED_HOSTS = ['$HOST_IP', '127.0.0.1', MY_IP]
+ALLOWED_HOSTS = ['$HOST_IP', '127.0.0.1', MY_IP, '10.14.8.3']
 
 
 # Application definition
@@ -60,14 +60,18 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-	'http://$HOST_IP:8001',
-    'http://$HOST_IP:8002',
-    'https://$HOST_IP:8443'
+	'http://' + MY_IP + ':8001',
+    'http://' + MY_IP + ':8002',
+    'http://' + MY_IP + ':8004',
+    'https://' + MY_IP + ':8443',
 ]
+
+# Dans settings.py de chaque service Django
+SESSION_COOKIE_DOMAIN = 'http:10.14.8.3:8001'
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = ['https://$HOST_IP:8443']
+CSRF_TRUSTED_ORIGINS = ['https://10.14.8.3:8443']
 
 ROOT_URLCONF = 'janken_app.urls'
 
