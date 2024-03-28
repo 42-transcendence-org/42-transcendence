@@ -233,10 +233,22 @@ class jankenHistoryAPIView(APIView): #get the history of your games
                                     'wins': FinishedJankenGames.countWins(request.user_id), \
                                     'draws': FinishedJankenGames.countDraws(request.user_id), \
                                     'losses': FinishedJankenGames.countLosses(request.user_id),
-                                    'winrate': "{:.1f}%".format(FinishedJankenGames.getWinrate(request.user_id))})
+                                    'winrate': "{:.1f}%".format(FinishedJankenGames.getWinrate(request.user_id)),
+                                    'most_played': FinishedJankenGames.getMostPlayed(request.user_id),
+                                    })
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
+        
+# class jankenMostPlayedAPIView(APIView):
+#     def get(self, request, *args, **kwargs):
+#         try:
+#             most_played_choice = FinishedJankenGames.getMostPlayed(request.user_id)
+#             return JsonResponse('most_played': most_played_choice)
+#         except Exception as e:
+#             print(e)
+#             return JsonResponse({'error': e.args[0]})
+
 
 # class getWinrateAPIView(APIView):
 #     def get(self, request, *args, **kwargs):

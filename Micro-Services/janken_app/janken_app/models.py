@@ -138,3 +138,23 @@ class FinishedJankenGames(models.Model):
         else:
             return 0
     
+    def getMostPlayed(user_id):
+        if not FinishedJankenGames.objects.filter(owner=user_id).exists():
+            return "Never played"
+        count_rock = 0
+        count_paper = 0
+        count_scissors = 0
+        if FinishedJankenGames.objects.filter(owner=user_id, owner_choice="rock").exists():
+            count_rock = FinishedJankenGames.objects.filter(owner=user_id, owner_choice="rock").count()
+        if FinishedJankenGames.objects.filter(owner=user_id, owner_choice="paper").exists():
+            count_paper = FinishedJankenGames.objects.filter(owner=user_id, owner_choice="paper").count()
+        if FinishedJankenGames.objects.filter(owner=user_id, owner_choice="scissors").exists():
+            count_scissors = FinishedJankenGames.objects.filter(owner=user_id, owner_choice="scissors").count()
+        if count_rock >= count_scissors and count_rock >= count_paper:
+            return "rock"
+        elif count_paper >= count_rock and count_paper >= count_scissors:
+            return "paper"
+        else:
+            return "scissors"
+
+    

@@ -193,6 +193,8 @@ export class Janken {
 			document.getElementById('janken-history-draws').textContent = 0;
 			document.getElementById('janken-history-losses').textContent = 0;
 			document.getElementById('janken-history-winrate-display').textContent = "No winrate to display";
+			document.getElementById('janken-history-most-played-choice').textContent = "Never played";
+			
 			return ;
 		}
 		const limit = response.history.length > 10 ? response.history.length - 10 : 0;
@@ -228,6 +230,8 @@ export class Janken {
 		document.getElementById('janken-history-wins').textContent = response.wins;
 		document.getElementById('janken-history-draws').textContent = response.draws;
 		document.getElementById('janken-history-losses').textContent =  response.losses;
+		document.getElementById('janken-history-most-played-choice').textContent = response.most_played;
+
 	}
 
 }
