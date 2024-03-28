@@ -41,15 +41,15 @@ class FinishedPongGames(models.Model):
         verbose_name = "Finished Pong Game"
         verbose_name_plural = "Finished Pong Games"
     
-    def getMyHistory(profile):
-        return FinishedPongGames.objects.filter(owner=profile)
+    def getMyHistory(user_id):
+        return FinishedPongGames.objects.filter(owner=user_id)
     
-    def countWins(profile):
-        return FinishedPongGames.objects.filter(owner=profile, result="Victory").count()
+    def countWins(user_id):
+        return FinishedPongGames.objects.filter(owner=user_id, result="Victory").count()
     
-    def countLosses(profile):
-        return FinishedPongGames.objects.filter(owner=profile, result="Defeat").count()
+    def countLosses(user_id):
+        return FinishedPongGames.objects.filter(owner=user_id, result="Defeat").count()
     
-    def countDraws(profile): #return 0 if no game found
-        return FinishedPongGames.objects.filter(owner=profile, result="draw").count()
+    def countDraws(user_id): #return 0 if no game found
+        return FinishedPongGames.objects.filter(owner=user_id, result="draw").count()
     

@@ -63,6 +63,7 @@ export class InputManager {
 					} else if (game.status === g.STATUS_ENDED) {
 					const url = 'https://' + window.location.host + '/game/pongHistory/';
 					Oauth.poster(url, window.client.game_manager.game_result);
+					window.client.game_manager.game_result = [];
 					game.reset();
 					}
 					break;
