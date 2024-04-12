@@ -5,7 +5,7 @@ DOCKER_COMPOSE_CMD := $(shell command -v docker-compose || echo "docker compose"
 DOCKER_COMPOSE	:= $(DOCKER_COMPOSE_CMD) -f ./docker-compose.yml --env-file ./.env
 
 VOLUMES_DIR		:= auth_db game_db janken_db
-VOLUMES_PATH	:= $(HOME)/data/transcendence
+VOLUMES_PATH	:= $(HOME)/data/transcendence_data
 VOLUMES			:= $(addprefix $(VOLUMES_PATH)/,$(VOLUMES_DIR))
 
 # define standard colors
@@ -44,11 +44,11 @@ stop:
 	$(DOCKER_COMPOSE) stop
 
 ls:
-	@echo "$(_GREEN)------------------------List running containers-------------------------$(_END)"
+	@echo "\n$(_GREEN)# List running containers$(_END)"
 	$(DOCKER_COMPOSE) ps
-	@echo "$(_GREEN)------------------------------List images-------------------------------$(_END)"
+	@echo "\n$(_GREEN)# List images$(_END)"
 	docker images
-	@echo "$(_GREEN)------------------------------List volumes------------------------------$(_END)"
+	@echo "\n$(_GREEN)# List volumes$(_END)"
 	docker volume ls
 
 migrate:
