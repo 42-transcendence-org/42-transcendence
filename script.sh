@@ -27,18 +27,21 @@ JWT2=$(echo "$LOGIN_RESPONSE2" | awk -F'"' '{print $4}')
 GAME_CREATION_RESPONSE=$(curl -s -k -b $PLAYER1_COOKIES -X POST -H "X-CSRFToken: $CSRF1" $CREATE_GAME_URL)
 
 # Join game
-TEST=$(curl -s -k -b $PLAYER2_COOKIES -X POST -H "X-CSRFToken: $CSRF2" $CREATE_GAME_URL)
+curl -s -k -b $PLAYER2_COOKIES -X POST -H "X-CSRFToken: $CSRF2" $CREATE_GAME_URL > /dev/null
 
 # Extract the game's id
 GAME_ID=$(echo "$GAME_CREATION_RESPONSE" | awk -F'"' '{print $4}')
 
-echo $GAME_CREATION_RESPONSE
-echo $TEST
-echo $GAME_ID
-
 EVENTSOURCE_URL=$BASE_URL/game/$GAME_ID/?token=$JWT1
 
-# Connect to the EventSource, timeout after 10 seconds
-curl -s -k -N -m 10 -b $PLAYER1_COOKIES -X GET -H "X-CSRFToken: $CSRF1" $EVENTSOURCE_URL
+# Connect to the EventSource, timeout after 5 seconds
+curl -k -N -m 5 $EVENTSOURCE_URL
+
+UPDATE_URL=$BASE_URL/game/$GAME_ID/
+
+for i in {1..10}; do
+	curl -s -k -b $PLAYER1_COOKIES -X PUT -H "Content-Type: application/json" -H "X-CSRFToken: $CSRF1" $UPDATE_URL -d '[0, 1]' > /dev/null
+	sleep 0.3
+done
 
 rm $PLAYER1_COOKIES $PLAYER2_COOKIES
