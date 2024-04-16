@@ -1,38 +1,44 @@
 #!/bin/bash
 
-# user and password from `./manage.py createsuperuser`
-YOUR_USER='matthieu'
-YOUR_PASS='yourpassword'
-
 BASE_URL=https://192.168.64.15:8443
 LOGIN_URL=$BASE_URL/auth/login/
 CREATE_GAME_URL=$BASE_URL/game/
 
-COOKIES=cookies.txt
+PLAYER1_USERNAME='player1'
+PLAYER2_USERNAME='player2'
+PLAYER1_PASSWORD='yourpassword'
+PLAYER2_PASSWORD='yourpassword'
+PLAYER1_COOKIES=cookies1.txt
+PLAYER2_COOKIES=cookies2.txt
 
-# stores csrftoken cookie on cookies.txt
-curl -k -s -c $COOKIES $BASE_URL > /dev/null
+# Log in
+LOGIN_RESPONSE1=$(curl -s -k -c $PLAYER1_COOKIES -d "username=$PLAYER1_USERNAME&password=$PLAYER1_PASSWORD" $LOGIN_URL)
+LOGIN_RESPONSE2=$(curl -s -k -c $PLAYER2_COOKIES -d "username=$PLAYER2_USERNAME&password=$PLAYER2_PASSWORD" $LOGIN_URL)
 
-TOKEN_VALUE="$(grep -oP '(?<=csrftoken[[:space:]]).*' cookies.txt)"
+# Extract CSRF
+CSRF1=$(grep csrftoken $PLAYER1_COOKIES | awk -F'\t' '{print $7}')
+CSRF2=$(grep csrftoken $PLAYER2_COOKIES | awk -F'\t' '{print $7}')
 
-# logs in, updating csrftoken and adding sessionid cookies
-LOGIN_RESPONSE=$(curl -k -b $COOKIES -c $COOKIES -d "csrfmiddlewaretoken=$TOKEN_VALUE&username=$YOUR_USER&password=$YOUR_PASS" $LOGIN_URL)
+# Extract JWT
+JWT1=$(echo "$LOGIN_RESPONSE1" | awk -F'"' '{print $4}')
+JWT2=$(echo "$LOGIN_RESPONSE2" | awk -F'"' '{print $4}')
 
-TOKEN_VALUE=$(echo "$LOGIN_RESPONSE" | awk -F'"' '{print $4}')
+# Create game
+GAME_CREATION_RESPONSE=$(curl -s -k -b $PLAYER1_COOKIES -X POST -H "X-CSRFToken: $CSRF1" $CREATE_GAME_URL)
 
-# updates var env with new cookie
-TOKEN_VALUE="$(grep -oP '(?<=csrftoken[[:space:]]).*' cookies.txt)"
+# Join game
+TEST=$(curl -s -k -b $PLAYER2_COOKIES -X POST -H "X-CSRFToken: $CSRF2" $CREATE_GAME_URL)
 
-# here comes the real request
-JSON_RESPONSE=$(curl -k -s -X POST -b $COOKIES -d "{\"a\":1}" -H "X-CSRFToken: $TOKEN_VALUE" $CREATE_GAME_URL)
+# Extract the game's id
+GAME_ID=$(echo "$GAME_CREATION_RESPONSE" | awk -F'"' '{print $4}')
 
-# Extracting the value from the JSON response
-ID_VALUE=$(echo "$JSON_RESPONSE" | sed -n 's/.*"id": "\(.*\)".*/\1/p')
+echo $GAME_CREATION_RESPONSE
+echo $TEST
+echo $GAME_ID
 
-EVENTSOURCE_URL=$BASE_URL/game/$ID_VALUE/?token=$TOKEN_VALUE
+EVENTSOURCE_URL=$BASE_URL/game/$GAME_ID/?token=$JWT1
 
-# curl -N -k -s -X GET -b $COOKIES -d "{\"a\":1}" -H "X-CSRFToken: $TOKEN_VALUE" $EVENTSOURCE_URL
+# Connect to the EventSource, timeout after 10 seconds
+curl -s -k -N -m 10 -b $PLAYER1_COOKIES -X GET -H "X-CSRFToken: $CSRF1" $EVENTSOURCE_URL
 
-curl -N -k -X GET -b $COOKIES -H "X-CSRFToken: $TOKEN_VALUE" $EVENTSOURCE_URL
-
-# rm cookies.txt
+rm $PLAYER1_COOKIES $PLAYER2_COOKIES
