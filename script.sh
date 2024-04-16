@@ -34,14 +34,17 @@ GAME_ID=$(echo "$GAME_CREATION_RESPONSE" | awk -F'"' '{print $4}')
 
 EVENTSOURCE_URL=$BASE_URL/game/$GAME_ID/?token=$JWT1
 
-# Connect to the EventSource, timeout after 5 seconds
+# Connect to the EventSource
 curl -k -N -m 5 $EVENTSOURCE_URL
 
-UPDATE_URL=$BASE_URL/game/$GAME_ID/
+GAME_INPUT_URL=$BASE_URL/game/$GAME_ID/
 
-for i in {1..10}; do
-	curl -s -k -b $PLAYER1_COOKIES -X PUT -H "Content-Type: application/json" -H "X-CSRFToken: $CSRF1" $UPDATE_URL -d '[0, 1]' > /dev/null
-	sleep 0.3
-done
+# Send a few inputs
+curl -s -k -b $PLAYER1_COOKIES -X PUT -H "Content-Type: application/json" -H "X-CSRFToken: $CSRF1" $GAME_INPUT_URL -d '[0, 1]' > /dev/null
+sleep 1
+curl -s -k -b $PLAYER1_COOKIES -X PUT -H "Content-Type: application/json" -H "X-CSRFToken: $CSRF1" $GAME_INPUT_URL -d '[0, 3]' > /dev/null
+sleep 1
+curl -s -k -b $PLAYER1_COOKIES -X PUT -H "Content-Type: application/json" -H "X-CSRFToken: $CSRF1" $GAME_INPUT_URL -d '[0, 2]' > /dev/null
 
+# Delete cookies
 rm $PLAYER1_COOKIES $PLAYER2_COOKIES
