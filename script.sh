@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# FIXME For now we have to disable the checks (if username is None ...) at the
+# start of game_view for the script to work. 
+
 BASE_URL=https://192.168.64.15:8443
 LOGIN_URL=$BASE_URL/auth/login/
 CREATE_GAME_URL=$BASE_URL/game/
