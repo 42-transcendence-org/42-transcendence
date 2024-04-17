@@ -146,6 +146,15 @@ class getFriendStatsAPIView(APIView):
 
 
 from .models import tournament
+import os
+
+class blockchainURLAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            return JsonResponse({'url_blockchain': os.environ.get('URL_BLOCKCHAIN')})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': e.args[0]})
 
 class tournamentAPIView(APIView):
     def post(self, request, *args, **kwargs):

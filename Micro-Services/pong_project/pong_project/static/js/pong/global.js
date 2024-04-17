@@ -50,4 +50,4 @@ export const BALL_MAX_ANGLE = Math.PI / 6;
 export const PADDLE_WIDTH = 64;
 export const PADDLE_SPEED = (BOARD_WIDTH - (2 * BOARD_CORRIDOR)) * 1.90;
 
-export const POINTS_TO_WIN = 10;
+export const POINTS_TO_WIN = 1;

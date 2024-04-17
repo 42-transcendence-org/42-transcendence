@@ -344,6 +344,9 @@ class DeleteFriendAPIView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
+
+import magic
+
 @require_http_methods(["POST"])
 def update_profile_picture(request):
     if request.method == 'POST':
@@ -351,6 +354,13 @@ def update_profile_picture(request):
             profile_picture = request.FILES.get('profile_picture')
             if profile_picture.content_type.startswith('image') == False:
                 raise Exception("The file is not an image.")
+            
+            mime = magic.Magic(mime=True)
+            mime_type = mime.from_buffer(profile_picture.read(1024))
+            if not mime_type.startswith('image'):
+                raise Exception("Le fichier n'est pas une image.")
+            profile_picture.seek(0)
+
             name = "profile_picture_" + request.user.username + ".jpg"
             if profile_picture:
                 with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:

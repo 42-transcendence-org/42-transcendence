@@ -85,6 +85,10 @@ export class Client {
 		}
 
 		if (div_to_show === 'tournament-history') {
+			const blockchainURL = await Oauth.getter('/game/blockchainURL/')
+			if (!blockchainURL.error){
+				document.getElementById('blockchain-link').href = blockchainURL.url_blockchain;
+			}
 			await this.tournament.tourneyHistoryDisplay();
 		}
 

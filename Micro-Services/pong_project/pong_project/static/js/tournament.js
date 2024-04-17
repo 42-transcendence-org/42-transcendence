@@ -28,14 +28,12 @@ export class Tournament {
 			alert(response.error);
 			return ;
 		}
-		console.log(response.games[0]);
 		const urlBlockchain = '/tournament/saveTournament/';
 		const responseBlock = await Oauth.poster(urlBlockchain, response.games[0]);
 		if (responseBlock.error) {
 			alert(responseBlock.error);
 			return ;
 		}
-		console.log(responseBlock);
 
 		const urlTx = '/game/tourneyBlockchainKey/'
 		const dataTx = {
@@ -43,18 +41,18 @@ export class Tournament {
 			tx: responseBlock.tx
 		}
 		const responseTx = await Oauth.poster(urlTx, dataTx);
-		console.log(responseTx);
 	}
 	
 	async tourneyHistoryDisplay() {
 		const url = '/game/tournament/';
 		const response = await Oauth.getter(url);
 		const lang = window.client.lang;
-	
+
 		if (response.error) {
 			return ;
 		}
 		document.getElementById('blockchain-link').style.display = 'block';
+
 		var div = document.getElementById('tournament-history-list');
 		div.textContent = "";
 		const limit = response.history.length > 10 ? response.history.length - 10 : 0;
@@ -82,13 +80,11 @@ export class Tournament {
 			p.style.padding = "10px";
 			const responseTx = await Oauth.poster('/game/tourneyTx/', {'tourney_id': response.history[i].id})
 			var tx = 'error';
-			console.log(responseTx);
 			if (responseTx.message)
 			{
 				tx = responseTx.tx;
 			}	
             link.href = 'https://sepolia.arbiscan.io/tx/' + tx + '#eventlog';
-			console.log(link.href);
 			if (lang == 'fr')
             	link.textContent = 'Cliquez ici pour aller à cette URL';
 			else if (lang == 'es')
