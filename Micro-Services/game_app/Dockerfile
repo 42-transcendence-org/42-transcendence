@@ -9,6 +9,9 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY script.sh /app/
+RUN chmod +x /app/script.sh
+
 EXPOSE 8000
 
-CMD ["uvicorn", "game_app.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "/app/script.sh"]

@@ -12,7 +12,7 @@ VOLUMES			:= $(addprefix $(VOLUMES_PATH)/,$(VOLUMES_DIR))
 _END			:=	\033[0m
 _GREEN			:=	\033[32m
 
-all: up migrate
+all: up
 
 # -d = run the containers in the background (terminal is still usable while running)
 # --build = force to rebuild the images of the services
@@ -50,11 +50,6 @@ ls:
 	docker images
 	@echo "\n$(_GREEN)# List volumes$(_END)"
 	docker volume ls
-
-migrate:
-	@docker exec auth python manage.py migrate > /dev/null 2>&1
-	@docker exec janken python manage.py migrate > /dev/null 2>&1
-	@docker exec game_app python manage.py migrate > /dev/null 2>&1 &
 
 # --rmi all = remove all images associated with the services
 # --volumes = remove any volume

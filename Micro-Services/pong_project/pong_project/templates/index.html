@@ -201,6 +201,7 @@
 				<button id="janken-join-game-button" data-fr="Recherche d'adversaire" data-en="Matchmaking" data-es="Buscando oponente">Matchmaking</button>
 				<button id="janken-game-in-progress-button" data-fr="Partie en cours" data-en="Game in progress" data-es="Partida en curso">Game in progress</button>
 				<button id="janken-history-button" data-fr="Mon historique" data-en="My History" data-es="Mi historial">My History</button>
+				<button id="janken-create-game-button-ia" data-fr="Jouer contre l'IA" data-en="Play against AI" data-es="Jugar contra la IA">Play against AI</button>
 			</div>
 			<div id="janken-history" style="display:none;">
 				<p data-fr="Historique" data-en="History" data-es="Historia">History</p>
@@ -242,6 +243,25 @@
 				</div>
 				<button id="janken-game-back" data-fr="Retour au menu" data-en="Back to Menu" data-es="Volver al menu">Back to Menu</button>
 			</div>
+			<div id="janken-game-ai" style="display:none;">
+				<p>
+					<p data-fr="Choisissez votre coup" data-en="Choose your move" data-es="Elige tu movimiento">Choose your move</p>
+					<span id="janken-game-opponent-nickname-ai" data-fr="Vous jouez contre une IA" data-es="Juegas contra una AI" data-en="You are playing against an AI">You are playing against an AI</span>
+				</p>
+				<div id="janken-game-buttons-ai">
+					<button id="rock-button-ai"></button>
+					<button id="paper-button-ai"></button>
+					<button id="scissors-button-ai"></button>
+				</div>
+				<button id="janken-game-back-ai" data-fr="Retour au menu" data-en="Back to Menu" data-es="Volver al menu">Back to Menu</button>
+			</div>
+			<div id="janken-result-ai" style="display:none;">
+				<p id="janken-result-text-ai"></p>
+				<p id="janken-result-result-ai"></p>
+				<button id="janken-result-play-again-ai" data-fr="Rejouer" data-en="Play again" data-es="Jugar de nuevo">Play again</button>
+				<button id="janken-result-back-ai" data-fr="Retour au menu" data-en="Back to Menu" data-es="Volver al menu">Back to Menu</button>
+			</div>
+
 			<div id="janken-already-played" style="display:none;">
 				<p>
 					<span data-fr="Vous avez déjà joué, en attente de " data-en="You already played, waiting for " data-es="Ya jugaste, esperando a ">You already played, waiting for </span>

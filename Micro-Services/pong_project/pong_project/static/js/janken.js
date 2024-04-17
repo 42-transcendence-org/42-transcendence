@@ -7,7 +7,7 @@ export class Janken {
 	}
 	
 	eventlisteners() {
-		document.getElementById('janken-button').addEventListener('click', () => window.client.nextPage('janken')); //janken
+		document.getElementById('janken-button').addEventListener('click', () => window.client.nextPage('janken'));
 		document.getElementById('janken-create-game-button').addEventListener('click', () => this.create_game());
 		document.getElementById('janken-join-game-button').addEventListener('click', () => this.join_game());
 		document.getElementById('rock-button').addEventListener('click', () => this.play('rock'));
@@ -23,6 +23,130 @@ export class Janken {
 		document.getElementById('janken-history-back-to-profile').addEventListener('click', () => client.nextPage('profile'));
 		document.getElementById('janken-history-button').addEventListener('click', () => client.nextPage('janken-history'));
 		document.getElementById('janken-not-authorized-back').addEventListener('click', () => client.nextPage('janken'));
+
+		document.getElementById('janken-create-game-button-ia').addEventListener('click', () => client.nextPage('janken-game-ai'));
+		document.getElementById('rock-button-ai').addEventListener('click', () => this.playAI('rock'));
+		document.getElementById('paper-button-ai').addEventListener('click', () => this.playAI('paper'));
+		document.getElementById('scissors-button-ai').addEventListener('click', () => this.playAI('scissors'));
+		document.getElementById('janken-game-back-ai').addEventListener('click', () => client.nextPage('janken'));
+		document.getElementById('janken-result-back-ai').addEventListener('click', () => client.nextPage('janken'));
+		document.getElementById('janken-result-play-again-ai').addEventListener('click', () => client.nextPage('janken-game-ai'));
+
+
+	}
+
+	async playAI(choice) {
+		var ai_choice = Math.floor(Math.random() * 3);
+
+		var lang = window.client.lang;
+		if (ai_choice == 0)
+		{
+			ai_choice = 'rock';
+		}
+		else if (ai_choice == 1)
+		{
+			ai_choice = 'paper';
+		}
+		else 
+		{
+			ai_choice = 'scissors';
+		}
+
+		var creator_choice = choice;
+		var opponent = "AI";
+		var opponent_choice = ai_choice;
+
+		var result = "draw";
+		if (creator_choice == "rock" && opponent_choice == "scissors")
+			result = "victory";
+		else if (creator_choice == "rock" && opponent_choice == "paper")
+			result = "defeat";
+		else if (creator_choice == "paper" && opponent_choice == "rock")
+			result = "victory";
+		else if (creator_choice == "paper" && opponent_choice == "scissors")
+			result = "defeat";
+		else if (creator_choice == "scissors" && opponent_choice == "paper")
+			result = "victory";
+		else if (creator_choice == "scissors" && opponent_choice == "rock")
+			result = "defeat";
+
+
+		if (lang == 'fr')
+		{
+			if (creator_choice == "rock")
+				creator_choice = "pierre";
+			else if (creator_choice == "paper")
+				creator_choice = "feuille";
+			else
+				creator_choice = "ciseaux";
+			if (opponent_choice == "rock")
+				opponent_choice = "pierre";
+			else if (opponent_choice == "paper")
+				opponent_choice = "feuille";
+			else
+				opponent_choice = "ciseaux";
+		} else if (lang == 'es')
+		{
+			if (creator_choice == "rock")
+				creator_choice = "piedra";
+			else if (creator_choice == "paper")
+				creator_choice = "papel";
+			else
+				creator_choice = "tijeras";
+			if (opponent_choice == "rock")
+				opponent_choice = "piedra";
+			else if (opponent_choice == "paper")
+				opponent_choice = "papel";
+			else
+				opponent_choice = "tijeras";
+		}
+
+		var div = document.getElementById('janken-result-text-ai');
+		if (lang == 'fr')
+			div.textContent = "Vous" + " avez joué " + creator_choice + " et " + opponent + " a joué " + opponent_choice + ". ";
+		else if (lang == 'en')
+			div.textContent = "You" + " played " + creator_choice + " and " + opponent + " played " + opponent_choice + ". ";
+		else if (lang == 'es')
+			div.textContent = "Tu" + " jugós " + creator_choice + " y " + opponent + " jugó " + opponent_choice + ". ";
+		if (result == "victory") {
+			if (lang == 'fr') {
+				div.textContent += "Vous avez gagné !";
+				div.style.backgroundColor = "#98fb98";
+			}
+			else if (lang == 'en') {
+				div.textContent += "You won !";
+				div.style.backgroundColor = "#98fb98";
+			}
+			else if (lang == 'es') {
+				div.textContent += "Tu ganaste !";
+				div.style.backgroundColor = "#98fb98";
+			}
+		}
+		else if (result == "draw") {
+			if (lang == 'fr') {
+				div.textContent += "C'est une égalité !";
+				div.style.backgroundColor = "#fffacd";
+			}
+			else if (lang == 'en') {
+				div.textContent += "It's a draw !";
+				div.style.backgroundColor = "#fffacd";
+			}
+			else if (lang == 'es') {
+				div.textContent += "Es un empate !";
+				div.style.backgroundColor = "#fffacd";
+			}
+		} else {
+			if (lang == 'fr') {
+				div.textContent += "Vous avez perdu !";
+				div.style.backgroundColor = "#ffb6c1";
+			} else if (lang == 'en') {
+				div.textContent += "You lost !";
+			} else if (lang == 'es') {
+				div.textContent += "Tu perdiste !";
+			}
+			div.style.backgroundColor = "#ffb6c1";
+		}
+		await window.client.nextPage('janken-result-ai');
 	}
 	
 	async game_in_progress() {

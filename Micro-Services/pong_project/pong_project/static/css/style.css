@@ -106,7 +106,9 @@ main {
 #pong-history button,
 #janken-lobby button,
 #janken-game button,
+#janken-game-ai button,
 #janken-result button,
+#janken-result-ai button,
 #janken-already-played button,
 #Login button,
 #Register button,
@@ -157,10 +159,12 @@ main button:hover,
 #game-div-test-Space:hover,
 #janken-lobby button:hover,
 #janken-game button:hover,
+#janken-game-ai button:hover,
 #janken button:hover,
 #janken-history button:hover,
 #janken-already-played button:hover,
 #janken-result button:hover,
+#janken-result-ai button:hover,
 #friend-profile button:hover,
 #pong-history button:hover {
 
@@ -691,8 +695,10 @@ label[for="OpenAIquestion"] {
 #pong-history,
 #tournament-history,
 #janken-game,
+#janken-game-ai,
 #janken-already-played,
 #janken-result,
+#janken-result-ai,
 #chatbot {
 	display: flex;
 	flex-direction: column;
@@ -821,14 +827,16 @@ label[for="OpenAIquestion"] {
 	border: 1px solid #ccc;
 }
 
-#janken-game {
+#janken-game,
+#janken-game-ai {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 }
 
-#janken-game-subdiv {
+#janken-game-subdiv,
+#janken-game-ai-subdiv {
 	display: flex;
 	margin: auto;
 	flex-direction: column;
@@ -876,7 +884,8 @@ label[for="OpenAIquestion"] {
 	font-size: 25px;
 }
 
-#janken-game-buttons {
+#janken-game-buttons,
+#janken-game-buttons-ai {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
@@ -886,7 +895,8 @@ label[for="OpenAIquestion"] {
 	margin-bottom: 10%;
 }
 
-#janken-game-buttons button {
+#janken-game-buttons button,
+#janken-game-buttons-ai button {
 	width: 30%;
 	height: 100%;
 	margin: auto;
@@ -899,15 +909,18 @@ label[for="OpenAIquestion"] {
 
 
 
-#rock-button {
+#rock-button,
+#rock-button-ai {
 	background-image: url('../images/pierre1.jpg');
 }
 
-#paper-button {
+#paper-button,
+#paper-button-ai {
 	background-image: url('../images/feuille1.jpg');
 }
 
-#scissors-button {
+#scissors-button,
+#scissors-button-ai {
 	background-image: url('../images/ciseau1.jpg');
 }
 
