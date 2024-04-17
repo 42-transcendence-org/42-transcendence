@@ -8,5 +8,4 @@ PyJWT
 uvicorn
 requests
 openai
-Pillow
 python-magic
