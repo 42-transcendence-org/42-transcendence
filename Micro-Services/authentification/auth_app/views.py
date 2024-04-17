@@ -345,8 +345,6 @@ class DeleteFriendAPIView(APIView):
             print(e)
             return JsonResponse({'error': e.args[0]})
 
-import magic
-
 @require_http_methods(["POST"])
 def update_profile_picture(request):
     if request.method == 'POST':
