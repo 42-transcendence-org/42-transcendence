@@ -358,6 +358,7 @@ def update_profile_picture(request):
             mime_type = data.from_buffer(profile_picture.read(1024))
             if not mime_type.startswith('image'):
                 raise Exception("The file is not an image.")
+            profile_picture.seek(0)
             name = "profile_picture_" + request.user.username + ".jpg"
             if profile_picture:
                 with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:
