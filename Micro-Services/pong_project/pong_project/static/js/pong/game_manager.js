@@ -395,7 +395,7 @@ export class GameManager {
 		} else if (localStorage.getItem('tournament-round') === "2") {
 			await window.client.tournament.finalGame(this.game_result['winner'], this.game_result['loser']);
 		} else if (localStorage.getItem('tournament-round') === "3") {
-			await window.client.tournament.sendToBlockchain(this.tourney_id);
+			window.client.tournament.sendToBlockchain(this.tourney_id);
 			await window.client.tournament.displayWinner(this.game_result['winner'], this.game_result['loser']);
 			this.tourney_id = undefined;
 		}

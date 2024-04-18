@@ -8,3 +8,4 @@ PyJWT
 uvicorn
 requests
 openai
+python-magic
