@@ -9,3 +9,4 @@ uvicorn
 requests
 openai
 Pillow
+python-magic
