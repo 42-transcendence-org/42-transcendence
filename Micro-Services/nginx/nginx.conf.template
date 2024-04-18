@@ -131,12 +131,8 @@ server {
     }
 
         # Redirect requests to the prometheus service
-    location /prometheus/ {
-        #allow 172.18.0.1; # Remplacez par l'adresse IP autorisée
-        #allow 127.0.0.1;
-        #deny all; # Refuse l'accès à toutes les autres adresses IP
-
-        proxy_pass http://prometheus_service;
+    location ~ ^/prometheus(/?)(.*) {
+        proxy_pass http://10.14.8.3:9090/$2$is_args$args;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
         proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client
@@ -146,16 +142,16 @@ server {
         proxy_set_header Cookie $http_cookie;    
     }
 
-                # Redirect requests to the grafana service
+        # Redirect requests to the grafana service
     location ~ ^/grafana/(.*) {
-    proxy_pass http://grafana_service/$1$is_args$args;
+        proxy_pass http://grafana_service/$1$is_args$args;
 
-    proxy_set_header Host $http_host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-Host $host;
-    proxy_set_header X-Forwarded-Port $server_port;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $server_port;
     }
 
 }
