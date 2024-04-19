@@ -131,7 +131,10 @@ def save_tournament(request):
 
 def get_tournament(request):
     try:
-        data.json.loads(request.body)
+        data = json.loads(request.body)
+        print (data)
+        print (w3.keccak(text=data['tournamentOwner']).hex())
+        print (w3.keccak(text="vburton@42").hex())
         event = tournament_contract.events.tournamentSaved()
         event_signature = w3.keccak(text="tournamentSaved(string,string,string[3],string[3],string[3])").hex()
         event_filter = {'fromBlock': 0, 'toBlock': 'latest', 'address': TOURNAMENT_ADDRESS, 'topics': [event_signature, None, None, None]}
@@ -143,13 +146,15 @@ def get_tournament(request):
             if (i >=10):
                 break
             event_data = event.process_log(log)
-            tournament_Owner = event_data['args']['tournamentOwner']
-            if tournament_Owner == w3.keccak(text=data['tournamentOwner']):
+            tournament_Owner = event_data['args']['tournamentOwner'].hex()
+            print(tournament_Owner)
+            if tournament_Owner == w3.keccak(text=data['tournamentOwner']).hex():
+                print("coucou")
                 args_dict = dict(event_data['args'])
                 args_dict['transactionHash'] = log.transactionHash.hex()
                 history.append(args_dict)
                 i += 1
-
+        print(history)
         return JsonResponse({'history': history})
     except Exception as e:
         print(e)

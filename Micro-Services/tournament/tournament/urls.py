@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from .blockchain.blockchain import save_tournament
+from .blockchain.blockchain import save_tournament, get_tournament
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 	path('prometheus/', include("django_prometheus.urls")),
 
     path('saveTournament/', save_tournament, name='saveTournament'),
+    path('getTournament/', get_tournament, name='getTournament')
 ]

@@ -63,13 +63,25 @@ export class Tournament {
 	}
 	
 	async tourneyHistoryDisplay() {
-		const url = '/game/tournament/';
-		const response = await Oauth.getter(url);
-		const lang = window.client.lang;
+		// const url = '/game/tournament/';
+		// const response = await Oauth.getter(url);
+		// const lang = window.client.lang;
 
+		// if (response.error) {
+		// 	return ;
+		// }
+
+		const url = '/tournament/getTournament/';
+		const data = {
+			tournamentOwner: localStorage.getItem('username')
+		}
+		const response = await Oauth.poster(url, data);
+		const lang = window.client.lang;
 		if (response.error) {
 			return ;
 		}
+
+		console.log(response);
 		document.getElementById('blockchain-link').style.display = 'block';
 
 		var div = document.getElementById('tournament-history-list');
