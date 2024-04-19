@@ -77,6 +77,7 @@ export class Connection {
 		}
 
 		localStorage.removeItem('jwt');
+		localStorage.removeItem('username');
 		window.client.home();
 	}
 

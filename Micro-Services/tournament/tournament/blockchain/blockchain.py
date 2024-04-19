@@ -17,39 +17,6 @@ w3 = Web3(HTTPProvider(provider_url))
 
 tournament_abi =[
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_tournamentOwner",
-				"type": "string"
-			},
-			{
-				"internalType": "string[4]",
-				"name": "_players",
-				"type": "string[4]"
-			},
-			{
-				"internalType": "string[3]",
-				"name": "_Match1",
-				"type": "string[3]"
-			},
-			{
-				"internalType": "string[3]",
-				"name": "_Match2",
-				"type": "string[3]"
-			},
-			{
-				"internalType": "string[3]",
-				"name": "_Finale",
-				"type": "string[3]"
-			}
-		],
-		"name": "saveTournament",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
@@ -65,9 +32,9 @@ tournament_abi =[
 			},
 			{
 				"indexed": False,
-				"internalType": "string[4]",
+				"internalType": "string",
 				"name": "players",
-				"type": "string[4]"
+				"type": "string"
 			},
 			{
 				"indexed": False,
@@ -90,6 +57,39 @@ tournament_abi =[
 		],
 		"name": "tournamentSaved",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_tournamentOwner",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_players",
+				"type": "string"
+			},
+			{
+				"internalType": "string[3]",
+				"name": "_Match1",
+				"type": "string[3]"
+			},
+			{
+				"internalType": "string[3]",
+				"name": "_Match2",
+				"type": "string[3]"
+			},
+			{
+				"internalType": "string[3]",
+				"name": "_Finale",
+				"type": "string[3]"
+			}
+		],
+		"name": "saveTournament",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ]
 tournament_contract = w3.eth.contract(address=TOURNAMENT_ADDRESS, abi=tournament_abi)
@@ -102,14 +102,12 @@ def save_tournament(request):
         nonce = w3.eth.get_transaction_count(account.address)
 
         data = json.loads(request.body)
-        Players = (f" {data['player1']},", f" {data['player2']},", f" {data['player3']},", f" {data['player4']}.")
+        Players = (f" {data['player1']}, {data['player2']}, {data['player3']}, {data['player4']}.")
         Match1 = (f"Winner: {data['game1_winner']}\n",f"Looser: {data['game1_loser']}\n", f"Score: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
         Match2 = (f"Winner: {data['game2_winner']}\n",f"Looser: {data['game2_loser']}\n", f"Score: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
         Finale = (f"Winner: {data['game3_winner']}\n",f"Looser: {data['game3_loser']}\n", f"Score: {data['game3_player1_score']}-{data['game3_player2_score']}")
 
-        tournamentOwner = "test"
-
-        tx = tournament_contract.functions.saveTournament(tournamentOwner, Players, Match1, Match2, Finale).build_transaction({
+        tx = tournament_contract.functions.saveTournament(data['tournamentOwner'], Players, Match1, Match2, Finale).build_transaction({
             'from': account.address,
             'chainId': chainId,
             'gas': 2000000,
@@ -135,7 +133,7 @@ def get_tournament(request):
     # tournamentOwner = request.get
 
     event = tournament_contract.events.tournamentSaved()
-    event_signature = w3.keccak(text="tournamentSaved(string,string[3],string[3],string[3])").hex()
+    event_signature = w3.keccak(text="tournamentSaved(string,string,string[3],string[3],string[3])").hex()
     event_filter = {'fromBlock': 0, 'toBlock': 'latest', 'address': TOURNAMENT_ADDRESS, 'topics': [event_signature, None, None, None]}
     logs = w3.eth.get_logs(event_filter)
 
@@ -148,11 +146,10 @@ def get_tournament(request):
         event_data = event.process_log(log)
         # Vérifier si l'ID du tournoi correspond
         tournament_Owner = event_data['args']['tournamentOwner']
-        if tournament_Owner == w3.keccak(text="test"):
+        if tournament_Owner == w3.keccak(text="vburton@42"):
             args_dict = dict(event_data['args'])
+            args_dict['transactionHash'] = log.transactionHash.hex()
             history.append(args_dict)
             i += 1
 
-    print("\n\n\n\n")
-    print(history)
-    
+    return JsonResponse({'history': history})

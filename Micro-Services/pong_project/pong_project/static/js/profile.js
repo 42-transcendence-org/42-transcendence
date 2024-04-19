@@ -39,6 +39,8 @@ export async function fetchProfileData(div_to_show) {
 
     await changeLanguage(data.default_language);
 
+	localStorage.setItem('username', data.username);
+
 	document.getElementById('banner-nickname-display').innerText = data.nickname;
 	document.getElementById('banner-profile-image-display').src = "auth/static/" + data.img;
 	document.getElementById('tournament-host-nickname').innerText = data.nickname;
