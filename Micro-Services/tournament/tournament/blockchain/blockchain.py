@@ -12,9 +12,6 @@ provider_url = os.getenv('PROVIDER_URL')
 private_key = os.getenv('PRIVATE_KEY')
 chainId = os.getenv('CHAIN_ID')
 
-
-w3 = Web3(HTTPProvider(provider_url))
-
 tournament_abi =[
 	{
 		"inputs": [],
@@ -92,6 +89,7 @@ tournament_abi =[
 		"type": "function"
 	}
 ]
+w3 = Web3(HTTPProvider(provider_url))
 tournament_contract = w3.eth.contract(address=TOURNAMENT_ADDRESS, abi=tournament_abi)
 
 
@@ -130,26 +128,29 @@ def save_tournament(request):
 
 
 def get_tournament(request):
-    # tournamentOwner = request.get
+    try:
+        data.json.loads(request.body)
+        event = tournament_contract.events.tournamentSaved()
+        event_signature = w3.keccak(text="tournamentSaved(string,string,string[3],string[3],string[3])").hex()
+        event_filter = {'fromBlock': 0, 'toBlock': 'latest', 'address': TOURNAMENT_ADDRESS, 'topics': [event_signature, None, None, None]}
+        logs = w3.eth.get_logs(event_filter)
 
-    event = tournament_contract.events.tournamentSaved()
-    event_signature = w3.keccak(text="tournamentSaved(string,string,string[3],string[3],string[3])").hex()
-    event_filter = {'fromBlock': 0, 'toBlock': 'latest', 'address': TOURNAMENT_ADDRESS, 'topics': [event_signature, None, None, None]}
-    logs = w3.eth.get_logs(event_filter)
+        i = 0
+        history = []
+        for log in logs:
+            if (i >=10):
+                break
+            # Décoder le log
+            event_data = event.process_log(log)
+            # Vérifier si l'ID du tournoi correspond
+            tournament_Owner = event_data['args']['tournamentOwner']
+            if tournament_Owner == w3.keccak(text=data[tournamentOwner]):
+                args_dict = dict(event_data['args'])
+                args_dict['transactionHash'] = log.transactionHash.hex()
+                history.append(args_dict)
+                i += 1
 
-    i = 0
-    history = []
-    for log in logs:
-        if (i >=10):
-            break
-        # Décoder le log
-        event_data = event.process_log(log)
-        # Vérifier si l'ID du tournoi correspond
-        tournament_Owner = event_data['args']['tournamentOwner']
-        if tournament_Owner == w3.keccak(text="vburton@42"):
-            args_dict = dict(event_data['args'])
-            args_dict['transactionHash'] = log.transactionHash.hex()
-            history.append(args_dict)
-            i += 1
-
-    return JsonResponse({'history': history})
+        return JsonResponse({'history': history})
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': "Failed to get tournament from blockchain: " + e.args[0]})
