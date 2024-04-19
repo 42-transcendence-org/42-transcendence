@@ -19,10 +19,6 @@ upstream tournament_service {
     server ${HOST_IP}:8005;
 }
 
-upstream prometheus_service {
-    server ${HOST_IP}:9090;
-}
-
 upstream grafana_service {
     server ${HOST_IP}:9300;
 }
@@ -121,18 +117,6 @@ server {
         # Redirect requests to the tournament service
     location /tournament/ {
         proxy_pass http://tournament_service/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
-        proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Pour le forwarding d'IP
-        proxy_set_header X-Forwarded-Proto $scheme; # Transmet le schéma utilisé (http ou https)
-        # Assurez-vous de transmettre le Cookie header pour conserver les cookies de session, y compris csrftoken
-        proxy_set_header Cookie $http_cookie;    
-    }
-
-        # Redirect requests to the prometheus service
-    location ~ ^/prometheus(/?)(.*) {
-        proxy_pass http://10.14.8.3:9090/$2$is_args$args;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Host $host; # Transmet le host demandé
         proxy_set_header X-Real-IP $remote_addr; # Transmet l'adresse IP du client

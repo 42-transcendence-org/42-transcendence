@@ -24,12 +24,34 @@ export class Tournament {
 			tourney_id: tourney_id
 		}
 		const response = await Oauth.poster(url, data);
+		const getPlayer = await Oauth.getter('/game/tournament/');
+		const check = getPlayer.history.length - 1;
+
 		if (response.error) {
 			alert(response.error);
 			return ;
 		}
+		const dataFinal = {
+			player1: getPlayer.history[check].player1,
+			player2: getPlayer.history[check].player2,
+			player3: getPlayer.history[check].player3,
+			player4: getPlayer.history[check].player4,
+			winner: getPlayer.history[check].winner,
+			game1_winner: response.games[0].winnerGame1,
+			game1_loser: response.games[0].loserGame1,
+			game2_winner: response.games[0].winnerGame2,
+			game2_loser: response.games[0].loserGame2,
+			game3_winner: response.games[0].winnerGame3,
+			game3_loser: response.games[0].loserGame3,
+			game1_player1_score: response.games[0].game1_player1_score,
+			game1_player2_score: response.games[0].game1_player2_score,
+			game2_player1_score: response.games[0].game2_player1_score,
+			game2_player2_score: response.games[0].game2_player2_score,
+			game3_player1_score: response.games[0].game3_player1_score,
+			game3_player2_score: response.games[0].game3_player2_score,
+		};
 		const urlBlockchain = '/tournament/saveTournament/';
-		const responseBlock = await Oauth.poster(urlBlockchain, response.games[0]);
+		const responseBlock = await Oauth.poster(urlBlockchain, dataFinal);
 		if (responseBlock.error) {
 			alert(responseBlock.error);
 			return ;
