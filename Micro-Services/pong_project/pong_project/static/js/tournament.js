@@ -18,53 +18,48 @@ export class Tournament {
 		});
 	}
 
-	async sendToBlockchain(tourney_id) {
-		const url = '/game/tourneyHistory/';
-		const data = {
-			tourney_id: tourney_id
-		}
-		const response = await Oauth.poster(url, data);
-		const getPlayer = await Oauth.getter('/game/tournament/');
-		const check = getPlayer.history.length - 1;
+	async sendToBlockchain() {
+		// const url = '/game/tourneyHistory/';
+		// const data = {
+		// 	tourney_id: tourney_id
+		// }
+		// const response = await Oauth.poster(url, data);
+		// const getPlayer = await Oauth.getter('/game/tournament/');
+		// const check = getPlayer.history.length - 1;
 
-		if (response.error) {
-			alert(response.error);
-			return ;
-		}
-		const dataFinal = {
-			tournamentOwner: localStorage.getItem('username'),
-			player1: getPlayer.history[check].player1,
-			player2: getPlayer.history[check].player2,
-			player3: getPlayer.history[check].player3,
-			player4: getPlayer.history[check].player4,
-			winner: getPlayer.history[check].winner,
-			game1_winner: response.games[0].game1_winner,
-			game1_loser: response.games[0].game1_loser,
-			game2_winner: response.games[0].game2_winner,
-			game2_loser: response.games[0].game2_loser,
-			game3_winner: response.games[0].game3_winner,
-			game3_loser: response.games[0].game3_loser,
-			game1_player1_score: response.games[0].game1_player1_score,
-			game1_player2_score: response.games[0].game1_player2_score,
-			game2_player1_score: response.games[0].game2_player1_score,
-			game2_player2_score: response.games[0].game2_player2_score,
-			game3_player1_score: response.games[0].game3_player1_score,
-			game3_player2_score: response.games[0].game3_player2_score,
-		};
-		console.log(dataFinal)
+		// if (response.error) {
+		// 	alert(response.error);
+		// 	return ;
+		// }
+		// const dataFinal = {
+		// 	tournamentOwner: localStorage.getItem('username'),
+		// 	player1: getPlayer.history[check].player1,
+		// 	player2: getPlayer.history[check].player2,
+		// 	player3: getPlayer.history[check].player3,
+		// 	player4: getPlayer.history[check].player4,
+		// 	winner: getPlayer.history[check].winner,
+		// 	game1_winner: response.games[0].game1_winner,
+		// 	game1_loser: response.games[0].game1_loser,
+		// 	game2_winner: response.games[0].game2_winner,
+		// 	game2_loser: response.games[0].game2_loser,
+		// 	game3_winner: response.games[0].game3_winner,
+		// 	game3_loser: response.games[0].game3_loser,
+		// 	game1_player1_score: response.games[0].game1_player1_score,
+		// 	game1_player2_score: response.games[0].game1_player2_score,
+		// 	game2_player1_score: response.games[0].game2_player1_score,
+		// 	game2_player2_score: response.games[0].game2_player2_score,
+		// 	game3_player1_score: response.games[0].game3_player1_score,
+		// 	game3_player2_score: response.games[0].game3_player2_score,
+		// };
+		// console.log(dataFinal)
+		console.log(localStorage.getItem('tournamentData'));
+		const tournamentData = JSON.parse(localStorage.getItem('tournamentData'));
 		const urlBlockchain = '/tournament/saveTournament/';
-		const responseBlock = await Oauth.poster(urlBlockchain, dataFinal);
+		const responseBlock = await Oauth.poster(urlBlockchain, tournamentData);
 		if (responseBlock.error) {
 			alert(responseBlock.error);
 			return ;
 		}
-
-		const urlTx = '/game/tourneyBlockchainKey/'
-		const dataTx = {
-			tourney_id: tourney_id,
-			tx: responseBlock.tx
-		}
-		const responseTx = await Oauth.poster(urlTx, dataTx);
 	}
 	
 	async tourneyHistoryDisplay() {

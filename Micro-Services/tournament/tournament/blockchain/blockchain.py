@@ -99,7 +99,9 @@ def save_tournament(request):
         account = w3.eth.account.from_key(private_key)
         nonce = w3.eth.get_transaction_count(account.address)
 
+        print(request.body)
         data = json.loads(request.body)
+        print(data)
         Players = (f" {data['player1']}, {data['player2']}, {data['player3']}, {data['player4']}.")
         Match1 = (f"Winner: {data['game1_winner']}\n",f"Looser: {data['game1_loser']}\n", f"Score: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
         Match2 = (f"Winner: {data['game2_winner']}\n",f"Looser: {data['game2_loser']}\n", f"Score: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
@@ -140,11 +142,9 @@ def get_tournament(request):
         for log in logs:
             if (i >=10):
                 break
-            # Décoder le log
             event_data = event.process_log(log)
-            # Vérifier si l'ID du tournoi correspond
             tournament_Owner = event_data['args']['tournamentOwner']
-            if tournament_Owner == w3.keccak(text=data[tournamentOwner]):
+            if tournament_Owner == w3.keccak(text=data['tournamentOwner']):
                 args_dict = dict(event_data['args'])
                 args_dict['transactionHash'] = log.transactionHash.hex()
                 history.append(args_dict)

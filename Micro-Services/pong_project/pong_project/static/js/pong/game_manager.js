@@ -295,7 +295,7 @@ export class GameManager {
 							alert("Player has disconnected, the game has been ended.");
 						else if (error.message === 'Game finished') {
 							alert("The game has ended.");
-							return ;
+							return;
 						}
 						else
 							console.error('EventSource failed:', error);
@@ -368,34 +368,55 @@ export class GameManager {
 	}
 
 	async tourneyHistory() {
-
-		const url1 = '/game/pongHistory/';
-		const response1 = await Oauth.poster(url1, window.client.game_manager.game_result);
-		if (response1.error) {
-			console.error(response1.error);
-			return ;
-		}
-
-		const url = '/game/tournament/';
-		const data = {
-			game_round: localStorage.getItem('tournament-round'),
-			game_id: response1.game_id,
-			tourney_id: this.tourney_id,
-		}
-
-		const response = await Oauth.poster(url, data);
-		if (response.error) {
-			console.error(response.error);
-		} else {
-			this.tourney_id = response.tourney_id;
-		}
+		console.log(localStorage.getItem('tournament-round'));
 
 		if (localStorage.getItem('tournament-round') === "1") {
+			let tournamentData = {
+				tournamentOwner: localStorage.getItem('username'),
+				player1: "",
+				player2: "",
+				player3: "",
+				player4: "",
+				game1_winner: "",
+				game1_loser: "",
+				game2_winner: "",
+				game2_loser: "",
+				game3_winner: "",
+				game3_loser: "",
+				game1_player1_score: "",
+				game1_player2_score: "",
+				game2_player1_score: "",
+				game2_player2_score: "",
+				game3_player1_score: "",
+				game3_player2_score: "",
+			};
+			localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
+		}
+
+		let tournamentData = JSON.parse(localStorage.getItem('tournamentData'));
+
+		if (localStorage.getItem('tournament-round') === "1") {
+			tournamentData['player1'] = window.client.game_manager.game_result.player1;
+			tournamentData['player2'] = window.client.game_manager.game_result.opponent;
+			tournamentData['game1_winner'] = window.client.game_manager.game_result.winner;
+			tournamentData['game1_loser'] = window.client.game_manager.game_result.loser;
+			tournamentData['game1_player1_score'] = window.client.game_manager.game_result.player_score;
+			tournamentData['game1_player2_score'] = window.client.game_manager.game_result.opponent_score;
 			await window.client.tournament.secondGame(this.game_result['winner'], this.game_result['loser']);
 		} else if (localStorage.getItem('tournament-round') === "2") {
+			tournamentData['player4'] = window.client.game_manager.game_result.player1;
+			tournamentData['player3'] = window.client.game_manager.game_result.opponent;
+			tournamentData['game2_winner'] = window.client.game_manager.game_result.winner;
+			tournamentData['game2_loser'] = window.client.game_manager.game_result.loser;
+			tournamentData['game2_player1_score'] = window.client.game_manager.game_result.player_score;
+			tournamentData['game2_player2_score'] = window.client.game_manager.game_result.opponent_score;
 			await window.client.tournament.finalGame(this.game_result['winner'], this.game_result['loser']);
 		} else if (localStorage.getItem('tournament-round') === "3") {
-			window.client.tournament.sendToBlockchain(this.tourney_id);
+			tournamentData['game3_winner'] = window.client.game_manager.game_result.winner;
+			tournamentData['game3_loser'] = window.client.game_manager.game_result.loser;
+			tournamentData['game3_player1_score'] = window.client.game_manager.game_result.player_score;
+			tournamentData['game3_player2_score'] = window.client.game_manager.game_result.opponent_score;
+			window.client.tournament.sendToBlockchain();
 			await window.client.tournament.displayWinner(this.game_result['winner'], this.game_result['loser']);
 			this.tourney_id = undefined;
 		}
