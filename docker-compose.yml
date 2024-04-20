@@ -157,6 +157,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - HOST_IP=${HOST_IP}
+      - URL_BLOCKCHAIN=${URL_BLOCKCHAIN}
       - PRIVATE_KEY=${PRIVATE_KEY}
       - PROVIDER_URL=${PROVIDER_URL}
       - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}

@@ -373,6 +373,7 @@ export class GameManager {
 		if (localStorage.getItem('tournament-round') === "1") {
 			let tournamentData = {
 				tournamentOwner: localStorage.getItem('username'),
+				Lang: window.client.lang,
 				player1: "",
 				player2: "",
 				player3: "",
@@ -402,6 +403,7 @@ export class GameManager {
 			tournamentData['game1_loser'] = window.client.game_manager.game_result.loser;
 			tournamentData['game1_player1_score'] = window.client.game_manager.game_result.player_score;
 			tournamentData['game1_player2_score'] = window.client.game_manager.game_result.opponent_score;
+			localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
 			await window.client.tournament.secondGame(this.game_result['winner'], this.game_result['loser']);
 		} else if (localStorage.getItem('tournament-round') === "2") {
 			tournamentData['player4'] = window.client.game_manager.game_result.player1;
@@ -410,14 +412,17 @@ export class GameManager {
 			tournamentData['game2_loser'] = window.client.game_manager.game_result.loser;
 			tournamentData['game2_player1_score'] = window.client.game_manager.game_result.player_score;
 			tournamentData['game2_player2_score'] = window.client.game_manager.game_result.opponent_score;
+			localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
 			await window.client.tournament.finalGame(this.game_result['winner'], this.game_result['loser']);
 		} else if (localStorage.getItem('tournament-round') === "3") {
 			tournamentData['game3_winner'] = window.client.game_manager.game_result.winner;
 			tournamentData['game3_loser'] = window.client.game_manager.game_result.loser;
 			tournamentData['game3_player1_score'] = window.client.game_manager.game_result.player_score;
 			tournamentData['game3_player2_score'] = window.client.game_manager.game_result.opponent_score;
+			localStorage.setItem('tournamentData', JSON.stringify(tournamentData));
 			window.client.tournament.sendToBlockchain();
 			await window.client.tournament.displayWinner(this.game_result['winner'], this.game_result['loser']);
+			localStorage.removeItem('tournamentData');
 			this.tourney_id = undefined;
 		}
 	}

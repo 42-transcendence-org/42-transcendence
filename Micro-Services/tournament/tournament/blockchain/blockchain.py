@@ -11,8 +11,47 @@ TOURNAMENT_ADDRESS = os.getenv('CONTRACT_ADDRESS')
 provider_url = os.getenv('PROVIDER_URL')
 private_key = os.getenv('PRIVATE_KEY')
 chainId = os.getenv('CHAIN_ID')
+urlBlockchain = os.getenv('URL_BLOCKCHAIN')
 
 tournament_abi =[
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_tournamentOwner",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_players",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_winner",
+				"type": "string"
+			},
+			{
+				"internalType": "string[3]",
+				"name": "_Match1",
+				"type": "string[3]"
+			},
+			{
+				"internalType": "string[3]",
+				"name": "_Match2",
+				"type": "string[3]"
+			},
+			{
+				"internalType": "string[3]",
+				"name": "_Finale",
+				"type": "string[3]"
+			}
+		],
+		"name": "saveTournament",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -31,6 +70,12 @@ tournament_abi =[
 				"indexed": False,
 				"internalType": "string",
 				"name": "players",
+				"type": "string"
+			},
+			{
+				"indexed": False,
+				"internalType": "string",
+				"name": "winner",
 				"type": "string"
 			},
 			{
@@ -54,39 +99,6 @@ tournament_abi =[
 		],
 		"name": "tournamentSaved",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_tournamentOwner",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_players",
-				"type": "string"
-			},
-			{
-				"internalType": "string[3]",
-				"name": "_Match1",
-				"type": "string[3]"
-			},
-			{
-				"internalType": "string[3]",
-				"name": "_Match2",
-				"type": "string[3]"
-			},
-			{
-				"internalType": "string[3]",
-				"name": "_Finale",
-				"type": "string[3]"
-			}
-		],
-		"name": "saveTournament",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	}
 ]
 w3 = Web3(HTTPProvider(provider_url))
@@ -99,15 +111,21 @@ def save_tournament(request):
         account = w3.eth.account.from_key(private_key)
         nonce = w3.eth.get_transaction_count(account.address)
 
-        print(request.body)
         data = json.loads(request.body)
-        print(data)
         Players = (f" {data['player1']}, {data['player2']}, {data['player3']}, {data['player4']}.")
-        Match1 = (f"Winner: {data['game1_winner']}\n",f"Looser: {data['game1_loser']}\n", f"Score: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
-        Match2 = (f"Winner: {data['game2_winner']}\n",f"Looser: {data['game2_loser']}\n", f"Score: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
-        Finale = (f"Winner: {data['game3_winner']}\n",f"Looser: {data['game3_loser']}\n", f"Score: {data['game3_player1_score']}-{data['game3_player2_score']}")
-
-        tx = tournament_contract.functions.saveTournament(data['tournamentOwner'], Players, Match1, Match2, Finale).build_transaction({
+        if (data['Lang'] == "es"):
+            Match1 = (f"Ganador: {data['game1_winner']}\n",f"Perdedora: {data['game1_loser']}\n", f"Puntaje: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
+            Match2 = (f"Ganador: {data['game2_winner']}\n",f"Perdedora: {data['game2_loser']}\n", f"Puntaje: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
+            Finale = (f"Ganador: {data['game3_winner']}\n",f"Perdedora: {data['game3_loser']}\n", f"Puntaje: {data['game3_player1_score']}-{data['game3_player2_score']}")
+        elif (data['Lang'] == "fr"):
+            Match1 = (f"Gagnant: {data['game1_winner']}\n",f"Perdant: {data['game1_loser']}\n", f"Score: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
+            Match2 = (f"Gagnant: {data['game2_winner']}\n",f"Perdant: {data['game2_loser']}\n", f"Score: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
+            Finale = (f"Gagnant: {data['game3_winner']}\n",f"Perdant: {data['game3_loser']}\n", f"Score: {data['game3_player1_score']}-{data['game3_player2_score']}")
+        else:
+            Match1 = (f"Winner: {data['game1_winner']}\n",f"Looser: {data['game1_loser']}\n", f"Score: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
+            Match2 = (f"Winner: {data['game2_winner']}\n",f"Looser: {data['game2_loser']}\n", f"Score: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
+            Finale = (f"Winner: {data['game3_winner']}\n",f"Looser: {data['game3_loser']}\n", f"Score: {data['game3_player1_score']}-{data['game3_player2_score']}")
+        tx = tournament_contract.functions.saveTournament(data['tournamentOwner'], Players, data['game3_winner'], Match1, Match2, Finale).build_transaction({
             'from': account.address,
             'chainId': chainId,
             'gas': 2000000,
@@ -118,25 +136,23 @@ def save_tournament(request):
         signed_tx = account.sign_transaction(tx)
         tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
-        print(f"Transaction soumise : {tx_hash.hex()}")
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
         tx = receipt.transactionHash.hex()
-        print(f"Transaction confirmée : ", tx)
         get_tournament(request)
         return JsonResponse({'message': 'success', 'tx': tx})
     except Exception as e:
             print(e)
             return JsonResponse({'error': "Failed to save tournament un blockchain: " + e.args[0]})
 
-
+@require_http_methods(["POST"])
 def get_tournament(request):
     try:
         data = json.loads(request.body)
-        print (data)
-        print (w3.keccak(text=data['tournamentOwner']).hex())
-        print (w3.keccak(text="vburton@42").hex())
+        OwnerEncode = w3.keccak(text=data['tournamentOwner']).hex()
+        Owner = OwnerEncode[2:]
+        print (Owner)
         event = tournament_contract.events.tournamentSaved()
-        event_signature = w3.keccak(text="tournamentSaved(string,string,string[3],string[3],string[3])").hex()
+        event_signature = w3.keccak(text="tournamentSaved(string,string,string,string[3],string[3],string[3])").hex()
         event_filter = {'fromBlock': 0, 'toBlock': 'latest', 'address': TOURNAMENT_ADDRESS, 'topics': [event_signature, None, None, None]}
         logs = w3.eth.get_logs(event_filter)
 
@@ -147,15 +163,16 @@ def get_tournament(request):
                 break
             event_data = event.process_log(log)
             tournament_Owner = event_data['args']['tournamentOwner'].hex()
-            print(tournament_Owner)
-            if tournament_Owner == w3.keccak(text=data['tournamentOwner']).hex():
-                print("coucou")
-                args_dict = dict(event_data['args'])
+            if tournament_Owner == Owner:
+                args_dict = {k: v.hex() if isinstance(v, bytes) else v for k, v in dict(event_data['args']).items()}                
                 args_dict['transactionHash'] = log.transactionHash.hex()
                 history.append(args_dict)
                 i += 1
-        print(history)
         return JsonResponse({'history': history})
     except Exception as e:
         print(e)
         return JsonResponse({'error': "Failed to get tournament from blockchain: " + e.args[0]})
+
+@require_http_methods(["GET"])
+def get_url_blockchain(request):
+    return JsonResponse({'url': urlBlockchain})
