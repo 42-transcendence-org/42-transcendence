@@ -19,40 +19,6 @@ export class Tournament {
 	}
 
 	async sendToBlockchain() {
-		// const url = '/game/tourneyHistory/';
-		// const data = {
-		// 	tourney_id: tourney_id
-		// }
-		// const response = await Oauth.poster(url, data);
-		// const getPlayer = await Oauth.getter('/game/tournament/');
-		// const check = getPlayer.history.length - 1;
-
-		// if (response.error) {
-		// 	alert(response.error);
-		// 	return ;
-		// }
-		// const dataFinal = {
-		// 	tournamentOwner: localStorage.getItem('username'),
-		// 	player1: getPlayer.history[check].player1,
-		// 	player2: getPlayer.history[check].player2,
-		// 	player3: getPlayer.history[check].player3,
-		// 	player4: getPlayer.history[check].player4,
-		// 	winner: getPlayer.history[check].winner,
-		// 	game1_winner: response.games[0].game1_winner,
-		// 	game1_loser: response.games[0].game1_loser,
-		// 	game2_winner: response.games[0].game2_winner,
-		// 	game2_loser: response.games[0].game2_loser,
-		// 	game3_winner: response.games[0].game3_winner,
-		// 	game3_loser: response.games[0].game3_loser,
-		// 	game1_player1_score: response.games[0].game1_player1_score,
-		// 	game1_player2_score: response.games[0].game1_player2_score,
-		// 	game2_player1_score: response.games[0].game2_player1_score,
-		// 	game2_player2_score: response.games[0].game2_player2_score,
-		// 	game3_player1_score: response.games[0].game3_player1_score,
-		// 	game3_player2_score: response.games[0].game3_player2_score,
-		// };
-		// console.log(dataFinal)
-		console.log(localStorage.getItem('tournamentData'));
 		const tournamentData = JSON.parse(localStorage.getItem('tournamentData'));
 		const urlBlockchain = '/tournament/saveTournament/';
 		const responseBlock = await Oauth.poster(urlBlockchain, tournamentData);
@@ -63,14 +29,6 @@ export class Tournament {
 	}
 	
 	async tourneyHistoryDisplay() {
-		// const url = '/game/tournament/';
-		// const response = await Oauth.getter(url);
-		// const lang = window.client.lang;
-
-		// if (response.error) {
-		// 	return ;
-		// }
-
 		const url = '/tournament/getTournament/';
 		const data = {
 			tournamentOwner: localStorage.getItem('username')
@@ -78,13 +36,9 @@ export class Tournament {
 		const response = await Oauth.poster(url, data);
 		const lang = window.client.lang;
 		if (response.error) {
-			console.log("coucou");
 			return ;
 		}
-
-		console.log(response);
 		document.getElementById('blockchain-link').style.display = 'block';
-
 		var div = document.getElementById('tournament-history-list');
 		div.textContent = "";
 		const limit = response.history.length > 10 ? response.history.length - 10 : 0;
@@ -205,7 +159,7 @@ export class Tournament {
 		localStorage.setItem('tournament-p3', data[2]);
 		localStorage.setItem('tournament-p4', data[3]);
 
-		localStorage.setItem('tournament-game-p1', data[0]);  //get ids in game through this
+		localStorage.setItem('tournament-game-p1', data[0]); 
 		localStorage.setItem('tournament-game-p2', data[1]);
 		localStorage.setItem('tournament-round', 1);
 

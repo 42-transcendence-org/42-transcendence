@@ -368,8 +368,6 @@ export class GameManager {
 	}
 
 	async tourneyHistory() {
-		console.log(localStorage.getItem('tournament-round'));
-
 		if (localStorage.getItem('tournament-round') === "1") {
 			let tournamentData = {
 				tournamentOwner: localStorage.getItem('username'),

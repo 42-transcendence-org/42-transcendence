@@ -150,7 +150,6 @@ def get_tournament(request):
         data = json.loads(request.body)
         OwnerEncode = w3.keccak(text=data['tournamentOwner']).hex()
         Owner = OwnerEncode[2:]
-        print (Owner)
         event = tournament_contract.events.tournamentSaved()
         event_signature = w3.keccak(text="tournamentSaved(string,string,string,string[3],string[3],string[3])").hex()
         event_filter = {'fromBlock': 0, 'toBlock': 'latest', 'address': TOURNAMENT_ADDRESS, 'topics': [event_signature, None, None, None]}
