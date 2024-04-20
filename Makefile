@@ -12,7 +12,7 @@ VOLUMES			:= $(addprefix $(VOLUMES_PATH)/,$(VOLUMES_DIR))
 _END			:=	\033[0m
 _GREEN			:=	\033[32m
 
-all: up | migrate
+all: up
 
 # -d = run the containers in the background (terminal is still usable while running)
 # --build = force to rebuild the images of the services
