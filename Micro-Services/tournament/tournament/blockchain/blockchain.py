@@ -142,7 +142,7 @@ def save_tournament(request):
         return JsonResponse({'message': 'success', 'tx': tx})
     except Exception as e:
             print(e)
-            return JsonResponse({'error': "Failed to save tournament un blockchain: " + e.args[0]})
+            return JsonResponse({'error': "Failed to save tournament in blockchain: " + e.args[0]})
 
 @require_http_methods(["POST"])
 def get_tournament(request):
