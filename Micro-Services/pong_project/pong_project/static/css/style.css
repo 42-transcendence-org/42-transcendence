@@ -945,3 +945,8 @@ label[for="OpenAIquestion"] {
 	aspect-ratio: 1/1;
 	line-height: 20px;
 }
+
+#blockchain-link {
+	width: 50%;
+	margin: auto;
+}
