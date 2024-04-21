@@ -59,6 +59,7 @@ export class Tournament {
 			p.appendChild(p2);
 			var link = document.createElement('a');
 
+			link.target = "_blank";
 			p.style.height = "auto";
 			p.style.width = "80%"
 			p.style.border = "1px solid #ccc";
