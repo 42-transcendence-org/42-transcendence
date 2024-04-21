@@ -18,41 +18,27 @@ export class Tournament {
 		});
 	}
 
-	async sendToBlockchain(tourney_id) {
-		const url = '/game/tourneyHistory/';
-		const data = {
-			tourney_id: tourney_id
-		}
-		const response = await Oauth.poster(url, data);
-		if (response.error) {
-			alert(response.error);
-			return ;
-		}
+	async sendToBlockchain() {
+		const tournamentData = JSON.parse(localStorage.getItem('tournamentData'));
 		const urlBlockchain = '/tournament/saveTournament/';
-		const responseBlock = await Oauth.poster(urlBlockchain, response.games[0]);
+		const responseBlock = await Oauth.poster(urlBlockchain, tournamentData);
 		if (responseBlock.error) {
 			alert(responseBlock.error);
 			return ;
 		}
-
-		const urlTx = '/game/tourneyBlockchainKey/'
-		const dataTx = {
-			tourney_id: tourney_id,
-			tx: responseBlock.tx
-		}
-		const responseTx = await Oauth.poster(urlTx, dataTx);
 	}
 	
 	async tourneyHistoryDisplay() {
-		const url = '/game/tournament/';
-		const response = await Oauth.getter(url);
+		const url = '/tournament/getTournament/';
+		const data = {
+			tournamentOwner: localStorage.getItem('username')
+		}
+		const response = await Oauth.poster(url, data);
 		const lang = window.client.lang;
-
 		if (response.error) {
 			return ;
 		}
 		document.getElementById('blockchain-link').style.display = 'block';
-
 		var div = document.getElementById('tournament-history-list');
 		div.textContent = "";
 		const limit = response.history.length > 10 ? response.history.length - 10 : 0;
@@ -60,13 +46,13 @@ export class Tournament {
 			var p = document.createElement('p');
 			var p2 = document.createElement('p');
 			if (lang == 'fr') {
-				p.textContent = "Tournoi avec l'id " + response.history[i].id + " avec les joueurs: " + response.history[i].player1 + ", " + response.history[i].player2 + ", " + response.history[i].player3 + " et " + response.history[i].player4 + ".";
+				p.textContent = "Tournoi avec les joueurs: " + response.history[i].players;
 				p2.textContent = "Vainqueur: " + response.history[i].winner;
 			} else if (lang == 'es') {
-				p.textContent = "Torneo con id " + response.history[i].id + " con los jugadores: " + response.history[i].player1 + ", " + response.history[i].player2 + ", " + response.history[i].player3 + " y " + response.history[i].player4 + ".";
+				p.textContent = "Torneo con los jugadores: " + response.history[i].players;
 				p2.textContent = "Ganador: " + response.history[i].winner;
 			} else {
-				p.textContent = "Tournament with id " + response.history[i].id + " with the players: " + response.history[i].player1 + ", " + response.history[i].player2 + ", " + response.history[i].player3 + " and " + response.history[i].player4 + ".";
+				p.textContent = "Tournament with the players: " + response.history[i].players;
 				p2.textContent = "Winner: " + response.history[i].winner;
 			}
 			div.appendChild(p);
@@ -78,12 +64,7 @@ export class Tournament {
 			p.style.border = "1px solid #ccc";
 			p.style.borderRadius = "30px";
 			p.style.padding = "10px";
-			const responseTx = await Oauth.poster('/game/tourneyTx/', {'tourney_id': response.history[i].id})
-			var tx = 'error';
-			if (responseTx.message)
-			{
-				tx = responseTx.tx;
-			}	
+			var tx = response.history[i].transactionHash;
             link.href = 'https://sepolia.arbiscan.io/tx/' + tx + '#eventlog';
 			if (lang == 'fr')
             	link.textContent = 'Cliquez ici pour aller à cette URL';
@@ -178,7 +159,7 @@ export class Tournament {
 		localStorage.setItem('tournament-p3', data[2]);
 		localStorage.setItem('tournament-p4', data[3]);
 
-		localStorage.setItem('tournament-game-p1', data[0]);  //get ids in game through this
+		localStorage.setItem('tournament-game-p1', data[0]); 
 		localStorage.setItem('tournament-game-p2', data[1]);
 		localStorage.setItem('tournament-round', 1);
 

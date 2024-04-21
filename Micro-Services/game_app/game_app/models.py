@@ -36,12 +36,3 @@ class FinishedPongGames(models.Model):
             return FinishedPongGames.objects.filter(owner=user_id, result="Victory", tourney_game=False).count() / FinishedPongGames.objects.filter(owner=user_id, tourney_game=False).count() * 100
         else:
             return 0
-
-
-class tournament(models.Model):
-    owner = models.IntegerField(default=-1)
-    game1 = models.ForeignKey(FinishedPongGames, on_delete=models.CASCADE, related_name="game1", default=None, null=True)
-    game2 = models.ForeignKey(FinishedPongGames, on_delete=models.CASCADE, related_name="game2", default=None, null=True)
-    game3 = models.ForeignKey(FinishedPongGames, on_delete=models.CASCADE, related_name="game3", default=None, null=True)
-    is_finished = models.BooleanField(default=False)
-    tx = models.CharField(max_length=300, default="None")

@@ -157,6 +157,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - HOST_IP=${HOST_IP}
+      - URL_BLOCKCHAIN=${URL_BLOCKCHAIN}
       - PRIVATE_KEY=${PRIVATE_KEY}
       - PROVIDER_URL=${PROVIDER_URL}
       - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
@@ -194,6 +195,7 @@ services:
       - ./Micro-Services/DevOps/Grafana/dashboards:/var/lib/grafana/dashboards
       - ./Micro-Services/DevOps/Grafana/init/custom_grafana.ini:/etc/grafana/grafana.ini
     environment:
+      - CHAIN_ID=${CHAIN_ID}
       - HOST_IP=${HOST_IP}
       - GF_SERVER_ROOT_URL=https://${HOST_IP}:8443/grafana
       - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
