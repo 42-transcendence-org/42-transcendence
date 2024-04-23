@@ -5,7 +5,6 @@ services:
     image: nginx:latest
     volumes:
       - ./Micro-Services/nginx/nginx.conf.template:/etc/nginx/conf.d/default.conf.template
-      - ./Micro-Services/nginx/certs:/etc/nginx/certs
       - ./Micro-Services/nginx/scriptConf.sh:/docker-entrypoint.d/init-nginx.sh
     ports:
       - '8080:8080'
@@ -23,7 +22,6 @@ services:
       - tournament
       - janken_app
     command: /docker-entrypoint.d/init-nginx.sh
-
 
   pong_project:
     build:
@@ -150,7 +148,6 @@ services:
       - 5432
     restart: on-failure
 
-
   tournament:
     build:
       context: ./Micro-Services/tournament/
@@ -176,12 +173,12 @@ services:
     volumes:
       - ./Micro-Services/DevOps/Prometheus/prometheus.template.yml:/etc/prometheus/prometheus.template.yml
     ports:
-     - "9090:9090"
+      - "9090:9090"
     networks:
-    - auth
-    - game_app
-    - tournament
-    - janken_app
+      - auth
+      - game_app
+      - tournament
+      - janken_app
     restart: on-failure
 
   grafana:
@@ -203,12 +200,11 @@ services:
     ports:
       - "9300:3000"
     networks:
-    - auth
-    - game_app
-    - tournament
-    - janken_app
+      - auth
+      - game_app
+      - tournament
+      - janken_app
     restart: on-failure
-
 
 volumes:
   auth_db:

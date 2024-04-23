@@ -5,7 +5,7 @@ DOCKER_COMPOSE_CMD := $(shell command -v docker-compose || echo "docker compose"
 DOCKER_COMPOSE	:= $(DOCKER_COMPOSE_CMD) -f ./docker-compose.yml --env-file ./.env
 
 VOLUMES_DIR		:= auth_db game_db janken_db
-VOLUMES_PATH	:= $(HOME)/goinfre/docker/volumes/data/
+VOLUMES_PATH	:= $(HOME)/data/42-transcendence
 VOLUMES			:= $(addprefix $(VOLUMES_PATH)/,$(VOLUMES_DIR))
 
 # define standard colors
@@ -53,7 +53,7 @@ ls:
 
 migrate:
 	@docker exec auth python manage.py migrate > /dev/null 2>&1
-	@docker exec janken python manage.py migrate > /dev/null 2>&1 
+	@docker exec janken python manage.py migrate > /dev/null 2>&1
 	@docker exec game_app python manage.py migrate > /dev/null 2>&1 &
 
 # --rmi all = remove all images associated with the services
