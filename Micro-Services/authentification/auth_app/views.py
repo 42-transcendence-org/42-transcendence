@@ -41,7 +41,7 @@ class LoginAPIView(APIView):
                 return JsonResponse({'token': token, 'username': user.username, 'message': 'Login successful'}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response({'error': "Connection refused: " + e.args[0]})
+            return Response({'error': "Connection refused: Username or password incorrect."})
 
 class RegisterAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -111,7 +111,7 @@ def joinErrForm(dico):
     string = ""
     for field, id in dico.items():
         for elem in id:
-            string += f"{field}: {elem}\n" 
+            string += f"{field}: {elem}\n"
     return string
 
 
@@ -286,7 +286,7 @@ class FriendRequestsAPIView(APIView):
         except Exception as e:
             print(e)
             return Response({'error': e.args[0]})
-        
+
     def post(self, request, *args, **kwargs): #accept a friend request
         try:
             if request.user.is_authenticated:
@@ -344,7 +344,7 @@ class DeleteFriendAPIView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
-        
+
 
 import magic
 @require_http_methods(["POST"])
@@ -390,7 +390,7 @@ class EmailAPIView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
-        
+
 
 class NicknameAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -434,7 +434,7 @@ class PasswordAPIView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
-        
+
 
 class getNicknameWithUserIdAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -447,7 +447,7 @@ class getNicknameWithUserIdAPIView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
-        
+
 class getUserIdWithNicknameAPIView(APIView):
     def post(self, request, *args, **kwargs):
         try:
@@ -530,7 +530,7 @@ class Login42APIView(APIView): #gets the access token from 42 for the user loggi
                 return Response({'message': 'User already registered', 'username':userData['username'], 'password':password}, status=status.HTTP_200_OK)
             user = form.save()
             user.profile.is42account = True
-            user.profile.nickname = userData['login'] + '@42' #will always be unique because of the @42 at the end + forbidden to create a user with @42 
+            user.profile.nickname = userData['login'] + '@42' #will always be unique because of the @42 at the end + forbidden to create a user with @42
             user.profile.correction_points = userData['correction_point']
             test = auth42ProfilePicture(userData['image']['versions']['large'], userData['login'] + '@42')
             user.profile.profile_picture = test
@@ -557,7 +557,7 @@ class OAuthVerifyStateAPIView(APIView): #verifies the state received by the clie
         if (os.environ.get('OAUTH_STATE') == request.data.get('state', 'no state')):
             return JsonResponse({'isValidState': True})
         return JsonResponse({'error': 'The state doesn\'t match 42API'})
-    
+
 
 #utils for 42 REGISTRATION
 def auth42ProfilePicture(image_url, login):
@@ -571,7 +571,7 @@ def auth42ProfilePicture(image_url, login):
     return ('avatar.jpg')
 
 
-        
+
 
 
 
@@ -608,4 +608,4 @@ class chatbotAPIView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({'error': e.args[0]})
-        
+
