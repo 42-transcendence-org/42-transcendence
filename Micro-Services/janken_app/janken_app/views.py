@@ -4,8 +4,6 @@ from .models import JankenGameCreation, JankenGameInProgress, FinishedJankenGame
 from django.http import JsonResponse
 
 
-
-
 #JANKEN GAME
 
 class createJankenGameAPIView(APIView): #create a gamecreation and wait for an opponent

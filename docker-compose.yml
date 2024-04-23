@@ -8,7 +8,6 @@ services:
       - ./Micro-Services/nginx/certs:/etc/nginx/certs
       - ./Micro-Services/nginx/scriptConf.sh:/docker-entrypoint.d/init-nginx.sh
     ports:
-      - '8080:8080'
       - '8443:8443'
     depends_on:
       - pong_project
@@ -118,8 +117,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - auth
-    ports:
-      - 5432
     restart: on-failure
 
   game_app_db:
@@ -132,8 +129,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - game_app
-    ports:
-      - 5432
     restart: on-failure
 
   janken_db:
@@ -146,8 +141,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - janken_app
-    ports:
-      - 5432
     restart: on-failure
 
 

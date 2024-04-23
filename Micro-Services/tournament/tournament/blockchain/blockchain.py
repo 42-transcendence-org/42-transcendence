@@ -138,7 +138,6 @@ def save_tournament(request):
 
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
         tx = receipt.transactionHash.hex()
-        get_tournament(request)
         return JsonResponse({'message': 'success', 'tx': tx})
     except Exception as e:
             print(e)

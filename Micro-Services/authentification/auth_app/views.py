@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from openai import OpenAI
 from django.http import JsonResponse
 from django.contrib.auth.password_validation import validate_password
+from django.views.decorators.http import require_http_methods
+from django.core.validators import validate_email
 
 #views
 
@@ -24,87 +26,91 @@ from django.contrib.auth.password_validation import validate_password
 
 class LoginAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        try:
-            form = AuthenticationForm(data=request.data)
-            if not form.is_valid():
-                users = User.objects.all()
-                for user in users:
-                    if user.username == request.data.get('username'):
-                        raise Exception('The password is incorrect')
-                raise Exception("The username doesn't exist")
-            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
-            if user:
-                login(request, user)
-                token = generate_jwt_token(user)
-                user.profile.online = True
+        form = AuthenticationForm(data=request.data)
+        if not form.is_valid():
+            return JsonResponse({"error": "The username or the pasword are incorrect exist"}, status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+        if user:
+            login(request, user)
+            token = generate_jwt_token(user)
+            if token is None:
+                return JsonResponse({"error: ": "Failed to generate token "}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            user.profile.online = True
+            try:
                 user.profile.save()
-                return JsonResponse({'token': token, 'username': user.username, 'message': 'Login successful'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
-            return Response({'error': "Connection refused: " + e.args[0]})
+            except Exception as e:
+                return JsonResponse({'error': 'Failed to save user status. User not shown as online'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse({'token': token, 'username': user.username, 'message': 'Login successful'}, status=status.HTTP_200_OK)
+
 
 class RegisterAPIView(APIView):
     def post(self, request, *args, **kwargs):
+        form = UserCreationForm(data=request.data)
+        if not form.is_valid(): #if username taken or password don't match
+            return JsonResponse({'error': 'form incorrect'}, status=400)
+        if (len(request.data.get('username')) > 14 or len(request.data.get('username')) < 3):
+            return (JsonResponse({"error": "This username is too long or too short. Must be between 3 and 14 !"}, status=400))
+        if request.data.get('username').endswith('@42'): #if username ends with @42
+            return JsonResponse({'error':'username cannot end with @42. Its is reserved for 42 accounts'}, status=400)
+        if (request.data.get('first_name') is None or request.data.get('first_name') == ''):
+            return JsonResponse({'error': 'Nickname is required'}, status=400)
+        if (len(request.data.get('first_name')) > 14 or len(request.data.get('username')) < 3):
+            return (JsonResponse({"error": "This nickname is too long or too short. Must be between 3 and 14 !"}, status=400))
+        if request.data.get('first_name').endswith('@42'): #if nickname ends with @42
+            return JsonResponse({'error':'nickname cannot end with @42. Its is reserved for 42 accounts'}, status=400)
+        if (isNicknameUnique(request.data.get('first_name')) == False): #if nickname already taken
+            return JsonResponse('nickname already taken')
+        if (len(request.data.get('first_name')) > 14):
+            return (JsonResponse({"error": "This nickname is too long !"}, status=400))
+        if (request.data.get('email') is None or request.data.get('email') == ''):
+            return JsonResponse({'error': 'email is required'}, status=400)
         try:
-            form = UserCreationForm(data=request.data)
-            if not form.is_valid(): #if username taken or password don't match
-                raise Exception(joinErrForm(form.errors))
-            if request.data.get('username').endswith('@42'): #if username ends with @42
-                raise Exception('username cannot end with @42. Its is reserved for 42 accounts')
-            if request.data.get('first_name').endswith('@42'): #if nickname ends with @42
-                raise Exception('nickname cannot end with @42. Its is reserved for 42 accounts')
-            if (isNicknameUnique(request.data.get('first_name')) == False): #if nickname already taken
-                raise Exception('nickname already taken')
-            if (len(request.data.get('username')) > 14):
-                return (JsonResponse({"error": "This username is too long !"}, status=400))
-            if (len(request.data.get('first_name')) > 14):
-                return (JsonResponse({"error": "This nickname is too long !"}, status=400))
             user = form.save() #creates the user
-            user.profile.is42account = False
-            user.profile.nickname = request.data.get('first_name')
-            user.profile.correction_points = -1
-            user.profile.profil_picture = "./avatar.jpg"
-            user.profile.email = request.data.get('email')
-            user.profile.save() #saves the profile
-            user.save() #saves the user
-            return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
-            print(e)
-            return Response({'error': "Registration refused: " + e.args[0]})
-
+            return JsonResponse({'error': "Failed to save user: " + str(e)}, status=500)
+        user.profile.is42account = False
+        user.profile.nickname = request.data.get('first_name')
+        user.profile.correction_points = -1
+        user.profile.profil_picture = "./avatar.jpg"
+        user.profile.email = request.data.get('email')
+        try:
+            user.profile.save() #saves the profile
+        except Exception as e:
+            raise JsonResponse({'error': "Failed to save profile but user is saved: " + str(e)}, status=500)
+        try:
+            user.save() #saves the user
+        except Exception as e:
+            return JsonResponse({'error': "Failed to save user data but user is saved: " + str(e)}, status=500)
+        return JsonResponse({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        
 class LogoutAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        try:
+        if request.user.is_authenticated:
             try:
                 request.user.profile.online = False
                 request.user.profile.save()
             except Exception as e:
                 print(e)
-                pass
+                return Response({'error': "Logout refused: " + e.args[0]})
             logout(request)
             return Response({"message": "User logged out successfully"})
-        except Exception as e:
-            print(e)
-            return Response({'error': "Logout refused: " + e.args[0]})
+        return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False})
 
-from django.views.decorators.http import require_http_methods
+        
 
 @require_http_methods(["GET"])
 def check_authentication(request):
-    try:
-        if request.user.is_authenticated:
-            try:
-                request.user.profile.online = True
-                request.user.profile.save()
-            except Exception as e:
-                print(e)
-                pass
+    if request.user.is_authenticated:
+        try:
+            request.user.profile.online = True
+            request.user.profile.save()
             return JsonResponse({'isAuthenticated': True})
-        else:
-            return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False})
-    except Exception as e:
-        print(e)
-        return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': 'Failed to save user status. User not shown as authenticated', 'isAuthenticated': False})
+    return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False})
+
+
 
 # CONNECTION.JS UTILS, NOT VIEWS BUT FUNCTIONS
 def joinErrForm(dico):
@@ -117,15 +123,18 @@ def joinErrForm(dico):
 
 def generate_jwt_token(user):
     dt = datetime.datetime.now() + datetime.timedelta(hours=1)
-    token = jwt.encode({
-        'user_id': user.id,
-        'username': user.username,
-        'nickname': user.profile.nickname,
-        'secret': os.environ.get('JANKEN_SECRET'),
-        'exp': int(dt.strftime('%s'))
-    }, settings.SECRET_KEY, algorithm="HS256")
-
-    return token.decode('utf-8') if isinstance(token, bytes) else token
+    try:
+        token = jwt.encode({
+            'user_id': user.id,
+            'username': user.username,
+            'nickname': user.profile.nickname,
+            'secret': os.environ.get('JANKEN_SECRET'),
+            'exp': int(dt.strftime('%s'))
+        }, settings.SECRET_KEY, algorithm="HS256")
+        return token.decode('utf-8') if isinstance(token, bytes) else token
+    except Exception as e:
+        print(e)
+        return None
 
 
 
@@ -462,19 +471,15 @@ class getUserIdWithNicknameAPIView(APIView):
 
 class SaveLanguageAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        try:
-            if request.user.is_authenticated:
-                language = request.data.get('language', 'no language')
-                if language == 'no language':
-                    return (JsonResponse({"error": "language is required"}, status=400))
-                request.user.profile.default_language = language
-                request.user.profile.save()
-                request.user.save()
-                return (JsonResponse({"message": "success", "language": language}, status=200))
-            return JsonResponse({'error': "not authenticated"})
-        except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+        if request.user.is_authenticated:
+            language = request.data.get('language', 'no language')
+            if (language != 'fr' and language != 'en' and language != 'es'):
+                return (JsonResponse({"error": "language is not valid"}, status=400))
+            request.user.profile.default_language = language
+            request.user.profile.save()
+            request.user.save()
+            return (JsonResponse({"message": "success", "language": language}, status=200))
+        return JsonResponse({'error': "not authenticated"})
 
 
 
