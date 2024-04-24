@@ -18,6 +18,7 @@ from django.http import JsonResponse
 from django.contrib.auth.password_validation import validate_password
 from django.views.decorators.http import require_http_methods
 from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 #views
 
@@ -54,7 +55,7 @@ class RegisterAPIView(APIView):
             return JsonResponse({'error':'username cannot end with @42. Its is reserved for 42 accounts'}, status=400)
         if (request.data.get('first_name') is None or request.data.get('first_name') == ''):
             return JsonResponse({'error': 'Nickname is required'}, status=400)
-        if (len(request.data.get('first_name')) > 14 or len(request.data.get('username')) < 3):
+        if (len(request.data.get('first_name')) > 14 or len(request.data.get('first_name')) < 3):
             return (JsonResponse({"error": "This nickname is too long or too short. Must be between 3 and 14 !"}, status=400))
         if request.data.get('first_name').endswith('@42'): #if nickname ends with @42
             return JsonResponse({'error':'nickname cannot end with @42. Its is reserved for 42 accounts'}, status=400)
@@ -76,7 +77,7 @@ class RegisterAPIView(APIView):
         try:
             user.profile.save() #saves the profile
         except Exception as e:
-            raise JsonResponse({'error': "Failed to save profile but user is saved: " + str(e)}, status=500)
+            return JsonResponse({'error': "Failed to save profile but user is saved: " + str(e)}, status=500)
         try:
             user.save() #saves the user
         except Exception as e:
@@ -297,43 +298,35 @@ class FriendRequestsAPIView(APIView):
             return Response({'error': e.args[0]})
         
     def post(self, request, *args, **kwargs): #accept a friend request
-        try:
-            if request.user.is_authenticated:
-                friend_name = request.data.get('friend', 'no friend')
-                if friend_name == 'no friend':
-                    raise Exception("friend is required")
-                try:
-                    new_friend = Profile.objects.get(nickname=friend_name)
-                except Profile.DoesNotExist:
-                    raise Exception("No user has this nickname.")
-                if (Friendship.friendshipExists(request.user.profile, new_friend) == True and Friendship.getFriendship(request.user.profile, new_friend).accepted == True):
-                    raise Exception("Friendship already exists")
-                friendship = Friendship.getFriendship(request.user.profile, new_friend)
-                friendship.accepted = True
-                friendship.save()
-                return JsonResponse({'message': 'success', 'friend': friend_name})
-            raise Exception("You are not authenticated")
-        except Exception as e:
-            print(e)
-            return Response({'error': e.args[0]})
+        if request.user.is_authenticated:
+            friend_name = request.data.get('friend', 'no friend')
+            if friend_name == 'no friend' or friend_name is None:
+                return JsonResponse({"error: ": "friend is required"}, status=400)
+            try:
+                new_friend = Profile.objects.get(nickname=friend_name)
+            except Profile.DoesNotExist:
+                return JsonResponse({"error: ": "No user has this nickname."}, status=400)
+            if (Friendship.friendshipExists(request.user.profile, new_friend) == True and Friendship.getFriendship(request.user.profile, new_friend).accepted == True):
+                return JsonResponse({"error: ": "Friendship already exists"}, status=400)
+            friendship = Friendship.getFriendship(request.user.profile, new_friend)
+            friendship.accepted = True
+            friendship.save()
+            return JsonResponse({'message': 'success', 'friend': friend_name})
+        return JsonResponse({"error: ": "You are not authenticated"})
 
 class RefuseFriendRequestAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        try:
-            if request.user.is_authenticated:
-                friend_name = request.data.get('friend', 'no friend')
-                if friend_name == 'no friend':
-                    raise Exception("Friend is required")
-                friendship = Friendship.objects.filter(friend2=request.user.profile, friend1__nickname=friend_name).first()
-                if friendship:
-                    friendship.delete()
-                    return JsonResponse({'success': True})
-                else:
-                    return JsonResponse({'error': 'Error: friend request not found'})
-            raise Exception("You are not authenticated")
-        except Exception as e:
-            print(e)
-            return Response({'error': e.args[0]})
+        if request.user.is_authenticated:
+            friend_name = request.data.get('friend', 'no friend')
+            if friend_name == 'no friend':
+                return JsonResponse({"error:": "Friend is required"}, status=400)
+            friendship = Friendship.objects.filter(friend2=request.user.profile, friend1__nickname=friend_name).first()
+            if friendship:
+                friendship.delete()
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'error': 'Friend request not found'})
+        return JsonResponse({"error:": "You are not authenticated"}, status=400)
 
 class DeleteFriendAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -359,34 +352,36 @@ import magic
 @require_http_methods(["POST"])
 def update_profile_picture(request):
     if request.method == 'POST':
-        try:
-            profile_picture = request.FILES.get('profile_picture')
-            if profile_picture.content_type.startswith('image') == False:
-                raise Exception("The file is not an image.")
-            data = magic.Magic(mime=True)
-            mime_type = data.from_buffer(profile_picture.read(1024))
-            if not mime_type.startswith('image'):
-                raise Exception("The file is not an image.")
-            profile_picture.seek(0)
-            name = "profile_picture_" + request.user.username + ".jpg"
-            if profile_picture:
-                with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:
-                    for chunk in profile_picture.chunks():
-                        f.write(chunk)
-                request.user.profile.profile_picture = name
+        profile_picture = request.FILES.get('profile_picture')
+        print(profile_picture)
+        if profile_picture is None:
+            return JsonResponse({"error: ": "No file was sent."}, status=400)
+        if profile_picture.content_type.startswith('image') == False:
+            return JsonResponse({"error: ": "The file is not an image."}, status=400)
+        data = magic.Magic(mime=True)
+        mime_type = data.from_buffer(profile_picture.read(1024))
+        if not mime_type.startswith('image'):
+            return JsonResponse({"error: ": "The file is not an image."}, status=400)
+        profile_picture.seek(0)
+        name = "profile_picture_" + request.user.username + ".jpg"
+        if profile_picture:
+            with open(os.path.join(settings.MEDIA_ROOT, name), 'wb') as f:
+                for chunk in profile_picture.chunks():
+                    f.write(chunk)
+            request.user.profile.profile_picture = name
+            try:
                 request.user.profile.save()
                 request.user.save()
-                return JsonResponse({'profile_picture': request.user.profile.profile_picture})
-        except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            except Exception as e:
+                return JsonResponse({'error': 'Failed to save the profile picture' + e.args[0]})
+            return JsonResponse({'profile_picture': request.user.profile.profile_picture})
     return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
 
 class EmailAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        try:
+        if request.user.is_authenticated:
             email = request.data.get('email', 'no email')
-            if email == 'no email':
+            if email == 'no email' or email is None:
                 return (JsonResponse({"error": "email is required"}, status=400))
             if request.user.profile.is42account == True:
                 return (JsonResponse({"error": "You can't change your email if you are a 42 account"}, status=400))
@@ -396,54 +391,55 @@ class EmailAPIView(APIView):
             request.user.profile.save()
             request.user.save()
             return (JsonResponse({"message": "success", "email": email}, status=200))
-        except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+        return JsonResponse({'error': "not authenticated"})
         
 
 class NicknameAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        try:
-            if request.user.is_authenticated:
-                first_name = request.data.get('first_name', 'no first_name')
-                if first_name == 'no first_name':
-                    return (JsonResponse({"error": "nickname is required"}, status=400))
-                if (isNicknameUnique(first_name) == False):
-                    return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
-                if (len(first_name) > 14):
-                    return (JsonResponse({"error": "This nickname is too long !"}, status=400))
-                if first_name.endswith('@42'): #if nickname ends with @42
-                    if (first_name != request.user.username):
-                        raise Exception('nickname cannot end with @42')
-                request.user.profile.nickname = first_name
+        if request.user.is_authenticated:
+            first_name = request.data.get('first_name', 'no first_name')
+            print("first_name = ", first_name)
+            if first_name == 'no first_name':
+                return (JsonResponse({"error": "nickname is required"}, status=400))
+            if (request.data.get('first_name') is None or request.data.get('first_name') == ''):
+                return JsonResponse({'error': 'Nickname is required'}, status=400)
+            if (isNicknameUnique(first_name) == False):
+                return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
+            if (len(first_name) > 14):
+                return (JsonResponse({"error": "This nickname is too long !"}, status=400))
+            if first_name.endswith('@42'): #if nickname ends with @42
+                if (first_name != request.user.username):
+                    return JsonResponse({"error:":'nickname cannot end with @42'}, status=400)
+            request.user.profile.nickname = first_name
+            try:
                 request.user.profile.save()
                 request.user.save()
-                return (JsonResponse({"message": "success", "first_name": first_name}, status=200))
-            return JsonResponse({'error': "not authenticated"})
-        except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            except:
+                return JsonResponse({'error': 'Failed to save the nickname'})
+            return (JsonResponse({"message": "success", "first_name": first_name}, status=200))
+        return JsonResponse({'error': "not authenticated"})
 
 class PasswordAPIView(APIView):
     def post(self, request, *args, **kwargs):
+        password = request.data.get('password', 'no password')
+        if password == 'no password':
+            return (JsonResponse({"error": "password is required"}, status=400))
+        if (len(password) > 14 or len(password) < 3 or password is None):
+            return (JsonResponse({"error": "This password is too long or too short."}, status=400))
+        if request.user.profile.is42account == True:
+            return (JsonResponse({"error": "You can't change your password if you are a 42 account"}, status=400))
         try:
-            password = request.data.get('password', 'no password')
-            if password == 'no password':
-                return (JsonResponse({"error": "password is required"}, status=400))
-            if request.user.profile.is42account == True:
-                return (JsonResponse({"error": "You can't change your password if you are a 42 account"}, status=400))
-            try:
-                validate_password(password, request.user)
-            except Exception as e:
-                errors = list(e.messages)
-                return Response({"error": errors}, status=400)
+            validate_password(password, request.user)
+        except Exception as e:
+            errors = list(e.messages)
+            return Response({"error": errors}, status=400)
+        try:
             request.user.set_password(password)
             request.user.save()
-            return (JsonResponse({"message": "success", "password": password}, status=200))
         except Exception as e:
             print(e)
-            return JsonResponse({'error': e.args[0]})
-        
+            return JsonResponse({'error': 'Failed to save the password'})
+        return (JsonResponse({"message": "success", "password": password}, status=200))
 
 class getNicknameWithUserIdAPIView(APIView):
     def post(self, request, *args, **kwargs):

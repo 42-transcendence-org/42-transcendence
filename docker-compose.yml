@@ -150,6 +150,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - HOST_IP=${HOST_IP}
+      - SECRET_DJANGO_KEY=${SECRET_DJANGO_KEY}
       - URL_BLOCKCHAIN=${URL_BLOCKCHAIN}
       - PRIVATE_KEY=${PRIVATE_KEY}
       - PROVIDER_URL=${PROVIDER_URL}
