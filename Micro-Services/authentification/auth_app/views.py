@@ -59,8 +59,8 @@ class RegisterAPIView(APIView):
             return (JsonResponse({"error": "This nickname is too long or too short. Must be between 3 and 14 !"}, status=400))
         if request.data.get('first_name').endswith('@42'): #if nickname ends with @42
             return JsonResponse({'error':'nickname cannot end with @42. Its is reserved for 42 accounts'}, status=400)
-        if (isNicknameUnique(request.data.get('first_name')) == False): #if nickname already taken
-            return JsonResponse('nickname already taken')
+        if (Profile.objects.filter(nickname=request.data.get('first_name')).exists() == True): #if nickname already taken
+            return JsonResponse({'error':'nickname already taken'}, status=400)
         if (len(request.data.get('first_name')) > 14):
             return (JsonResponse({"error": "This nickname is too long !"}, status=400))
         if (request.data.get('email') is None or request.data.get('email') == ''):
@@ -77,10 +77,12 @@ class RegisterAPIView(APIView):
         try:
             user.profile.save() #saves the profile
         except Exception as e:
+            print(e)
             return JsonResponse({'error': "Failed to save profile but user is saved: " + str(e)}, status=500)
         try:
             user.save() #saves the user
         except Exception as e:
+            print(e)
             return JsonResponse({'error': "Failed to save user data but user is saved: " + str(e)}, status=500)
         return JsonResponse({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         
