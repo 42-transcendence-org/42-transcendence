@@ -1,14 +1,11 @@
 import json, asyncio
 
 import game_app.pong.constants as g
+
 from game_app.pong.game_server import server
-from django.http import JsonResponse
-import json
 from rest_framework.views import APIView
-from django.http import JsonResponse
 from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.cache import never_cache
-import time
 from django.views.decorators.http import require_http_methods
 
 async def stream_generator(game_id):
@@ -20,6 +17,18 @@ async def stream_generator(game_id):
         except asyncio.CancelledError:
             server.handle_disconnect(game_id)
             raise
+
+@require_http_methods(["GET"])
+def get_player_names(request, game_id):
+    username = getattr(request, 'username', None)
+    if username is None or not server.game_exists(game_id) or not server.player_is_in_session(game_id, username):
+        return JsonResponse({"error": "Unauthorized access"}, status=403)
+    aliases = server.get_names(game_id)
+    if aliases:
+        aliases_dict = { "p1": aliases[0], "p2": aliases[1] }
+        return JsonResponse(aliases_dict , status=200)
+    else:
+        return JsonResponse({}, status=404)
 
 @require_http_methods(["POST"])
 def game_create_view(request):
@@ -61,8 +70,6 @@ async def game_view(request, game_id):
 
         server.create_input(game_id, username, input_id, timestamp)
         return JsonResponse({}, status=200)
-
-
 
 from .models import FinishedPongGames
 from django.utils import timezone

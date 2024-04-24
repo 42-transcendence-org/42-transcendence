@@ -81,6 +81,11 @@ class GameServer:
         else:
             return "Game has ended."
 
+    def get_names(self, game_id):
+        if game_id in self.game_sessions:
+            return self.game_sessions[game_id].aliases
+        return None
+
     def matchmaker(self, alias, user_id):
         for game_id, session in self.game_sessions.items():
             if session.aliases[g.ID_PLAYER1] == "" or session.aliases[g.ID_PLAYER2] == "":

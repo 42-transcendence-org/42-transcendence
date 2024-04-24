@@ -5,8 +5,6 @@ import * as sound from './sound.js';
 import * as input from './input.js';
 import * as snapshot from './snapshot.js';
 import * as graphics from './graphics.js';
-import * as Oauth from '../Oauth.js';
-
 
 export class GameManager {
 	constructor() {
@@ -117,7 +115,6 @@ export class GameManager {
 
 	async update_loop() {
 		this.request_id = requestAnimationFrame(this.update_loop.bind(this));
-
 		let curr_time = performance.now();
 
 		/* Convert to seconds */
@@ -180,6 +177,15 @@ export class GameManager {
 			this.sound.process_sound_events(this.remote_tick);
 		} else {
 			this.handle_events(this.game);
+		}
+		if (this.game_type === g.TYPE_REMOTE && (interpolated_snapshots[0].state.status === g.STATUS_ACTIVE || interpolated_snapshots[1].state.status === g.STATUS_ACTIVE) && this.aliases[0] === "Player 1" && this.aliases[1] === "Player 2") {
+			const data = await this.send_get_aliases_request();
+			if (data.p1 && data.p2) {
+				this.aliases[0] = data.p1;
+				this.aliases[1] = data.p2;
+				document.getElementById('game-div-p1').textContent = this.aliases[1];
+				document.getElementById('game-div-p2').textContent = this.aliases[0];
+			}
 		}
 		this.graphics.interpolate(interpolated_snapshots[0], interpolated_snapshots[1], alpha);
 		this.graphics.render(this.game_type);
@@ -365,6 +371,28 @@ export class GameManager {
 		}
 
 		this.game_id = data.id
+	}
+
+	async send_get_aliases_request() {
+		const token = localStorage.getItem("jwt");
+		const url = 'https://' + window.location.host + '/game/' + this.game_id + '/aliases/';
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				'Content-Type': 'application/json',
+				'X-CSRFToken': window.client.get_cookie('csrftoken'),
+			},
+			credentials: 'include',
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(data.error || 'Network response was not ok.');
+		}
+
+		return data;
 	}
 
 	async tourneyHistory() {

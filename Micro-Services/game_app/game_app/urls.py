@@ -1,16 +1,14 @@
-from django.urls import path
-from django.urls import include
-
 from . import views
+
 from django.contrib import admin
-from .views import pongHistoryAPIView, getFriendStatsAPIView
+from django.urls import include, path
 
 urlpatterns = [
-    path("", views.game_create_view, name="game_create_view"),
     path('admin/', admin.site.urls),
-
+    path("", views.game_create_view, name="game_create_view"),
     path("<uuid:game_id>/", views.game_view, name="game_view"),
+    path("<uuid:game_id>/aliases/", views.get_player_names, name="get_player_names"),
 	path('prometheus/', include("django_prometheus.urls")),
-	path('pongHistory/', pongHistoryAPIView.as_view(), name='pongHistory'),
-	path('getFriendStats/', getFriendStatsAPIView.as_view(), name='getFriendStats'),
+	path('pongHistory/', views.pongHistoryAPIView.as_view(), name='pongHistory'),
+	path('getFriendStats/', views.getFriendStatsAPIView.as_view(), name='getFriendStats'),
 ]
