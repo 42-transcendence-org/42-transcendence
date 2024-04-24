@@ -958,20 +958,10 @@ label[for="OpenAIquestion"] {
     display: inline-block;
 }
 
-#profile-profile-picture-display{
+#profile-profile-picture-display,
+#friend-profile-profile-picture-display,
+#friend-profile-profile-picture-display {
     border-radius: 5%;
-	border: 1px solid black;
-	display: inline-block;
-}
-
-#friend-profile-profile-picture-display{
-	border-radius: 5%;
-	border: 1px solid black;
-	display: inline-block;
-}
-
-#friend-online-status-image {
-	border-radius: 5%;
 	border: 1px solid black;
 	display: inline-block;
 }

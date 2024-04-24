@@ -113,7 +113,6 @@ def save_tournament(request):
 
     try:
         data = json.loads(request.body)
-        print("Parse JSON: ",data)
         validated_data = TournamentData(**data)
     except ValidationError as e:
         return JsonResponse({'error': "Invalid data"}, status=400)

@@ -45,4 +45,4 @@ urlpatterns = [
 	path('chatgpt/', chatbotAPIView.as_view(), name='chatgpt'),
 	
 ]
-                                                                            
+                                                                    
