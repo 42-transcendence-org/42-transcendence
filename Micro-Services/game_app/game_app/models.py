@@ -36,3 +36,7 @@ class FinishedPongGames(models.Model):
             return FinishedPongGames.objects.filter(owner=user_id, result="Victory", tourney_game=False).count() / FinishedPongGames.objects.filter(owner=user_id, tourney_game=False).count() * 100
         else:
             return 0
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)

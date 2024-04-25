@@ -32,6 +32,10 @@ class JankenGameCreation(models.Model):
         verbose_name = "Janken Game Creation"
         verbose_name_plural = "Janken Game Creations"
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
 class JankenGameInProgress(models.Model):
     creator = models.IntegerField(default=-1)
     opponent = models.IntegerField(default=-1)
@@ -88,6 +92,10 @@ class JankenGameInProgress(models.Model):
             game.save()
         else:
             return None
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
         
     def addToHistory(self):
         if self.result == "draw":
@@ -156,4 +164,8 @@ class FinishedJankenGames(models.Model):
             return "paper"
         else:
             return "scissors"
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 

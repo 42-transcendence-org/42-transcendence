@@ -90,10 +90,9 @@ class pongHistoryAPIView(APIView):
                 completion_day= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%d/%m"), \
                 completion_time= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"), \
             )
-            return JsonResponse({'message': 'success', 'game_id': game.id})
+            return JsonResponse({'message': 'success', 'game_id': game.id}, status=201)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': 'failed to save pong game'}, status=400)
 
     def get(self, request, *args, **kwargs):
         try:
@@ -116,10 +115,9 @@ class pongHistoryAPIView(APIView):
             return JsonResponse({'history': history, \
                                 'wins': FinishedPongGames.countWins(request.user_id), \
                                 'losses': FinishedPongGames.countLosses(request.user_id),
-                                'winrate': "{:.1f}%".format(FinishedPongGames.getWinrate(request.user_id))})
+                                'winrate': "{:.1f}%".format(FinishedPongGames.getWinrate(request.user_id))}, status=200)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': 'failed to get pong game history'}, status=400)
 
 class getFriendStatsAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -146,7 +144,6 @@ class getFriendStatsAPIView(APIView):
             return JsonResponse({'history': history,
                                 'wins': FinishedPongGames.countWins(friend_id),
                                 'losses': FinishedPongGames.countLosses(friend_id),
-                                'winrate': "{:.1f}%".format(FinishedPongGames.getWinrate(friend_id))})
+                                'winrate': "{:.1f}%".format(FinishedPongGames.getWinrate(friend_id))}, status=200)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': 'failed to get pong game history'}, status=400)

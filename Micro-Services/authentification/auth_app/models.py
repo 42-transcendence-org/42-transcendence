@@ -23,6 +23,10 @@ class Profile(models.Model):
         verbose_name = "Profile"
         verbose_name_plural = "Profiles"
 
+    def save(self, *args, **kwargs):
+        self.full_clean(exclude=['email'])
+        super().save(*args, **kwargs)
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -61,6 +65,10 @@ class Friendship(models.Model):
     class Meta:
         verbose_name = "Friendship"
         verbose_name_plural = "Friendships"
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 class Notifications(models.Model):
     profile = models.ForeignKey(Profile, on_delete = models.CASCADE)
@@ -82,3 +90,7 @@ class Notifications(models.Model):
 
     def countNotifications(profile):
         return Notifications.objects.filter(profile=profile).count()
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)

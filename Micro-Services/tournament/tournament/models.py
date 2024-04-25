@@ -19,6 +19,10 @@ class TournamentData(BaseModel):
     game3_player1_score: int = Field(..., nullable=False)
     game3_player2_score: int = Field(..., nullable=False)
     Lang: str = Field(...)
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     @validator('Lang')
     def lang_must_be_valid(cls, v):

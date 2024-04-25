@@ -1,0 +1,17 @@
+curl 'https://192.168.252.193:8443/janken/createJankenGame/' \
+  -H 'accept: */*' \
+  -H 'accept-language: fr-FR,fr;q=0.9' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MSwidXNlcm5hbWUiOiJ0dXR1Iiwibmlja25hbWUiOiJmb2Zrb2Zrb2YiLCJzZWNyZXQiOiJzLWZ6ZWZ6ZTc4WkFkemQ4WjdoZHpEQVphRDg5ZGRkZCIsImV4cCI6MTcxNDA4Nzc1OX0.g4snUOCA5Ls_gVD6bdIyPIUOxqv1iJq_HJgQ04J9U7o' \
+  -H 'content-type: application/json' \
+  -H 'cookie: csrftoken=RdJQAaHzL7dEklXYFu3i8iAaSqKfWy7z; sessionid=f6muxqj66kn6x1k6ecq76sjrjrwig8kh' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://192.168.252.193:8443/' \
+  -H 'sec-ch-ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' \
+  -H 'x-csrftoken: RdJQAaHzL7dEklXYFu3i8iAaSqKfWy7z' \
+  --insecure

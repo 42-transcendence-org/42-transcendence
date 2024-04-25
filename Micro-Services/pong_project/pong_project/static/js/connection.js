@@ -48,19 +48,20 @@ export class Connection {
 		};
 		const response = await Oauth.poster(url, data);
 		
+		
 		document.getElementById('username_login').value = document.getElementById('username_register').value;
 		document.getElementById('password_login').value = document.getElementById('password1_register').value;
-		
-		document.getElementById('username_register').value = '';
 		document.getElementById('password1_register').value = '';
 		document.getElementById('password2_register').value = '';
-		document.getElementById('email_address_register').value = '';
-		document.getElementById('first_name_register').value = '';
-
+		
 		if (response.error) {
 			alert(response.error);
 			return ;
 		}
+		
+		document.getElementById('username_register').value = '';
+		document.getElementById('email_address_register').value = '';
+		document.getElementById('first_name_register').value = '';
 		alert('Registration was successful');
 		this.login_user_request();
 	}

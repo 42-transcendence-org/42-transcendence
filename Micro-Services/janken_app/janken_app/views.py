@@ -2,11 +2,11 @@ from django.http import JsonResponse
 from rest_framework.views import APIView
 from .models import JankenGameCreation, JankenGameInProgress, FinishedJankenGames
 from django.http import JsonResponse
+import time
+from django.utils import timezone
+from django.db import Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError
 
-
-#JANKEN GAME
-
-class createJankenGameAPIView(APIView): #create a gamecreation and wait for an opponent
+class createJankenGameAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             if (JankenGameCreation.objects.filter(creator=request.user_id).exists() == True):
@@ -15,12 +15,13 @@ class createJankenGameAPIView(APIView): #create a gamecreation and wait for an o
                 raise Exception("You are already playing a game")
             game = JankenGameCreation.objects.create(creator=request.user_id)
             game.save()
-            return JsonResponse({'game_id': game.id})
+            return JsonResponse({'game_id': game.id}, status=201)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': e.args[0]}, status=400)
 
-class gameInProgressAPIView(APIView): #check your game status
+class gameInProgressAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             game = JankenGameInProgress.getMyGame(request.user_id)
@@ -32,19 +33,19 @@ class gameInProgressAPIView(APIView): #check your game status
                 return JsonResponse({'message': 'game finished'})
             if game.creator == request.user_id:
                 if game.creator_choice != "None":
-                    return JsonResponse({'message': 'already played', 'opponent': game.opponent})
-                return JsonResponse({'message': 'game in progress', 'opponent': game.opponent})
+                    return JsonResponse({'message': 'already played', 'opponent': game.opponent}, status=200)
+                return JsonResponse({'message': 'game in progress', 'opponent': game.opponent}, status=200)
             if game.opponent == request.user_id:
                 if game.opponent_choice != "None":
-                    return JsonResponse({'message': 'already played', 'opponent': game.creator}) 
-                return JsonResponse({'message': 'game in progress', 'opponent': game.creator})
+                    return JsonResponse({'message': 'already played', 'opponent': game.creator}, status=200) 
+                return JsonResponse({'message': 'game in progress', 'opponent': game.creator}, status=200)
             raise Exception('You are not part of a game')
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': e.args[0]}, status=400)
 
-
-class jankenGameAPIView(APIView): #find an ennemy, matchmaking
+class jankenGameAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             if (JankenGameCreation.objects.filter(creator=request.user_id).exists() == True):
@@ -56,12 +57,13 @@ class jankenGameAPIView(APIView): #find an ennemy, matchmaking
             game = JankenGameCreation.matchMaking(request.user_id)
             JankenGameInProgress.objects.create(creator=game.creator, opponent=request.user_id)
             game.delete()
-            return JsonResponse({'game_id': game.id})
+            return JsonResponse({'game_id': game.id}, status=201)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': e.args[0]}, status=400)
         
-    def post(self, request, *args, **kwargs): #play your move
+    def post(self, request, *args, **kwargs):
         try:
             game = JankenGameInProgress.getMyGame(request.user_id)
             if game is None:
@@ -71,12 +73,13 @@ class jankenGameAPIView(APIView): #find an ennemy, matchmaking
             if game.opponent == request.user_id and game.opponent_choice != "None":
                 raise Exception("You already gave your input")
             JankenGameInProgress.giveInput(request.data.get('input', 'rock'), request.user_id)
-            return JsonResponse({'message': 'success'})
+            return JsonResponse({'message': 'success'}, status=201)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': e.args[0]}, status=400)
 
-class waitForResultsAPIView(APIView): #waiting for the game to be finished
+class waitForResultsAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             game = JankenGameInProgress.getMyGame(request.user_id)
@@ -84,14 +87,13 @@ class waitForResultsAPIView(APIView): #waiting for the game to be finished
                 raise Exception("You are not part of a game")
             if (JankenGameInProgress.getMyGame(request.user_id).game_finished == False):
                 raise Exception("The game is not finished yet")
-            return JsonResponse({'message': 'still waiting'})
+            return JsonResponse({'message': 'still waiting'}, status=200)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': e.args[0]}, status=400)
 
-import time
-
-class waitForOpponentAPIView(APIView): #waiting for a user to join your game, get the game he creater when he joined your game
+class waitForOpponentAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             if (JankenGameCreation.objects.filter(creator=request.user_id).exists() == True):
@@ -102,20 +104,20 @@ class waitForOpponentAPIView(APIView): #waiting for a user to join your game, ge
             if (JankenGameInProgress.myGame(request.user_id).exists() == False):
                 raise Exception("No opponent found")
             game = JankenGameInProgress.objects.get(creator=request.user_id)
-            return JsonResponse({'opponent': game.opponent})
+            return JsonResponse({'opponent': game.opponent}, status=200)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': e.args[0]}, status=400)
 
 
-class getResultsAPIView(APIView): #get the results of the game
+class getResultsAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             game = JankenGameInProgress.getMyGame(request.user_id)
             if game is None:
                 raise Exception('You are not part of a game')
-            #get winner
-            if game.creator_choice == game.opponent_choice: #draw
+            if game.creator_choice == game.opponent_choice:
                 game.result = "draw"
             elif game.creator_choice == "rock":
                 if game.opponent_choice == "scissors":
@@ -132,7 +134,6 @@ class getResultsAPIView(APIView): #get the results of the game
                     game.result = game.creator
                 elif game.opponent_choice == "rock":
                     game.result = game.opponent
-            #get loser and winner based on result==creator or result==opponent
             if game.result == game.creator:
                 game.winner = game.creator
                 game.loser = game.opponent
@@ -144,35 +145,33 @@ class getResultsAPIView(APIView): #get the results of the game
             game.save()
             results = {'message': 'success', 'creator': game.creator, 'opponent': game.opponent, 'creator_choice': game.creator_choice, \
                     'opponent_choice': game.opponent_choice, 'result': game.result, 'loser': game.loser, 'winner': game.winner, 'myself':request.user_id}
-            #give your permission to have the game deleted
             if request.user_id == game.creator:
                 game.to_delete_creator = True
                 game.save()
             if request.user_id == game.opponent:
                 game.to_delete_opponent = True
                 game.save()
-            #delete if both gave permission
             if game.to_delete_creator == True and game.to_delete_opponent == True:
                 game.addToHistory()
             return JsonResponse(results)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
             return JsonResponse({'error': e.args[0]})
 
-class deleteMyJankenGameCreationAPIView(APIView): #cancel a game creatoin
+class deleteMyJankenGameCreationAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             game = JankenGameCreation.getMyGameCreation(request.user_id)
             if game:
                 game.delete()
-            return JsonResponse({'message': 'success'})
+            return JsonResponse({'message': 'success'}, status=200)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': e.args[0]}, status=400)
 
-from django.utils import timezone
-
-class amIPlayingAPIView(APIView): #check if you are playing a game
+class amIPlayingAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             game = JankenGameInProgress.getMyGame(request.user_id)
@@ -181,7 +180,7 @@ class amIPlayingAPIView(APIView): #check if you are playing a game
                     if (timezone.now() - game.completion_time).total_seconds() > 20:
                         game.addToHistory()
                         raise Exception('You are not playing a game')
-                    return JsonResponse({'message': 'The game is finished'})
+                    return JsonResponse({'message': 'The game is finished'}, status=200)
                 if game.first_input_time != None:
                     if (timezone.now() - game.first_input_time).total_seconds() > 300:
                         game.completion_time = timezone.now()
@@ -195,21 +194,21 @@ class amIPlayingAPIView(APIView): #check if you are playing a game
                         raise Exception('You are not playing a game')
                 if game.creator == request.user_id:
                     if game.creator_choice == "None":
-                        return JsonResponse({'message': 'Waiting for your input'})
-                    return JsonResponse({'message': 'Waiting for your opponent to play'})
+                        return JsonResponse({'message': 'Waiting for your input'}, status=200)
+                    return JsonResponse({'message': 'Waiting for your opponent to play'}, status=200)
                 if game.opponent == request.user_id:
                     if game.opponent_choice == "None":
                         return JsonResponse({'message': 'Waiting for your input'})
-                    return JsonResponse({'message': 'Waiting for your opponent to play'})
+                    return JsonResponse({'message': 'Waiting for your opponent to play'}, status=200)
             if JankenGameCreation.getMyGameCreation(request.user_id) is not None:
-                return JsonResponse({'message': 'You are waiting for an opponent'})
+                return JsonResponse({'message': 'You are waiting for an opponent'}, status=200)
             raise Exception('You are not playing a game')
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
-from django.contrib.auth.decorators import login_required
+            return JsonResponse({'error': e.args[0]}, status=400)
 
-class jankenHistoryAPIView(APIView): #get the history of your games
+class jankenHistoryAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             games = FinishedJankenGames.objects.filter(owner=request.user_id)
@@ -232,10 +231,11 @@ class jankenHistoryAPIView(APIView): #get the history of your games
                                     'losses': FinishedJankenGames.countLosses(request.user_id),
                                     'winrate': "{:.1f}%".format(FinishedJankenGames.getWinrate(request.user_id)),
                                     'most_played': FinishedJankenGames.getMostPlayed(request.user_id),
-                                    })
+                                    }, status=200)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': e.args[0]}, status=400)
         
 class getFriendStatsAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -261,7 +261,8 @@ class getFriendStatsAPIView(APIView):
                                 'wins': FinishedJankenGames.countWins(friend_id),
                                 'losses': FinishedJankenGames.countLosses(friend_id),
                                 'draws': FinishedJankenGames.countDraws(friend_id),
-                                'winrate': "{:.1f}%".format(FinishedJankenGames.getWinrate(friend_id))}) 
+                                'winrate': "{:.1f}%".format(FinishedJankenGames.getWinrate(friend_id))}, status=200)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            print(e)
-            return JsonResponse({'error': e.args[0]})
+            return JsonResponse({'error': e.args[0]}, status=400)
