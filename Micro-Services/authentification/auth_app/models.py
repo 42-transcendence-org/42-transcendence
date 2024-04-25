@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.validators import MinLengthValidator
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE)
@@ -10,7 +11,7 @@ class Profile(models.Model):
     is42account = models.BooleanField(default=False)
     email = models.EmailField(max_length=100, blank=True, default="default@default.default")
     profile_picture = models.CharField(max_length=100, blank=True, default="avatar.jpg")
-    nickname = models.CharField(max_length=100, blank=True, default="No Nickname Yet")
+    nickname = models.CharField(max_length=100, validators=[MinLengthValidator(1)], null=False)
     correction_points = models.IntegerField(default=0)
     online = models.BooleanField(default=False)
     default_language = models.CharField(max_length=2, default='en')

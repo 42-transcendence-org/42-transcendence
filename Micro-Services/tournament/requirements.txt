@@ -5,3 +5,4 @@ uvicorn
 web3
 djangorestframework
 python-dotenv
+pydantic

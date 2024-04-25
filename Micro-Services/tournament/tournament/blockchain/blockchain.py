@@ -1,10 +1,11 @@
 from web3 import Web3, HTTPProvider
-from web3.middleware import geth_poa_middleware
 from django.http import JsonResponse
-from dotenv import load_dotenv
 import os
 import json
 from django.views.decorators.http import require_http_methods
+from typing import Tuple
+from pydantic import ValidationError
+from ..models import TournamentData
 
 
 TOURNAMENT_ADDRESS = os.getenv('CONTRACT_ADDRESS')
@@ -107,42 +108,45 @@ tournament_contract = w3.eth.contract(address=TOURNAMENT_ADDRESS, abi=tournament
 
 @require_http_methods(["POST"])
 def save_tournament(request):
+    account = w3.eth.account.from_key(private_key)
+    nonce = w3.eth.get_transaction_count(account.address)
+
     try:
-        account = w3.eth.account.from_key(private_key)
-        nonce = w3.eth.get_transaction_count(account.address)
-
         data = json.loads(request.body)
-        Players = (f" {data['player1']}, {data['player2']}, {data['player3']}, {data['player4']}.")
-        if (data['Lang'] == "es"):
-            Match1 = (f"Ganador: {data['game1_winner']}\n",f"Perdedora: {data['game1_loser']}\n", f"Puntaje: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
-            Match2 = (f"Ganador: {data['game2_winner']}\n",f"Perdedora: {data['game2_loser']}\n", f"Puntaje: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
-            Finale = (f"Ganador: {data['game3_winner']}\n",f"Perdedora: {data['game3_loser']}\n", f"Puntaje: {data['game3_player1_score']}-{data['game3_player2_score']}")
-        elif (data['Lang'] == "fr"):
-            Match1 = (f"Gagnant: {data['game1_winner']}\n",f"Perdant: {data['game1_loser']}\n", f"Score: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
-            Match2 = (f"Gagnant: {data['game2_winner']}\n",f"Perdant: {data['game2_loser']}\n", f"Score: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
-            Finale = (f"Gagnant: {data['game3_winner']}\n",f"Perdant: {data['game3_loser']}\n", f"Score: {data['game3_player1_score']}-{data['game3_player2_score']}")
-        else:
-            Match1 = (f"Winner: {data['game1_winner']}\n",f"Looser: {data['game1_loser']}\n", f"Score: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
-            Match2 = (f"Winner: {data['game2_winner']}\n",f"Looser: {data['game2_loser']}\n", f"Score: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
-            Finale = (f"Winner: {data['game3_winner']}\n",f"Looser: {data['game3_loser']}\n", f"Score: {data['game3_player1_score']}-{data['game3_player2_score']}")
-        tx = tournament_contract.functions.saveTournament(data['tournamentOwner'], Players, data['game3_winner'], Match1, Match2, Finale).build_transaction({
-            'from': account.address,
-            'chainId': chainId,
-            'gas': 2000000,
-            'gasPrice': w3.to_wei('50', 'gwei'),
-            'nonce': nonce,
-        })
+        validated_data = TournamentData(**data)
+    except ValidationError as e:
+        return JsonResponse({'error': "Invalid data"}, status=400)
+    except json.JSONDecodeError as e:
+        return JsonResponse({'error': "Invalid JSON"}, status=400)
+    Players = (f" {data['player1']}, {data['player2']}, {data['player3']}, {data['player4']}.")
+    if (data['Lang'] == "es"):
+        Match1 = (f"Ganador: {data['game1_winner']}\n",f"Perdedora: {data['game1_loser']}\n", f"Puntaje: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
+        Match2 = (f"Ganador: {data['game2_winner']}\n",f"Perdedora: {data['game2_loser']}\n", f"Puntaje: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
+        Finale = (f"Ganador: {data['game3_winner']}\n",f"Perdedora: {data['game3_loser']}\n", f"Puntaje: {data['game3_player1_score']}-{data['game3_player2_score']}")
+    elif (data['Lang'] == "fr"):
+        Match1 = (f"Gagnant: {data['game1_winner']}\n",f"Perdant: {data['game1_loser']}\n", f"Score: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
+        Match2 = (f"Gagnant: {data['game2_winner']}\n",f"Perdant: {data['game2_loser']}\n", f"Score: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
+        Finale = (f"Gagnant: {data['game3_winner']}\n",f"Perdant: {data['game3_loser']}\n", f"Score: {data['game3_player1_score']}-{data['game3_player2_score']}")
+    else:
+        Match1 = (f"Winner: {data['game1_winner']}\n",f"Looser: {data['game1_loser']}\n", f"Score: {data['game1_player1_score']}-{data['game1_player2_score']}\n\n")
+        Match2 = (f"Winner: {data['game2_winner']}\n",f"Looser: {data['game2_loser']}\n", f"Score: {data['game2_player1_score']}-{data['game2_player2_score']}\n\n")
+        Finale = (f"Winner: {data['game3_winner']}\n",f"Looser: {data['game3_loser']}\n", f"Score: {data['game3_player1_score']}-{data['game3_player2_score']}")
+    tx = tournament_contract.functions.saveTournament(data['tournamentOwner'], Players, data['game3_winner'], Match1, Match2, Finale).build_transaction({
+        'from': account.address,
+        'chainId': chainId,
+        'gas': 2000000,
+        'gasPrice': w3.to_wei('50', 'gwei'),
+        'nonce': nonce,
+    })
 
-        signed_tx = account.sign_transaction(tx)
+    signed_tx = account.sign_transaction(tx)
+    try:
         tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
-        tx = receipt.transactionHash.hex()
-        get_tournament(request)
-        return JsonResponse({'message': 'success', 'tx': tx})
     except Exception as e:
-            print(e)
-            return JsonResponse({'error': "Failed to save tournament in blockchain: " + e.args[0]})
+        return JsonResponse({'error': "Failed to save tournament in blockchain."})
+    tx = receipt.transactionHash.hex()
+    return JsonResponse({'message': 'success', 'tx': tx})
 
 @require_http_methods(["POST"])
 def get_tournament(request):

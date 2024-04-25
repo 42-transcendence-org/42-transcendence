@@ -27,7 +27,8 @@
 					<option value="es" data-fr="Espagnol" data-en="Spanish" data-es="Espanol">Spanish</option>
 					<option value="en" data-fr="Anglais" data-en="English" data-es="Ingles">English</option>
 				</select>
-				<img id="banner-profile-image-display" width="100" height="110" src="" alt="User Image" style="display: inline-block;">
+				<img id="banner-profile-image-display" src="" alt="User Image" style="border-radius: 5%; width: 100px; height: 100px; display: inline-block;">
+				<!-- <img id="banner-profile-image-display" width="100" height="110" src="" alt="User Image" style="display: inline-block;"> -->
 				<button id="logout-button" type="submit" style="display: inline-block;" data-fr="Déconnexion" data-en="Logout" data-es="Cerrar sesion">Logout</button>
 			</div>
 		</header>
@@ -84,11 +85,11 @@
 
 			<div id="friend-profile" style="display:none;">
 				<div id="friends-info">
-					<img src="" id="friend-profile-profile-picture-display" width="75" height="87" alt="profile picture">
+					<img src="" id="friend-profile-profile-picture-display" width="75" height="80" alt="profile picture">
 					<p id="friend-nickname-welcome-p" style="display: inline-block; margin-bottom: 0;"><span id="friend-profile-nickname-display"></span></p>
 					<p id="friend-online-status" style="display: inline-block;">
 						<span data-fr="statut : " data-en="status : " data-es="estatuto : ">status : </span>
-						<img src="auth/static/online.jpg" id="friend-online-status-image" width="40" height="40" alt="online status">
+						<img src="auth/static/online.jpg" id="friend-online-status-image" width="40" height="40" alt="online status >
 					</p>
 				</div>
 				<div id="friend-history">
@@ -137,7 +138,7 @@
 
 			<div id="profile" style="display: none;">
 				<div id="my-profile-history">
-					<img src="" id="profile-profile-picture-display" alt="profile picture">
+					<img src="" id="profile-profile-picture-display" alt="profile picture" style="border-radius: 5%; width: 100px; height: 100px; display: inline-block;">
 					<div id="my-profile-history-buttons">
 						<button id="profile-janken-history-button" data-fr="Mon historique de Janken" data-en="My Janken History" data-es="Mi historial de Janken">My Janken History</button>
 						<button id="profile-pong-history-button" data-fr="Mon historique de Pong" data-en="My Pong History" data-es="Mi historial de Pong">My Pong History</button>

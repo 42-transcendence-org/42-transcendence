@@ -138,17 +138,3 @@ server {
     }
 
 }
-
-# Second server block for redirecting HTTP to HTTPS
-server {
-    # Listen on port 80 (default port for HTTP) and set this as the default server
-    # for requests coming to port 80
-    listen 80 default_server;
-
-    # Default server name (catch-all)
-    server_name _;
-
-    # Redirect all HTTP requests to HTTPS
-    # $host and $request_uri are variables for the host and URI part of the request
-    return 301 https://$host$request_uri;
-}

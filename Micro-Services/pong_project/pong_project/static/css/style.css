@@ -3,7 +3,6 @@
 	src: url('../assets/code-page-437.ttf') format('truetype');
 }
 
-
 body {
 	height: 100%;
 	display: flex;
@@ -954,4 +953,20 @@ label[for="OpenAIquestion"] {
 #blockchain-link {
 	width: 50%;
 	margin: auto;
+}
+
+#banner-profile-image-display {
+    border-radius: 5%;
+    width: 100px;
+    height: 100px;
+	border: 1px solid black;
+    display: inline-block;
+}
+
+#profile-profile-picture-display,
+#friend-profile-profile-picture-display,
+#friend-profile-profile-picture-display {
+    border-radius: 5%;
+	border: 1px solid black;
+	display: inline-block;
 }
