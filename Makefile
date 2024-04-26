@@ -5,14 +5,14 @@ DOCKER_COMPOSE_CMD := $(shell command -v docker-compose || echo "docker compose"
 DOCKER_COMPOSE	:= $(DOCKER_COMPOSE_CMD) -f ./docker-compose.yml --env-file ./.env
 
 VOLUMES_DIR		:= auth_db game_db janken_db
-VOLUMES_PATH	:= $(HOME)/goinfre/docker/volumes/data/
+VOLUMES_PATH	:= /home/will/code/data/
 VOLUMES			:= $(addprefix $(VOLUMES_PATH)/,$(VOLUMES_DIR))
 
 # define standard colors
 _END			:=	\033[0m
 _GREEN			:=	\033[32m
 
-all: up
+all: up migrate
 
 # -d = run the containers in the background (terminal is still usable while running)
 # --build = force to rebuild the images of the services
@@ -65,6 +65,7 @@ clean:
 
 fclean: clean
 	@echo "$(_GREEN)Removes images, containers and volumes$(_END)"
+	sudo rm -rf $(VOLUMES)
 
 # -a = remove all objects including unused
 # -f = force the removal without confirmation
@@ -74,4 +75,4 @@ prune: fclean
 
 re: stop up
 
-.PHONY: all build up start restart stop ls clean fclean prune re debug migrate
+.PHONY: all build up start restart stop ls clean fclean prune re debug
