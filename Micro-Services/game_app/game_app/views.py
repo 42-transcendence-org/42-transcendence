@@ -59,10 +59,11 @@ async def game_view(request, game_id):
     elif request.method == "PUT":
         try:
             data = json.loads(request.body)
-            if not (isinstance(data, list) and len(data) == 2):
-                raise ValueError("Input must be a pair of [input, timestamp]")
-        except (json.JSONDecodeError, ValueError) as e:
-            return JsonResponse({"error": str(e)}, status=400)
+        except:
+            return JsonResponse({"error": "Input must be a pair of ints"}, status=400)
+
+        if not (isinstance(data, list) and len(data) == 2 and isinstance(data[0], int) and isinstance(data[1], int)):
+            return JsonResponse({"error": "Input must be a pair of ints"}, status=400)
 
         input_id, timestamp = data
         if input_id not in g.INPUTS:
