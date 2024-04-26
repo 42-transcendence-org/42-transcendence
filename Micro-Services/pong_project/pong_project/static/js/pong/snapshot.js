@@ -5,6 +5,7 @@ class Snapshot {
 	constructor() {
 		this.tick = 0;
 		this.state = new game.Game();
+		this.state.status = g.STATUS_WAITING;
 	}
 }
 
