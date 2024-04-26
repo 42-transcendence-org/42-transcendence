@@ -122,7 +122,7 @@ def check_authentication(request):
             return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
             return JsonResponse({'error': 'Failed to save user status. User not shown as authenticated', 'isAuthenticated': False}, status=403)
-    return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False}, status=203)
+    return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False}, status=200)
 
 def generate_jwt_token(user):
     dt = datetime.datetime.now() + datetime.timedelta(hours=1)
