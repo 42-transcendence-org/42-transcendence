@@ -1,5 +1,6 @@
 from django.db import models
 
+# FIXME Add validation
 class FinishedPongGames(models.Model):
     owner = models.IntegerField(default=-1)
     game_type = models.CharField(max_length=100, default="None")

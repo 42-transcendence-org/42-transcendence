@@ -82,18 +82,31 @@ async def game_view(request, game_id):
         return JsonResponse({}, status=200)
 
 
+def validate_dict(to_check):
+    if not isinstance(to_check, dict):
+        return False
+    for key, value in to_check.items():
+        if not (isinstance(key, str) and isinstance(value, str) and value != ""):
+            return False
+    return True
+
+
+# FIXME Validate this in the model
 class pongHistoryAPIView(APIView):
     def post(self, request):
+        if not isinstance(request.data, dict):
+            return JsonResponse({"error": "Bad Request"}, status=400)
+
         game = FinishedPongGames.objects.create(
             owner=request.user_id,
-            player1=request.data.get("player1", "undefined"),
-            game_type=request.data.get("game_type", "undefined"),
-            opponent=request.data.get("opponent", "undefined"),
-            player_score=request.data.get("player_score", "undefined"),
-            opponent_score=request.data.get("opponent_score", "undefined"),
-            winner=request.data.get("winner", "undefined"),
-            result=request.data.get("result", "undefined"),
-            tourney_game=request.data.get("tourney_game", False),
+            player1=request.data.get("player1"),
+            game_type=request.data.get("game_type"),
+            opponent=request.data.get("opponent"),
+            player_score=request.data.get("player_score"),
+            opponent_score=request.data.get("opponent_score"),
+            winner=request.data.get("winner"),
+            result=request.data.get("result"),
+            tourney_game=request.data.get("tourney_game"),
             completion_day=timezone.now().astimezone(timezone.get_current_timezone()).strftime("%d/%m"),
             completion_time=timezone.now().astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"),
         )
@@ -130,11 +143,14 @@ class pongHistoryAPIView(APIView):
         )
 
 
+# TODO Test this
 class getFriendStatsAPIView(APIView):
     def post(self, request):
-        friend_id = request.data.get("friend_id", "undefined")
-        if friend_id == "undefined":
-            raise Exception("Please provide a valid friend_id")
+        if not (isinstance(request.data, dict)):
+            return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
+        friend_id = request.data.get("friend_id")
+        if not (isinstance(friend_id, int) and friend_id >= 1):
+            return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
         games = FinishedPongGames.objects.filter(owner=friend_id)
         if games.exists() == False:
             return JsonResponse({"error": "You never played a game !"}, status=200)
