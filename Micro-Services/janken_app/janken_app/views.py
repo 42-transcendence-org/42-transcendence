@@ -49,8 +49,13 @@ class jankenGameAPIView(APIView):
         game.delete()
         return JsonResponse({"game_id": game.id}, status=201)
 
-    # FIXME: Check request.data
+    # TODO Test this
     def post(self, request):
+        if not (isinstance(request.data, dict)):
+            return JsonResponse({"error": 'Request must be of the form {"input":"rock | paper | scissor"}'}, status=400)
+        input = request.data.get("input", None)
+        if not (isinstance(input, str) and input in ["rock", "paper", "scissors"]):
+            return JsonResponse({"error": 'Request must be of the form {"input":"rock | paper | scissor"}'}, status=400)
         game = JankenGameInProgress.getMyGame(request.user_id)
         if game is None:
             return JsonResponse({"error": "You are not part of a game"}, status=403)
@@ -58,7 +63,7 @@ class jankenGameAPIView(APIView):
             return JsonResponse({"error": "You already gave your input"}, status=200)
         elif game.opponent == request.user_id and game.opponent_choice != "None":
             return JsonResponse({"error": "You already gave your input"}, status=200)
-        JankenGameInProgress.giveInput(request.data.get("input", "rock"), request.user_id)
+        JankenGameInProgress.giveInput(input, request.user_id)
         return JsonResponse({"message": "success"}, status=201)
 
 
@@ -210,12 +215,14 @@ class jankenHistoryAPIView(APIView):
             status=200,
         )
 
-# FIXME Check request.data
+# TODO Test this
 class getFriendStatsAPIView(APIView):
     def post(self, request):
-        friend_id = request.data.get("friend_id", "undefined")
-        if friend_id == "undefined":
-            return JsonResponse("Please provide a valid friend_id", status=400)
+        if not (isinstance(request.data, dict)):
+            return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
+        friend_id = request.data.get("friend_id", None)
+        if not (isinstance(friend_id, int) and friend_id >= 1):
+            return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
         games = FinishedJankenGames.objects.filter(owner=friend_id)
         if games.exists() == False:
             return JsonResponse({"error": "You never played a game !"}, status=200)
