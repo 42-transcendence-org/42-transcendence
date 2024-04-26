@@ -43,7 +43,7 @@ class jankenGameAPIView(APIView):
         if JankenGameInProgress.getMyGame(request.user_id) != None:
             return JsonResponse({"error": "You already have a game in progress"}, status=403)
         if JankenGameCreation.objects.all().exists() == False:
-            return JsonResponse({"error": "No game available"}, status=404)
+            return JsonResponse({"error": "No game available"}, status=403)
         game = JankenGameCreation.matchMaking(request.user_id)
         JankenGameInProgress.objects.create(creator=game.creator, opponent=request.user_id)
         game.delete()
@@ -158,7 +158,7 @@ class amIPlayingAPIView(APIView):
             if game.game_finished == True:
                 if (timezone.now() - game.completion_time).total_seconds() > 20:
                     game.addToHistory()
-                    return JsonResponse({"error": "You are not playing"}, status=201)
+                    return JsonResponse({"message": "Game result was deleted"}, status=201)
                 return JsonResponse({"message": "The game is finished"}, status=200)
             if game.first_input_time != None:
                 if (timezone.now() - game.first_input_time).total_seconds() > 300:
@@ -170,7 +170,7 @@ class amIPlayingAPIView(APIView):
                     if game.winner == game.creator:
                         game.loser = game.opponent
                     game.save()
-                    return JsonResponse({"error": "You are not playing"}, status=201)
+                    return JsonResponse({"message": "One player forfeited, the game is finished"}, status=201)
             if game.creator == request.user_id:
                 if game.creator_choice == "None":
                     return JsonResponse({"message": "Waiting for your input"}, status=200)
@@ -215,14 +215,14 @@ class jankenHistoryAPIView(APIView):
             status=200,
         )
 
-# TODO Test this
+# TODO Test this FIXME friend value
 class getFriendStatsAPIView(APIView):
     def post(self, request):
         if not (isinstance(request.data, dict)):
             return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
         friend_id = request.data.get("friend_id")
-        if not (isinstance(friend_id, int) and friend_id >= 1):
-            return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
+        if not (isinstance(friend_id, int) and friend_id >= 1 and friend_id <= 10000):
+            return JsonResponse({"error": 'Request must be of the form {"friend_id":id} and id between 1 and 10000'}, status=400)
         games = FinishedJankenGames.objects.filter(owner=friend_id)
         if games.exists() == False:
             return JsonResponse({"error": "You never played a game !"}, status=200)

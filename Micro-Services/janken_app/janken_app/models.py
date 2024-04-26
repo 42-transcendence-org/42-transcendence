@@ -98,16 +98,19 @@ class JankenGameInProgress(models.Model):
         super().save(*args, **kwargs)
 
     def addToHistory(self):
-        if self.result == "draw":
-            FinishedJankenGames.objects.create(owner=self.creator, opponent=self.opponent, owner_choice=self.creator_choice, opponent_choice=self.opponent_choice, result=self.result, completion_time=self.completion_time, loser=self.loser, winner=self.winner)
-            FinishedJankenGames.objects.create(owner=self.opponent, opponent=self.creator, owner_choice=self.opponent_choice, opponent_choice=self.creator_choice, result=self.result, completion_time=self.completion_time, loser=self.loser, winner=self.winner)
-        elif self.winner == self.creator:
-            FinishedJankenGames.objects.create(owner=self.creator, opponent=self.opponent, owner_choice=self.creator_choice, opponent_choice=self.opponent_choice, result="Victory", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
-            FinishedJankenGames.objects.create(owner=self.opponent, opponent=self.creator, owner_choice=self.opponent_choice, opponent_choice=self.creator_choice, result="Defeat", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
-        elif self.winner == self.opponent:
-            FinishedJankenGames.objects.create(owner=self.creator, opponent=self.opponent, owner_choice=self.creator_choice, opponent_choice=self.opponent_choice, result="Defeat", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
-            FinishedJankenGames.objects.create(owner=self.opponent, opponent=self.creator, owner_choice=self.opponent_choice, opponent_choice=self.creator_choice, result="Victory", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
-        self.delete()
+        try:
+            if self.result == "draw":
+                FinishedJankenGames.objects.create(owner=self.creator, opponent=self.opponent, owner_choice=self.creator_choice, opponent_choice=self.opponent_choice, result=self.result, completion_time=self.completion_time, loser=self.loser, winner=self.winner)
+                FinishedJankenGames.objects.create(owner=self.opponent, opponent=self.creator, owner_choice=self.opponent_choice, opponent_choice=self.creator_choice, result=self.result, completion_time=self.completion_time, loser=self.loser, winner=self.winner)
+            elif self.winner == self.creator:
+                FinishedJankenGames.objects.create(owner=self.creator, opponent=self.opponent, owner_choice=self.creator_choice, opponent_choice=self.opponent_choice, result="Victory", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
+                FinishedJankenGames.objects.create(owner=self.opponent, opponent=self.creator, owner_choice=self.opponent_choice, opponent_choice=self.creator_choice, result="Defeat", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
+            elif self.winner == self.opponent:
+                FinishedJankenGames.objects.create(owner=self.creator, opponent=self.opponent, owner_choice=self.creator_choice, opponent_choice=self.opponent_choice, result="Defeat", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
+                FinishedJankenGames.objects.create(owner=self.opponent, opponent=self.creator, owner_choice=self.opponent_choice, opponent_choice=self.creator_choice, result="Victory", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
+            self.delete()
+        except:
+            return None
 
 
 # FIXME Cap owner to some value
@@ -137,7 +140,7 @@ class FinishedJankenGames(models.Model):
     def countLosses(profile):
         return FinishedJankenGames.objects.filter(owner=profile, result="Defeat").count()
 
-    def countDraws(profile): #return 0 if no game found
+    def countDraws(profile):
         return FinishedJankenGames.objects.filter(owner=profile, result="draw").count()
 
     def getWinrate(user_id):

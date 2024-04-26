@@ -108,28 +108,18 @@ def joinErrForm(dico):
 class LogoutAPIView(APIView):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            try:
-                request.user.profile.online = False
-                request.user.profile.save()
-                logout(request)
-            except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
-                return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
-            except Exception as e:
-                return JsonResponse({'error': "Logout refused: " + e.args[0]})
+            request.user.profile.online = False
+            request.user.profile.save()
+            logout(request)
             return JsonResponse({"message": "User logged out successfully"}, status=status.HTTP_200_OK)
         return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False}, status=403)
 
 @require_http_methods(["GET"])
 def check_authentication(request):
     if request.user.is_authenticated:
-        try:
-            request.user.profile.online = True
-            request.user.profile.save()
-            return JsonResponse({'isAuthenticated': True})
-        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
-            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
-        except Exception as e:
-            return JsonResponse({'error': 'Failed to save user status. User not shown as authenticated', 'isAuthenticated': False}, status=403)
+        request.user.profile.online = True
+        request.user.profile.save()
+        return JsonResponse({'isAuthenticated': True})
     return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False}, status=200)
 
 def generate_jwt_token(user):

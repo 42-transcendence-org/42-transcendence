@@ -81,22 +81,11 @@ async def game_view(request, game_id):
         server.create_input(game_id, username, input_id, timestamp)
         return JsonResponse({}, status=200)
 
-
-def validate_dict(to_check):
-    if not isinstance(to_check, dict):
-        return False
-    for key, value in to_check.items():
-        if not (isinstance(key, str) and isinstance(value, str) and value != ""):
-            return False
-    return True
-
-
-# FIXME Validate this in the model
+# TODO test this
 class pongHistoryAPIView(APIView):
     def post(self, request):
-        if not isinstance(request.data, dict):
-            return JsonResponse({"error": "Bad Request"}, status=400)
-
+        if not validate_finished_game_dict(request.data):
+            return JsonResponse({"error": "Bad Data"}, status=400)
         game = FinishedPongGames.objects.create(
             owner=request.user_id,
             player1=request.data.get("player1"),
@@ -149,8 +138,8 @@ class getFriendStatsAPIView(APIView):
         if not (isinstance(request.data, dict)):
             return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
         friend_id = request.data.get("friend_id")
-        if not (isinstance(friend_id, int) and friend_id >= 1):
-            return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
+        if not (isinstance(friend_id, int) and friend_id >= 1 and friend_id <= 10000):
+            return JsonResponse({"error": 'Request must be of the form {"friend_id":id} with id between 1 and 10000'}, status=400)
         games = FinishedPongGames.objects.filter(owner=friend_id)
         if games.exists() == False:
             return JsonResponse({"error": "You never played a game !"}, status=200)
@@ -179,3 +168,46 @@ class getFriendStatsAPIView(APIView):
             },
             status=200,
         )
+
+
+def validate_finished_game_dict(to_check):
+    if not isinstance(to_check, dict):
+        return False
+    if not all(
+        key in to_check
+        for key in [
+            "player1",
+            "game_type",
+            "opponent",
+            "player_score",
+            "opponent_score",
+            "winner",
+            "loser",
+            "result",
+            "tourney_game",
+        ]
+    ):
+        return False
+    if not all(
+        isinstance(to_check[key], str) and to_check[key] != ""
+        for key in [
+            "player1",
+            "game_type",
+            "opponent",
+            "winner",
+            "loser",
+            "result",
+        ]
+    ):
+        return False
+    if not all(
+        isinstance(to_check[key], int) and to_check[key] >= 0 and to_check[key] <= 100
+        for key in [
+            "player_score",
+            "opponent_score",
+        ]
+    ):
+        return False
+    if not isinstance(to_check["tourney_game"], bool):
+        return False
+    return True
