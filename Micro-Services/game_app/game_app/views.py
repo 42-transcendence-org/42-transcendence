@@ -1,13 +1,18 @@
 import json, asyncio
 
 import game_app.pong.constants as g
-
 from game_app.pong.game_server import server
+
+from .models import FinishedPongGames
+
+from django.utils import timezone
+
 from rest_framework.views import APIView
+
 from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
-from django.db import Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError
+
 
 async def stream_generator(game_id):
     while True:
@@ -19,22 +24,24 @@ async def stream_generator(game_id):
             server.handle_disconnect(game_id)
             raise
 
+
 @require_http_methods(["GET"])
 def get_player_names(request, game_id):
-    username = getattr(request, 'username', None)
+    username = getattr(request, "username", None)
     if username is None or not server.game_exists(game_id) or not server.player_is_in_session(game_id, username):
         return JsonResponse({"error": "Unauthorized access"}, status=403)
     aliases = server.get_names(game_id)
     if aliases:
-        aliases_dict = { "p1": aliases[0], "p2": aliases[1] }
-        return JsonResponse(aliases_dict , status=200)
+        aliases_dict = {"p1": aliases[0], "p2": aliases[1]}
+        return JsonResponse(aliases_dict, status=200)
     else:
         return JsonResponse({}, status=404)
 
+
 @require_http_methods(["POST"])
 def game_create_view(request):
-    username = getattr(request, 'username', None)
-    user_id = getattr(request, 'user_id', None)
+    username = getattr(request, "username", None)
+    user_id = getattr(request, "user_id", None)
 
     has_session = server.player_has_active_session(username)
     if has_session:
@@ -42,10 +49,11 @@ def game_create_view(request):
 
     return JsonResponse({"id": server.matchmaker(username, user_id)}, status=201)
 
+
 @never_cache
 @require_http_methods(["GET", "PUT"])
 async def game_view(request, game_id):
-    username = getattr(request, 'username', None)
+    username = getattr(request, "username", None)
     if username is None or not server.game_exists(game_id) or not server.player_is_in_session(game_id, username):
         return JsonResponse({"error": "Unauthorized access"}, status=403)
 
@@ -73,85 +81,85 @@ async def game_view(request, game_id):
         server.create_input(game_id, username, input_id, timestamp)
         return JsonResponse({}, status=200)
 
-from .models import FinishedPongGames
-from django.utils import timezone
 
 class pongHistoryAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            game = FinishedPongGames.objects.create(
-                owner=request.user_id, \
-                player1=request.data.get('player1', 'undefined'), \
-                game_type=request.data.get('game_type', 'undefined'), \
-                opponent=request.data.get('opponent', 'undefined'), \
-                player_score=request.data.get('player_score', 'undefined'), \
-                opponent_score=request.data.get('opponent_score', 'undefined'), \
-                winner=request.data.get('winner', 'undefined'), \
-                result=request.data.get('result', 'undefined'), \
-                tourney_game=request.data.get('tourney_game', False), \
-                completion_day= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%d/%m"), \
-                completion_time= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"), \
-            )
-            return JsonResponse({'message': 'success', 'game_id': game.id}, status=201)
-        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
-            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
-        except Exception as e:
-            return JsonResponse({'error': 'failed to save pong game'}, status=400)
+    def post(self, request):
+        game = FinishedPongGames.objects.create(
+            owner=request.user_id,
+            player1=request.data.get("player1", "undefined"),
+            game_type=request.data.get("game_type", "undefined"),
+            opponent=request.data.get("opponent", "undefined"),
+            player_score=request.data.get("player_score", "undefined"),
+            opponent_score=request.data.get("opponent_score", "undefined"),
+            winner=request.data.get("winner", "undefined"),
+            result=request.data.get("result", "undefined"),
+            tourney_game=request.data.get("tourney_game", False),
+            completion_day=timezone.now().astimezone(timezone.get_current_timezone()).strftime("%d/%m"),
+            completion_time=timezone.now().astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"),
+        )
+        return JsonResponse({"message": "success", "game_id": game.id}, status=201)
 
-    def get(self, request, *args, **kwargs):
-        try:
-            games = FinishedPongGames.objects.filter(owner=request.user_id)
-            if games.exists() == False:
-                return JsonResponse({'error':'You never played a game !'}, status=200)
-            history = []
-            for game in games:
-                if game.game_type != 'tournament':
-                    history.append({'owner': game.owner, \
-                                'game_type': game.game_type, \
-                                'opponent': game.opponent, \
-                                'player_score': game.player_score, \
-                                'opponent_score': game.opponent_score, \
-                                'winner': game.winner, \
-                                'result': game.result, \
-                                'end_day': game.completion_day, \
-                                'end_time': game.completion_time, \
-                                        })
-            return JsonResponse({'history': history, \
-                                'wins': FinishedPongGames.countWins(request.user_id), \
-                                'losses': FinishedPongGames.countLosses(request.user_id),
-                                'winrate': "{:.1f}%".format(FinishedPongGames.getWinrate(request.user_id))}, status=200)
-        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
-            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
-        except Exception as e:
-            return JsonResponse({'error': 'failed to get pong game history'}, status=400)
+    def get(self, request):
+        games = FinishedPongGames.objects.filter(owner=request.user_id)
+        if games.exists() == False:
+            return JsonResponse({"error": "You never played a game !"}, status=200)
+        history = []
+        for game in games:
+            if game.game_type != "tournament":
+                history.append(
+                    {
+                        "owner": game.owner,
+                        "game_type": game.game_type,
+                        "opponent": game.opponent,
+                        "player_score": game.player_score,
+                        "opponent_score": game.opponent_score,
+                        "winner": game.winner,
+                        "result": game.result,
+                        "end_day": game.completion_day,
+                        "end_time": game.completion_time,
+                    }
+                )
+        return JsonResponse(
+            {
+                "history": history,
+                "wins": FinishedPongGames.countWins(request.user_id),
+                "losses": FinishedPongGames.countLosses(request.user_id),
+                "winrate": "{:.1f}%".format(FinishedPongGames.getWinrate(request.user_id)),
+            },
+            status=200,
+        )
+
 
 class getFriendStatsAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            friend_id = request.data.get('friend_id', 'undefined')
-            if friend_id == 'undefined':
-                raise Exception('Please provide a valid friend_id')
-            games = FinishedPongGames.objects.filter(owner=friend_id)
-            if games.exists() == False:
-                return JsonResponse({'error':'You never played a game !'}, status=200)
-            history = []
-            for game in games:
-                if game.game_type != 'tournament':
-                    history.append({'owner': game.owner, \
-                                'game_type': game.game_type, \
-                                'opponent': game.opponent, \
-                                'player_score': game.player_score, \
-                                'opponent_score': game.opponent_score, \
-                                'winner': game.winner, \
-                                'result': game.result, \
-                                'end_day': game.completion_day, \
-                                'end_time': game.completion_time, \
-                                        })
-            return JsonResponse({'history': history,
-                                'wins': FinishedPongGames.countWins(friend_id),
-                                'losses': FinishedPongGames.countLosses(friend_id),
-                                'winrate': "{:.1f}%".format(FinishedPongGames.getWinrate(friend_id))}, status=200)
-        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
-            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
-        except Exception as e:
-            return JsonResponse({'error': 'failed to get pong game history'}, status=400)
+    def post(self, request):
+        friend_id = request.data.get("friend_id", "undefined")
+        if friend_id == "undefined":
+            raise Exception("Please provide a valid friend_id")
+        games = FinishedPongGames.objects.filter(owner=friend_id)
+        if games.exists() == False:
+            return JsonResponse({"error": "You never played a game !"}, status=200)
+        history = []
+        for game in games:
+            if game.game_type != "tournament":
+                history.append(
+                    {
+                        "owner": game.owner,
+                        "game_type": game.game_type,
+                        "opponent": game.opponent,
+                        "player_score": game.player_score,
+                        "opponent_score": game.opponent_score,
+                        "winner": game.winner,
+                        "result": game.result,
+                        "end_day": game.completion_day,
+                        "end_time": game.completion_time,
+                    }
+                )
+        return JsonResponse(
+            {
+                "history": history,
+                "wins": FinishedPongGames.countWins(friend_id),
+                "losses": FinishedPongGames.countLosses(friend_id),
+                "winrate": "{:.1f}%".format(FinishedPongGames.getWinrate(friend_id)),
+            },
+            status=200,
+        )
