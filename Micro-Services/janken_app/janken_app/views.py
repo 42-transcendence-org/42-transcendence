@@ -213,7 +213,7 @@ class jankenHistoryAPIView(APIView):
         try:
             games = FinishedJankenGames.objects.filter(owner=request.user_id)
             if games.exists() == False:
-                raise Exception('You never played a game !')
+                return JsonResponse({'error':'You never played a game !'}, status=200)
             history = []
             for game in games:
                 history.append({'opponent': game.opponent,\
@@ -245,7 +245,7 @@ class getFriendStatsAPIView(APIView):
                 raise Exception('Please provide a valid friend_id')
             games = FinishedJankenGames.objects.filter(owner=friend_id)
             if games.exists() == False:
-                raise Exception('Your friend never played a game !')
+                return JsonResponse({'error':'You never played a game !'}, status=200)
             history = []
             for game in games:
                 history.append({'opponent': game.opponent,\

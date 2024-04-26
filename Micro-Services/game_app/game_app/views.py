@@ -78,7 +78,6 @@ from django.utils import timezone
 
 class pongHistoryAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        print("coucou")
         try:
             game = FinishedPongGames.objects.create(
                 owner=request.user_id, \
@@ -103,7 +102,7 @@ class pongHistoryAPIView(APIView):
         try:
             games = FinishedPongGames.objects.filter(owner=request.user_id)
             if games.exists() == False:
-                raise Exception('You never played a game !')
+                return JsonResponse({'error':'You never played a game !'}, status=200)
             history = []
             for game in games:
                 if game.game_type != 'tournament':
@@ -134,7 +133,7 @@ class getFriendStatsAPIView(APIView):
                 raise Exception('Please provide a valid friend_id')
             games = FinishedPongGames.objects.filter(owner=friend_id)
             if games.exists() == False:
-                raise Exception('You never played a game !')
+                return JsonResponse({'error':'You never played a game !'}, status=200)
             history = []
             for game in games:
                 if game.game_type != 'tournament':
