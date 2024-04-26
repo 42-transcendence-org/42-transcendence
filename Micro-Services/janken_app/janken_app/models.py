@@ -8,16 +8,16 @@ class JankenGameCreation(models.Model):
 
     def __str__(self):
         return self.creator + " created a Janken Game"
-    
+
     def findGame():
         return JankenGameCreation.objects.all().first() | None
-    
+
     def getMyGameCreation(profile):
         if JankenGameCreation.objects.filter(creator=profile).exists():
             return JankenGameCreation.objects.get(creator=profile)
         else:
             return None
-        
+
     def matchMaking(user_id):
         if JankenGameCreation.objects.all().exists():
             myWinrate = FinishedJankenGames.getWinrate(user_id)
@@ -27,7 +27,7 @@ class JankenGameCreation(models.Model):
                         return game
             return JankenGameCreation.objects.all().first()
         return None
-    
+
     class Meta:
         verbose_name = "Janken Game Creation"
         verbose_name_plural = "Janken Game Creations"
@@ -53,14 +53,14 @@ class JankenGameInProgress(models.Model):
 
     def __str__(self):
         return self.creator + " vs " + self.opponent
-    
+
     class Meta:
         verbose_name = "Janken Game In Progress"
         verbose_name_plural = "Janken Games In Progress"
-    
+
     def myGame(profile):
         return JankenGameInProgress.objects.filter(creator=profile) | JankenGameInProgress.objects.filter(opponent=profile)
-    
+
     def getMyGame(profile):
         if JankenGameInProgress.objects.filter(creator=profile).exists():
             return JankenGameInProgress.objects.get(creator=profile)
@@ -68,7 +68,7 @@ class JankenGameInProgress(models.Model):
             return JankenGameInProgress.objects.get(opponent=profile)
         else:
             return None
-    
+
     def giveInput(choice, Profile):
         if JankenGameInProgress.objects.filter(creator=Profile).exists():
             game = JankenGameInProgress.objects.get(creator=Profile)
@@ -92,11 +92,11 @@ class JankenGameInProgress(models.Model):
             game.save()
         else:
             return None
-        
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
-        
+
     def addToHistory(self):
         if self.result == "draw":
             FinishedJankenGames.objects.create(owner=self.creator, opponent=self.opponent, owner_choice=self.creator_choice, opponent_choice=self.opponent_choice, result=self.result, completion_time=self.completion_time, loser=self.loser, winner=self.winner)
@@ -109,8 +109,8 @@ class JankenGameInProgress(models.Model):
             FinishedJankenGames.objects.create(owner=self.opponent, opponent=self.creator, owner_choice=self.opponent_choice, opponent_choice=self.creator_choice, result="Victory", completion_time=self.completion_time, loser=self.loser, winner=self.winner)
         self.delete()
 
-        
 
+# FIXME Cap owner to some value
 class FinishedJankenGames(models.Model):
     owner = models.IntegerField(default=-1)
     opponent = models.IntegerField(default=-1)
@@ -123,29 +123,29 @@ class FinishedJankenGames(models.Model):
 
     def __str__(self):
         return self.owner + " " + self.result
-    
+
     class Meta:
         verbose_name = "Finished Janken Game"
         verbose_name_plural = "Finished Janken Games"
-    
+
     def getMyHistory(profile):
         return FinishedJankenGames.objects.filter(owner=profile)
-    
+
     def countWins(profile):
         return FinishedJankenGames.objects.filter(owner=profile, result="Victory").count()
-    
+
     def countLosses(profile):
         return FinishedJankenGames.objects.filter(owner=profile, result="Defeat").count()
-    
+
     def countDraws(profile): #return 0 if no game found
         return FinishedJankenGames.objects.filter(owner=profile, result="draw").count()
-    
+
     def getWinrate(user_id):
         if FinishedJankenGames.objects.filter(owner=user_id).exists():
             return FinishedJankenGames.objects.filter(owner=user_id, result="Victory").count() / FinishedJankenGames.objects.filter(owner=user_id).count() * 100
         else:
             return 0
-    
+
     def getMostPlayed(user_id):
         if not FinishedJankenGames.objects.filter(owner=user_id).exists():
             return "Never played"
@@ -164,7 +164,7 @@ class FinishedJankenGames(models.Model):
             return "paper"
         else:
             return "scissors"
-        
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
