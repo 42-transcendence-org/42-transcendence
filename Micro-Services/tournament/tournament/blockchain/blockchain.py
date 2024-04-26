@@ -114,7 +114,7 @@ def save_tournament(request):
 		try:
 			data = json.loads(request.body)
 			if not isinstance(data, dict):
-				return JsonResponse({"error": "Invalid data"}, status=400)
+				return JsonResponse({"error": "Invalid format"}, status=400)
 			validated_data = TournamentData(**data)
 		except ValidationError as e:
 			return JsonResponse({'error': "Invalid data"}, status=400)

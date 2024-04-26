@@ -5,7 +5,7 @@ DOCKER_COMPOSE_CMD := $(shell command -v docker-compose || echo "docker compose"
 DOCKER_COMPOSE	:= $(DOCKER_COMPOSE_CMD) -f ./docker-compose.yml --env-file ./.env
 
 VOLUMES_DIR		:= auth_db game_db janken_db
-VOLUMES_PATH	:= /home/will/code/trans/../data/
+VOLUMES_PATH	:= $(HOME)/goinfre/docker/volumes/data/
 VOLUMES			:= $(addprefix $(VOLUMES_PATH)/,$(VOLUMES_DIR))
 
 # define standard colors

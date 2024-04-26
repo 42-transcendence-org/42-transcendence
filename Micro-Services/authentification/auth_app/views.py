@@ -122,7 +122,7 @@ def check_authentication(request):
             return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
             return JsonResponse({'error': 'Failed to save user status. User not shown as authenticated', 'isAuthenticated': False}, status=403)
-    return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False}, status=403)
+    return JsonResponse({'error': 'Not authenticated', 'isAuthenticated': False}, status=203)
 
 def generate_jwt_token(user):
     dt = datetime.datetime.now() + datetime.timedelta(hours=1)
@@ -423,10 +423,10 @@ class NicknameAPIView(APIView):
     def post(self, request, *args, **kwargs):
         try:
             if request.user.is_authenticated:
+                if not (isinstance(request.data, dict) and isinstance(request.data.get('first_name'), str) == True):
+                    return JsonResponse({"error": "Invalid data"}, status=400)
                 first_name = request.data.get('first_name', 'no first_name')
-                if first_name == 'no first_name':
-                    return (JsonResponse({"error": "nickname is required"}, status=400))
-                if (request.data.get('first_name') is None or request.data.get('first_name') == ''):
+                if (first_name is None or first_name == '' or first_name == 'no first_name'):
                     return JsonResponse({'error': 'Nickname is required'}, status=400)
                 if (isNicknameUnique(first_name) == False):
                     return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
@@ -451,7 +451,11 @@ class NicknameAPIView(APIView):
 class PasswordAPIView(APIView):
     def post(self, request, *args, **kwargs):
         try:
+            if not isinstance(request.data, dict):
+                return JsonResponse({"error": "Invalid data"}, status=400)
             password = request.data.get('password', 'no password')
+            if (password == None):
+                return (JsonResponse({"error": "password is required"}, status=400))
             if password == 'no password':
                 return (JsonResponse({"error": "password is required"}, status=400))
             if (len(password) > 14 or len(password) < 3 or password is None):

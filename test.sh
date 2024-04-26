@@ -1,14 +1,12 @@
-curl 'https://10.14.8.3:8443/auth/getFriendInfo/' \
+  curl 'https://10.14.8.7:8443/auth/nickname/' \
   -H 'accept: */*' \
   -H 'accept-language: en-US,en;q=0.9' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxOCwidXNlcm5hbWUiOiJ3cnVldC1zdUA0MiIsIm5pY2tuYW1lIjoid3J1ZXQtc3VANDIiLCJzZWNyZXQiOiJzLWZ6ZWZ6ZTc4WkFkemQ4WjdoZHpEQVphRDg5ZGRkZCIsImV4cCI6MTcxNDA2OTAxNn0.r49tbqcl3gKtffO4eqVApouNFNG-vw9eq7TXdpiLeLg' \
-  -H 'cache-control: no-cache' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNiwidXNlcm5hbWUiOiJ3d3ciLCJuaWNrbmFtZSI6Ind3dyIsInNlY3JldCI6InMtZnplZnplNzhaQWR6ZDhaN2hkekRBWmFEODlkZGRkIiwiZXhwIjoxNzE0MTMyMjQyfQ.S7rQc83nA5gECOKNH5XiOOaHo_Bv3my_K2XI63gf1Jk' \
   -H 'content-type: application/json' \
-  -H 'cookie: csrftoken=oEmdMa1ieieXLD6EvAqX6HJur4EViwdH; sessionid=32qir23a4wfmv2iogl894dpt53n9i20l' \
-  -H 'origin: https://10.14.8.3:8443' \
-  -H 'pragma: no-cache' \
+  -H 'cookie: csrftoken=CAAsfCv8XgBhjxC6RS45LSkK918E13xO; sessionid=7ygxolrm8ndn1bgszaiglyvnmcfuu37p' \
+  -H 'origin: https://10.14.8.7:8443' \
   -H 'priority: u=1, i' \
-  -H 'referer: https://10.14.8.3:8443/' \
+  -H 'referer: https://10.14.8.7:8443/' \
   -H 'sec-ch-ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"' \
   -H 'sec-ch-ua-mobile: ?0' \
   -H 'sec-ch-ua-platform: "Linux"' \
@@ -16,6 +14,6 @@ curl 'https://10.14.8.3:8443/auth/getFriendInfo/' \
   -H 'sec-fetch-mode: cors' \
   -H 'sec-fetch-site: same-origin' \
   -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' \
-  -H 'x-csrftoken: oEmdMa1ieieXLD6EvAqX6HJur4EViwdH' \
-  --data-raw '{}' \
+  -H 'x-csrftoken: CAAsfCv8XgBhjxC6RS45LSkK918E13xO' \
+  --data '{"first_name":{"a":"o"}, "first_name":"\t\t\t\t\t\tu", "s"}' \
   --insecure

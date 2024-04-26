@@ -5,6 +5,8 @@ import game_app.pong.constants as g
 import game_app.pong.sound as sound
 import game_app.pong.input as input
 from game_app.models import FinishedPongGames
+from django.db import Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError
+
 
 class GameManager:
     def __init__(self) -> None:
@@ -83,28 +85,33 @@ class GameManager:
         if (self.already_saved == True):
             return
         self.already_saved = True
-        winner = self.user_ids[0] if self.game.scores[0] > self.game.scores[1] else self.user_ids[1]
-        result = "Victory" if winner == self.user_ids[0] else "Defeat"
-        FinishedPongGames.objects.create(
-            owner=self.user_ids[0], \
-            game_type="remote", \
-            opponent=self.user_ids[1], \
-            player_score=self.game.scores[0], \
-            opponent_score=self.game.scores[1], \
-            winner=winner, \
-            result=result, \
-            completion_day= time.strftime("%d/%m"), \
-            completion_time= time.strftime("%H:%M:%S"), \
-        )
-        result = "Defeat" if winner == self.user_ids[0] else "Victory"
-        FinishedPongGames.objects.create(
-            owner=self.user_ids[1], \
-            game_type="remote", \
-            opponent=self.user_ids[0], \
-            player_score=self.game.scores[1], \
-            opponent_score=self.game.scores[0], \
-            winner=winner, \
-            result=result, \
-            completion_day= time.strftime("%d/%m"), \
-            completion_time= time.strftime("%H:%M:%S"), \
-        )
+        try:
+            winner = self.user_ids[0] if self.game.scores[0] > self.game.scores[1] else self.user_ids[1]
+            result = "Victory" if winner == self.user_ids[0] else "Defeat"
+            FinishedPongGames.objects.create(
+                owner=self.user_ids[0], \
+                game_type="remote", \
+                opponent=self.user_ids[1], \
+                player_score=self.game.scores[0], \
+                opponent_score=self.game.scores[1], \
+                winner=winner, \
+                result=result, \
+                completion_day= time.strftime("%d/%m"), \
+                completion_time= time.strftime("%H:%M:%S"), \
+            )
+            result = "Defeat" if winner == self.user_ids[0] else "Victory"
+            FinishedPongGames.objects.create(
+                owner=self.user_ids[1], \
+                game_type="remote", \
+                opponent=self.user_ids[0], \
+                player_score=self.game.scores[1], \
+                opponent_score=self.game.scores[0], \
+                winner=winner, \
+                result=result, \
+                completion_day= time.strftime("%d/%m"), \
+                completion_time= time.strftime("%H:%M:%S"), \
+            )
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            print("saving was cancelled")
+            return
+        

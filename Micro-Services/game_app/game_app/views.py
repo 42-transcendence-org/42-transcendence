@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
+from django.db import Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError
 
 async def stream_generator(game_id):
     while True:
@@ -76,6 +77,7 @@ from django.utils import timezone
 
 class pongHistoryAPIView(APIView):
     def post(self, request, *args, **kwargs):
+        print("coucou")
         try:
             game = FinishedPongGames.objects.create(
                 owner=request.user_id, \
@@ -91,6 +93,8 @@ class pongHistoryAPIView(APIView):
                 completion_time= timezone.now().astimezone(timezone.get_current_timezone()).strftime("%H:%M:%S"), \
             )
             return JsonResponse({'message': 'success', 'game_id': game.id}, status=201)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
             return JsonResponse({'error': 'failed to save pong game'}, status=400)
 
@@ -116,6 +120,8 @@ class pongHistoryAPIView(APIView):
                                 'wins': FinishedPongGames.countWins(request.user_id), \
                                 'losses': FinishedPongGames.countLosses(request.user_id),
                                 'winrate': "{:.1f}%".format(FinishedPongGames.getWinrate(request.user_id))}, status=200)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
             return JsonResponse({'error': 'failed to get pong game history'}, status=400)
 
@@ -145,5 +151,7 @@ class getFriendStatsAPIView(APIView):
                                 'wins': FinishedPongGames.countWins(friend_id),
                                 'losses': FinishedPongGames.countLosses(friend_id),
                                 'winrate': "{:.1f}%".format(FinishedPongGames.getWinrate(friend_id))}, status=200)
+        except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
+            return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
             return JsonResponse({'error': 'failed to get pong game history'}, status=400)

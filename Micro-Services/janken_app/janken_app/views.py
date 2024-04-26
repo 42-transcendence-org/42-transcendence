@@ -91,7 +91,7 @@ class waitForResultsAPIView(APIView):
         except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
             return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            return JsonResponse({'error': e.args[0]}, status=400)
+            return JsonResponse({'error': e.args[0]}, status=200)
 
 class waitForOpponentAPIView(APIView):
     def get(self, request, *args, **kwargs):
@@ -108,7 +108,7 @@ class waitForOpponentAPIView(APIView):
         except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
             return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            return JsonResponse({'error': e.args[0]}, status=400)
+            return JsonResponse({'error': e.args[0]}, status=200)
 
 
 class getResultsAPIView(APIView):
@@ -206,7 +206,7 @@ class amIPlayingAPIView(APIView):
         except (Error, InterfaceError, DatabaseError, DataError, OperationalError, IntegrityError, InternalError) as e:
             return JsonResponse({'error': 'Request stopped before reaching database. Please contact the website admin.'}, status=502)
         except Exception as e:
-            return JsonResponse({'error': e.args[0]}, status=400)
+            return JsonResponse({'error': e.args[0]}, status=201)
 
 class jankenHistoryAPIView(APIView):
     def get(self, request, *args, **kwargs):
