@@ -29,3 +29,13 @@ class TournamentData(BaseModel):
         if v not in ['es', 'fr', 'en']:
             raise ValueError('Language must be "es", "fr", or "en"')
         return v
+    
+    @validator(
+    "game1_player1_score", "game1_player2_score",
+    "game2_player1_score", "game2_player2_score",
+    "game3_player1_score", "game3_player2_score"
+    )
+    def validate_scores(cls, value):
+        if not 0 <= value <= 5:
+            raise ValueError("Les scores doivent être compris entre 0 et 5.")
+        return value
