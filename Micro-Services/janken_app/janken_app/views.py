@@ -53,7 +53,7 @@ class jankenGameAPIView(APIView):
     def post(self, request):
         if not (isinstance(request.data, dict)):
             return JsonResponse({"error": 'Request must be of the form {"input":"rock | paper | scissor"}'}, status=400)
-        input = request.data.get("input", None)
+        input = request.data.get("input")
         if not (isinstance(input, str) and input in ["rock", "paper", "scissors"]):
             return JsonResponse({"error": 'Request must be of the form {"input":"rock | paper | scissor"}'}, status=400)
         game = JankenGameInProgress.getMyGame(request.user_id)
@@ -220,7 +220,7 @@ class getFriendStatsAPIView(APIView):
     def post(self, request):
         if not (isinstance(request.data, dict)):
             return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
-        friend_id = request.data.get("friend_id", None)
+        friend_id = request.data.get("friend_id")
         if not (isinstance(friend_id, int) and friend_id >= 1):
             return JsonResponse({"error": 'Request must be of the form {"friend_id":id}'}, status=400)
         games = FinishedJankenGames.objects.filter(owner=friend_id)
