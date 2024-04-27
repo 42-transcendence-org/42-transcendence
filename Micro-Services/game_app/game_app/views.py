@@ -81,7 +81,6 @@ async def game_view(request, game_id):
         server.create_input(game_id, username, input_id, timestamp)
         return JsonResponse({}, status=200)
 
-# TODO test this
 class pongHistoryAPIView(APIView):
     def post(self, request):
         if not validate_finished_game_dict(request.data):
@@ -132,7 +131,6 @@ class pongHistoryAPIView(APIView):
         )
 
 
-# TODO Test this
 class getFriendStatsAPIView(APIView):
     def post(self, request):
         if not (isinstance(request.data, dict)):

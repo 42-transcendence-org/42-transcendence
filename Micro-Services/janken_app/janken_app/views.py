@@ -49,7 +49,6 @@ class jankenGameAPIView(APIView):
         game.delete()
         return JsonResponse({"game_id": game.id}, status=201)
 
-    # TODO Test this
     def post(self, request):
         if not (isinstance(request.data, dict)):
             return JsonResponse({"error": 'Request must be of the form {"input":"rock | paper | scissor"}'}, status=400)
@@ -215,7 +214,6 @@ class jankenHistoryAPIView(APIView):
             status=200,
         )
 
-# TODO Test this FIXME friend value
 class getFriendStatsAPIView(APIView):
     def post(self, request):
         if not (isinstance(request.data, dict)):
@@ -225,7 +223,7 @@ class getFriendStatsAPIView(APIView):
             return JsonResponse({"error": 'Request must be of the form {"friend_id":id} and id between 1 and 10000'}, status=400)
         games = FinishedJankenGames.objects.filter(owner=friend_id)
         if games.exists() == False:
-            return JsonResponse({"error": "You never played a game !"}, status=200)
+            return JsonResponse({"error": "No game played for this id."}, status=200)
         history = []
         for game in games:
             history.append(
