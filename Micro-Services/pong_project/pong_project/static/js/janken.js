@@ -332,8 +332,8 @@ export class Janken {
 				clearInterval(localStorage.getItem('id_interval_wait_results'));
 				localStorage.setItem('id_interval_wait_results', setInterval(this.waitResults, 1000));
 			}
-				document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'flex');
-				document.getElementById('janken-button').style.setProperty('--display-before', 'flex');
+			document.getElementById('janken-game-in-progress-button').style.setProperty('--display-before', 'flex');
+			document.getElementById('janken-button').style.setProperty('--display-before', 'flex');
 		}
 	}
 

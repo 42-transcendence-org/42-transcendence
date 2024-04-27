@@ -157,7 +157,7 @@ class amIPlayingAPIView(APIView):
             if game.game_finished == True:
                 if (timezone.now() - game.completion_time).total_seconds() > 20:
                     game.addToHistory()
-                    return JsonResponse({"message": "Game result was deleted"}, status=201)
+                    return JsonResponse({"message": "Game result was deleted"}, status=200)
                 return JsonResponse({"message": "The game is finished"}, status=200)
             if game.first_input_time != None:
                 if (timezone.now() - game.first_input_time).total_seconds() > 300:
@@ -169,7 +169,7 @@ class amIPlayingAPIView(APIView):
                     if game.winner == game.creator:
                         game.loser = game.opponent
                     game.save()
-                    return JsonResponse({"message": "One player forfeited, the game is finished"}, status=201)
+                    return JsonResponse({"message": "One player forfeited, the game is finished"}, status=200)
             if game.creator == request.user_id:
                 if game.creator_choice == "None":
                     return JsonResponse({"message": "Waiting for your input"}, status=200)
@@ -180,7 +180,7 @@ class amIPlayingAPIView(APIView):
                 return JsonResponse({"message": "Waiting for your opponent to play"}, status=200)
         if JankenGameCreation.getMyGameCreation(request.user_id) is not None:
             return JsonResponse({"message": "You are waiting for an opponent"}, status=200)
-        return JsonResponse({"error": "You are not playing"}, status=201)
+        return JsonResponse({"error": "You are not playing"}, status=200)
 
 
 class jankenHistoryAPIView(APIView):

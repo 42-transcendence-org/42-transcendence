@@ -10,7 +10,7 @@ class FinishedPongGames(models.Model):
     result = models.CharField(max_length=100, default="None")
     completion_day = models.CharField(max_length=100, default="None")
     completion_time = models.CharField(max_length=100, default="None")
-    player1 = models.CharField(max_length=100, default="")
+    player1 = models.CharField(max_length=100, default="A")
     tourney_game = models.BooleanField(default=False)
 
     def __str__(self):
