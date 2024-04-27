@@ -1,9 +1,9 @@
-curl 'https://192.168.252.193:8443/tournament/saveTournament/' \
+curl 'https://192.168.252.193:8443/auth/getNicknameWithUserId/' \
   -H 'accept: */*' \
   -H 'accept-language: fr-FR,fr;q=0.9' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMywidXNlcm5hbWUiOiJ3aWxsIiwibmlja25hbWUiOiJvIiwic2VjcmV0Ijoicy1memVmemU3OFpBZHpkOFo3aGR6REFaYUQ4OWRkZGQiLCJleHAiOjE3MTQyMDc0Njd9.RADXE_-fe1413MTDChivN3Vmm2yTZxrseJHYHlC-iTU' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMywidXNlcm5hbWUiOiJ3aWxsIiwibmlja25hbWUiOiJvIiwic2VjcmV0Ijoicy1memVmemU3OFpBZHpkOFo3aGR6REFaYUQ4OWRkZGQiLCJleHAiOjE3MTQyMTA2ODV9.GHZfqJBcs3vhkSbAgiVPdlkiKd2hR9Cn6VHB_dS5uDI' \
   -H 'content-type: application/json' \
-  -H 'cookie: csrftoken=vSbuGtS8QWq9iLn7wlUvEVbftpJEZ2YC; sessionid=5t5s0u6d73gkjtkko5s0bzosc2231w35' \
+  -H 'cookie: csrftoken=mxzA9Fiej22K3r6iP4G7xy30tzUL8yPv; sessionid=er2o2nod8wy7i8tclmjz323k6fm1px1v' \
   -H 'origin: https://192.168.252.193:8443' \
   -H 'priority: u=1, i' \
   -H 'referer: https://192.168.252.193:8443/' \
@@ -14,6 +14,6 @@ curl 'https://192.168.252.193:8443/tournament/saveTournament/' \
   -H 'sec-fetch-mode: cors' \
   -H 'sec-fetch-site: same-origin' \
   -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' \
-  -H 'x-csrftoken: vSbuGtS8QWq9iLn7wlUvEVbftpJEZ2YC' \
-  --data-raw '{"tournamentOwner":"will","Lang":"en","player1":null,"player2":"l","player3":"r","player4":"t","game1_winner":"l","game1_loser":"o","game2_winner":"t","game2_loser":"r","game3_winner":"t","game3_loser":"l","game1_player1_score":0,"game1_player2_score":1,"game2_player1_score":1,"game2_player2_score":0,"game3_player1_score":0,"game3_player2_score":1}' \
+  -H 'x-csrftoken: mxzA9Fiej22K3r6iP4G7xy30tzUL8yPv' \
+  --data-raw '{"user_id":-6567890}' \
   --insecure

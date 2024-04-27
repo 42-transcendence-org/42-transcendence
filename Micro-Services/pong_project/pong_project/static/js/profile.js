@@ -231,11 +231,9 @@ export async function changeProfilePicture(event) {
 			alert(responseData.error);
 			throw new Error(responseData.error);
 		}
+		document.getElementById('profile-profile-picture-display').src = "auth/static/" + responseData.profile_picture + "?cachebuster=" + new Date().getTime();;
+		document.getElementById('banner-profile-image-display').src = "auth/static/" + responseData.profile_picture + "?cachebuster=" + new Date().getTime();;
 
-		document.getElementById('profile-profile-picture-display').src = "auth/static/" + responseData.profile_picture;
-		document.getElementById('banner-profile-image-display').src = "auth/static/" + responseData.profile_picture;
-
-		// window.location.reload();
 	}
 	catch (error) {
 		console.error(error);
