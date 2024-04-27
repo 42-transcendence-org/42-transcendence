@@ -153,6 +153,8 @@ def save_tournament(request):
 @require_http_methods(["POST"])
 def get_tournament(request):
 	data = json.loads(request.body)
+	if not (isinstance(data, dict) and isinstance(data['tournamentOwner'], str)):
+		return JsonResponse({"error": "Invalid format"}, status=400)
 	OwnerEncode = w3.keccak(text=data['tournamentOwner']).hex()
 	Owner = OwnerEncode[2:]
 	event = tournament_contract.events.tournamentSaved()

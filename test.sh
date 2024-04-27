@@ -1,7 +1,8 @@
-curl 'https://192.168.252.193:8443/game/getFriendStats/' \
+
+  curl 'https://192.168.252.193:8443/tournament/getTournament/' \
   -H 'accept: */*' \
   -H 'accept-language: fr-FR,fr;q=0.9' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMywidXNlcm5hbWUiOiJ3aWxsIiwibmlja25hbWUiOiJvIiwic2VjcmV0Ijoicy1memVmemU3OFpBZHpkOFo3aGR6REFaYUQ4OWRkZGQiLCJleHAiOjE3MTQyMDY5OTR9.Lcf3ZToEmW7_7tuwyTQDTLRgShLgBucJMXetQKIYOwk' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMywidXNlcm5hbWUiOiJ3aWxsIiwibmlja25hbWUiOiJvIiwic2VjcmV0Ijoicy1memVmemU3OFpBZHpkOFo3aGR6REFaYUQ4OWRkZGQiLCJleHAiOjE3MTQyMDc1NDF9.3lEy9OehaBO_M3XhlA4B_Bhg-ZH7XDDJinE2zJYWaiU' \
   -H 'content-type: application/json' \
   -H 'cookie: csrftoken=vSbuGtS8QWq9iLn7wlUvEVbftpJEZ2YC; sessionid=5t5s0u6d73gkjtkko5s0bzosc2231w35' \
   -H 'origin: https://192.168.252.193:8443' \
@@ -15,5 +16,5 @@ curl 'https://192.168.252.193:8443/game/getFriendStats/' \
   -H 'sec-fetch-site: same-origin' \
   -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' \
   -H 'x-csrftoken: vSbuGtS8QWq9iLn7wlUvEVbftpJEZ2YC' \
-  --data-raw '{"friend_id":430}' \
+  --data-raw '{"tournamentOwner":"oo8392"}' \
   --insecure
