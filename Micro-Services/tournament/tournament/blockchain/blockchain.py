@@ -169,8 +169,6 @@ def get_tournament(request):
 	i = 0
 	history = []
 	for log in logs:
-		if (i >=10):
-			break
 		event_data = event.process_log(log)
 		tournament_Owner = event_data['args']['tournamentOwner'].hex()
 		if tournament_Owner == Owner:
