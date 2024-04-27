@@ -15,16 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
 from django.urls import include, path
 from .views import createJankenGameAPIView, jankenGameAPIView, waitForOpponentAPIView, waitForResultsAPIView, getResultsAPIView, deleteMyJankenGameCreationAPIView, gameInProgressAPIView, amIPlayingAPIView, jankenHistoryAPIView, getFriendStatsAPIView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('prometheus/', include("django_prometheus.urls")),
 
-
-    #janken
 	path('createJankenGame/', createJankenGameAPIView.as_view(), name='createJankenGame'),
 	path('jankenGame/', jankenGameAPIView.as_view(), name='jankenGame'),
 	path('waitForOpponent/', waitForOpponentAPIView.as_view(), name='waitForOpponent'),

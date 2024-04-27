@@ -45,7 +45,6 @@ export class Game {
 		this.ball.velocity.y = Math.cos(angle) * g.BALL_SPEED_MIN * direction;
 	}
 
-	/* Update the angle of the ball based on where it hits the paddle */
 	update_ball_velocity(paddle, normal) {
 		const expanded =
 			new physics.Rectangle(
@@ -115,12 +114,10 @@ export class Game {
 		}
 
 		if (this.ball.position.x <= g.BOARD_WALL || this.ball.position.x + this.ball.size.x >= g.BOARD_WIDTH - g.BOARD_WALL) {
-			/* Left and right walls */
 			this.ball.position.x = this.ball.position.x <= g.BOARD_WALL ? g.BOARD_WALL : g.BOARD_WIDTH - this.ball.size.x - g.BOARD_WALL;
 			this.ball.velocity.x *= -1;
 			this.collision_happened = true;
 		} else if (this.ball.position.y <= g.BOARD_WALL || this.ball.position.y + this.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_WALL) {
-			/* Top and bottoms walls */
 			if (this.ball.position.y <= g.BOARD_WALL)
 				this.scores[g.ID_PLAYER1] += 1;
 			else

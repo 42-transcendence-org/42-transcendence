@@ -73,7 +73,6 @@ export class Oauth {
 	}
 	
 	async LogTheUserIn(data) {
-		data['is42'] = true;
 		const url = '/auth/login/';
 		const response = await poster(url, data);
 		if (response.error) {

@@ -45,7 +45,6 @@ class Game:
         self.ball.velocity.x = math.sin(angle) * g.BALL_SPEED_MIN * direction
         self.ball.velocity.y = math.cos(angle) * g.BALL_SPEED_MIN * direction
 
-    # Update the angle of the ball based on where it hits the paddle
     def update_ball_velocity(self, paddle, normal):
         expanded = physics.Rectangle(
             paddle.position.x - self.ball.size.x / 2,
@@ -101,12 +100,10 @@ class Game:
             self.ball.position.y += self.ball.velocity.y * dt
 
         if self.ball.position.x <= g.BOARD_WALL or self.ball.position.x + self.ball.size.x >= g.BOARD_WIDTH - g.BOARD_WALL:
-            # Left and right walls
             self.ball.position.x = g.BOARD_WALL if self.ball.position.x <= g.BOARD_WALL else g.BOARD_WIDTH - self.ball.size.x - g.BOARD_WALL
             self.ball.velocity.x *= -1
             self.collision_happened = True
         elif self.ball.position.y <= g.BOARD_WALL or self.ball.position.y + self.ball.size.y >= g.BOARD_HEIGHT - g.BOARD_WALL:
-            # Top and bottom wall
             if self.ball.position.y <= g.BOARD_WALL:
                 self.scores[g.ID_PLAYER1] += 1
             else:

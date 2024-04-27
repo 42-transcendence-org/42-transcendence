@@ -14,12 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import include, path
 from .blockchain.blockchain import save_tournament, get_tournament, get_url_blockchain
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
 	path('prometheus/', include("django_prometheus.urls")),
 
     path('saveTournament/', save_tournament, name='saveTournament'),

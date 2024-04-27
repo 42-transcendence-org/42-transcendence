@@ -30,6 +30,7 @@ def checkDictStr(D):
 
 class LoginAPIView(APIView):
     def post(self, request):
+        print(request.data)
         if not checkDictStr(request.data):
             return JsonResponse({"error": "Invalid data"}, status=400)
         form = AuthenticationForm(data=request.data)
@@ -321,6 +322,8 @@ class NicknameAPIView(APIView):
                 return (JsonResponse({"error": "This nickname is already taken !"}, status=400))
             if (len(first_name) > 14):
                 return (JsonResponse({"error": "This nickname is too long !"}, status=400))
+            if (len(first_name) < 3):
+                return (JsonResponse({"error": "This nickname is too short !"}, status=400))
             if first_name.endswith('@42'):
                 if (first_name != request.user.username):
                     return JsonResponse({"error":'nickname cannot end with @42'}, status=400)

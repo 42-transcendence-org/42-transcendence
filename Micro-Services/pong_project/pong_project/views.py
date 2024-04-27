@@ -18,5 +18,4 @@ def favicon_view(request):
             print(e)
         return HttpResponse(favicon, content_type='image/x-icon')
     except Exception as e:
-        print(e)
         return HttpResponse("Error no favicon", content_type='text/plain')

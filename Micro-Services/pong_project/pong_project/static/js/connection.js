@@ -24,13 +24,13 @@ export class Connection {
 		};
 		const response = await Oauth.poster(url, data);
 		
-		document.getElementById('username_login').value = '';
-		document.getElementById('password_login').value = '';
-
 		if (response.error) {
 			alert(response.error);
 			return ;
 		}
+		
+		document.getElementById('username_login').value = '';
+		document.getElementById('password_login').value = '';
 		localStorage.setItem('jwt', response.token);
 		window.client.home();
 	}
@@ -55,6 +55,8 @@ export class Connection {
 		document.getElementById('password2_register').value = '';
 		
 		if (response.error) {
+			document.getElementById('username_login').value = '';
+			document.getElementById('password_login').value = '';
 			alert(response.error);
 			return ;
 		}
@@ -62,7 +64,7 @@ export class Connection {
 		document.getElementById('username_register').value = '';
 		document.getElementById('email_address_register').value = '';
 		document.getElementById('first_name_register').value = '';
-		alert('Registration was successful');
+		alert('Welcome to the 42 School Pong Project! Have fun playing our different games!');
 		this.login_user_request();
 	}
 
@@ -73,7 +75,6 @@ export class Connection {
 		const response = await Oauth.getter(url);
 
 		if (response.error) {
-			alert(response.error);
 			return ;
 		}
 

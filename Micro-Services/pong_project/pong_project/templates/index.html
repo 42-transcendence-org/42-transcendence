@@ -7,16 +7,14 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>ft_transcendence</title>
-	<link rel="icon" href="{% static 'assets/images/favicon.ico' %}" />
+	<title>42 school</title>
 	<link rel="stylesheet" href="{% static 'css/style.css' %}">
-	<link rel="manifest" href="{% static 'site.webmanifest' %}">
 </head>
 
 <body>
 	<main>
 		<header class="banner">
-			<h1 id="home-banner" data-fr="ft_transcendence" data-en="ft_transcendence" data-es="ft_transcendence">ft_transcendence</h1>
+			<h1 id="home-banner" data-fr="Ecole 42" data-en="42 school" data-es="Escuela 42">42 school</h1>
 			<div id="login-banner" style="display: none;">
 				<p id="welcomeMessage" style="display: inline-block;">
 					<span data-fr="Bienvenue" data-en="Welcome" data-es="Bienvenido">Welcome</span>, <span id="banner-nickname-display">NO NICKNAME</span> !
@@ -27,8 +25,7 @@
 					<option value="es" data-fr="Espagnol" data-en="Spanish" data-es="Espanol">Spanish</option>
 					<option value="en" data-fr="Anglais" data-en="English" data-es="Ingles">English</option>
 				</select>
-				<img id="banner-profile-image-display" src="" alt="User Image" style="border-radius: 5%; width: 100px; height: 100px; display: inline-block;">
-				<!-- <img id="banner-profile-image-display" width="100" height="110" src="" alt="User Image" style="display: inline-block;"> -->
+				<img id="banner-profile-image-display" src="" alt="User Image" style="border-radius: 5%; width: 100px; height: 110px; display: inline-block;">
 				<button id="logout-button" type="submit" style="display: inline-block;" data-fr="Déconnexion" data-en="Logout" data-es="Cerrar sesion">Logout</button>
 			</div>
 		</header>
@@ -59,8 +56,6 @@
 				<button id="game-div-test-Space" data-en="Pause" data-es="Pausa" data-fr="Pause">Pause</button>
 			</div>
 
-
-
 			<div id="friends" style="display:none">
 				<form id="add-friend-form">
 					<p id="add-friend-p" data-fr="Entrez le pseudonyme de la personne que vous souhaitez ajouter comme ami :" data-en="Input the nickname of who you want to add as friend:" data-es="Ingrese el apodo de la persona que desea agregar como amigo:"> Input the nickname of who you want to add as friend: </p>
@@ -75,24 +70,20 @@
 					<div id="friends-list-delete"></div>
 				</div>
 				<p id="friend-requests-p" data-fr="Demandes d'amis :" data-en="Friend requests:" data-es="Solicitudes de amistad:"> Friend requests: </p>
-
 				<div id="friends-requests"></div>
 			</div>
 
 
-
-
-
 			<div id="friend-profile" style="display:none;">
 				<div id="friends-info">
-					<img src="" id="friend-profile-profile-picture-display" width="75" height="80" alt="profile picture">
+					<img src="" id="friend-profile-profile-picture-display" width="75" height="87" alt="profile picture">
 					<p id="friend-nickname-welcome-p" style="display: inline-block; margin-bottom: 0;"><span id="friend-profile-nickname-display"></span></p>
 					<p id="friend-online-status" style="display: inline-block;">
 						<span data-fr="statut : " data-en="status : " data-es="estatuto : ">status : </span>
-						<img src="auth/static/online.jpg" id="friend-online-status-image" width="40" height="40" alt="online status >
+						<img src="auth/static/online.jpg" id="friend-online-status-image" width="40" height="40" alt="online status" >
 					</p>
 				</div>
-				<div id=" friend-history">
+				<div id="friend-history">
 					<div id="friend-profile-janken-history">
 						<p id="janken-history-p" data-fr="Historique de Janken" data-en="Janken History" data-es="Historial de Janken"> Janken History </p>
 						<p>

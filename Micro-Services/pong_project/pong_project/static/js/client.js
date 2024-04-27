@@ -67,6 +67,10 @@ export class Client {
 	
 		const isLogged = await this.connection.isLoggedIn();
 
+		if (window.location.href != "https://" + window.location.host + "/") {
+			window.location.href = "https://" + window.location.host + "/";
+			console.log(window.location.href);
+		}
 		if (isLogged === 'true') {
 			await profile.fetchProfileData(div_to_show);
 			await this.janken.relaunchGetters();

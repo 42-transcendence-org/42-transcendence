@@ -11,7 +11,7 @@ class Profile(models.Model):
     is42account = models.BooleanField(default=False)
     email = models.EmailField(max_length=100, blank=True, default="default@default.default")
     profile_picture = models.CharField(max_length=100, blank=True, default="avatar.jpg")
-    nickname = models.CharField(max_length=100, validators=[MinLengthValidator(1)], null=False)
+    nickname = models.CharField(max_length=100, null=False)
     correction_points = models.IntegerField(default=0)
     online = models.BooleanField(default=False)
     default_language = models.CharField(max_length=2, default='en')

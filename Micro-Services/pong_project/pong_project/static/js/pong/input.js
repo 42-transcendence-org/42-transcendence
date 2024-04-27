@@ -12,9 +12,7 @@ class Input {
 
 export class InputManager {
 	constructor() {
-		/* The timestamp of the last input processed by the server */
 		this.last_ack_timestamp = 0;
-		/* The timestamp of the last input sent to the server */
 		this.last_sent_timestamp = 0;
 		this.keyboard_state = {};
 		this.input_queue = [];
@@ -122,6 +120,9 @@ export class InputManager {
 			return;
 		}
 		let player_id = key === 'a' || key === 's' || key === ' ' || key === 'Escape' ? g.ID_PLAYER1 : g.ID_PLAYER2;
+		
+		if (window.client.game_manager.game_type == g.TYPE_AI && player_id == g.ID_PLAYER2)
+			return;
 
 		if (type === 'keydown') {
 			if (!this.keyboard_state[key]) {

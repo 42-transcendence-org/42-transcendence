@@ -19,7 +19,7 @@ class JWTAuthenticationMiddleware:
                     raise ValueError('Invalid payload')
                 if (request.secret != os.environ.get('JANKEN_SECRET')):
                     raise ValueError('Invalid secret')
-            except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, ValueError) as e:
+            except Exception as e:
                 return JsonResponse({'error': "bad jwt"})
         return self.get_response(request)
     
@@ -32,6 +32,6 @@ class JWTAuthenticationMiddleware:
                 if prefix.lower() == 'bearer':
                     return token
                 
-            except ValueError:
-                pass
+            except Exception as e:
+                print(e)
         return request.GET.get('token')

@@ -113,7 +113,6 @@ class JankenGameInProgress(models.Model):
             return None
 
 
-# FIXME Cap owner to some value
 class FinishedJankenGames(models.Model):
     owner = models.IntegerField(default=-1)
     opponent = models.IntegerField(default=-1)
