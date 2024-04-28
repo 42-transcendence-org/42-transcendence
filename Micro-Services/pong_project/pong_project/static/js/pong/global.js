@@ -50,4 +50,4 @@ export const BALL_MAX_ANGLE = Math.PI / 6;
 export const PADDLE_WIDTH = 64;
 export const PADDLE_SPEED = (BOARD_WIDTH - (2 * BOARD_CORRIDOR)) * 2.0;
 
-export const POINTS_TO_WIN = 1;
+export const POINTS_TO_WIN = 5; /* don't put it over 5 for tournament games, or the tourney won't be saved in back bc of validator model allowing score up to 5 */
