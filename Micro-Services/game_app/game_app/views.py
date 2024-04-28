@@ -207,4 +207,8 @@ def validate_finished_game_dict(to_check):
         return False
     if not isinstance(to_check["tourney_game"], bool):
         return False
+    if to_check["game_type"] not in ["local", "ai"]:
+        return False
+    if not (to_check["winner"] == to_check["player1"] or to_check["winner"] == to_check["opponent"]):
+        return False
     return True

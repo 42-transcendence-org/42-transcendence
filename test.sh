@@ -221,3 +221,62 @@
 #   -H 'x-csrftoken: h7B2ptRI1IPRd2KslRxfEgqNjWLHE5Vb' \
 #   --data-raw null \
 #   --insecure
+
+# curl 'https://192.168.252.193:8443/auth/SaveLanguage/' \
+#   -H 'accept: */*' \
+#   -H 'accept-language: fr-FR,fr;q=0.9' \
+#   -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6IndydWV0LXN1QDQyIiwibmlja25hbWUiOiJ3cnVldC1zdUA0MiIsInNlY3JldCI6InMtZnplZnplNzhaQWR6ZDhaN2hkekRBWmFEODlkZGRkIiwiZXhwIjoxNzE0MzMwODY5fQ.7XSBD3vLtsH05oy8IxJdTySaUEguYZznelCKNruKOQI' \
+#   -H 'content-type: application/json' \
+#   -H 'cookie: csrftoken=h7B2ptRI1IPRd2KslRxfEgqNjWLHE5Vb; sessionid=m7i1qf0it7e5lf4p0lpcixqigt64innh' \
+#   -H 'origin: https://192.168.252.193:8443' \
+#   -H 'priority: u=1, i' \
+#   -H 'referer: https://192.168.252.193:8443/' \
+#   -H 'sec-ch-ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"' \
+#   -H 'sec-ch-ua-mobile: ?0' \
+#   -H 'sec-ch-ua-platform: "Windows"' \
+#   -H 'sec-fetch-dest: empty' \
+#   -H 'sec-fetch-mode: cors' \
+#   -H 'sec-fetch-site: same-origin' \
+#   -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' \
+#   -H 'x-csrftoken: h7B2ptRI1IPRd2KslRxfEgqNjWLHE5Vb' \
+#   --data-raw 1 \
+#   --insecure
+
+
+# curl 'https://192.168.252.193:8443/auth/getInfo/' \
+#   -H 'accept: */*' \
+#   -H 'accept-language: fr-FR,fr;q=0.9' \
+#   -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6IndydWV0LXN1QDQyIiwibmlja25hbWUiOiJ3cnVldC1zdUA0MiIsInNlY3JldCI6InMtZnplZnplNzhaQWR6ZDhaN2hkekRBWmFEODlkZGRkIiwiZXhwIjoxNzE0MzMxMDg2fQ.b8IHuyg60HE4Y8iGZ13uZQFRKgEjRU8F2ZBRib_evgs' \
+#   -H 'content-type: application/json' \
+#   -H 'cookie: csrftoken=nDSMzKcp3m5T0eWRC82d2i2P8VyvL55X; sessionid=v1ju6776pp9r5hcas9x8eywh8u0yoy6q' \
+#   -H 'priority: u=1, i' \
+#   -H 'referer: https://192.168.252.193:8443/' \
+#   -H 'sec-ch-ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"' \
+#   -H 'sec-ch-ua-mobile: ?0' \
+#   -H 'sec-ch-ua-platform: "Windows"' \
+#   -H 'sec-fetch-dest: empty' \
+#   -H 'sec-fetch-mode: cors' \
+#   -H 'sec-fetch-site: same-origin' \
+#   -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' \
+#   -H 'x-csrftoken: nDSMzKcp3m5T0eWRC82d2i2P8VyvL55X' \
+#   --insecure
+
+curl 'https://192.168.252.193:8443/game/pongHistory/' \
+  -H 'accept: */*' \
+  -H 'accept-language: fr-FR,fr;q=0.9' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6IndydWV0LXN1QDQyIiwibmlja25hbWUiOiJ3cnVldC1zdUA0MiIsInNlY3JldCI6InMtZnplZnplNzhaQWR6ZDhaN2hkekRBWmFEODlkZGRkIiwiZXhwIjoxNzE0MzMxMDg4fQ.YzJB1JU0DjzmWXRsxMP9_O9V35L2NdgIb7PKKx-d384' \
+  -H 'content-type: application/json' \
+  -H 'cookie: csrftoken=nDSMzKcp3m5T0eWRC82d2i2P8VyvL55X; sessionid=v1ju6776pp9r5hcas9x8eywh8u0yoy6q' \
+  -H 'origin: https://192.168.252.193:8443' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://192.168.252.193:8443/' \
+  -H 'sec-ch-ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' \
+  -H 'x-csrftoken: nDSMzKcp3m5T0eWRC82d2i2P8VyvL55X' \
+  --data-raw None \
+  --insecure
