@@ -64,7 +64,7 @@ export class Connection {
 		document.getElementById('username_register').value = '';
 		document.getElementById('email_address_register').value = '';
 		document.getElementById('first_name_register').value = '';
-		alert('Welcome to the 42 School Pong Project! Have fun playing our different games!');
+		alert('Welcome to the 42 School Games Website ! Have fun playing our different games !');
 		this.login_user_request();
 	}
 

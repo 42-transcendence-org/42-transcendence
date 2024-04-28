@@ -127,6 +127,7 @@ services:
 
 
   authentification_db:
+    container_name: auth_db_container
     image: postgres:16-bookworm
     volumes:
       - auth_db:/var/lib/postgresql/data
@@ -139,6 +140,7 @@ services:
     restart: on-failure
 
   game_app_db:
+    container_name: game_app_db_container
     image: postgres:16-bookworm
     volumes:
       - game_app_db:/var/lib/postgresql/data
@@ -151,6 +153,7 @@ services:
     restart: on-failure
 
   janken_db:
+    container_name: janken_db_container
     image: postgres:16-bookworm
     volumes:
       - janken_db:/var/lib/postgresql/data

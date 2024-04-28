@@ -448,7 +448,8 @@ export async function getPongHistory() {
 		if (response.history[i].game_type == "remote") {
 			if (response.history[i].winner != owner)
 				response.history[i].winner = owner;
-			response.history[i].opponent = await getNicknameWithUserId(response.history[i].opponent);
+			
+			response.history[i].opponent = await getNicknameWithUserId(Number(response.history[i].opponent));
 		}
 		if (lang == 'fr') {
 			p.textContent = owner + " a joué ";
