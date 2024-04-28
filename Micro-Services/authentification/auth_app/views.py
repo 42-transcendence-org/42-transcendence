@@ -236,10 +236,14 @@ class FriendRequestsAPIView(APIView):
             exists = Profile.objects.filter(nickname=friend_name).exists()
             if not exists:
                 return JsonResponse({"error": "No user has this nickname."}, status=400)
+            if request.user.profile.nickname == friend_name:
+                return JsonResponse({"error": "You can't send a friend request to yourself"}, status=400)
             new_friend = Profile.objects.get(nickname=friend_name)
             if (Friendship.friendshipExists(request.user.profile, new_friend) == True and Friendship.getFriendship(request.user.profile, new_friend).accepted == True):
                 return JsonResponse({"error": "Friendship already exists"}, status=400)
             friendship = Friendship.getFriendship(request.user.profile, new_friend)
+            if friendship is None:
+                return JsonResponse({"error": "Friendship request not found"}, status=400)
             friendship.accepted = True
             friendship.save()
             return JsonResponse({'message': 'success', 'friend': friend_name})
