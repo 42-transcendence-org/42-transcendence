@@ -18,9 +18,14 @@ from django.http import JsonResponse
 from django.contrib.auth.password_validation import validate_password
 from django.views.decorators.http import require_http_methods
 
-def checkDictStr(D):
+def checkDictStr(D, required_keys):
     if not isinstance(D, dict):
         return False
+    if len(D) == 0:
+        return False
+    for key in required_keys:
+        if key not in D:
+            return False
     for key, value in D.items():
         if not isinstance(key, str) or not isinstance(value, str):
             return False
@@ -30,7 +35,7 @@ def checkDictStr(D):
 
 class LoginAPIView(APIView):
     def post(self, request):
-        if not checkDictStr(request.data):
+        if not checkDictStr(request.data, ['username', 'password']):
             return JsonResponse({"error": "Invalid data"}, status=400)
         form = AuthenticationForm(data=request.data)
         if not form.is_valid():
@@ -47,7 +52,7 @@ class LoginAPIView(APIView):
 
 class RegisterAPIView(APIView):
     def post(self, request):
-        if not checkDictStr(request.data):
+        if not checkDictStr(request.data, ['username', 'password1', 'password2', 'first_name', 'email']):
             return (JsonResponse({"error": "Invalid data"}, status=400))
         form = UserCreationForm(data=request.data)
         if not form.is_valid():
@@ -149,7 +154,7 @@ def getInfo(request):
 class getFriendInfoAPIView(APIView):
     def post(self, request):
         if request.user.is_authenticated:
-            if not checkDictStr(request.data):
+            if not checkDictStr(request.data, ['friend']):
                 return (JsonResponse({"error": "Invalid data"}, status=400))
             friend_name = request.data.get('friend')
             if not Profile.objects.filter(nickname=friend_name).exists():
@@ -169,7 +174,7 @@ class getFriendInfoAPIView(APIView):
 class addFriendAPIView(APIView):
     def post(self, request):
         if request.user.is_authenticated:
-            if not checkDictStr(request.data):
+            if not checkDictStr(request.data, ['friend']):
                 return (JsonResponse({"error": "Invalid data"}, status=400))
             myself = request.user.profile
             friend_name = request.data.get('friend')
@@ -225,7 +230,7 @@ class FriendRequestsAPIView(APIView):
       
     def post(self, request):
         if request.user.is_authenticated:
-            if not checkDictStr(request.data):
+            if not checkDictStr(request.data, ['friend']):
                 return (JsonResponse({"error": "Invalid data"}, status=400))
             friend_name = request.data.get('friend')
             exists = Profile.objects.filter(nickname=friend_name).exists()
@@ -243,7 +248,7 @@ class FriendRequestsAPIView(APIView):
 class RefuseFriendRequestAPIView(APIView):
     def post(self, request):
         if request.user.is_authenticated:
-            if not checkDictStr(request.data):
+            if not checkDictStr(request.data, ['friend']):
                 return (JsonResponse({"error": "Invalid data"}, status=400))
             friend_name = request.data.get('friend')
             friendship = Friendship.objects.filter(friend2=request.user.profile, friend1__nickname=friend_name).first()
@@ -257,7 +262,7 @@ class RefuseFriendRequestAPIView(APIView):
 class DeleteFriendAPIView(APIView):
     def post(self, request):
         if request.user.is_authenticated:
-            if not checkDictStr(request.data):
+            if not checkDictStr(request.data, ['friend']):
                 return (JsonResponse({"error": "Invalid data"}, status=400))
             friend_name = request.data.get('friend')
             exists = Profile.objects.filter(nickname=friend_name).exists()
@@ -271,7 +276,7 @@ class DeleteFriendAPIView(APIView):
             else:
                 return JsonResponse({'error': 'Friendship already ended'})
         return JsonResponse({"error": "You are not authenticated"}, status=401)
-        
+
 @require_http_methods(["POST"])
 def update_profile_picture(request):
         if request.user.is_authenticated:
@@ -301,7 +306,7 @@ def update_profile_picture(request):
 class EmailAPIView(APIView):
     def post(self, request):
         if request.user.is_authenticated:
-            if not checkDictStr(request.data):
+            if not checkDictStr(request.data, ['email']):
                 return (JsonResponse({"error": "Invalid data"}, status=400))
             email = request.data.get('email')
             if request.user.profile.is42account == True:
@@ -317,7 +322,7 @@ class EmailAPIView(APIView):
 class NicknameAPIView(APIView):
     def post(self, request):
         if request.user.is_authenticated:
-            if not checkDictStr(request.data):
+            if not checkDictStr(request.data, ['first_name']):
                 return (JsonResponse({"error": "Invalid data"}, status=400))
             first_name = request.data.get('first_name')
             if (isNicknameUnique(first_name) == False):
@@ -338,7 +343,7 @@ class NicknameAPIView(APIView):
 class PasswordAPIView(APIView):
     def post(self, request):
         if request.user.is_authenticated:
-            if not checkDictStr(request.data):
+            if not checkDictStr(request.data, ['password']):
                     return (JsonResponse({"error": "Invalid data"}, status=400))
             password = request.data.get('password')
             if (len(password) > 14 or len(password) < 3 or password is None):
@@ -367,7 +372,7 @@ class getNicknameWithUserIdAPIView(APIView):
         
 class getUserIdWithNicknameAPIView(APIView):
     def post(self, request):
-        if not checkDictStr(request.data):
+        if not checkDictStr(request.data, ['nickname']):
             return (JsonResponse({"error": "Invalid data"}, status=400))
         nickname = request.data.get('nickname')
         if len(nickname) > 14:
@@ -384,7 +389,7 @@ class getUserIdWithNicknameAPIView(APIView):
 class SaveLanguageAPIView(APIView):
     def post(self, request):
         if request.user.is_authenticated:
-            if not checkDictStr(request.data):
+            if not checkDictStr(request.data, ['language']):
                 return (JsonResponse({"error": "Invalid data"}, status=400))
             language = request.data.get('language', 'no language')
             if language not in ["fr", "en", "es"]: 
@@ -397,7 +402,7 @@ class SaveLanguageAPIView(APIView):
 
 class Login42APIView(APIView):
     def post(self, request):
-        if not checkDictStr(request.data):
+        if not checkDictStr(request.data, ['code']):
             return (JsonResponse({"error": "Invalid data"}, status=400))
         code = request.data.get('code', None)
         if (code is None or len(code) > 150):
@@ -460,7 +465,7 @@ class OAuthRedirectUrlAPIView(APIView):
 
 class OAuthVerifyStateAPIView(APIView):
     def post(self, request):
-        if not checkDictStr(request.data):
+        if not checkDictStr(request.data, ['state']):
             return (JsonResponse({"error": "Invalid state"}, status=400))
         if (os.environ.get('OAUTH_STATE') == request.data.get('state')):
             return JsonResponse({'isValidState': True})

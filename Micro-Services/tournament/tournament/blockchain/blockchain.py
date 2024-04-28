@@ -112,13 +112,13 @@ def save_tournament(request):
 	nonce = w3.eth.get_transaction_count(account.address)
 	try:
 		data = json.loads(request.body)
-	except json.JSONDecodeError as e:
+	except Exception as e:
 		return JsonResponse({'error': "Invalid JSON"}, status=400)
 	if not isinstance(data, dict):
 		return JsonResponse({"error": "Invalid format"}, status=400)
 	try:
 		TournamentData(**data)
-	except ValidationError as e:
+	except Exception as e:
 		return JsonResponse({'error': "Invalid data"}, status=400)
 	Players = (f" {data['player1']}, {data['player2']}, {data['player3']}, {data['player4']}.")
 	if (data['Lang'] == "es"):
@@ -152,7 +152,12 @@ def save_tournament(request):
 
 @require_http_methods(["POST"])
 def get_tournament(request):
-	data = json.loads(request.body)
+	try:
+		data = json.loads(request.body)
+	except Exception as e:
+		return JsonResponse({'error': "Invalid JSON"}, status=400)
+	if 'tournamentOwner' not in data:
+		return JsonResponse({"error": "Missing 'tournamentOwner' in data"}, status=400)
 	if not (isinstance(data, dict) and isinstance(data['tournamentOwner'], str)):
 		return JsonResponse({"error": "Invalid format"}, status=400)
 	OwnerEncode = w3.keccak(text=data['tournamentOwner']).hex()

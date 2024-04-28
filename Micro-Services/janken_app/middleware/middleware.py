@@ -20,7 +20,7 @@ class JWTAuthenticationMiddleware:
                 if (request.secret != os.environ.get('JANKEN_SECRET')):
                     raise ValueError('Invalid secret')
             except Exception as e:
-                return JsonResponse({'error': "bad jwt"})
+                return JsonResponse({'error': "bad jwt"}, status=403)
         return self.get_response(request)
     
     @staticmethod

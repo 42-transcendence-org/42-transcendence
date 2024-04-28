@@ -16,7 +16,7 @@ class JWTAuthenticationMiddleware:
                 if (request.user_id is None) or (request.username is None):
                     raise ValueError('Invalid payload')
             except Exception as e:
-                return JsonResponse({'error': "bad jwt"})
+                return JsonResponse({'error': "bad jwt"}, status=403)
         return self.get_response(request)
     
     @staticmethod

@@ -49,7 +49,6 @@ def game_create_view(request):
 
     return JsonResponse({"id": server.matchmaker(username, user_id)}, status=201)
 
-
 @never_cache
 @require_http_methods(["GET", "PUT"])
 async def game_view(request, game_id):
