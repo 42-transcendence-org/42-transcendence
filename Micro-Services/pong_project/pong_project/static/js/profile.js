@@ -609,7 +609,7 @@ export async function friendPongHistory(history, friend_name) {
 			history[i].winner = owner;
 		
 		if (history[i].game_type == "remote") {
-			history[i].opponent = await getNicknameWithUserId(history[i].opponent);
+			history[i].opponent = await getNicknameWithUserId(Number(history[i].opponent));
 			if (history[i].winner != owner) {
 				history[i].winner = history[i].opponent;
 			}

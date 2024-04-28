@@ -30,7 +30,6 @@ def checkDictStr(D):
 
 class LoginAPIView(APIView):
     def post(self, request):
-        print(request.data)
         if not checkDictStr(request.data):
             return JsonResponse({"error": "Invalid data"}, status=400)
         form = AuthenticationForm(data=request.data)
@@ -121,12 +120,15 @@ def generate_jwt_token(user):
     return token.decode('utf-8') if isinstance(token, bytes) else token
 
 def isNicknameUnique(nickname):
-    users = User.objects.all()
-    for user in users:
-        if hasattr(user, 'profile') and user.profile is not None and user.profile.nickname is not None:
-            if user.profile.nickname == nickname:
-                return False
-    return True
+    try:
+        users = User.objects.all()
+        for user in users:
+            if hasattr(user, 'profile') and user.profile is not None and user.profile.nickname is not None:
+                if user.profile.nickname == nickname:
+                    return False
+        return True
+    except:
+        return False
 
 @require_http_methods(["GET"])
 def getInfo(request):
@@ -347,7 +349,6 @@ class PasswordAPIView(APIView):
                 validate_password(password, request.user)
                 request.user.set_password(password)
             except Exception as e:
-                print(e)
                 return (JsonResponse({"error": "This password is not strong enough."}, status=400))
             request.user.save()
             return (JsonResponse({"message": "success", "password": password}, status=200))
