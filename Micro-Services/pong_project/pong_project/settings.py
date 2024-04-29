@@ -28,11 +28,11 @@ DEBUG = False
 
 MY_IP = os.environ.get('HOST_IP', '127.0.0.1')
 
-ALLOWED_HOSTS = ['localhost', MY_IP]
+ALLOWED_HOSTS = [MY_IP]
 
 
 
-CSRF_TRUSTED_ORIGINS = ['https://localhost:8443', f'https://{MY_IP}:8443']
+CSRF_TRUSTED_ORIGINS = [f'https://{MY_IP}:8443']
 # Application definition
 
 INSTALLED_APPS = [
@@ -65,7 +65,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    'https://localhost:8443'
+    'https://' + MY_IP + ':8443',
 ]
 
 SESSION_COOKIE_DOMAIN = f'{MY_IP}:8001'
@@ -89,17 +89,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "pong_project.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

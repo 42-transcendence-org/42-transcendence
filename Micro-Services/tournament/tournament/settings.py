@@ -58,9 +58,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'https://localhost:8443'
+    'https://' + MY_IP + ':8443',
 ]
-
 
 CORS_ALLOW_CREDENTIALS = True
 
