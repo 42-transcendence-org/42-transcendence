@@ -368,6 +368,8 @@ class getNicknameWithUserIdAPIView(APIView):
         if not (isinstance(request.data, dict) and isinstance(request.data.get('user_id'), int)):
             return JsonResponse({'error': 'Invalid data'}, status=400)
         user_id = request.data.get('user_id')
+        if not (user_id < 10000 and user_id >= 1):
+            return JsonResponse({'error': 'Invalid user id'})
         exist = User.objects.filter(id=user_id).exists()
         if not exist:
             return JsonResponse({'error': 'No user with this id'}, status=400)
@@ -387,7 +389,7 @@ class getUserIdWithNicknameAPIView(APIView):
         try:
             user = User.objects.get(profile__nickname=nickname)
         except Exception as e:
-            return JsonResponse({'error': 'Failed to get the user with this nickname'}, status=503)
+            return JsonResponse({'error': 'Failed to get the user with this nickname'}, status=403)
         return (JsonResponse({"user_id": user.id}, status=200))
 
 class SaveLanguageAPIView(APIView):

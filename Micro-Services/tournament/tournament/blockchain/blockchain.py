@@ -156,9 +156,11 @@ def get_tournament(request):
 		data = json.loads(request.body)
 	except Exception as e:
 		return JsonResponse({'error': "Invalid JSON"}, status=400)
+	if not isinstance(data, dict):
+		return JsonResponse({"error": "Invalid format"}, status=400)
 	if 'tournamentOwner' not in data:
 		return JsonResponse({"error": "Missing 'tournamentOwner' in data"}, status=400)
-	if not (isinstance(data, dict) and isinstance(data['tournamentOwner'], str)):
+	if not (isinstance(data['tournamentOwner'], str)):
 		return JsonResponse({"error": "Invalid format"}, status=400)
 	OwnerEncode = w3.keccak(text=data['tournamentOwner']).hex()
 	Owner = OwnerEncode[2:]
